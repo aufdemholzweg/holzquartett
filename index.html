@@ -1,2 +1,693 @@
 <!DOCTYPE html>
-<!-- (Platzhalter: Hier gehört dein ganzer HTML-Code rein – bitte erneut senden nach Reset) -->
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Holzarten-Eigenschaften-Quartett</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+        }
+        
+        .card-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+        
+        .card-flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .card-front, .card-back {
+            backface-visibility: hidden;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .card-back {
+            transform: rotateY(180deg);
+        }
+        
+        .wood-texture {
+            background: linear-gradient(45deg, #8B4513 25%, transparent 25%), 
+                        linear-gradient(-45deg, #8B4513 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, #8B4513 75%), 
+                        linear-gradient(-45deg, transparent 75%, #8B4513 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            background-color: #D2B48C;
+            opacity: 0.1;
+        }
+        
+        .pulse-win {
+            animation: pulse-green 0.8s ease-in-out;
+        }
+        
+        .pulse-lose {
+            animation: pulse-red 0.8s ease-in-out;
+        }
+        
+        @keyframes pulse-green {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+            50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+        }
+        
+        @keyframes pulse-red {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+        }
+        
+        .hover-lift:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-amber-50 to-orange-100 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b-2 border-amber-200">
+        <div class="max-w-6xl mx-auto px-4 py-4">
+            <h1 class="text-2xl font-bold text-amber-800 text-center">🌳 Holzarten-Eigenschaften-Quartett</h1>
+        </div>
+    </header>
+
+    <!-- Game Setup Modal -->
+    <div id="setupModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
+            <h2 class="text-2xl font-bold text-amber-800 mb-6 text-center">Spiel starten</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Dein Name:</label>
+                    <input type="text" id="playerName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent" placeholder="Spielername eingeben">
+                </div>
+                <button onclick="startGame()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                    🎮 Spiel starten
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Container -->
+    <div id="gameContainer" class="hidden max-w-6xl mx-auto px-4 py-6">
+        <!-- Score & Status Panel -->
+        <div class="max-w-md mx-auto mb-6 space-y-3">
+            <div class="flex justify-center gap-6">
+                <!-- Player Score Box -->
+                <div class="w-1/2 bg-white rounded-xl shadow-lg p-3 text-center">
+                    <p id="playerNameDisplay" class="text-lg font-bold text-amber-600 truncate"></p>
+                    <p class="text-sm text-gray-500">Karten: <span id="playerCards" class="font-semibold">15</span></p>
+                </div>
+                <!-- AI Score Box -->
+                <div class="w-1/2 bg-white rounded-xl shadow-lg p-3 text-center">
+                    <p class="text-lg font-bold text-red-600">Computer</p>
+                    <p class="text-sm text-gray-500">Karten: <span id="aiCards" class="font-semibold">15</span></p>
+                </div>
+            </div>
+            <!-- Status Bar -->
+            <div class="w-full bg-gray-200 rounded-full h-3 relative overflow-hidden border border-gray-300">
+                <div id="statusBar" class="bg-amber-500 h-full rounded-l-full transition-all duration-500" style="width: 50%;"></div>
+                 <div class="absolute inset-0 flex justify-center items-center">
+                    <div class="w-0.5 h-full bg-white opacity-75"></div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Game Board -->
+        <div class="flex justify-center gap-4 mb-6">
+            <!-- Player Card -->
+            <div class="text-center">
+                <div id="playerCard" class="relative w-[13.5rem] h-72 perspective-1000">
+                    <!-- Card content will be inserted here -->
+                </div>
+            </div>
+
+            <!-- AI Card -->
+            <div class="text-center">
+                <div id="aiCard" class="relative w-[13.5rem] h-72 perspective-1000">
+                    <!-- Card content will be inserted here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Panel -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mt-6 text-center mx-auto min-h-[128px] flex flex-col items-center justify-center" style="max-width: 435px;">
+            <div id="attributeSelection" class="">
+                 <h3 class="text-lg font-semibold text-gray-700">Wähle eine Eigenschaft!</h3>
+            </div>
+            <div id="nextRoundButton" class="hidden w-full mb-2">
+                 <button onclick="nextRound()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-8 rounded-lg transition-colors">
+                     ➡️ Nächster Zug
+                 </button>
+             </div>
+            <div id="resultDisplay" class="hidden">
+                 <h3 id="resultText" class="text-xl font-bold mb-1"></h3>
+                 <p id="resultDetails" class="text-sm text-gray-600"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="gameOverModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl text-center">
+            <h2 id="gameOverTitle" class="text-3xl font-bold mb-4"></h2>
+            <p id="gameOverText" class="text-gray-600 mb-6"></p>
+            <div class="space-y-3">
+                <button onclick="showLeaderboard()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                    🏆 Bestenliste anzeigen
+                </button>
+                <button onclick="resetGame()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                    🔄 Neues Spiel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaderboard Modal -->
+    <div id="leaderboardModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
+            <h2 class="text-2xl font-bold text-amber-800 mb-6 text-center">🏆 Bestenliste</h2>
+            <div id="leaderboardList" class="space-y-2 mb-6">
+                <!-- Leaderboard entries will be inserted here -->
+            </div>
+            <button onclick="closeLeaderboard()" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                Schließen
+            </button>
+        </div>
+    </div>
+
+    <!-- Gemini Info Modal -->
+    <div id="infoModal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 px-4">
+        <div class="bg-white rounded-xl p-8 max-w-lg w-full mx-4 shadow-2xl relative">
+            <button onclick="closeInfoModal()" class="absolute top-2 right-3 text-2xl text-gray-400 hover:text-gray-600">&times;</button>
+            <h2 id="infoModalTitle" class="text-2xl font-bold text-amber-800 mb-4">Wissenswertes</h2>
+            <div id="infoModalContent" class="text-gray-700 space-y-4 max-h-[60vh] overflow-y-auto">
+                <!-- Gemini content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // Game data
+        const woodCards = [
+            {name: "Eiche", dk: 2, haerte: 85, quellenSchwindenRadial: 4.0, dichte: 650, gewicht: 12000},
+            {name: "Buche", dk: 5, haerte: 80, quellenSchwindenRadial: 5.8, dichte: 720, gewicht: 14000},
+            {name: "Kiefer", dk: 3, haerte: 40, quellenSchwindenRadial: 3.5, dichte: 520, gewicht: 11000},
+            {name: "Fichte", dk: 4, haerte: 35, quellenSchwindenRadial: 3.6, dichte: 450, gewicht: 11000},
+            {name: "Tanne", dk: 4, haerte: 38, quellenSchwindenRadial: 3.5, dichte: 460, gewicht: 10000},
+            {name: "Lärche", dk: 3, haerte: 55, quellenSchwindenRadial: 3.7, dichte: 590, gewicht: 12000},
+            {name: "Birke", dk: 5, haerte: 60, quellenSchwindenRadial: 5.4, dichte: 650, gewicht: 13000},
+            {name: "Ahorn", dk: 5, haerte: 75, quellenSchwindenRadial: 4.8, dichte: 630, gewicht: 12500},
+            {name: "Esche", dk: 5, haerte: 90, quellenSchwindenRadial: 4.9, dichte: 700, gewicht: 13000},
+            {name: "Kirsche", dk: 3, haerte: 70, quellenSchwindenRadial: 4.0, dichte: 600, gewicht: 11500},
+            {name: "Nussbaum", dk: 3, haerte: 65, quellenSchwindenRadial: 4.0, dichte: 640, gewicht: 12000},
+            {name: "Douglasie", dk: 3, haerte: 45, quellenSchwindenRadial: 3.5, dichte: 510, gewicht: 12000},
+            {name: "Zeder", dk: 2, haerte: 42, quellenSchwindenRadial: 2.8, dichte: 480, gewicht: 9500},
+            {name: "Mahagoni", dk: 2, haerte: 55, quellenSchwindenRadial: 3.0, dichte: 550, gewicht: 10500},
+            {name: "Teak", dk: 1, haerte: 60, quellenSchwindenRadial: 2.5, dichte: 650, gewicht: 11000},
+            {name: "Bambus", dk: 4, haerte: 50, quellenSchwindenRadial: 3.0, dichte: 400, gewicht: 18000},
+            {name: "Pappel", dk: 5, haerte: 25, quellenSchwindenRadial: 4.5, dichte: 380, gewicht: 9000},
+            {name: "Weide", dk: 5, haerte: 30, quellenSchwindenRadial: 4.0, dichte: 420, gewicht: 8000},
+            {name: "Linde", dk: 5, haerte: 35, quellenSchwindenRadial: 3.8, dichte: 530, gewicht: 9000},
+            {name: "Ulme", dk: 3, haerte: 75, quellenSchwindenRadial: 4.5, dichte: 680, gewicht: 11500},
+            {name: "Kastanie", dk: 2, haerte: 50, quellenSchwindenRadial: 3.5, dichte: 600, gewicht: 10000},
+            {name: "Robinie", dk: 1, haerte: 80, quellenSchwindenRadial: 3.0, dichte: 730, gewicht: 15000},
+            {name: "Hemlock", dk: 4, haerte: 40, quellenSchwindenRadial: 3.6, dichte: 500, gewicht: 10000},
+            {name: "Zypresse", dk: 2, haerte: 48, quellenSchwindenRadial: 3.0, dichte: 520, gewicht: 9000},
+            {name: "Redwood", dk: 2, haerte: 35, quellenSchwindenRadial: 2.8, dichte: 400, gewicht: 8500},
+            {name: "H hickory", dk: 3, haerte: 95, quellenSchwindenRadial: 5.5, dichte: 750, gewicht: 14000},
+            {name: "Wenge", dk: 2, haerte: 88, quellenSchwindenRadial: 3.8, dichte: 880, gewicht: 16000},
+            {name: "Zebrano", dk: 3, haerte: 70, quellenSchwindenRadial: 4.0, dichte: 750, gewicht: 13000},
+            {name: "Palisander", dk: 2, haerte: 82, quellenSchwindenRadial: 3.0, dichte: 850, gewicht: 16000},
+            {name: "Ebony", dk: 1, haerte: 98, quellenSchwindenRadial: 3.2, dichte: 1200, gewicht: 16500}
+        ];
+
+        // Game state
+        let gameState = {
+            playerName: '',
+            playerCards: [],
+            aiCards: [],
+            currentPlayerCard: null,
+            currentAiCard: null,
+            playerTurn: true,
+            gameOver: false,
+            roundResult: null,
+            roundInProgress: false
+        };
+
+        // Attribute icons and names
+        const attributeInfo = {
+            dk: {icon: '🛡️', name: 'Dauerhaftigkeit (DK)', color: 'blue'},
+            haerte: {icon: '💎', name: 'Druckfestigkeit (N/mm²)', color: 'blue'},
+            quellenSchwindenRadial: {icon: '↔️', name: 'Quellen/Schwinden radial', color: 'blue'},
+            dichte: {icon: '⚖️', name: 'Rohdichte (kg/m³)', color: 'blue'},
+            gewicht: {icon: '🏋️', name: 'E-Modul (N/mm²)', color: 'blue'}
+        };
+
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function startGame() {
+            const playerName = document.getElementById('playerName').value.trim();
+            if (!playerName) {
+                alert('Bitte gib deinen Namen ein!');
+                return;
+            }
+
+            gameState.playerName = playerName;
+            document.getElementById('playerNameDisplay').textContent = playerName;
+
+            // Shuffle and distribute cards
+            const shuffledCards = shuffleArray(woodCards);
+            gameState.playerCards = shuffledCards.slice(0, 15);
+            gameState.aiCards = shuffledCards.slice(15, 30);
+
+            // Set current cards
+            gameState.currentPlayerCard = gameState.playerCards[0];
+            gameState.currentAiCard = gameState.aiCards[0];
+
+            // Show game
+            document.getElementById('setupModal').classList.add('hidden');
+            document.getElementById('gameContainer').classList.remove('hidden');
+
+            updateDisplay();
+            displayCards();
+        }
+
+        function createCard(cardData, isRevealed = true, isPlayer = true) {
+            const card = document.createElement('div');
+            card.className = `card-3d w-full h-full relative cursor-pointer transition-all duration-300 ${isPlayer ? 'hover-lift' : ''}`;
+            
+            if (!isRevealed) {
+                card.classList.add('card-flipped');
+            }
+
+            // Card front (revealed)
+            const cardFront = document.createElement('div');
+            cardFront.className = `card-front bg-white rounded-xl shadow-lg border-2 border-amber-200 p-3 flex flex-col`;
+            
+            const isPlayerCard = isPlayer && isRevealed;
+
+            const infoButtonHTML = isPlayerCard ? `
+                <button id="player-info-button" onclick="showWoodInfo()" class="hidden bg-purple-600 text-white rounded-full h-6 w-6 flex-shrink-0 flex items-center justify-center text-xs hover:bg-purple-700">
+                    ✨
+                </button>
+            ` : '';
+
+            const attributeButtons = isPlayer ? `
+                <div class="space-y-2 mt-auto">
+                    <button onclick="selectAttribute('dk')" class="w-full flex justify-between items-center py-1 px-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer">
+                        <span class="flex items-center text-left"><span class="mr-2 text-xs">🛡️</span><span class="text-xs">Dauerhaftigkeit</span></span>
+                        <span class="font-bold text-blue-600 text-sm">${cardData.dk}</span>
+                    </button>
+                    <button onclick="selectAttribute('haerte')" class="w-full flex justify-between items-center py-1 px-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer">
+                        <span class="flex items-center text-left"><span class="mr-2 text-xs">💎</span><span class="text-xs">Druckfestigkeit</span></span>
+                        <span class="font-bold text-blue-600 text-sm">${cardData.haerte}</span>
+                    </button>
+                    <button onclick="selectAttribute('quellenSchwindenRadial')" class="w-full flex justify-between items-center py-1 px-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer">
+                        <span class="flex items-center text-left"><span class="mr-2 text-xs">↔️</span><span class="text-xs">Quellen/Schwinden</span></span>
+                        <span class="font-bold text-blue-600 text-sm">${cardData.quellenSchwindenRadial}</span>
+                    </button>
+                    <button onclick="selectAttribute('dichte')" class="w-full flex justify-between items-center py-1 px-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer">
+                        <span class="flex items-center text-left"><span class="mr-2 text-xs">⚖️</span><span class="text-xs">Rohdichte</span></span>
+                        <span class="font-bold text-blue-600 text-sm">${cardData.dichte}</span>
+                    </button>
+                    <button onclick="selectAttribute('gewicht')" class="w-full flex justify-between items-center py-1 px-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer">
+                        <span class="flex items-center text-left"><span class="mr-2 text-xs">🏋️</span><span class="text-xs">E-Modul</span></span>
+                        <span class="font-bold text-blue-600 text-sm">${cardData.gewicht.toLocaleString('de-DE')}</span>
+                    </button>
+                </div>
+            ` : `
+                 <div class="space-y-2 mt-auto">
+                    <div class="flex justify-between items-center py-1 px-2 bg-blue-50 rounded-lg">
+                        <span class="flex items-center text-left"><span class="mr-2 text-xs">🛡️</span><span class="text-xs">Dauerhaftigkeit</span></span>
+                        <span class="font-bold text-blue-600 text-sm">${cardData.dk}</span>
+                    </div>
+                    <div class="flex justify-between items-center py-1 px-2 bg-blue-50 rounded-lg">
+                        <span class="flex items-center text-left"><span class="mr-2 text-xs">💎</span><span class="text-xs">Druckfestigkeit</span></span>
+                        <span class="font-bold text-blue-600 text-sm">${cardData.haerte}</span>
+                    </div>
+                    <div class="flex justify-between items-center py-1 px-2 bg-blue-50 rounded-lg">
+                        <span class="flex items-center text-left"><span class="mr-2 text-xs">↔️</span><span class="text-xs">Quellen/Schwinden</span></span>
+                        <span class="font-bold text-blue-600 text-sm">${cardData.quellenSchwindenRadial}</span>
+                    </div>
+                    <div class="flex justify-between items-center py-1 px-2 bg-blue-50 rounded-lg">
+                        <span class="flex items-center text-left"><span class="mr-2 text-xs">⚖️</span><span class="text-xs">Rohdichte</span></span>
+                        <span class="font-bold text-blue-600 text-sm">${cardData.dichte}</span>
+                    </div>
+                    <div class="flex justify-between items-center py-1 px-2 bg-blue-50 rounded-lg">
+                        <span class="flex items-center text-left"><span class="mr-2 text-xs">🏋️</span><span class="text-xs">E-Modul</span></span>
+                        <span class="font-bold text-blue-600 text-sm">${cardData.gewicht.toLocaleString('de-DE')}</span>
+                    </div>
+                </div>
+            `;
+            
+            cardFront.innerHTML = `
+                <div class="text-center mb-1">
+                    <div class="flex justify-center items-center gap-2">
+                        <div class="text-3xl">🌳</div>
+                        <h3 class="text-lg font-bold text-amber-800 truncate">${cardData.name}</h3>
+                        ${infoButtonHTML}
+                    </div>
+                </div>
+                ${attributeButtons}
+            `;
+
+            // Card back (hidden)
+            const cardBack = document.createElement('div');
+            cardBack.className = 'card-back bg-gradient-to-br from-amber-600 to-orange-700 rounded-xl shadow-lg border-2 border-amber-300 p-4 flex items-center justify-center relative overflow-hidden';
+            cardBack.innerHTML = `
+                <div class="wood-texture absolute inset-0"></div>
+                <div class="text-center z-10">
+                    <div class="text-6xl mb-4">🌳</div>
+                    <h3 class="text-xl font-bold text-white opacity-90">Holzquartett</h3>
+                </div>
+            `;
+
+            card.appendChild(cardFront);
+            card.appendChild(cardBack);
+            
+            return card;
+        }
+
+        function displayCards() {
+            const playerCardContainer = document.getElementById('playerCard');
+            const aiCardContainer = document.getElementById('aiCard');
+
+            playerCardContainer.innerHTML = '';
+            aiCardContainer.innerHTML = '';
+
+            const playerCard = createCard(gameState.currentPlayerCard, true, true);
+            const aiCard = createCard(gameState.currentAiCard, false, false);
+
+            playerCardContainer.appendChild(playerCard);
+            aiCardContainer.appendChild(aiCard);
+        }
+
+        function selectAttribute(attribute) {
+            // Prevent multiple selections
+            if (gameState.roundInProgress) return;
+            gameState.roundInProgress = true;
+
+            const playerValue = gameState.currentPlayerCard[attribute];
+            const aiValue = gameState.currentAiCard[attribute];
+
+            // Reveal AI card immediately
+            const aiCardElement = document.getElementById('aiCard').querySelector('.card-3d');
+            aiCardElement.classList.remove('card-flipped');
+
+            // Disable only the attribute buttons
+            const attributeButtons = document.querySelectorAll('#playerCard .space-y-2 > button');
+            attributeButtons.forEach(button => {
+                button.disabled = true;
+                button.classList.remove('hover:bg-blue-100', 'cursor-pointer');
+                button.classList.add('cursor-not-allowed', 'opacity-50');
+            });
+
+            // Determine winner and highlight winning attribute
+            let winner = '';
+            let resultText = '';
+            let resultClass = '';
+
+            let playerWins;
+            let comparisonChar = '>';
+            if (attribute === 'quellenSchwindenRadial' || attribute === 'dk') {
+                comparisonChar = '<';
+                if (playerValue < aiValue) playerWins = true;
+                else if (aiValue < playerValue) playerWins = false;
+                else playerWins = 'tie';
+            } else {
+                if (playerValue > aiValue) playerWins = true;
+                else if (aiValue > playerValue) playerWins = false;
+                else playerWins = 'tie';
+            }
+
+            if (playerWins === true) {
+                winner = 'player';
+                resultText = `🎉 Du gewinnst!`;
+                resultClass = 'text-green-600';
+                highlightAttribute(attribute, 'win');
+                gameState.playerCards.shift();
+                gameState.aiCards.shift();
+                gameState.playerCards.push(gameState.currentPlayerCard, gameState.currentAiCard);
+                document.getElementById('playerCard').querySelector('.card-3d').classList.add('pulse-win');
+            } else if (playerWins === false) {
+                winner = 'ai';
+                resultText = `😞 KI gewinnst!`;
+                resultClass = 'text-red-600';
+                highlightAttribute(attribute, 'lose');
+                gameState.playerCards.shift();
+                gameState.aiCards.shift();
+                gameState.aiCards.push(gameState.currentAiCard, gameState.currentPlayerCard);
+                document.getElementById('playerCard').querySelector('.card-3d').classList.add('pulse-lose');
+            } else {
+                winner = 'tie';
+                resultText = `🤝 Unentschieden!`;
+                resultClass = 'text-yellow-600';
+                highlightAttribute(attribute, 'tie');
+                gameState.playerCards.push(gameState.playerCards.shift());
+                gameState.aiCards.push(gameState.aiCards.shift());
+            }
+
+            // Show result
+            const formattedPlayerValue = typeof playerValue === 'number' ? playerValue.toLocaleString('de-DE') : playerValue;
+            const formattedAiValue = typeof aiValue === 'number' ? aiValue.toLocaleString('de-DE') : aiValue;
+
+            document.getElementById('resultText').textContent = resultText;
+            document.getElementById('resultText').className = `text-xl font-bold mb-1 ${resultClass}`;
+            document.getElementById('resultDetails').textContent = `${attributeInfo[attribute].name.split(' (')[0]}: ${formattedPlayerValue} vs ${formattedAiValue}`;
+            
+            document.getElementById('attributeSelection').classList.add('hidden');
+            document.getElementById('resultDisplay').classList.remove('hidden');
+            document.getElementById('nextRoundButton').classList.remove('hidden');
+            
+            const infoButton = document.getElementById('player-info-button');
+            if (infoButton) {
+                infoButton.classList.remove('hidden');
+            }
+
+
+            gameState.roundResult = winner;
+            gameState.selectedAttribute = attribute;
+            updateDisplay();
+            checkGameOver();
+        }
+
+        function highlightAttribute(attribute, result) {
+            const playerCard = document.getElementById('playerCard');
+            const aiCard = document.getElementById('aiCard');
+            
+            let playerBgColor = '', aiBgColor = '';
+            
+            if (result === 'win') {
+                playerBgColor = 'bg-green-200';
+                aiBgColor = 'bg-gray-200';
+            } else if (result === 'lose') {
+                playerBgColor = 'bg-red-200';
+                aiBgColor = 'bg-green-200';
+            } else {
+                playerBgColor = 'bg-yellow-200';
+                aiBgColor = 'bg-yellow-200';
+            }
+            
+            const attributeSelectors = {
+                'dk': 0, 'haerte': 1, 'quellenSchwindenRadial': 2, 'dichte': 3, 'gewicht': 4
+            };
+            const attributeIndex = attributeSelectors[attribute];
+            
+            const playerAttributes = playerCard.querySelectorAll('.space-y-2 > *');
+            if (playerAttributes[attributeIndex]) {
+                playerAttributes[attributeIndex].className = playerAttributes[attributeIndex].className.replace(/bg-blue-50|hover:bg-blue-100/g, playerBgColor);
+            }
+            
+            const aiAttributes = aiCard.querySelectorAll('.space-y-2 > *');
+            if (aiAttributes[attributeIndex]) {
+                aiAttributes[attributeIndex].className = aiAttributes[attributeIndex].className.replace(/bg-blue-50|hover:bg-blue-100/g, aiBgColor);
+            }
+        }
+
+        function nextRound() {
+            document.getElementById('playerCard').querySelector('.card-3d').classList.remove('pulse-win', 'pulse-lose');
+
+            if (gameState.playerCards.length === 0 || gameState.aiCards.length === 0) {
+                endGame();
+                return;
+            }
+
+            gameState.currentPlayerCard = gameState.playerCards[0];
+            gameState.currentAiCard = gameState.aiCards[0];
+            gameState.roundInProgress = false;
+
+            document.getElementById('attributeSelection').classList.remove('hidden');
+            document.getElementById('nextRoundButton').classList.add('hidden');
+            document.getElementById('resultDisplay').classList.add('hidden');
+
+
+            displayCards();
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            const playerCardsCount = gameState.playerCards.length;
+            const aiCardsCount = gameState.aiCards.length;
+            
+            document.getElementById('playerCards').textContent = playerCardsCount;
+            document.getElementById('aiCards').textContent = aiCardsCount;
+            
+            const totalCards = playerCardsCount + aiCardsCount;
+            const playerPercentage = totalCards > 0 ? (playerCardsCount / totalCards) * 100 : 50;
+            
+            const statusBar = document.getElementById('statusBar');
+            if (statusBar) {
+                statusBar.style.width = `${playerPercentage}%`;
+                // Change color based on who is winning
+                if (playerPercentage > 50) {
+                    statusBar.classList.remove('bg-red-500');
+                    statusBar.classList.add('bg-amber-500');
+                } else if (playerPercentage < 50) {
+                    statusBar.classList.remove('bg-amber-500');
+                    statusBar.classList.add('bg-red-500');
+                } else {
+                     statusBar.classList.remove('bg-red-500');
+                     statusBar.classList.add('bg-amber-500');
+                }
+            }
+        }
+
+        function checkGameOver() {
+            if (gameState.playerCards.length === 0 || gameState.aiCards.length === 0) {
+                setTimeout(endGame, 2000);
+            }
+        }
+
+        function endGame() {
+            const playerWon = gameState.playerCards.length > 0;
+            
+            document.getElementById('gameOverTitle').textContent = playerWon ? '🎉 Glückwunsch!' : '😞 Spiel verloren';
+            document.getElementById('gameOverTitle').className = `text-3xl font-bold mb-4 ${playerWon ? 'text-green-600' : 'text-red-600'}`;
+            document.getElementById('gameOverText').textContent = playerWon ? 
+                `Du hast gewonnen, ${gameState.playerName}! Du hast alle Karten gesammelt.` :
+                `Die KI hat gewonnen. Versuche es nochmal!`;
+
+            if (playerWon) {
+                saveToLeaderboard(gameState.playerName, gameState.playerCards.length);
+            }
+
+            document.getElementById('gameOverModal').classList.remove('hidden');
+        }
+
+        function saveToLeaderboard(playerName, score) {
+            let leaderboard = JSON.parse(localStorage.getItem('holzquartett-leaderboard') || '[]');
+            leaderboard.push({
+                name: playerName,
+                score: score,
+                date: new Date().toLocaleDateString('de-DE')
+            });
+            leaderboard.sort((a, b) => b.score - a.score);
+            leaderboard = leaderboard.slice(0, 10);
+            localStorage.setItem('holzquartett-leaderboard', JSON.stringify(leaderboard));
+        }
+
+        function showLeaderboard() {
+            const leaderboard = JSON.parse(localStorage.getItem('holzquartett-leaderboard') || '[]');
+            const leaderboardList = document.getElementById('leaderboardList');
+            
+            if (leaderboard.length === 0) {
+                leaderboardList.innerHTML = '<p class="text-gray-500 text-center">Noch keine Einträge</p>';
+            } else {
+                leaderboardList.innerHTML = leaderboard.map((entry, index) => `
+                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                        <span class="font-semibold">${index + 1}. ${entry.name}</span>
+                        <span class="text-sm text-gray-600">${entry.score} Karten - ${entry.date}</span>
+                    </div>
+                `).join('');
+            }
+            
+            document.getElementById('gameOverModal').classList.add('hidden');
+            document.getElementById('leaderboardModal').classList.remove('hidden');
+        }
+
+        function closeLeaderboard() {
+            document.getElementById('leaderboardModal').classList.add('hidden');
+            document.getElementById('gameOverModal').classList.remove('hidden');
+        }
+
+        function resetGame() {
+            gameState = {
+                playerName: '', playerCards: [], aiCards: [], currentPlayerCard: null, currentAiCard: null, playerTurn: true, gameOver: false, roundResult: null, roundInProgress: false
+            };
+            document.getElementById('gameOverModal').classList.add('hidden');
+            document.getElementById('leaderboardModal').classList.add('hidden');
+            document.getElementById('gameContainer').classList.add('hidden');
+            document.getElementById('setupModal').classList.remove('hidden');
+            document.getElementById('playerName').value = '';
+            document.getElementById('infoModal').classList.add('hidden');
+        }
+
+        // --- Gemini API Feature ---
+        function showWoodInfo() {
+            const woodName = gameState.currentPlayerCard.name;
+            const modal = document.getElementById('infoModal');
+            const title = document.getElementById('infoModalTitle');
+            const content = document.getElementById('infoModalContent');
+            
+            title.textContent = `Wissenswertes über ${woodName}`;
+            content.innerHTML = '<p class="text-center">Lade interessante Fakten...</p>';
+            modal.classList.remove('hidden');
+            
+            getWoodInfo(woodName);
+        }
+
+        function closeInfoModal() {
+            document.getElementById('infoModal').classList.add('hidden');
+        }
+
+        async function getWoodInfo(woodName) {
+            const content = document.getElementById('infoModalContent');
+            const apiKey = ""; // API key is handled by the environment
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+            
+            const prompt = `Gib mir einen kurzen, interessanten Fakt (maximal 2-3 Sätze) über die Holzart ${woodName}. Erkläre kurz eine typische Verwendung basierend auf seinen Eigenschaften. Antworte auf Deutsch.`;
+
+            const payload = {
+                contents: [{
+                    parts: [{ text: prompt }]
+                }],
+            };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.status}`);
+                }
+
+                const result = await response.json();
+                const text = result.candidates[0].content.parts[0].text;
+                content.innerHTML = `<p>${text.replace(/\n/g, '</p><p>')}</p>`;
+            } catch (error) {
+                console.error("Fehler bei der Gemini-API-Anfrage:", error);
+                content.innerHTML = '<p>Entschuldigung, die Fakten konnten nicht geladen werden. Bitte versuche es später erneut.</p>';
+            }
+        }
+
+    </script>
+</body>
+</html>
+
