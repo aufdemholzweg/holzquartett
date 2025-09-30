@@ -51,7 +51,17 @@
         .pulse-lose {
             animation: pulse-red 0.8s ease-in-out;
         }
+
+        .animate-pop-in {
+            animation: pop-in 0.5s ease-out forwards;
+        }
         
+        @keyframes pop-in {
+            0% { transform: scale(0); opacity: 0; }
+            70% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+
         @keyframes pulse-green {
             0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
             50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
@@ -119,17 +129,17 @@
 
 
         <!-- Game Board -->
-        <div class="flex justify-center gap-4 mb-6">
+        <div class="flex justify-center gap-2 sm:gap-4 mb-6 max-w-md mx-auto">
             <!-- Player Card -->
-            <div class="text-center">
-                <div id="playerCard" class="relative w-[13.5rem] h-72 perspective-1000">
+            <div class="text-center w-1/2">
+                <div id="playerCard" class="relative aspect-[3/4] perspective-1000">
                     <!-- Card content will be inserted here -->
                 </div>
             </div>
 
             <!-- AI Card -->
-            <div class="text-center">
-                <div id="aiCard" class="relative w-[13.5rem] h-72 perspective-1000">
+            <div class="text-center w-1/2">
+                <div id="aiCard" class="relative aspect-[3/4] perspective-1000">
                     <!-- Card content will be inserted here -->
                 </div>
             </div>
@@ -181,13 +191,13 @@
         </div>
     </div>
 
-    <!-- Gemini Info Modal -->
+    <!-- Info Modal -->
     <div id="infoModal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 px-4">
         <div class="bg-white rounded-xl p-8 max-w-lg w-full mx-4 shadow-2xl relative">
             <button onclick="closeInfoModal()" class="absolute top-2 right-3 text-2xl text-gray-400 hover:text-gray-600">&times;</button>
             <h2 id="infoModalTitle" class="text-2xl font-bold text-amber-800 mb-4">Wissenswertes</h2>
             <div id="infoModalContent" class="text-gray-700 space-y-4 max-h-[60vh] overflow-y-auto">
-                <!-- Gemini content will be inserted here -->
+                <!-- Info content will be inserted here -->
             </div>
         </div>
     </div>
@@ -227,6 +237,162 @@
             {name: "Palisander", dk: 2, haerte: 82, quellenSchwindenRadial: 3.0, dichte: 850, gewicht: 16000},
             {name: "Ebony", dk: 1, haerte: 98, quellenSchwindenRadial: 3.2, dichte: 1200, gewicht: 16500}
         ];
+        
+        // NEU: Lokale Informationen für jede Holzart
+        // Hier können Sie Ihre eigenen Texte eintragen.
+        const woodInfo = {
+          "Eiche": {
+            info: `Eiche (QE) Die Eiche zählt zu den bedeutendsten heimischen Laubhölzern Europas. Ihr Holz ist hart, schwer und sehr dauerhaft, was sie zu einem bevorzugten Werkstoff im Innen‑ und Außenbereich macht. Besonders charakteristisch sind die hohen Gerbstoffanteile, die das Holz widerstandsfähig gegen Pilze und Schädlinge machen – gleichzeitig können sie beim Kontakt mit Eisen zu Verfärbungen führen. Eichenholz ist grobporig und zeigt einen deutlichen Übergang zwischen Früh- und Spätholz, wodurch die Jahresringe klar sichtbar sind. Diese ausgeprägte Maserung sorgt für eine markante, lebendige Optik. Verwendung: Möbel, Fußböden, Treppen, Fassdauben (z. B. für Weinfässer), Schiffbau, Terrassen, Brücken, Fachwerk. Funfact: Bereits in der Antike galt die Eiche als Symbol für Stärke und Beständigkeit – sie ziert bis heute zahlreiche Wappen und Münzen.`,
+            bildBaum: "https://www.schreiner-seiten.de/holzarten/eiche.php#images-2",
+            bildQuerschnitt: "https://www.gdholz.net/images/holzarten/063a-weisseiche-1.jpg"
+          },
+          "Buche": {
+            info: `Buche (BU) Die Buche ist ein gleichmäßig strukturiertes Hartholz heimischer Wälder. Ihr Holz ist zäh, biegsam und relativ harzarm, wodurch es sich sehr gut für Möbel und Parkett eignet. Buchenholz ist ringporig mit mittelgroßen Poren im Frühholz und dichterem Spätholz, sodass die Übergänge dezent sichtbar sind – die Jahresringe sind gut erkennbar, aber nicht grob. Verwendung: Möbel, Parkett, Furniere, Sperrholz, Innenausbau. Funfact: Buchenholz war lange Zeit typisch fürs Wagenrad – wegen seiner Kombination aus Zähigkeit und Elastizität.`,
+            bildBaum: "https://Beispielbild-verlinken.de/buche_baum.jpg",
+            bildQuerschnitt: "https://Beispielbild-verlinken.de/buche_querschnitt.jpg"
+          },
+          "Kiefer": {
+            info: `Kiefer (KI) Kiefer ist ein weit verbreitetes Nadelholz mit markanter Jahresringstruktur. Es ist weich, harzhaltig und relativ leicht zu bearbeiten. Das Holz zeigt keine ausgeprägten großen Poren wie Laubhölzer, sondern eine eher gleichmäßige Zellstruktur – Jahresringe und Harzkanäle sind sichtbar. Verwendung: Bauholz, Dachstühle, Innenausbau, Möbel, Paneele. Funfact: Kiefernharz wurde früher als Klebstoff oder als Bestandteil von Salben und Dichtungsmaterialien verwendet.`,
+            bildBaum: "https://Beispielbild-verlinken.de/kiefer_baum.jpg",
+            bildQuerschnitt: "https://Beispielbild-verlinken.de/kiefer_querschnitt.jpg"
+          },
+          "Fichte": {
+            info: `Fichte (FI) Fichte ist ein klassisches Bauholz mit guter Festigkeit bei geringem Gewicht. Es lässt sich leicht bearbeiten und vielfach einsetzen. Das Holz weist eine feine Zellstruktur auf, ohne große Poren – Jahresringe sind erkennbar, aber nicht grob. Verwendung: Bauholz, Innenverkleidung, Dach, Möbel, Paneele. Funfact: In vielen Gebirgsregionen war Fichtenholz über Jahrhunderte hinweg der Standard für Dachkonstruktionen und Sägewerke.`,
+            bildBaum: "https://Beispielbild-verlinken.de/fichte_baum.jpg",
+            bildQuerschnitt: "https://Beispielbild-verlinken.de/fichte_querschnitt.jpg"
+          },
+          "Tanne": {
+            info: `Tanne (TA) Tanne ist ein harzarmes, vergleichsweise feines Nadelholz, das oft als Alternative zur Fichte verwendet wird. Die Struktur ähnelt der Fichte: feine Fasern, dezente Jahresringe, keine ausgeprägten Poren. Verwendung: Innenausbau, Möbel, Paneele, Bauholz. Funfact: Da Tanne weniger Harz enthält, ist sie angenehmer in Räumen einzusetzen, da sie weniger Geruch abgibt.`,
+            bildBaum: "https://Beispielbild-verlinken.de/tanne_baum.jpg",
+            bildQuerschnitt: "https://Beispielbild-verlinken.de/tanne_querschnitt.jpg"
+          },
+          "Lärche": {
+            info: `Lärche (LA) Lärche ist bekannt für ihre natürliche Witterungsbeständigkeit und schöne Farbe. Sie kombiniert Elastizität mit Festigkeit. Das Holz zeigt ausgeprägte Jahresringe und Harzkanäle – die Struktur ist deutlich sichtbar. Verwendung: Fassadenholz, Fenster, Terrassen, Außenbau, Möbel. Funfact: Lärchenholz wird häufig ohne chemische Behandlung im Außenbereich eingesetzt und erhält mit der Zeit eine edle Vergrauung.`,
+            bildBaum: "https://Beispielbild-verlinken.de/laerche_baum.jpg",
+            bildQuerschnitt: "https://Beispielbild-verlinken.de/laerche_querschnitt.jpg"
+          },
+          "Birke": {
+            info: `Birke (BI) Birke ist ein helles, dekoratives Holz mit feiner, gleichmäßiger Struktur. Es überzeugt durch gute Biegsamkeit. Das Holz ist zerstreutporig – Poren sind fein verteilt, ohne große Unterschiede zwischen Früh- und Spätholz. Verwendung: Möbel, Furniere, Sperrholz, Innenausbau. Funfact: Birkenrinde wurde früher als wasserabweisendes Material für Behälter und Boote genutzt.`,
+            bildBaum: "https://Beispielbild-verlinken.de/birke_baum.jpg",
+            bildQuerschnitt: "https://Beispielbild-verlinken.de/birke_querschnitt.jpg"
+          },
+          "Ahorn": {
+            info: `Ahorn (AM) Ahorn ist hart, hell und elegant – ideal für feine Möbel, Instrumente und Designanwendungen. Es handelt sich ebenfalls um ein zerstreutporiges Holz mit gleichmäßiger Porenverteilung, ohne starke Übergänge zwischen Früh‑ und Spätholz. Verwendung: Möbel, Parkett, Instrumente, Schneidebretter. Funfact: Aus Ahorn gewinnt man auch Ahornsirup – allerdings aus nordamerikanischen Arten, nicht unbedingt jene zum Möbelbau.`,
+            bildBaum: "https://Beispielbild-verlinken.de/ahorn_baum.jpg",
+            bildQuerschnitt: "https://Beispielbild-verlinken.de/ahorn_querschnitt.jpg"
+          },
+          "Esche": {
+            info: `Esche (ES) Die Esche ist ein besonders zähes, elastisches Holz mit hoher Festigkeit. Sie zeigt ringporige Struktur mit deutlich sichtbaren Poren im Frühholz und schmaleren Poren im Spätholz. Verwendung: Werkzeugstiele, Sportgeräte, Möbel, Parkett, Innenausbau. Funfact: In der Antike wurden Wagenräder und Speichen häufig aus Esche gefertigt – wegen ihrer elastischen Eigenschaften.`,
+            bildBaum: "https://Beispielbild-verlinken.de/esche_baum.jpg",
+            bildQuerschnitt: "https://Beispielbild-verlinken.de/esche_querschnitt.jpg"
+          },
+          "Kirsche": {
+            info: `Kirsche (KR) Kirschbaumholz besitzt warme rote Töne, die mit Licht nachdunkeln, und eine edle Struktur. Ringporig mit deutlichem Übergang zwischen Früh- und Spätholz – Jahresringe sind gut sichtbar. Verwendung: Möbel, Furniere, Innenausbau, Dekor. Funfact: Kirschholz wird oft in Möbeln verwendet, die mit der Zeit “reifer” aussehen – die Farbe verbessert sich mit Alterung.`,
+            bildBaum: "https://Beispielbild-verlinken.de/kirsche_baum.jpg",
+            bildQuerschnitt: "https://Beispielbild-verlinken.de/kirsche_querschnitt.jpg"
+          },
+          "Nussbaum": {
+            info: `Nussbaum (NU) Nussbaumholz ist dunkel, dekorativ und sehr hochwertig. Das Kernholz hat oft starken Farbkontrast zum Splintholz. Es ist zerstreutporig – Poren sind fein über die Fläche verteilt, oft mit dekorativen Maserungen. Verwendung: Möbel, Furniere, Intarsien, edle Ausstattungen. Funfact: Walnuss (Nussbaum) war schon in der Renaissance sehr geschätzt und zierte viele königliche Möbelstücke.`,
+            bildBaum: "https://Beispielbild-verlinken.de/nussbaum_baum.jpg",
+            bildQuerschnitt: "https://Beispielbild-verlinken.de/nussbaum_querschnitt.jpg"
+          },
+          "Douglasie": {
+            info: `Douglasie (DO) Douglasienholz ist robust, witterungsbeständig und häufig im Außenbau eingesetzt. Die Struktur ist klar erkennbar – deutliche Jahresringe mit Transition zwischen Früh‑ und Spätholz. Verwendung: Bauholz, Fassaden, Dach, Möbel im Außenbereich. Funfact: Die Douglasie stammt ursprünglich aus Nordamerika, ist aber auch in Europa weit verbreitet und wird großgezogen.`,
+            bildBaum: "https://Beispielbild-verlinken.de/douglasie_baum.jpg",
+            bildQuerschnitt: "https://Beispielbild-verlinken.de/douglasie_querschnitt.jpg"
+          },
+          "Zeder": {
+            info: `Zeder (ZE) Zedernholz duftet angenehm und besitzt von Natur aus eine Resistenz gegen Insektenbefall und Feuchtigkeit. Die Struktur ist fein mit gleichmäßigen Poren – kein starker Kontrast zwischen Früh- und Spätholz. Verwendung: Möbel, Fassaden, Innenraum, Schränke. Funfact: Zedernholz wird oft in Kleiderschränken eingesetzt, weil es den unverwechselbaren Duft und Insektenabwehr besitzt.`,
+            bildBaum: "https://Beispielbild-verlinken.de/zeder_baum.jpg",
+            bildQuerschnitt: "https://Beispielbild-verlinken.de/zeder_querschnitt.jpg"
+          },
+          "Mahagoni": {
+            info: `Mahagoni (MA) Mahagoni ist ein tropisches Edelholz mit hoher Dauerhaftigkeit und edler Farbe. Es ist zerstreutporig – Poren gleichmäßig verteilt und oft mit dekorativer Kernholzstruktur. Verwendung: Möbel, Fenster, Luxusausstattung, Bootsbau. Funfact: In manchen Ländern ist Mahagoni wegen seiner Seltenheit streng reguliert und unterliegt Artenschutzbestimmungen.`,
+            bildBaum: "https://Beispielbild-verlinken.de/mahagoni_baum.jpg",
+            bildQuerschnitt: "https://Beispielbild-verlinken.de/mahagoni_querschnitt.jpg"
+          },
+          "Teak": {
+            info: `Teak (TE) Teak ist extrem witterungsbeständig durch hohen Öl- und Harzgehalt – ideal für Außenmöbel und Schiffsbau. Die Struktur ist fein zerstreutporig, mit dekorativem Erscheinungsbild und gleichmäßiger Porenverteilung. Verwendung: Gartenmöbel, Terrassen, Boote, Fenster, Außenbereich. Funfact: Teakholz war früher für den Bau von Kriegsschiffen sehr gefragt wegen seiner Dauerhaftigkeit und Wasserbeständigkeit.`,
+            bildBaum: "https://Beispielbild-verlinken.de/teak_baum.jpg",
+            bildQuerschnitt: "https://Beispielbild-verlinken.de/teak_querschnitt.jpg"
+          },
+          "Bambus": {
+            info: `Bambus (BA) Bambus ist botanisch gesehen kein Holz, sondern ein Gras – dennoch extrem stabil und vielseitig verwendbar. Die Struktur ist röhrenartig und weist keine klassischen Poren wie Harthölzer auf. Verwendung: Fußböden, Möbel, Treppen, nachhaltiger Bau. Funfact: Bambus wächst so schnell, dass einzelne Stangen innerhalb weniger Monate über einen Meter wachsen können.`,
+            bildBaum: "https://Beispielbild-verlinken.de/bambus_baum.jpg",
+            bildQuerschnitt: "https://Beispielbild-verlinken.de/bambus_querschnitt.jpg"
+          },
+          "Pappel": {
+            info: `Pappel (PA) Pappelholz ist sehr leicht und weich – weniger tragfähig, aber gut bearbeitbar. Feine Struktur, fast keine großen Poren – Jahresringe nur dezent sichtbar. Verwendung: Leichtbau, Verpackungen, Möbel mit geringer Belastung. Funfact: Pappelholz wird oft für Modellbau oder Flugzeuginnenräume verwendet, wo Leichtigkeit zählt.`,
+            bildBaum: "https://Beispielbild-verlinken.de/pappel_baum.jpg",
+            bildQuerschnitt: "https://Beispielbild-verlinken.de/pappel_querschnitt.jpg"
+          },
+          "Weide": {
+            info: `Weide (WE) Weidenholz ist elastisch und biegsam – traditionell für Flechtarbeiten und Körbe verwendet. Die Struktur ist fein zerstreutporig, Poren kaum markant. Verwendung: Flechtwerk, Gartenbau, leichte Möbel. Funfact: Weidenruten werden seit Jahrhunderten für Korbgeflechte, Zäune und Rankhilfen genutzt.`,
+            bildBaum: "https://Beispielbild-verlinken.de/weide_baum.jpg",
+            bildQuerschnitt: "https://Beispielbild-verlinken.de/weide_querschnitt.jpg"
+          },
+          "Linde": {
+            info: `Linde (LI) Lindenholz ist weich, homogen und gut schnitzbar – ideal für feine Holzarbeiten. Fein zerstreutporig und gleichmäßig, ohne großen Porenkontrast. Verwendung: Intarsien, geschnitzte Dekors, Möbel, Modellbau. Funfact: Lindenholz war traditionell das Holz der Bildhauer und Orgelbauer im Mittelalter.`,
+            bildBaum: "https://Beispielbild-verlinken.de/linde_baum.jpg",
+            bildQuerschnitt: "https://Beispielbild-verlinken.de/linde_querschnitt.jpg"
+          },
+          "Ulme": {
+            info: `Ulme (UL) Ulmenholz ist zäh und eher hart – früher oft für Möbel und Reparaturen verwendet. Ringporig mit markanten Poren und gelegentlichem unruhigem Faserverlauf. Verwendung: Möbel, Innenausbau, Reparaturholz. Funfact: Ulmenholz hat früher im Wagen- und Möbelbau Bedeutung gehabt, besonders dort, wo Biegung gefragt war.`,
+            bildBaum: "https://Beispielbild-verlinken.de/ulme_baum.jpg",
+            bildQuerschnitt: "https://Beispielbild-verlinken.de/ulme_querschnitt.jpg"
+          },
+          "Kastanie": {
+            info: `Kastanie (KA) Kastanienholz ist ähnlich der Eiche wetterbeständig, mit warmem Farbton und markanter Struktur. Ringporig mit klar sichtbaren Jahresringen und deutlichem Übergang. Verwendung: Außenbau, Möbel, Balken, Gartenholz. Funfact: Kastanienholz wurde oft in historischen Bauwerken als wetterbeständige Alternative zur Eiche verwendet.`,
+            bildBaum: "https://Beispielbild-verlinken.de/kastanie_baum.jpg",
+            bildQuerschnitt: "https://Beispielbild-verlinken.de/kastanie_querschnitt.jpg"
+          },
+          "Robinie": {
+            info: `Robinie (RO) Robinienholz ist eines der härtesten europäischen Hölzer und sehr dauerhaft im Freien. Ringporig mit feinen Poren und schmalem Übergang – die Struktur ist weniger kontrastreich. Verwendung: Gartenholz, Terrassen, Balken, Zäune. Funfact: Robinie wird oft als „europäisches Teak“ genannt, weil es ähnliche Eigenschaften wie Tropenholz zeigt.`,
+            bildBaum: "https://Beispielbild-verlinken.de/robinie_baum.jpg",
+            bildQuerschnitt: "https://Beispielbild-verlinken.de/robinie_querschnitt.jpg"
+          },
+          "Hemlock": {
+            info: `Hemlock (HE) Hemlock ist ein nördliches Nadelholz mit feiner Struktur, weich und gleichmäßig. Die Porenstruktur ähnelt einfacher Zellstruktur; Jahresringe dezent sichtbar. Verwendung: Innenausbau, Paneele, Bauholz. Funfact: Hemlock wird oft im Möbel- und Leichtbau verwendet, wenn gutes Verhältnis zwischen Gewicht und Stabilität gefragt ist.`,
+            bildBaum: "https://Beispielbild-verlinken.de/hemlock_baum.jpg",
+            bildQuerschnitt: "https://Beispielbild-verlinken.de/hemlock_querschnitt.jpg"
+          },
+          "Zypresse": {
+            info: `Zypresse (ZY) Zypressenholz duftet gut und ist natürlich resistent gegen Feuchtigkeit und Schädlinge. Die Struktur ist fein und gleichmäßig, mit moderatem Porencharakter. Verwendung: Außen- und Gartenholz, Möbel, Fassaden. Funfact: Zypresse wurde in mediterranen Regionen oft zur Holzverkleidung von Kirchen und Tempeln verwendet.`,
+            bildBaum: "https://Beispielbild-verlinken.de/zypresse_baum.jpg",
+            bildQuerschnitt: "https://Beispielbild-verlinken.de/zypresse_querschnitt.jpg"
+          },
+          "Redwood": {
+            info: `Redwood (RW) Redwood ist ein leichtes Tropenholz mit guter Dauerhaftigkeit und dekorativer Farbe. Zerstreutporig mit feiner Textur, Poren gleichmäßig verteilt. Verwendung: Außenholz, Zäune, Gartenkonstruktionen. Funfact: Der Küstenmammutbaum (Redwood) zählt zu den höchsten Bäumen der Welt.`,
+            bildBaum: "https://Beispielbild-verlinken.de/redwood_baum.jpg",
+            bildQuerschnitt: "https://Beispielbild-verlinken.de/redwood_querschnitt.jpg"
+          },
+          "H hickory": {
+            info: `Hickory (HI) Hickory ist ein ausgesprochen zähes und hartes Holz – ideal für stark beanspruchte Teile. Ringporig mit ausgeprägten Poren im Frühholz und klaren Jahresringen. Verwendung: Werkzeugstiele, Sportgeräte, Möbel mit hoher Belastung. Funfact: Hickory war traditionell Material für Peitschen, Wurfstöcke und Arbeitsgeräte.`,
+            bildBaum: "https://Beispielbild-verlinken.de/hickory_baum.jpg",
+            bildQuerschnitt: "https://Beispielbild-verlinken.de/hickory_querschnitt.jpg"
+          },
+          "Wenge": {
+            info: `Wenge (WE-NE) Wenge ist ein dunkles Tropenholz mit hoher Härte und dekorativer Maserung. Zerstreutporig mit feinen Poren – oft Streifenzeichnung sichtbar. Verwendung: Luxusmöbel, Parkett, Furniere. Funfact: Wegen seiner tiefen, dunklen Farbe wird Wenge oft in Kontrasten zu hellem Holz kombiniert.`,
+            bildBaum: "https://Beispielbild-verlinken.de/wenge_baum.jpg",
+            bildQuerschnitt: "https://Beispielbild-verlinken.de/wenge_querschnitt.jpg"
+          },
+          "Zebrano": {
+            info: `Zebrano (ZE-RA) Zebrano zeichnet sich durch seine markante Streifenoptik aus – dekorativ und auffällig. Die Porenstruktur ist zerstreutporig, oft mit deutlichem Maserungseffekt. Verwendung: Designmöbel, Furniere, Dekorationen. Funfact: Zebrano wird oft für luxuriöse Intarsien und Furnierarbeiten verwendet.`,
+            bildBaum: "https://Beispielbild-verlinken.de/zebrano_baum.jpg",
+            bildQuerschnitt: "https://Beispielbild-verlinken.de/zebrano_querschnitt.jpg"
+          },
+          "Palisander": {
+            info: `Palisander (PA) Palisanderholz ist dekorativ, fest und langlebig – mit attraktiven Farbtönen. Zerstreutporig mit feiner Struktur und gleichmäßiger Porenverteilung. Verwendung: Gitarren, Möbel, Furniere. Funfact: Palisanderholz war früher oft exklusiv für edle Musikinstrumente und Intarsien reserviert.`,
+            bildBaum: "https://Beispielbild-verlinken.de/palisander_baum.jpg",
+            bildQuerschnitt: "https://Beispielbild-verlinken.de/palisander_querschnitt.jpg"
+          },
+          "Ebony": {
+            info: `Ebony (EB) Ebenholz ist eines der härtesten Hölzer – fast tiefschwarz und sehr dicht. Zerstreutporig mit extrem feinen Poren, kaum sichtbar – Porenstruktur sehr fein. Verwendung: Klaviertasten, Intarsien, Luxusdekore. Funfact: Ebenholz wurde im alten Ägypten für Statuetten und Schmuckstücke verwendet – wegen seiner tiefen Farbe und Seltenheit.`,
+            bildBaum: "https://Beispielbild-verlinken.de/ebony_baum.jpg",
+            bildQuerschnitt: "https://Beispielbild-verlinken.de/ebony_querschnitt.jpg"
+          }
+        };
+
 
         // Game state
         let gameState = {
@@ -476,6 +642,11 @@
             const infoButton = document.getElementById('player-info-button');
             if (infoButton) {
                 infoButton.classList.remove('hidden');
+                // NEU: Animation hinzufügen
+                infoButton.classList.add('animate-pop-in');
+                setTimeout(() => {
+                    infoButton.classList.remove('animate-pop-in');
+                }, 500); // Dauer der Animation
             }
 
 
@@ -636,54 +807,41 @@
             document.getElementById('infoModal').classList.add('hidden');
         }
 
-        // --- Gemini API Feature ---
+        // --- Info Feature ---
         function showWoodInfo() {
             const woodName = gameState.currentPlayerCard.name;
             const modal = document.getElementById('infoModal');
             const title = document.getElementById('infoModalTitle');
-            const content = document.getElementById('infoModalContent');
             
             title.textContent = `Wissenswertes über ${woodName}`;
-            content.innerHTML = '<p class="text-center">Lade interessante Fakten...</p>';
-            modal.classList.remove('hidden');
-            
             getWoodInfo(woodName);
+            modal.classList.remove('hidden');
         }
 
         function closeInfoModal() {
             document.getElementById('infoModal').classList.add('hidden');
         }
 
-        async function getWoodInfo(woodName) {
+        function getWoodInfo(woodName) {
             const content = document.getElementById('infoModalContent');
-            const apiKey = ""; // API key is handled by the environment
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+            const infoData = woodInfo[woodName];
             
-            const prompt = `Gib mir einen kurzen, interessanten Fakt (maximal 2-3 Sätze) über die Holzart ${woodName}. Erkläre kurz eine typische Verwendung basierend auf seinen Eigenschaften. Antworte auf Deutsch.`;
-
-            const payload = {
-                contents: [{
-                    parts: [{ text: prompt }]
-                }],
-            };
-
-            try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) {
-                    throw new Error(`API error: ${response.status}`);
-                }
-
-                const result = await response.json();
-                const text = result.candidates[0].content.parts[0].text;
-                content.innerHTML = `<p>${text.replace(/\n/g, '</p><p>')}</p>`;
-            } catch (error) {
-                console.error("Fehler bei der Gemini-API-Anfrage:", error);
-                content.innerHTML = '<p>Entschuldigung, die Fakten konnten nicht geladen werden. Bitte versuche es später erneut.</p>';
+            if (infoData) {
+                content.innerHTML = `
+                    <p>${infoData.info}</p>
+                    <div class="flex gap-4 mt-4">
+                        <div class="w-1/2">
+                            <h4 class="font-semibold mb-2 text-center">Baum</h4>
+                            <img src="${infoData.bildBaum}" alt="Bild von ${woodName} Baum" class="w-full h-auto rounded-lg object-cover" onerror="this.style.display='none'">
+                        </div>
+                        <div class="w-1/2">
+                            <h4 class="font-semibold mb-2 text-center">Querschnitt</h4>
+                            <img src="${infoData.bildQuerschnitt}" alt="Bild von ${woodName} Querschnitt" class="w-full h-auto rounded-lg object-cover" onerror="this.style.display='none'">
+                        </div>
+                    </div>
+                `;
+            } else {
+                content.innerHTML = "<p>Für diese Holzart sind aktuell keine Informationen verfügbar.</p>";
             }
         }
 
