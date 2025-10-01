@@ -146,7 +146,7 @@
         </div>
 
         <!-- Action Panel -->
-        <div class="bg-white rounded-xl shadow-lg p-6 mt-6 text-center mx-auto min-h-[128px] flex flex-col items-center justify-center" style="max-width: 435px;">
+        <div class="bg-white rounded-xl shadow-lg p-4 mt-6 text-center mx-auto flex flex-col items-center justify-center" style="max-width: 435px;">
             <div id="attributeSelection" class="">
                  <h3 class="text-lg font-semibold text-gray-700">Wähle eine Eigenschaft!</h3>
             </div>
@@ -411,7 +411,7 @@
         const attributeInfo = {
             dk: {icon: '🛡️', name: 'Dauerhaftigkeit (DK)', color: 'blue'},
             haerte: {icon: '💎', name: 'Druckfestigkeit (N/mm²)', color: 'blue'},
-            quellenSchwindenRadial: {icon: '↔️', name: 'Quellen/Schwinden radial', color: 'blue'},
+            quellenSchwindenRadial: {icon: '↔️', name: 'Quellen/Schwinden (%)', color: 'blue'},
             dichte: {icon: '⚖️', name: 'Rohdichte (kg/m³)', color: 'blue'},
             gewicht: {icon: '🏋️', name: 'E-Modul (N/mm²)', color: 'blue'}
         };
@@ -474,48 +474,108 @@
 
             const attributeButtons = isPlayer ? `
                 <div class="space-y-1 mt-auto">
-                    <button onclick="selectAttribute('dk')" class="w-full flex justify-between items-center py-2 px-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer text-left">
-                        <span class="flex items-center"><span class="mr-2 text-base">🛡️</span><span class="text-sm font-medium">Dauerhaftigkeit</span></span>
-                        <span class="font-bold text-blue-600 text-base">${cardData.dk}</span>
+                    <button onclick="selectAttribute('dk')" class="w-full flex justify-between items-center py-3 px-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer text-left">
+                        <div class="flex items-center">
+                            <span class="mr-2 text-lg">🛡️</span>
+                            <div>
+                                <span class="text-sm font-medium leading-tight">Dauerhaftigkeit</span>
+                                <span class="block text-xs text-gray-500 leading-tight">(DK)</span>
+                            </div>
+                        </div>
+                        <span class="font-bold text-blue-600 text-lg">${cardData.dk}</span>
                     </button>
-                    <button onclick="selectAttribute('haerte')" class="w-full flex justify-between items-center py-2 px-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer text-left">
-                        <span class="flex items-center"><span class="mr-2 text-base">💎</span><span class="text-sm font-medium">Druckfestigkeit</span></span>
-                        <span class="font-bold text-blue-600 text-base">${cardData.haerte}</span>
+                    <button onclick="selectAttribute('haerte')" class="w-full flex justify-between items-center py-3 px-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer text-left">
+                         <div class="flex items-center">
+                            <span class="mr-2 text-lg">💎</span>
+                            <div>
+                                <span class="text-sm font-medium leading-tight">Druckfestigkeit</span>
+                                <span class="block text-xs text-gray-500 leading-tight">(N/mm²)</span>
+                            </div>
+                        </div>
+                        <span class="font-bold text-blue-600 text-lg">${cardData.haerte}</span>
                     </button>
-                    <button onclick="selectAttribute('quellenSchwindenRadial')" class="w-full flex justify-between items-center py-2 px-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer text-left">
-                        <span class="flex items-center"><span class="mr-2 text-base">↔️</span><span class="text-sm font-medium">Quellen/Schwinden</span></span>
-                        <span class="font-bold text-blue-600 text-base">${cardData.quellenSchwindenRadial}</span>
+                    <button onclick="selectAttribute('quellenSchwindenRadial')" class="w-full flex justify-between items-center py-3 px-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer text-left">
+                         <div class="flex items-center">
+                            <span class="mr-2 text-lg">↔️</span>
+                            <div>
+                                <span class="text-sm font-medium leading-tight">Quellen/Schwinden</span>
+                                <span class="block text-xs text-gray-500 leading-tight">(%)</span>
+                            </div>
+                        </div>
+                        <span class="font-bold text-blue-600 text-lg">${cardData.quellenSchwindenRadial}</span>
                     </button>
-                    <button onclick="selectAttribute('dichte')" class="w-full flex justify-between items-center py-2 px-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer text-left">
-                        <span class="flex items-center"><span class="mr-2 text-base">⚖️</span><span class="text-sm font-medium">Rohdichte</span></span>
-                        <span class="font-bold text-blue-600 text-base">${cardData.dichte}</span>
+                    <button onclick="selectAttribute('dichte')" class="w-full flex justify-between items-center py-3 px-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer text-left">
+                         <div class="flex items-center">
+                            <span class="mr-2 text-lg">⚖️</span>
+                            <div>
+                                <span class="text-sm font-medium leading-tight">Rohdichte</span>
+                                <span class="block text-xs text-gray-500 leading-tight">(kg/m³)</span>
+                            </div>
+                        </div>
+                        <span class="font-bold text-blue-600 text-lg">${cardData.dichte}</span>
                     </button>
-                    <button onclick="selectAttribute('gewicht')" class="w-full flex justify-between items-center py-2 px-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer text-left">
-                        <span class="flex items-center"><span class="mr-2 text-base">🏋️</span><span class="text-sm font-medium">E-Modul</span></span>
-                        <span class="font-bold text-blue-600 text-base">${cardData.gewicht.toLocaleString('de-DE')}</span>
+                    <button onclick="selectAttribute('gewicht')" class="w-full flex justify-between items-center py-3 px-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer text-left">
+                         <div class="flex items-center">
+                            <span class="mr-2 text-lg">🏋️</span>
+                            <div>
+                                <span class="text-sm font-medium leading-tight">E-Modul</span>
+                                <span class="block text-xs text-gray-500 leading-tight">(N/mm²)</span>
+                            </div>
+                        </div>
+                        <span class="font-bold text-blue-600 text-lg">${cardData.gewicht.toLocaleString('de-DE')}</span>
                     </button>
                 </div>
             ` : `
                  <div class="space-y-1 mt-auto">
-                    <div class="w-full flex justify-between items-center py-2 px-2 bg-blue-50 rounded-lg text-left">
-                        <span class="flex items-center"><span class="mr-2 text-base">🛡️</span><span class="text-sm font-medium">Dauerhaftigkeit</span></span>
-                        <span class="font-bold text-blue-600 text-base">${cardData.dk}</span>
+                    <div class="w-full flex justify-between items-center py-3 px-2 bg-blue-50 rounded-lg text-left">
+                        <div class="flex items-center">
+                            <span class="mr-2 text-lg">🛡️</span>
+                            <div>
+                                <span class="text-sm font-medium leading-tight">Dauerhaftigkeit</span>
+                                <span class="block text-xs text-gray-500 leading-tight">(DK)</span>
+                            </div>
+                        </div>
+                        <span class="font-bold text-blue-600 text-lg">${cardData.dk}</span>
                     </div>
-                    <div class="w-full flex justify-between items-center py-2 px-2 bg-blue-50 rounded-lg text-left">
-                        <span class="flex items-center"><span class="mr-2 text-base">💎</span><span class="text-sm font-medium">Druckfestigkeit</span></span>
-                        <span class="font-bold text-blue-600 text-base">${cardData.haerte}</span>
+                    <div class="w-full flex justify-between items-center py-3 px-2 bg-blue-50 rounded-lg text-left">
+                         <div class="flex items-center">
+                            <span class="mr-2 text-lg">💎</span>
+                            <div>
+                                <span class="text-sm font-medium leading-tight">Druckfestigkeit</span>
+                                <span class="block text-xs text-gray-500 leading-tight">(N/mm²)</span>
+                            </div>
+                        </div>
+                        <span class="font-bold text-blue-600 text-lg">${cardData.haerte}</span>
                     </div>
-                    <div class="w-full flex justify-between items-center py-2 px-2 bg-blue-50 rounded-lg text-left">
-                        <span class="flex items-center"><span class="mr-2 text-base">↔️</span><span class="text-sm font-medium">Quellen/Schwinden</span></span>
-                        <span class="font-bold text-blue-600 text-base">${cardData.quellenSchwindenRadial}</span>
+                    <div class="w-full flex justify-between items-center py-3 px-2 bg-blue-50 rounded-lg text-left">
+                         <div class="flex items-center">
+                            <span class="mr-2 text-lg">↔️</span>
+                            <div>
+                                <span class="text-sm font-medium leading-tight">Quellen/Schwinden</span>
+                                <span class="block text-xs text-gray-500 leading-tight">(%)</span>
+                            </div>
+                        </div>
+                        <span class="font-bold text-blue-600 text-lg">${cardData.quellenSchwindenRadial}</span>
                     </div>
-                    <div class="w-full flex justify-between items-center py-2 px-2 bg-blue-50 rounded-lg text-left">
-                        <span class="flex items-center"><span class="mr-2 text-base">⚖️</span><span class="text-sm font-medium">Rohdichte</span></span>
-                        <span class="font-bold text-blue-600 text-base">${cardData.dichte}</span>
+                    <div class="w-full flex justify-between items-center py-3 px-2 bg-blue-50 rounded-lg text-left">
+                         <div class="flex items-center">
+                            <span class="mr-2 text-lg">⚖️</span>
+                            <div>
+                                <span class="text-sm font-medium leading-tight">Rohdichte</span>
+                                <span class="block text-xs text-gray-500 leading-tight">(kg/m³)</span>
+                            </div>
+                        </div>
+                        <span class="font-bold text-blue-600 text-lg">${cardData.dichte}</span>
                     </div>
-                    <div class="w-full flex justify-between items-center py-2 px-2 bg-blue-50 rounded-lg text-left">
-                        <span class="flex items-center"><span class="mr-2 text-base">🏋️</span><span class="text-sm font-medium">E-Modul</span></span>
-                        <span class="font-bold text-blue-600 text-base">${cardData.gewicht.toLocaleString('de-DE')}</span>
+                    <div class="w-full flex justify-between items-center py-3 px-2 bg-blue-50 rounded-lg text-left">
+                        <div class="flex items-center">
+                            <span class="mr-2 text-lg">🏋️</span>
+                            <div>
+                                <span class="text-sm font-medium leading-tight">E-Modul</span>
+                                <span class="block text-xs text-gray-500 leading-tight">(N/mm²)</span>
+                            </div>
+                        </div>
+                        <span class="font-bold text-blue-600 text-lg">${cardData.gewicht.toLocaleString('de-DE')}</span>
                     </div>
                 </div>
             `;
