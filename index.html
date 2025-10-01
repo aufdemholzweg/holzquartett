@@ -473,49 +473,49 @@
             ` : '';
 
             const attributeButtons = isPlayer ? `
-                <div class="space-y-2 mt-auto">
-                    <button onclick="selectAttribute('dk')" class="w-full flex justify-between items-center py-1 px-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer">
-                        <span class="flex items-center text-left"><span class="mr-2 text-xs">🛡️</span><span class="text-xs">Dauerhaftigkeit</span></span>
-                        <span class="font-bold text-blue-600 text-sm">${cardData.dk}</span>
+                <div class="space-y-1 mt-auto">
+                    <button onclick="selectAttribute('dk')" class="w-full flex justify-between items-center py-2 px-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer text-left">
+                        <span class="flex items-center"><span class="mr-2 text-base">🛡️</span><span class="text-sm font-medium">Dauerhaftigkeit</span></span>
+                        <span class="font-bold text-blue-600 text-base">${cardData.dk}</span>
                     </button>
-                    <button onclick="selectAttribute('haerte')" class="w-full flex justify-between items-center py-1 px-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer">
-                        <span class="flex items-center text-left"><span class="mr-2 text-xs">💎</span><span class="text-xs">Druckfestigkeit</span></span>
-                        <span class="font-bold text-blue-600 text-sm">${cardData.haerte}</span>
+                    <button onclick="selectAttribute('haerte')" class="w-full flex justify-between items-center py-2 px-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer text-left">
+                        <span class="flex items-center"><span class="mr-2 text-base">💎</span><span class="text-sm font-medium">Druckfestigkeit</span></span>
+                        <span class="font-bold text-blue-600 text-base">${cardData.haerte}</span>
                     </button>
-                    <button onclick="selectAttribute('quellenSchwindenRadial')" class="w-full flex justify-between items-center py-1 px-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer">
-                        <span class="flex items-center text-left"><span class="mr-2 text-xs">↔️</span><span class="text-xs">Quellen/Schwinden</span></span>
-                        <span class="font-bold text-blue-600 text-sm">${cardData.quellenSchwindenRadial}</span>
+                    <button onclick="selectAttribute('quellenSchwindenRadial')" class="w-full flex justify-between items-center py-2 px-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer text-left">
+                        <span class="flex items-center"><span class="mr-2 text-base">↔️</span><span class="text-sm font-medium">Quellen/Schwinden</span></span>
+                        <span class="font-bold text-blue-600 text-base">${cardData.quellenSchwindenRadial}</span>
                     </button>
-                    <button onclick="selectAttribute('dichte')" class="w-full flex justify-between items-center py-1 px-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer">
-                        <span class="flex items-center text-left"><span class="mr-2 text-xs">⚖️</span><span class="text-xs">Rohdichte</span></span>
-                        <span class="font-bold text-blue-600 text-sm">${cardData.dichte}</span>
+                    <button onclick="selectAttribute('dichte')" class="w-full flex justify-between items-center py-2 px-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer text-left">
+                        <span class="flex items-center"><span class="mr-2 text-base">⚖️</span><span class="text-sm font-medium">Rohdichte</span></span>
+                        <span class="font-bold text-blue-600 text-base">${cardData.dichte}</span>
                     </button>
-                    <button onclick="selectAttribute('gewicht')" class="w-full flex justify-between items-center py-1 px-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer">
-                        <span class="flex items-center text-left"><span class="mr-2 text-xs">🏋️</span><span class="text-xs">E-Modul</span></span>
-                        <span class="font-bold text-blue-600 text-sm">${cardData.gewicht.toLocaleString('de-DE')}</span>
+                    <button onclick="selectAttribute('gewicht')" class="w-full flex justify-between items-center py-2 px-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer text-left">
+                        <span class="flex items-center"><span class="mr-2 text-base">🏋️</span><span class="text-sm font-medium">E-Modul</span></span>
+                        <span class="font-bold text-blue-600 text-base">${cardData.gewicht.toLocaleString('de-DE')}</span>
                     </button>
                 </div>
             ` : `
-                 <div class="space-y-2 mt-auto">
-                    <div class="flex justify-between items-center py-1 px-2 bg-blue-50 rounded-lg">
-                        <span class="flex items-center text-left"><span class="mr-2 text-xs">🛡️</span><span class="text-xs">Dauerhaftigkeit</span></span>
-                        <span class="font-bold text-blue-600 text-sm">${cardData.dk}</span>
+                 <div class="space-y-1 mt-auto">
+                    <div class="w-full flex justify-between items-center py-2 px-2 bg-blue-50 rounded-lg text-left">
+                        <span class="flex items-center"><span class="mr-2 text-base">🛡️</span><span class="text-sm font-medium">Dauerhaftigkeit</span></span>
+                        <span class="font-bold text-blue-600 text-base">${cardData.dk}</span>
                     </div>
-                    <div class="flex justify-between items-center py-1 px-2 bg-blue-50 rounded-lg">
-                        <span class="flex items-center text-left"><span class="mr-2 text-xs">💎</span><span class="text-xs">Druckfestigkeit</span></span>
-                        <span class="font-bold text-blue-600 text-sm">${cardData.haerte}</span>
+                    <div class="w-full flex justify-between items-center py-2 px-2 bg-blue-50 rounded-lg text-left">
+                        <span class="flex items-center"><span class="mr-2 text-base">💎</span><span class="text-sm font-medium">Druckfestigkeit</span></span>
+                        <span class="font-bold text-blue-600 text-base">${cardData.haerte}</span>
                     </div>
-                    <div class="flex justify-between items-center py-1 px-2 bg-blue-50 rounded-lg">
-                        <span class="flex items-center text-left"><span class="mr-2 text-xs">↔️</span><span class="text-xs">Quellen/Schwinden</span></span>
-                        <span class="font-bold text-blue-600 text-sm">${cardData.quellenSchwindenRadial}</span>
+                    <div class="w-full flex justify-between items-center py-2 px-2 bg-blue-50 rounded-lg text-left">
+                        <span class="flex items-center"><span class="mr-2 text-base">↔️</span><span class="text-sm font-medium">Quellen/Schwinden</span></span>
+                        <span class="font-bold text-blue-600 text-base">${cardData.quellenSchwindenRadial}</span>
                     </div>
-                    <div class="flex justify-between items-center py-1 px-2 bg-blue-50 rounded-lg">
-                        <span class="flex items-center text-left"><span class="mr-2 text-xs">⚖️</span><span class="text-xs">Rohdichte</span></span>
-                        <span class="font-bold text-blue-600 text-sm">${cardData.dichte}</span>
+                    <div class="w-full flex justify-between items-center py-2 px-2 bg-blue-50 rounded-lg text-left">
+                        <span class="flex items-center"><span class="mr-2 text-base">⚖️</span><span class="text-sm font-medium">Rohdichte</span></span>
+                        <span class="font-bold text-blue-600 text-base">${cardData.dichte}</span>
                     </div>
-                    <div class="flex justify-between items-center py-1 px-2 bg-blue-50 rounded-lg">
-                        <span class="flex items-center text-left"><span class="mr-2 text-xs">🏋️</span><span class="text-xs">E-Modul</span></span>
-                        <span class="font-bold text-blue-600 text-sm">${cardData.gewicht.toLocaleString('de-DE')}</span>
+                    <div class="w-full flex justify-between items-center py-2 px-2 bg-blue-50 rounded-lg text-left">
+                        <span class="flex items-center"><span class="mr-2 text-base">🏋️</span><span class="text-sm font-medium">E-Modul</span></span>
+                        <span class="font-bold text-blue-600 text-base">${cardData.gewicht.toLocaleString('de-DE')}</span>
                     </div>
                 </div>
             `;
@@ -575,7 +575,7 @@
             aiCardElement.classList.remove('card-flipped');
 
             // Disable only the attribute buttons
-            const attributeButtons = document.querySelectorAll('#playerCard .space-y-2 > button');
+            const attributeButtons = document.querySelectorAll('#playerCard .space-y-1 > button');
             attributeButtons.forEach(button => {
                 button.disabled = true;
                 button.classList.remove('hover:bg-blue-100', 'cursor-pointer');
@@ -678,12 +678,12 @@
             };
             const attributeIndex = attributeSelectors[attribute];
             
-            const playerAttributes = playerCard.querySelectorAll('.space-y-2 > *');
+            const playerAttributes = playerCard.querySelectorAll('.space-y-1 > *');
             if (playerAttributes[attributeIndex]) {
                 playerAttributes[attributeIndex].className = playerAttributes[attributeIndex].className.replace(/bg-blue-50|hover:bg-blue-100/g, playerBgColor);
             }
             
-            const aiAttributes = aiCard.querySelectorAll('.space-y-2 > *');
+            const aiAttributes = aiCard.querySelectorAll('.space-y-1 > *');
             if (aiAttributes[attributeIndex]) {
                 aiAttributes[attributeIndex].className = aiAttributes[attributeIndex].className.replace(/bg-blue-50|hover:bg-blue-100/g, aiBgColor);
             }
