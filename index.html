@@ -202,7 +202,15 @@
         </div>
     </div>
 
+    
+    <script>
+        // Seite immer oben starten
+        window.onload = function() {
+            window.scroll(0, 0);
+            document.body.scroll = 0; //Fallback
+        };
 
+        
     <script>
         // Game data
         const woodCards = [
