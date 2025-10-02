@@ -151,7 +151,7 @@
                  <h3 class="text-lg font-semibold text-gray-700">Wähle eine Eigenschaft!</h3>
             </div>
             <div id="nextRoundButton" class="hidden w-full mb-1">
-                 <button onclick="nextRound()" class="w-full bg-amber-600 hover:bg-amber-800 text-white font-bold py-1 px-8 rounded-lg transition-colors">
+                 <button onclick="nextRound()" class="w-full bg-amber-600 hover:bg-amber-800 text-white font-bold py-3 px-8 rounded-lg transition-colors">
                      ➡️ Nächster Zug
                  </button>
              </div>
@@ -671,7 +671,7 @@
                 document.getElementById('playerCard').querySelector('.card-3d').classList.add('pulse-win');
             } else if (playerWins === false) {
                 winner = 'ai';
-                resultText = `😞 KI gewinnst!`;
+                resultText = `😞 Computer gewinnt!`;
                 resultClass = 'text-red-600';
                 highlightAttribute(attribute, 'lose');
                 gameState.playerCards.shift();
