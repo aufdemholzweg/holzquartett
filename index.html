@@ -201,7 +201,9 @@
             </div>
         </div>
     </div>
-    
+
+
+    <script>
         // Game data
         const woodCards = [
             {name: "Eiche", dk: 2, haerte: 85, quellenSchwindenRadial: 4.0, dichte: 650, gewicht: 12000},
@@ -472,7 +474,7 @@
 
             const attributeButtons = isPlayer ? `
                 <div class="space-y-1 mt-auto">
-                    <button onclick="selectAttribute('dk')" class="w-full flex justify-between items-center py-1 px-0.5 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer text-left">
+                    <button onclick="selectAttribute('dk')" class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer text-left">
                         <div class="flex items-center">
                             <span class="mr-2 text-xs">🛡️</span>
                             <div>
@@ -480,7 +482,7 @@
                                 <span class="block text-xs text-gray-500 leading-tight">(DK)</span>
                             </div>
                         </div>
-                        <span class="font-bold text-blue-600 text-base">${cardData.dk}</span>
+                        <span class="font-base text-blue-600 text-base">${cardData.dk}</span>
                     </button>
                     <button onclick="selectAttribute('haerte')" class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer text-left">
                          <div class="flex items-center">
@@ -490,7 +492,7 @@
                                 <span class="block text-xs text-gray-500 leading-tight">(N/mm²)</span>
                             </div>
                         </div>
-                        <span class="font-bold text-blue-600 text-base">${cardData.haerte}</span>
+                        <span class="font-sm text-blue-600 text-base">${cardData.haerte}</span>
                     </button>
                     <button onclick="selectAttribute('quellenSchwindenRadial')" class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer text-left">
                          <div class="flex items-center">
@@ -500,7 +502,7 @@
                                 <span class="block text-xs text-gray-500 leading-tight">(radial %)</span>
                             </div>
                         </div>
-                        <span class="font-bold text-blue-600 text-base">${cardData.quellenSchwindenRadial}</span>
+                        <span class="font-sm text-blue-600 text-base">${cardData.quellenSchwindenRadial}</span>
                     </button>
                     <button onclick="selectAttribute('dichte')" class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer text-left">
                          <div class="flex items-center">
@@ -510,7 +512,7 @@
                                 <span class="block text-xs text-gray-500 leading-tight">(kg/m³)</span>
                             </div>
                         </div>
-                        <span class="font-bold text-blue-600 text-base">${cardData.dichte}</span>
+                        <span class="font-sm text-blue-600 text-base">${cardData.dichte}</span>
                     </button>
                     <button onclick="selectAttribute('gewicht')" class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer text-left">
                          <div class="flex items-center">
@@ -520,7 +522,7 @@
                                 <span class="block text-xs text-gray-500 leading-tight">(N/mm²)</span>
                             </div>
                         </div>
-                        <span class="font-bold text-blue-600 text-base">${cardData.gewicht.toLocaleString('de-DE')}</span>
+                        <span class="font-sm text-blue-600 text-base">${cardData.gewicht.toLocaleString('de-DE')}</span>
                     </button>
                 </div>
             ` : `
@@ -533,7 +535,7 @@
                                 <span class="block text-xs text-gray-500 leading-tight">(DK)</span>
                             </div>
                         </div>
-                        <span class="font-bold text-blue-600 text-base">${cardData.dk}</span>
+                        <span class="font-sm text-blue-600 text-base">${cardData.dk}</span>
                     </div>
                     <div class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 rounded-lg text-left">
                          <div class="flex items-center">
@@ -543,7 +545,7 @@
                                 <span class="block text-xs text-gray-500 leading-tight">(N/mm²)</span>
                             </div>
                         </div>
-                        <span class="font-bold text-blue-600 text-base">${cardData.haerte}</span>
+                        <span class="font-sm text-blue-600 text-base">${cardData.haerte}</span>
                     </div>
                     <div class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 rounded-lg text-left">
                          <div class="flex items-center">
@@ -553,7 +555,7 @@
                                 <span class="block text-xs text-gray-500 leading-tight">(%)</span>
                             </div>
                         </div>
-                        <span class="font-bold text-blue-600 text-base">${cardData.quellenSchwindenRadial}</span>
+                        <span class="font-sm text-blue-600 text-base">${cardData.quellenSchwindenRadial}</span>
                     </div>
                     <div class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 rounded-lg text-left">
                          <div class="flex items-center">
@@ -563,7 +565,7 @@
                                 <span class="block text-xs text-gray-500 leading-tight">(kg/m³)</span>
                             </div>
                         </div>
-                        <span class="font-bold text-blue-600 text-base">${cardData.dichte}</span>
+                        <span class="font-sm text-blue-600 text-base">${cardData.dichte}</span>
                     </div>
                     <div class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 rounded-lg text-left">
                         <div class="flex items-center">
@@ -573,7 +575,7 @@
                                 <span class="block text-xs text-gray-500 leading-tight">(N/mm²)</span>
                             </div>
                         </div>
-                        <span class="font-bold text-blue-600 text-base">${cardData.gewicht.toLocaleString('de-DE')}</span>
+                        <span class="font-sm text-blue-600 text-base">${cardData.gewicht.toLocaleString('de-DE')}</span>
                     </div>
                 </div>
             `;
@@ -595,8 +597,8 @@
             cardBack.innerHTML = `
                 <div class="wood-texture absolute inset-0"></div>
                 <div class="text-center z-10">
-                    <div class="text-8xl mb-4">🌳</div>
-                    <h3 class="text-xl font-bold text-orange-400 opacity-90">Holzquartett</h3>
+                    <div class="text-6xl mb-4">🌳</div>
+                    <h3 class="text-xl font-bold text-white opacity-90">Holzquartett</h3>
                 </div>
             `;
 
@@ -902,8 +904,7 @@
                 content.innerHTML = "<p>Für diese Holzart sind aktuell keine Informationen verfügbar.</p>";
             }
         }
-        <script>
-window.onload = function() {
-  window.scrollTo(0, 0);
-  document.body.scrollTop = 0; // Fallback für ältere Browser
-};
+
+    </script>
+</body>
+</html>
