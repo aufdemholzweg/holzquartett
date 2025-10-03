@@ -2,14 +2,14 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Holz-Quartett</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             font-weight: 300;
         }
         
@@ -83,7 +83,7 @@
     <header class="bg-white shadow-sm border-b-2 border-amber-200">
         <div class="max-w-6xl mx-auto px-4 py-3">
             <h1 class="text-2xl font-bold text-amber-800 text-center">🌳 Holz-Quartett</h1>
-            <p class="text-xs text-gray-500 text-center mt-1">von Christopher Lehr, in Verbindung mit meiner Masterarbeit</p>
+            <p class="text-xs text-gray-500 text-center mt-1">von Christopher Lehr, in Verbindung mit meiner Masterarbeit zur Erlangung des akademischen Gerades Master of Education (M.Ed.)</p>
         </div>
     </header>
 
@@ -107,7 +107,7 @@
     <div id="gameContainer" class="hidden max-w-6xl mx-auto px-4 py-4">
         <!-- Score & Status Panel -->
         <div class="max-w-md mx-auto mb-3 space-y-1">
-            <div class="flex justify-center gap-2">
+            <div class="flex justify-center space-x-2">
                 <!-- Player Score Box -->
                 <div class="w-1/2 bg-white rounded-xl shadow-lg p-3 text-center">
                     <p id="playerNameDisplay" class="text-lg font-bold text-amber-600 truncate"></p>
@@ -130,7 +130,7 @@
 
 
         <!-- Game Board -->
-        <div class="flex justify-center gap-2 sm:gap-2 mb-3 max-w-md mx-auto">
+        <div class="flex justify-center space-x-2 sm:space-x-2 mb-3 max-w-md mx-auto">
             <!-- Player Card -->
             <div class="text-center w-1/2">
                 <div id="playerCard" class="relative aspect-[20/36] perspective-1000">
@@ -236,7 +236,7 @@
             {name: "Wenge", dk: 2, haerte: 88, quellenSchwindenRadial: 3.8, dichte: 880, gewicht: 16000},
             {name: "Zebrano", dk: 3, haerte: 70, quellenSchwindenRadial: 4.0, dichte: 750, gewicht: 13000},
             {name: "Palisander", dk: 2, haerte: 82, quellenSchwindenRadial: 3.0, dichte: 850, gewicht: 16000},
-            {name: "Ebony", dk: 1, haerte: 98, quellenSchwindenRadial: 3.2, dichte: 1200, gewicht: 16500}
+            {name: "Ebenholz", dk: 1, haerte: 98, quellenSchwindenRadial: 3.2, dichte: 1200, gewicht: 16500}
         ];
         
         // NEU: Lokale Informationen für jede Holzart
@@ -387,8 +387,8 @@
             bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/palisander_1.jpg?raw=true",
             bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/palisander_2.jpg?raw=true"
           },
-          "Ebony": {
-            info: `Ebony (EB) Ebenholz ist eines der härtesten Hölzer – fast tiefschwarz und sehr dicht. Zerstreutporig mit extrem feinen Poren, kaum sichtbar – Porenstruktur sehr fein. Verwendung: Klaviertasten, Intarsien, Luxusdekore. Funfact: Ebenholz wurde im alten Ägypten für Statuetten und Schmuckstücke verwendet – wegen seiner tiefen Farbe und Seltenheit.`,
+          "Ebenholz": {
+            info: `Ebenholz (EB) Ebenholz ist eines der härtesten Hölzer – fast tiefschwarz und sehr dicht. Zerstreutporig mit extrem feinen Poren, kaum sichtbar – Porenstruktur sehr fein. Verwendung: Klaviertasten, Intarsien, Luxusdekore. Funfact: Ebenholz wurde im alten Ägypten für Statuetten und Schmuckstücke verwendet – wegen seiner tiefen Farbe und Seltenheit.`,
             bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ebenholz_1.jpg?raw=true",
             bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ebenholz_2.jpg?raw=true"
           }
@@ -585,7 +585,7 @@
             
             cardFront.innerHTML = `
                 <div class="text-center mb-1">
-                    <div class="flex justify-center items-center gap-2">
+                    <div class="flex justify-center items-center space-x-2">
                         <div class="text-3xl">🌳</div>
                         <h3 class="text-lg font-bold text-amber-800 truncate">${cardData.name}</h3>
                         ${infoButtonHTML}
@@ -892,7 +892,7 @@
             if (infoData) {
                 content.innerHTML = `
                     <p>${infoData.info}</p>
-                    <div class="flex gap-4 mt-4">
+                    <div class="flex space-x-4 mt-4">
                         <div class="w-1/2">
                             <h4 class="font-semibold mb-2 text-center">Baum</h4>
                             <img src="${infoData.bildBaum}" alt="Bild von ${woodName} Baum" class="w-full h-auto rounded-lg object-cover" onerror="this.style.display='none'">
