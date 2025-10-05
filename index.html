@@ -83,7 +83,7 @@
     <header class="bg-white shadow-sm border-b-2 border-amber-200">
         <div class="max-w-6xl mx-auto px-4 py-3">
             <h1 class="text-2xl font-bold text-amber-800 text-center">🌳 Holz-Quartett</h1>
-            <p class="text-xs text-gray-500 text-center mt-1">von Christopher Lehr, in Verbindung mit meiner Masterarbeit</p>
+            <p class="text-xs text-gray-500 text-center mt-1">von Christopher Lehr, in Verbindung mit meiner Masterarbeit zur Erlangung des akademischen Gerades Master of Education (M.Ed.)</p>
         </div>
     </header>
 
@@ -121,7 +121,7 @@
             </div>
             <!-- Status Bar -->
             <div class="w-full bg-gray-200 rounded-full h-4 relative overflow-hidden border border-gray-300">
-                <div id="statusBar" class="bg-amber-500 h-full rounded-l-full transition-all duration-500" style="width: 50%;"></div>
+                <div id="statusBar" class="h-full rounded-l-full transition-all duration-500" style="width: 50%; background-color: #f59e0b;"></div>
                  <div class="absolute inset-0 flex justify-center items-center">
                     <div class="w-0.5 h-full bg-white opacity-75"></div>
                 </div>
@@ -130,7 +130,7 @@
 
 
         <!-- Game Board -->
-        <div class="flex justify-center space-x-2 sm:space-x-2 mb-3 max-w-md mx-auto">
+        <div class="flex justify-center space-x-2 sm:space-x-2 mb-4 max-w-md mx-auto">
             <!-- Player Card -->
             <div class="text-center w-1/2">
                 <div id="playerCard" class="relative aspect-[20/36] perspective-1000">
@@ -147,12 +147,12 @@
         </div>
 
         <!-- Action Panel -->
-        <div class="bg-white rounded-xl shadow-lg p-1 mt-3 text-center mx-auto flex flex-col items-center justify-center max-w-md w-full">
+        <div class="bg-white rounded-xl shadow-lg p-1 mt-4 text-center mx-auto flex flex-col items-center justify-center max-w-md w-full">
             <div id="attributeSelection" class="">
                  <h3 class="text-lg font-semibold text-gray-700">Wähle eine Eigenschaft!</h3>
             </div>
             <div id="nextRoundButton" class="hidden w-full mb-1">
-                 <button onclick="nextRound()" class="w-full bg-amber-600 hover:bg-amber-800 text-white font-bold py-3 px-8 rounded-lg transition-colors">
+                 <button onclick="nextRound()" class="w-full bg-amber-600 hover:bg-amber-800 text-white font-bold py-3 px-8 rounded-xl transition-colors">
                      ➡️ Nächster Zug
                  </button>
              </div>
@@ -464,20 +464,22 @@
             }
 
             // Card front (revealed)
+            const borderColor = isPlayer ? 'border-amber-400' : 'border-gray-300';
+            const shadow = isPlayer ? 'shadow-lg' : 'shadow-md';
             const cardFront = document.createElement('div');
-            cardFront.className = `card-front bg-white rounded-xl shadow-lg border-2 border-amber-200 p-3 flex flex-col`;
+            cardFront.className = `card-front bg-white rounded-xl ${shadow} border-2 ${borderColor} p-3 flex flex-col`;
             
             const isPlayerCard = isPlayer && isRevealed;
 
             const infoButtonHTML = isPlayerCard ? `
                 <button id="player-info-button" onclick="showWoodInfo()" class="hidden bg-purple-600 text-white rounded-full h-6 w-6 flex-shrink-0 flex items-center justify-center text-xs hover:bg-purple-700">
-                    ✨
+                    💡
                 </button>
             ` : '';
 
             const attributeButtons = isPlayer ? `
                 <div class="space-y-1 mt-auto">
-                    <button onclick="selectAttribute('dk')" class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer text-left">
+                    <button onclick="selectAttribute('dk')" class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors cursor-pointer text-left">
                         <div class="flex items-center">
                             <span class="mr-2 text-xs">🛡️</span>
                             <div>
@@ -487,7 +489,7 @@
                         </div>
                         <span class="font-sm text-blue-600 text-base">${cardData.dk}</span>
                     </button>
-                    <button onclick="selectAttribute('haerte')" class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer text-left">
+                    <button onclick="selectAttribute('haerte')" class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors cursor-pointer text-left">
                          <div class="flex items-center">
                             <span class="mr-2 text-xs">💎</span>
                             <div>
@@ -497,17 +499,17 @@
                         </div>
                         <span class="font-sm text-blue-600 text-base">${cardData.haerte}</span>
                     </button>
-                    <button onclick="selectAttribute('quellenSchwindenRadial')" class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer text-left">
+                    <button onclick="selectAttribute('quellenSchwindenRadial')" class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors cursor-pointer text-left">
                          <div class="flex items-center">
                             <span class="mr-2 text-xs">↔️</span>
                             <div>
                                 <span class="text-xs font-medium leading-tight">Quellen/Schwn.</span>
-                                <span class="block text-xs text-gray-500 leading-tight">(radial %)</span>
+                                <span class="block text-xs text-gray-500 leading-tight">(%)</span>
                             </div>
                         </div>
                         <span class="font-sm text-blue-600 text-base">${cardData.quellenSchwindenRadial}</span>
                     </button>
-                    <button onclick="selectAttribute('dichte')" class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer text-left">
+                    <button onclick="selectAttribute('dichte')" class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors cursor-pointer text-left">
                          <div class="flex items-center">
                             <span class="mr-2 text-xs">⚖️</span>
                             <div>
@@ -517,7 +519,7 @@
                         </div>
                         <span class="font-sm text-blue-600 text-base">${cardData.dichte}</span>
                     </button>
-                    <button onclick="selectAttribute('gewicht')" class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer text-left">
+                    <button onclick="selectAttribute('gewicht')" class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors cursor-pointer text-left">
                          <div class="flex items-center">
                             <span class="mr-2 text-xs">🏋️</span>
                             <div>
@@ -530,7 +532,7 @@
                 </div>
             ` : `
                  <div class="space-y-1 mt-auto">
-                    <div class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 rounded-lg text-left">
+                    <div class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 rounded-xl text-left">
                         <div class="flex items-center">
                             <span class="mr-2 text-xs">🛡️</span>
                             <div>
@@ -540,7 +542,7 @@
                         </div>
                         <span class="font-sm text-blue-600 text-base">${cardData.dk}</span>
                     </div>
-                    <div class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 rounded-lg text-left">
+                    <div class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 rounded-xl text-left">
                          <div class="flex items-center">
                             <span class="mr-2 text-xs">💎</span>
                             <div>
@@ -550,7 +552,7 @@
                         </div>
                         <span class="font-sm text-blue-600 text-base">${cardData.haerte}</span>
                     </div>
-                    <div class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 rounded-lg text-left">
+                    <div class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 rounded-xl text-left">
                          <div class="flex items-center">
                             <span class="mr-2 text-xs">↔️</span>
                             <div>
@@ -560,7 +562,7 @@
                         </div>
                         <span class="font-sm text-blue-600 text-base">${cardData.quellenSchwindenRadial}</span>
                     </div>
-                    <div class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 rounded-lg text-left">
+                    <div class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 rounded-xl text-left">
                          <div class="flex items-center">
                             <span class="mr-2 text-xs">⚖️</span>
                             <div>
@@ -570,7 +572,7 @@
                         </div>
                         <span class="font-sm text-blue-600 text-base">${cardData.dichte}</span>
                     </div>
-                    <div class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 rounded-lg text-left">
+                    <div class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 rounded-xl text-left">
                         <div class="flex items-center">
                             <span class="mr-2 text-xs">🏋️</span>
                             <div>
@@ -787,16 +789,17 @@
             if (statusBar) {
                 statusBar.style.width = `${playerPercentage}%`;
                 // Change color based on who is winning
-                if (playerPercentage > 50) {
-                    statusBar.classList.remove('bg-red-500');
-                    statusBar.classList.add('bg-amber-500');
+                let color = '#f97316'; // orange-500
+                if (playerPercentage < 25) {
+                    color = '#c2410c'; // orange-700
                 } else if (playerPercentage < 50) {
-                    statusBar.classList.remove('bg-amber-500');
-                    statusBar.classList.add('bg-red-500');
-                } else {
-                     statusBar.classList.remove('bg-red-500');
-                     statusBar.classList.add('bg-amber-500');
+                    color = '#f59e0b'; // amber-500
+                } else if (playerPercentage > 75) {
+                    color = '#16a34a'; // green-600
+                } else if (playerPercentage > 50) {
+                    color = '#84cc16'; // lime-500
                 }
+                statusBar.style.backgroundColor = color;
             }
         }
 
@@ -887,17 +890,18 @@
 
         function getWoodInfo(woodName) {
             const content = document.getElementById('infoModalContent');
-            const infoData = woodInfo[woodName];
+            const infoData = woodInfo[woodName] || woodInfo[Object.keys(woodInfo).find(k => k.toLowerCase() === woodName.toLowerCase())];
+
             
             if (infoData) {
                 content.innerHTML = `
                     <p>${infoData.info}</p>
-                    <div class="flex space-x-4 mt-4">
-                        <div class="w-1/2">
+                    <div class="space-y-4 mt-4">
+                        <div>
                             <h4 class="font-semibold mb-2 text-center">Baum</h4>
                             <img src="${infoData.bildBaum}" alt="Bild von ${woodName} Baum" class="w-full h-auto rounded-lg object-cover" onerror="this.style.display='none'">
                         </div>
-                        <div class="w-1/2">
+                        <div>
                             <h4 class="font-semibold mb-2 text-center">Querschnitt</h4>
                             <img src="${infoData.bildQuerschnitt}" alt="Bild von ${woodName} Querschnitt" class="w-full h-auto rounded-lg object-cover" onerror="this.style.display='none'">
                         </div>
