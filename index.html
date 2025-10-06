@@ -111,13 +111,13 @@
         <div class="max-w-md mx-auto mb-3 space-y-1">
             <div class="flex justify-center space-x-2">
                 <!-- Player Score Box -->
-                <div class="w-1/2 bg-white rounded-xl shadow-lg p-3 text-center">
-                    <p id="playerNameDisplay" class="text-lg font-bold text-amber-600 truncate"></p>
+                <div class="w-1/2 bg-white rounded-xl shadow-lg p-2 text-center">
+                    <p id="playerNameDisplay" class="text-base font-bold text-amber-600 truncate"></p>
                     <p class="text-sm text-gray-500">Karten: <span id="playerCards" class="font-semibold">15</span></p>
                 </div>
                 <!-- AI Score Box -->
-                <div class="w-1/2 bg-white rounded-xl shadow-lg p-3 text-center">
-                    <p class="text-lg font-bold text-red-600">Computer</p>
+                <div class="w-1/2 bg-white rounded-xl shadow-lg p-2 text-center">
+                    <p class="text-base font-bold text-red-600">Computer</p>
                     <p class="text-sm text-gray-500">Karten: <span id="aiCards" class="font-semibold">15</span></p>
                 </div>
             </div>
@@ -142,7 +142,7 @@
 
             <!-- AI Card -->
             <div class="text-center w-1/2">
-                <div id="aiCard" class="relative aspect-[20/38] perspective-1000">
+                <div id="aiCard" class="relative aspect-[20/36] perspective-1000">
                     <!-- Card content will be inserted here -->
                 </div>
             </div>
@@ -340,7 +340,7 @@
           },
           "Pappel": {
             info: `Pappel (PA) Pappelholz ist sehr leicht und weich – weniger tragfähig, aber gut bearbeitbar. Feine Struktur, fast keine großen Poren – Jahresringe nur dezent sichtbar. Verwendung: Leichtbau, Verpackungen, Möbel mit geringer Belastung. Funfact: Pappelholz wird oft für Modellbau oder Flugzeuginnenräume verwendet, wo Leichtigkeit zählt.`,
-            bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/pappel_1.jpg?raw=true",
+            bildBaum: "hhttps://github.com/aufdemholzweg/holzquartett/blob/main/images/pappel_1.jpg?raw=true",
             bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/pappel_2.jpg?raw=true"
           },
           "Weide": {
@@ -462,7 +462,7 @@
         const attributeInfo = {
             dk: {icon: '🛡️', name: 'Dauerhaftigkeit (DK)', color: 'blue'},
             haerte: {icon: '💎', name: 'Druckfestigkeit (N/mm²)', color: 'blue'},
-            quellenSchwindenRadial: {icon: '↔️', name: 'Quellen/Schwin. (%)', color: 'blue'},
+            quellenSchwindenRadial: {icon: '↔️', name: 'Quellen/Schwinden (%)', color: 'blue'},
             dichte: {icon: '⚖️', name: 'Rohdichte (kg/m³)', color: 'blue'},
             gewicht: {icon: '🏋️', name: 'E-Modul (N/mm²)', color: 'blue'}
         };
@@ -549,11 +549,11 @@
                         </div>
                         <span class="font-sm text-blue-600 text-base">${cardData.haerte}</span>
                     </button>
-                    <button onclick="selectAttribute('Quellen/Schwin.')" class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors cursor-pointer text-left">
+                    <button onclick="selectAttribute('quellenSchwindenRadial')" class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors cursor-pointer text-left">
                          <div class="flex items-center">
                             <span class="mr-2 text-xs">↔️</span>
                             <div>
-                                <span class="text-xs font-medium leading-tight">Quellen/Schwin.</span>
+                                <span class="text-xs font-medium leading-tight">Quellen/Schwn.</span>
                                 <span class="block text-xs text-gray-500 leading-tight">(%)</span>
                             </div>
                         </div>
@@ -997,4 +997,3 @@
     </script>
 </body>
 </html>
-
