@@ -635,10 +635,13 @@
                 </div>
             `;
             
+            const woodData = woodInfo[cardData.name] || woodInfo[Object.keys(woodInfo).find(k => k.toLowerCase() === cardData.name.toLowerCase())];
+            const treeImage = woodData ? woodData.bildBaum : 'https://placehold.co/36x36/d1d5db/374151?text=?';
+
             cardFront.innerHTML = `
                 <div class="text-center mb-1">
                     <div class="flex justify-center items-center space-x-2">
-                        <div class="text-3xl">🌳</div>
+                        <img src="${treeImage}" alt="${cardData.name}" class="w-9 h-9 object-cover rounded-full border-2 border-amber-200">
                         <h3 class="text-lg font-bold text-amber-800 truncate">${cardData.name}</h3>
                         ${infoButtonHTML}
                     </div>
