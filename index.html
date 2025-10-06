@@ -44,16 +44,16 @@
             opacity: 0.1;
         }
         
-        .pulse-win {
-            animation: pulse-green 0.8s ease-in-out;
-        }
-        
-        .pulse-lose {
-            animation: pulse-red 0.8s ease-in-out;
-        }
-
         .animate-pop-in {
             animation: pop-in 0.5s ease-out forwards;
+        }
+
+        .animate-glow-win {
+            animation: glow-win 1.2s ease-out;
+        }
+
+        .animate-glow-lose {
+            animation: glow-lose 1.2s ease-out;
         }
         
         @keyframes pop-in {
@@ -62,14 +62,16 @@
             100% { transform: scale(1); }
         }
 
-        @keyframes pulse-green {
-            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
-            50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+        @keyframes glow-win {
+            0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); } /* green-400 */
+            50% { box-shadow: 0 0 30px 15px rgba(74, 222, 128, 0.6); }
+            100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
         }
-        
-        @keyframes pulse-red {
-            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-            50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+
+        @keyframes glow-lose {
+            0% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0); } /* red-400 */
+            50% { box-shadow: 0 0 30px 15px rgba(248, 113, 113, 0.6); }
+            100% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0); }
         }
         
         .hover-lift:hover {
@@ -167,8 +169,8 @@
     <div id="reflectionModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
         <div class="bg-white rounded-xl p-8 max-w-lg w-full mx-4 shadow-2xl text-center">
             <h2 class="text-2xl font-bold text-amber-800 mb-4">🎉 Super gespielt! Zeit zum Reflektieren!</h2>
-            <p class="text-gray-700 mb-6 text-left">
-                Stell dir vor, du sollst einen stabilen und langlebigen Esstisch für eine Familie entwerfen. Welches der Hölzer aus dem Spiel würdest du wählen und warum? Berücksichtige dabei Eigenschaften wie Härte (Druckfestigkeit), Dauerhaftigkeit und das Quell-/Schwindverhalten.
+            <p id="reflectionQuestion" class="text-gray-700 mb-6 text-left">
+                <!-- Question will be inserted here dynamically -->
             </p>
             <textarea id="reflectionAnswer" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent min-h-[100px]" placeholder="Deine Begründung..."></textarea>
             <button onclick="showFinalWinScreen()" class="mt-6 w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
@@ -407,6 +409,40 @@
             bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ebenholz_2.jpg?raw=true"
           }
         };
+
+        const reflectionQuestions = [
+            "Stell dir vor, du sollst einen stabilen und langlebigen Esstisch für eine Familie entwerfen. Welches der Hölzer aus dem Spiel würdest du wählen und warum? Berücksichtige dabei Eigenschaften wie Härte (Druckfestigkeit), Dauerhaftigkeit und das Quell-/Schwindverhalten.",
+            "Welches Holz würdest du für Gartenmöbel wählen, die der Witterung ausgesetzt sind? Begründe deine Entscheidung mit Hilfe der Dauerhaftigkeitsklasse.",
+            "Eine Küchenarbeitsplatte muss schnittfest und widerstandsfähig sein. Welches Holz aus dem Quartett eignet sich hierfür am besten und warum? Beziehe dich auf die Druckfestigkeit.",
+            "Für einen stark beanspruchten Dielenboden in einem öffentlichen Gebäude benötigst du ein sehr hartes Holz. Nenne zwei geeignete Holzarten aus dem Spiel und begründe deine Wahl.",
+            "Du sollst den Korpus einer Akustikgitarre bauen. Welches Holz würdest du aufgrund seiner klanglichen Eigenschaften und seiner Optik bevorzugen?",
+            "Fenster sind ständig wechselnder Luftfeuchtigkeit ausgesetzt. Welches Holz ist aufgrund seines geringen Quell- und Schwindverhaltens besonders gut für Fensterrahmen geeignet?",
+            "Für ein Modellflugzeug oder ein leichtes Regal wird ein Holz mit geringer Dichte, aber ausreichender Stabilität benötigt. Welches wäre deine erste Wahl?",
+            "Robinie und Lärche sind beide für den Außenbereich beliebt. Vergleiche die beiden Hölzer anhand ihrer Quartett-Werte und erkläre, in welchem Fall du welches Holz bevorzugen würdest.",
+            "Du möchtest einen gebogenen Handlauf für eine Treppe herstellen. Welches Holz mit einem hohen E-Modul und guter Biegsamkeit (z.B. Esche, Buche) würdest du verwenden? Begründe.",
+            "Vergleiche die Rohdichte und den E-Modul von Fichte und Eiche. Warum wird Fichte häufiger als Bauholz für Dachstühle verwendet, obwohl Eiche stabiler ist?",
+            "Hölzer mit hohem Quell- und Schwindmaß erfordern besondere konstruktive Maßnahmen (z.B. Fugen). Bei welchem Holz aus dem Spiel musst du besonders aufpassen und was könntest du tun?",
+            "Ein Hammerstiel muss extrem bruchfest und elastisch sein. Welches Holz (z.B. Esche, Hickory) ist hierfür die beste Wahl und warum?",
+            "Bei Eichenholz kann es in Verbindung mit Eisen zu unschönen Verfärbungen kommen. Was ist die Ursache und welche Alternative für Verbindungsmittel würdest du vorschlagen?",
+            "Weiche Hölzer wie Fichte oder Kiefer sind anfälliger für Dellen. Welche Oberflächenbehandlung würdest du vorschlagen, um die Widerstandsfähigkeit zu erhöhen?",
+            "Für die Herstellung von dekorativen Furnieren eignen sich Hölzer mit einer schönen Maserung. Nenne zwei Hölzer aus dem Spiel, die oft als Furnierholz verwendet werden.",
+            "Nenne drei heimische Hölzer aus dem Quartett, die du als nachhaltige Alternative zu Tropenhölzern wie Teak oder Mahagoni einsetzen könntest. Begründe deine Auswahl anhand der Eigenschaften.",
+            "Holz ist ein wichtiger CO₂-Speicher. Warum ist die Verwendung von langlebigen Holzprodukten (z.B. im Bauwesen) ein Beitrag zum Klimaschutz?",
+            "Was bedeuten Siegel wie FSC oder PEFC im Zusammenhang mit den im Spiel gezeigten Hölzern? Warum ist das für dich als zukünftige Lehrkraft wichtig?",
+            "Teak hat eine exzellente Dauerhaftigkeit (DK 1). Diskutiere die Vor- und Nachteile des Einsatzes von Teak im Vergleich zu einer heimischen Alternative wie der Robinie.",
+            "Bambus ist botanisch gesehen ein Gras, hat aber holzähnliche Eigenschaften. Welche ökologischen Vorteile bietet Bambus gegenüber klassischen Holzarten?",
+            "Was könntest du aus einem alten Eichenbalken aus einem Fachwerkhaus noch herstellen, um das Material möglichst lange im Kreislauf zu halten?",
+            "Du möchtest ein Möbelstück mit einem starken Hell-Dunkel-Kontrast entwerfen. Welche zwei Hölzer aus dem Spiel würdest du kombinieren, um diesen Effekt zu erzielen (z.B. Ahorn und Nussbaum)?",
+            "Hölzer wie Eiche oder Esche haben eine sehr ausdrucksstarke Maserung, während Ahorn oder Buche ruhiger wirken. Für welches Möbelstück würdest du bewusst ein Holz mit starker Maserung wählen?",
+            "Stell dir vor, du entwirfst ein Kinderspielzeug aus Holz. Würdest du eher ein Hartholz oder ein Weichholz wählen? Begründe deine Entscheidung auch im Hinblick auf die Haptik und Sicherheit.",
+            "Einige Hölzer wie Kirsche oder Lärche verändern ihre Farbe unter Lichteinfluss stark. In welchem Anwendungsfall könnte dieser Effekt erwünscht sein und wo eher störend?",
+            "Für ein modernes, minimalistisches Möbelstück wird oft ein helles, gleichmäßig gemasertes Holz verwendet. Welches Holz aus dem Quartett passt am besten zu diesem Stil?",
+            "Welches Holz würdest du für den Bau einer rustikalen Almhütte verwenden und warum? Beziehe dich auf Optik und technische Eigenschaften.",
+            "Du planst ein Schülerprojekt, bei dem ein Nistkasten für Vögel gebaut werden soll. Welches Holz wäre geeignet und welche Eigenschaften müsstest du den Schülern vermitteln?",
+            "Ein Kunde wünscht sich für seine Terrasse das billigste Holz. Wie würdest du ihm anhand der Quartett-Karten erklären, warum eine Investition in ein Holz mit höherer Dauerhaftigkeitsklasse langfristig sinnvoller ist?",
+            "Welche Eigenschaft einer Holzart aus dem Spiel hat dich am meisten überrascht und warum?",
+            "Wenn du eine neue Kategorie für das Quartett-Spiel erfinden könntest, welche wäre das und warum wäre sie für die Holztechnik relevant?"
+        ];
 
 
         // Game state
@@ -687,7 +723,7 @@
                 gameState.playerCards.shift();
                 gameState.aiCards.shift();
                 gameState.playerCards.push(gameState.currentPlayerCard, gameState.currentAiCard);
-                document.getElementById('playerCard').querySelector('.card-3d').classList.add('pulse-win');
+                document.getElementById('playerCard').querySelector('.card-front').classList.add('animate-glow-win');
             } else if (playerWins === false) {
                 winner = 'ai';
                 resultText = `😞 KI gewinnst!`;
@@ -696,7 +732,7 @@
                 gameState.playerCards.shift();
                 gameState.aiCards.shift();
                 gameState.aiCards.push(gameState.currentAiCard, gameState.currentPlayerCard);
-                document.getElementById('playerCard').querySelector('.card-3d').classList.add('pulse-lose');
+                document.getElementById('playerCard').querySelector('.card-front').classList.add('animate-glow-lose');
             } else {
                 winner = 'tie';
                 resultText = `🤝 Unentschieden!`;
@@ -769,7 +805,11 @@
         }
 
         function nextRound() {
-            document.getElementById('playerCard').querySelector('.card-3d').classList.remove('pulse-win', 'pulse-lose');
+            const playerCardFront = document.getElementById('playerCard').querySelector('.card-front');
+            if (playerCardFront) {
+                playerCardFront.classList.remove('animate-glow-win', 'animate-glow-lose');
+            }
+
 
             if (gameState.playerCards.length === 0 || gameState.aiCards.length === 0) {
                 endGame();
@@ -828,7 +868,21 @@
 
             if (playerWon) {
                 saveToLeaderboard(gameState.playerName, gameState.playerCards.length);
+
+                // Get the next reflection question
+                let questionIndex = parseInt(localStorage.getItem('reflectionQuestionIndex') || '0');
+                const question = reflectionQuestions[questionIndex];
+                
+                // Display the question
+                document.getElementById('reflectionQuestion').textContent = question;
+                
+                // Show the modal
                 document.getElementById('reflectionModal').classList.remove('hidden');
+
+                // Update the index for the next game
+                questionIndex = (questionIndex + 1) % reflectionQuestions.length;
+                localStorage.setItem('reflectionQuestionIndex', questionIndex.toString());
+
             } else {
                 document.getElementById('gameOverTitle').textContent = '😞 Spiel verloren';
                 document.getElementById('gameOverTitle').className = `text-3xl font-bold mb-3 text-red-600`;
@@ -839,6 +893,7 @@
 
         function showFinalWinScreen() {
             document.getElementById('reflectionModal').classList.add('hidden');
+            document.getElementById('reflectionAnswer').value = ''; // Clear textarea
             
             document.getElementById('gameOverTitle').textContent = '🎉 Glückwunsch!';
             document.getElementById('gameOverTitle').className = `text-3xl font-bold mb-3 text-green-600`;
@@ -894,6 +949,7 @@
             document.getElementById('setupModal').classList.remove('hidden');
             document.getElementById('playerName').value = '';
             document.getElementById('infoModal').classList.add('hidden');
+            document.getElementById('reflectionAnswer').value = ''; // Clear textarea
         }
 
         // --- Info Feature ---
