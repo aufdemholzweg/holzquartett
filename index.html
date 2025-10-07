@@ -682,10 +682,12 @@
             const treeImage = woodData ? woodData.bildBaum : 'https://placehold.co/36x36/d1d5db/374151?text=?';
 
             cardFront.innerHTML = `
-                <img src="${treeImage}" alt="${cardData.name}" class="absolute top-2 left-2 w-12 h-12 object-cover rounded-full border-2 border-amber-200">
-                <div class="text-center mb-1">
-                    <div class="flex justify-center items-center space-x-2">
+                <div class="flex justify-between items-center w-full mb-1">
+                    <div class="flex items-center space-x-2 flex-1 min-w-0">
+                        <img src="${treeImage}" alt="${cardData.name}" class="w-9 h-9 object-cover rounded-full border-2 border-amber-200 flex-shrink-0">
                         <h3 class="text-lg font-bold text-amber-800 truncate">${cardData.name}</h3>
+                    </div>
+                    <div class="flex-shrink-0">
                         ${infoButtonHTML}
                     </div>
                 </div>
@@ -694,7 +696,7 @@
 
             // Card back (hidden)
             const cardBack = document.createElement('div');
-            cardBack.className = 'card-back bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl shadow-lg border-2 border-amber-300 p-4 flex items-center justify-center relative overflow-hidden';
+            cardBack.className = 'card-back bg-gradient-to-br from-amber-300 to-orange-400 rounded-xl shadow-lg border-2 border-amber-300 p-4 flex items-center justify-center relative overflow-hidden';
             cardBack.innerHTML = `
                 <div class="wood-texture absolute inset-0"></div>
                 <div class="text-center z-10">
