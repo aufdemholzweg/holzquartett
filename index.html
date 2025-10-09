@@ -255,7 +255,7 @@
     <script type="module">
         // Firebase Imports
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         // --- Globale Variablen für Firebase und Spielstatus ---
@@ -367,21 +367,10 @@
             "Wenn du eine neue Kategorie für das Quartett-Spiel erfinden könntest, welche wäre das und warum wäre sie für die Holztechnik relevant?"
         ];
 
-
-        // Game state
         let gameState = {
-            playerName: '',
-            playerCards: [],
-            aiCards: [],
-            currentPlayerCard: null,
-            currentAiCard: null,
-            playerTurn: true,
-            gameOver: false,
-            roundResult: null,
-            roundInProgress: false
+            playerName: '', playerCards: [], aiCards: [], currentPlayerCard: null, currentAiCard: null, playerTurn: true, gameOver: false, roundResult: null, roundInProgress: false
         };
 
-        // Attribute icons and names
         const attributeInfo = {
             dk: {icon: '🛡️', name: 'Dauerhaftigkeit (DK)', color: 'blue'},
             haerte: {icon: '💎', name: 'Druckfestigkeit (N/mm²)', color: 'blue'},
@@ -390,6 +379,376 @@
             gewicht: {icon: '🏋️', name: 'E-Modul (N/mm²)', color: 'blue'}
         };
 
+        // --- Firebase Konfiguration ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyCyRXl8-JPr1xTXPDi1VG-eQk6fOnTpqUI",
+            authDomain: "holzquartett-3a177.firebaseapp.com",
+            projectId: "holzquartett-3a177",
+            storageBucket: "holzquartett-3a177.appspot.com",
+            messagingSenderId: "1081595025073",
+            appId: "1:1081595025073:web:bc571fffb6e4f20b27f490"
+        };
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+        auth = getAuth(app);
+        
+        // --- Event Listener und Initialisierung beim Laden der Seite ---
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                await signInAnonymously(auth);
+            } catch (error) {
+                console.error("Firebase Auth Error:", error);
+            }
+            
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    localPlayerId = user.uid;
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const gameIdFromUrl = urlParams.get('game');
+                    if (gameIdFromUrl) {
+                        gameId = gameIdFromUrl;
+                        gameMode = 'multiplayer';
+                        showNamePrompt('join');
+                    }
+                }
+            });
+        });
+
+        window.addEventListener('beforeunload', async () => {
+            if (gameMode === 'multiplayer' && gameId && localPlayerId) {
+                const gameRef = doc(db, "games", gameId);
+                const playerStatusPath = `players.${localPlayerId}.status`;
+                await updateDoc(gameRef, { [playerStatusPath]: "offline" }).catch(e => {});
+            }
+        });
+
+
+        // --- UI-Steuerungsfunktionen ---
+
+        window.showNamePrompt = (mode) => {
+            document.getElementById('setupModal').classList.add('hidden');
+            const nameModal = document.getElementById('nameModal');
+            nameModal.classList.remove('hidden');
+            const nameSubmitButton = document.getElementById('nameSubmitButton');
+            
+            const newButton = nameSubmitButton.cloneNode(true);
+            nameSubmitButton.parentNode.replaceChild(newButton, nameSubmitButton);
+
+            newButton.addEventListener('click', () => {
+                const playerName = document.getElementById('playerName').value.trim();
+                if (!playerName) {
+                    alert('Bitte gib deinen Namen ein!');
+                    return;
+                }
+                nameModal.classList.add('hidden');
+
+                if (mode === 'ai') {
+                    gameMode = 'ai';
+                    startGameAI(playerName);
+                } else if (mode === 'multiplayer') {
+                    gameMode = 'multiplayer';
+                    createGame(playerName);
+                } else if (mode === 'join') {
+                    joinGame(gameId, playerName);
+                }
+            });
+        }
+        
+        // --- Multiplayer Logik ---
+
+        async function createGame(playerName) {
+            const lobbyModal = document.getElementById('multiplayerLobbyModal');
+            lobbyModal.classList.remove('hidden');
+            
+            gameId = Math.random().toString(36).substring(2, 8).toUpperCase();
+            const shareLinkInput = document.getElementById('shareLink');
+            const baseUrl = window.location.href.split('?')[0];
+            shareLinkInput.value = `${baseUrl}?game=${gameId}`;
+            
+            const gameRef = doc(db, "games", gameId);
+            
+            const initialGameData = {
+                gameId: gameId,
+                status: 'waiting',
+                playerIds: [localPlayerId],
+                players: {
+                    [localPlayerId]: { name: playerName, cards: [], status: 'online' }
+                },
+                createdAt: serverTimestamp()
+            };
+
+            await setDoc(gameRef, initialGameData);
+            listenToGameChanges();
+        }
+
+        async function joinGame(gameIdToJoin, playerName) {
+            const gameRef = doc(db, "games", gameIdToJoin);
+            const gameSnap = await getDoc(gameRef);
+
+            if (gameSnap.exists() && gameSnap.data().status === 'waiting' && gameSnap.data().playerIds.length === 1) {
+                document.getElementById('lobbyTitle').textContent = "Spiel wird beigetreten...";
+                document.getElementById('lobbyText').textContent = "Moment, die Karten werden gemischt.";
+                document.getElementById('multiplayerLobbyModal').classList.remove('hidden');
+
+                const shuffledCards = shuffleArray(woodCards);
+                const player1Id = gameSnap.data().playerIds[0];
+                
+                const gameUpdateData = {
+                    status: 'playing',
+                    playerIds: [player1Id, localPlayerId],
+                    [`players.${localPlayerId}`]: { name: playerName, cards: shuffledCards.slice(15), status: 'online' },
+                    [`players.${player1Id}.cards`]: shuffledCards.slice(0, 15),
+                    turn: player1Id,
+                    currentCards: {
+                        [player1Id]: shuffledCards.slice(0, 15)[0],
+                        [localPlayerId]: shuffledCards.slice(15)[0],
+                    },
+                    lastResult: null,
+                    lastActivity: serverTimestamp()
+                };
+
+                await updateDoc(gameRef, gameUpdateData);
+                listenToGameChanges();
+            } else {
+                alert("Spiel nicht gefunden oder bereits voll.");
+                window.location.search = '';
+            }
+        }
+
+        function listenToGameChanges() {
+            const gameRef = doc(db, "games", gameId);
+            unsubscribeGame = onSnapshot(gameRef, (docSnap) => {
+                if (!docSnap.exists()) {
+                    alert("Das Spiel wurde beendet.");
+                    resetGame();
+                    return;
+                }
+                
+                const gameData = docSnap.data();
+                localGameState = gameData;
+                
+                if(gameData.status === 'playing' || gameData.status === 'finished') {
+                    document.getElementById('multiplayerLobbyModal').classList.add('hidden');
+                    document.getElementById('gameContainer').classList.remove('hidden');
+                    updateMultiplayerUI(gameData);
+                }
+
+                const opponentId = gameData.playerIds.find(id => id !== localPlayerId);
+                if (opponentId && gameData.players[opponentId]?.status === 'offline') {
+                    alert('Dein Mitspieler hat das Spiel verlassen.');
+                }
+            });
+        }
+
+        function updateMultiplayerUI(gameData) {
+            const opponentId = gameData.playerIds.find(id => id !== localPlayerId);
+
+            document.getElementById('playerNameDisplay').textContent = gameData.players[localPlayerId].name;
+            document.getElementById('playerCards').textContent = gameData.players[localPlayerId].cards.length;
+
+            if (opponentId) {
+                document.getElementById('opponentNameDisplay').textContent = gameData.players[opponentId].name;
+                document.getElementById('aiCards').textContent = gameData.players[opponentId].cards.length;
+            } else {
+                document.getElementById('opponentNameDisplay').textContent = "Wartet...";
+                document.getElementById('aiCards').textContent = '...';
+            }
+            
+            updateStatusBar(gameData.players[localPlayerId].cards.length, gameData.players[opponentId]?.cards.length || 0);
+            displayMultiplayerCards(gameData);
+
+            const turnIndicator = document.getElementById('turnIndicator');
+            const attributeSelection = document.getElementById('attributeSelection');
+            const resultDisplay = document.getElementById('resultDisplay');
+            const nextRoundBtn = document.getElementById('nextRoundButton');
+            
+            turnIndicator.classList.remove('hidden');
+            
+            if (gameData.lastResult) {
+                attributeSelection.classList.add('hidden');
+                resultDisplay.classList.remove('hidden');
+                nextRoundBtn.classList.remove('hidden');
+
+                const { winnerId, attribute, values } = gameData.lastResult;
+                const winnerName = winnerId === localPlayerId ? 'Du' : gameData.players[winnerId].name;
+                
+                let resultText = winnerId === 'tie' ? `🤝 Unentschieden!` : `🎉 ${winnerName} gewinnst!`;
+                if(winnerId !== localPlayerId && winnerId !== 'tie') resultText = `😞 ${winnerName} gewinnt!`;
+                
+                document.getElementById('resultText').textContent = resultText;
+                document.getElementById('resultDetails').textContent = `${attributeInfo[attribute].name.split(' (')[0]}: ${values[localPlayerId]} vs ${values[opponentId]}`;
+                
+            } else {
+                resultDisplay.classList.add('hidden');
+                nextRoundBtn.classList.add('hidden');
+                
+                if (gameData.turn === localPlayerId) {
+                    turnIndicator.textContent = "Du bist am Zug!";
+                    turnIndicator.className = 'text-sm font-semibold p-2 text-green-600';
+                    attributeSelection.classList.remove('hidden');
+                } else {
+                    turnIndicator.textContent = `${gameData.players[gameData.turn]?.name} ist am Zug...`;
+                    turnIndicator.className = 'text-sm font-semibold p-2 text-gray-500';
+                    attributeSelection.classList.add('hidden');
+                }
+            }
+        }
+        
+        function updateStatusBar(playerCount, opponentCount) {
+            const total = playerCount + opponentCount;
+            const playerPercentage = total > 0 ? (playerCount / total) * 100 : 50;
+            
+            const statusBar = document.getElementById('statusBar');
+            if (statusBar) {
+                statusBar.style.width = `${playerPercentage}%`;
+                let color = '#f59e0b'; // amber-500
+                if (playerPercentage < 25) color = '#c2410c'; // orange-700
+                else if (playerPercentage < 50) color = '#f59e0b';
+                else if (playerPercentage > 75) color = '#16a34a'; // green-600
+                else if (playerPercentage > 50) color = '#84cc16'; // lime-500
+                statusBar.style.backgroundColor = color;
+            }
+        }
+
+        function displayMultiplayerCards(gameData) {
+            const opponentId = gameData.playerIds.find(id => id !== localPlayerId);
+            
+            const playerCardContainer = document.getElementById('playerCard');
+            const aiCardContainer = document.getElementById('aiCard');
+
+            playerCardContainer.innerHTML = '';
+            aiCardContainer.innerHTML = '';
+            
+            const showOpponentCard = !!gameData.lastResult;
+
+            const playerCard = createCard(gameData.currentCards[localPlayerId], true, true);
+            playerCardContainer.appendChild(playerCard);
+
+            if (opponentId && gameData.currentCards[opponentId]) {
+                const aiCard = createCard(gameData.currentCards[opponentId], showOpponentCard, false);
+                aiCardContainer.appendChild(aiCard);
+            } else {
+                 aiCardContainer.innerHTML = `<div class="card-front bg-gray-200 rounded-xl shadow-md border-2 border-gray-300 p-3 flex flex-col items-center justify-center h-full">Wartet auf Spieler 2...</div>`;
+            }
+        }
+
+        async function multiplayerSelectAttribute(attribute) {
+            if (!localGameState || localGameState.turn !== localPlayerId || localGameState.lastResult) return;
+            
+            const playerCard = localGameState.currentCards[localPlayerId];
+            const opponentId = localGameState.playerIds.find(id => id !== localPlayerId);
+            const opponentCard = localGameState.currentCards[opponentId];
+
+            const playerValue = playerCard[attribute];
+            const opponentValue = opponentCard[attribute];
+            
+            let playerWins;
+            if (attribute === 'quellenSchwindenRadial' || attribute === 'dk') {
+                if (playerValue < opponentValue) playerWins = true;
+                else if (opponentValue < playerValue) playerWins = false;
+                else playerWins = 'tie';
+            } else {
+                if (playerValue > opponentValue) playerWins = true;
+                else if (opponentValue > playerValue) playerWins = false;
+                else playerWins = 'tie';
+            }
+
+            const winnerId = playerWins === 'tie' ? 'tie' : (playerWins ? localPlayerId : opponentId);
+            
+            const gameUpdate = {
+                lastResult: {
+                    winnerId: winnerId,
+                    attribute: attribute,
+                    values: {
+                        [localPlayerId]: playerValue,
+                        [opponentId]: opponentValue
+                    }
+                },
+                lastActivity: serverTimestamp()
+            };
+            
+            const gameRef = doc(db, "games", gameId);
+            await updateDoc(gameRef, gameUpdate);
+        }
+
+        async function multiplayerNextRound() {
+            if (localGameState.turn !== localPlayerId && localGameState.lastResult.winnerId !== localPlayerId && localGameState.lastResult.winnerId !== 'tie') return;
+
+            const winnerId = localGameState.lastResult.winnerId;
+            const player1Id = localGameState.playerIds[0];
+            const player2Id = localGameState.playerIds[1];
+            
+            const p1Cards = [...localGameState.players[player1Id].cards];
+            const p2Cards = [...localGameState.players[player2Id].cards];
+
+            const p1Card = p1Cards.shift();
+            const p2Card = p2Cards.shift();
+            
+            if (winnerId === player1Id) {
+                p1Cards.push(p1Card, p2Card);
+            } else if (winnerId === player2Id) {
+                p2Cards.push(p1Card, p2Card);
+            } else { // Tie
+                p1Cards.push(p1Card);
+                p2Cards.push(p2Card);
+            }
+            
+            if (p1Cards.length === 0 || p2Cards.length === 0) {
+                 await updateDoc(doc(db, "games", gameId), { status: 'finished' });
+                 endGame(); // Aufruf, um den Endbildschirm anzuzeigen
+                 return;
+            }
+
+            const nextTurn = winnerId === 'tie' ? localGameState.turn : winnerId;
+
+            const gameUpdate = {
+                'lastResult': null,
+                'turn': nextTurn,
+                'players': {
+                    [player1Id]: { ...localGameState.players[player1Id], cards: p1Cards },
+                    [player2Id]: { ...localGameState.players[player2Id], cards: p2Cards }
+                },
+                'currentCards': {
+                    [player1Id]: p1Cards[0],
+                    [player2Id]: p2Cards[0]
+                },
+                'lastActivity': serverTimestamp()
+            };
+
+            const gameRef = doc(db, "games", gameId);
+            await updateDoc(gameRef, gameUpdate);
+        }
+
+        window.copyShareLink = () => {
+            const linkInput = document.getElementById('shareLink');
+            linkInput.select();
+            document.execCommand('copy');
+            alert('Link kopiert!');
+        }
+
+        // --- Controller-Funktionen für beide Modi ---
+        window.selectAttribute = function(attribute) {
+            if (gameMode === 'ai') {
+                selectAttributeAI(attribute);
+            } else if (gameMode === 'multiplayer') {
+                multiplayerSelectAttribute(attribute);
+            }
+        }
+
+        window.nextRound = function() {
+            if (gameMode === 'ai') {
+                nextRoundAI();
+            } else if (gameMode === 'multiplayer') {
+                multiplayerNextRound();
+            }
+        }
+
+
+        // --- Bestehende Spiellogik (leicht angepasst für AI-Modus) ---
+        let gameState = {
+            playerName: '', playerCards: [], aiCards: [], currentPlayerCard: null, currentAiCard: null, playerTurn: true, gameOver: false, roundResult: null, roundInProgress: false
+        };
+        
         function shuffleArray(array) {
             const shuffled = [...array];
             for (let i = shuffled.length - 1; i > 0; i--) {
@@ -399,33 +758,23 @@
             return shuffled;
         }
 
-        function startGame() {
-            const playerName = document.getElementById('playerName').value.trim();
-            if (!playerName) {
-                alert('Bitte gib deinen Namen ein!');
-                return;
-            }
-
+        function startGameAI(playerName) {
             gameState.playerName = playerName;
             document.getElementById('playerNameDisplay').textContent = playerName;
 
-            // Shuffle and distribute cards
             const shuffledCards = shuffleArray(woodCards);
             gameState.playerCards = shuffledCards.slice(0, 15);
             gameState.aiCards = shuffledCards.slice(15, 30);
-
-            // Set current cards
             gameState.currentPlayerCard = gameState.playerCards[0];
             gameState.currentAiCard = gameState.aiCards[0];
-
-            // Show game
+            
             document.getElementById('setupModal').classList.add('hidden');
             document.getElementById('gameContainer').classList.remove('hidden');
 
             window.scrollTo(0, 0);
 
-            updateDisplay();
-            displayCards();
+            updateDisplayAI();
+            displayCardsAI();
         }
 
         function createCard(cardData, isRevealed = true, isPlayer = true) {
@@ -436,7 +785,6 @@
                 card.classList.add('card-flipped');
             }
 
-            // Card front (revealed)
             const borderColor = isPlayer ? 'border-amber-400' : 'border-gray-300';
             const shadow = isPlayer ? 'shadow-lg' : 'shadow-md';
             const cardFront = document.createElement('div');
