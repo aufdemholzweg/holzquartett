@@ -1,730 +1,1109 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Holz-Quartett – Multiplayer & KI</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-    body{font-family:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-weight:300;}
-    .card-3d{transform-style:preserve-3d;transition:transform .6s;}
-    .card-flipped{transform:rotateY(180deg);}
-    .card-front,.card-back{backface-visibility:hidden;position:absolute;width:100%;height:100%;}
-    .card-back{transform:rotateY(180deg);}
-    .wood-texture{background:linear-gradient(45deg,#8B4513 25%,transparent 25%),linear-gradient(-45deg,#8B4513 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#8B4513 75%),linear-gradient(-45deg,transparent 75%,#8B4513 75%);background-size:20px 20px;background-position:0 0,0 10px,10px -10px,-10px 0px;background-color:#D2B48C;opacity:.1;}
-    .animate-pop-in{animation:pop-in .5s ease-out forwards;}
-    .animate-glow-win{animation:glow-win 1.2s ease-out;}
-    .animate-glow-lose{animation:glow-lose 1.2s ease-out;}
-    @keyframes pop-in{0%{transform:scale(0);opacity:0}70%{transform:scale(1.2);opacity:1}100%{transform:scale(1)}}
-    @keyframes glow-win{0%{box-shadow:0 0 0 0 rgba(34,197,94,0)}50%{box-shadow:0 0 30px 15px rgba(34,197,94,.55)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
-    @keyframes glow-lose{0%{box-shadow:0 0 0 0 rgba(239,68,68,0)}50%{box-shadow:0 0 30px 15px rgba(239,68,68,.55)}100%{box-shadow:0 0 0 0 rgba(239,68,68,0)}}
-    .hover-lift:hover{transform:translateY(-4px);box-shadow:0 10px 25px rgba(0,0,0,.15);}
-    .category-selected{background-color:#e5e7eb !important;}
-    .result-badge{font-weight:600}
-    /* Lesbare Erklärungen */
-    #roundInfo{max-width:640px;margin-left:auto;margin-right:auto}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Holz-Quartett</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-weight: 300;
+        }
+
+        .card-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+
+        .card-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            backface-visibility: hidden;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+        }
+
+        .wood-texture {
+            background: linear-gradient(45deg, #8B4513 25%, transparent 25%), 
+                        linear-gradient(-45deg, #8B4513 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, #8B4513 75%), 
+                        linear-gradient(-45deg, transparent 75%, #8B4513 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            background-color: #D2B48C;
+            opacity: 0.1;
+        }
+
+        .animate-pop-in {
+            animation: pop-in 0.5s ease-out forwards;
+        }
+
+        .animate-glow-win {
+            animation: glow-win 1.2s ease-out;
+        }
+
+        .animate-glow-lose {
+            animation: glow-lose 1.2s ease-out;
+        }
+
+        @keyframes pop-in {
+            0% { transform: scale(0); opacity: 0; }
+            70% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes glow-win {
+            0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); } /* green-400 */
+            50% { box-shadow: 0 0 30px 15px rgba(74, 222, 128, 0.6); }
+            100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+        }
+
+        @keyframes glow-lose {
+            0% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0); } /* red-400 */
+            50% { box-shadow: 0 0 30px 15px rgba(248, 113, 113, 0.6); }
+            100% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0); }
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+    </style>
+    <script>
+        // Preload card images for better performance
+        const imageUrls = [
+          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/eiche_1.jpg?raw=true",
+          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/buche_1.jpg?raw=true",
+          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kiefer_1.jpg?raw=true",
+          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/fichte_1.jpg?raw=true",
+          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/tanne_1.jpg?raw=true",
+          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/laerche_1.jpg?raw=true",
+          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/birke_1.jpg?raw=true",
+          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ahorn_1.jpg?raw=true",
+          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/esche_1.jpg?raw=true",
+          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kirsche_1.jpg?raw=true",
+          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/nussbaum_1.jpg?raw=true",
+          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/douglasie_1.jpg?raw=true",
+          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zeder_1.jpg?raw=true",
+          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/mahagoni_1.jpg?raw=true",
+          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/teak_1.jpg?raw=true",
+          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/bambus_1.jpg?raw=true",
+          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/pappel_1.jpg?raw=true",
+          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/weide_1.jpg?raw=true",
+          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/linde_1.jpg?raw=true",
+          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ulme_1.jpg?raw=true",
+          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kastanie_1.jpg?raw=true",
+          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/robinie_1.jpg?raw=true",
+          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/hemlock_1.jpg?raw=true",
+          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zypresse_1.jpg?raw=true",
+          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/redwood_1.jpg?raw=true",
+          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/hickory_1.jpg?raw=true",
+          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/wenge_1.jpg?raw=true",
+          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zebrano_1.jpg?raw=true",
+          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/palisander_1.jpg?raw=true",
+          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ebenholz_1.jpg?raw=true"
+        ];
+        imageUrls.forEach(url => {
+            if (!url) return;
+            const link = document.createElement('link');
+            link.rel = 'preload';
+            link.as = 'image';
+            link.href = url;
+            document.head.appendChild(link);
+        });
+    </script>
 </head>
 <body class="bg-gradient-to-br from-amber-50 to-orange-100 min-h-screen">
-  <!-- Header -->
-  <header class="bg-white shadow-sm border-b-2 border-amber-200">
-    <div class="max-w-6xl mx-auto px-4 p-3">
-      <h1 class="text-2xl font-bold text-amber-800 text-center">🌳 Holz-Quartett</h1>
-      <p class="text-xs text-gray-600 text-center mt-1">von Christopher Lehr · Masterarbeit Holztechnik</p>
-    </div>
-  </header>
-
-  <!-- Setup Modal -->
-  <div id="setupModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-    <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
-      <h2 class="text-2xl font-bold text-amber-800 mb-6 text-center">Spielmodus wählen</h2>
-      <div class="space-y-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Dein Name</label>
-          <input type="text" id="playerName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent" placeholder="Spielername">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b-2 border-amber-200">
+        <div class="max-w-6xl mx-auto px-4 p-3">
+            <h1 class="text-2xl font-bold text-amber-800 text-center">🌳 Holz-Quartett</h1>
+            <p class="text-xs text-gray-500 text-center mt-1">von Christopher Lehr, in Verbindung mit meiner Masterarbeit</p>
         </div>
-        <button id="btnAI" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">🎮 Gegen Computer</button>
-        <button id="btnMP" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">🧑‍🤝‍🧑 Online mit Freund</button>
-      </div>
-    </div>
-  </div>
+    </header>
 
-  <!-- Multiplayer Lobby -->
-  <div id="multiplayerLobbyModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
-    <div class="bg-white rounded-xl p-8 max-w-lg w-full mx-4 shadow-2xl text-center">
-      <h2 id="lobbyTitle" class="text-2xl font-bold text-amber-800 mb-4">Warte auf Mitspieler…</h2>
-      <p id="lobbyText" class="text-gray-700 mb-6">Teile den Link:</p>
-      <div class="bg-gray-100 p-3 rounded-lg border border-gray-300">
-        <input id="shareLink" type="text" class="w-full bg-transparent text-center text-blue-600" readonly>
-      </div>
-      <button id="btnCopyLink" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors">Link kopieren</button>
-      <p id="lobbyStatus" class="mt-6 text-green-600 font-semibold"></p>
-    </div>
-  </div>
-
-  <!-- Game -->
-  <div id="gameContainer" class="hidden max-w-6xl mx-auto px-4 py-4">
-    <div class="max-w-md mx-auto mb-3 space-y-1">
-      <div class="flex justify-center space-x-2">
-        <div class="w-1/2 bg-white rounded-xl shadow p-2 text-center">
-          <p id="playerNameDisplay" class="text-base font-bold text-red-600 truncate"></p>
-          <p class="text-sm text-gray-500">Karten: <span id="playerCards" class="font-semibold">15</span></p>
+    <!-- Game Mode Selection Modal -->
+    <div id="setupModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl text-center">
+            <h2 class="text-2xl font-bold text-amber-800 mb-6">Spielmodus wählen</h2>
+            <div class="space-y-4">
+                <button onclick="showNamePrompt('ai')" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors text-lg">
+                    🎮 Gegen Computer spielen
+                </button>
+                <button onclick="showNamePrompt('multiplayer')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors text-lg">
+                    🧑‍🤝‍🧑 Mit Freund online spielen
+                </button>
+            </div>
         </div>
-        <div class="w-1/2 bg-white rounded-xl shadow p-2 text-center">
-          <p id="opponentNameDisplay" class="text-base font-bold text-red-600">Computer</p>
-          <p class="text-sm text-gray-500">Karten: <span id="aiCards" class="font-semibold">15</span></p>
+    </div>
+
+    <!-- Name Input Modal -->
+    <div id="nameModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
+            <h2 class="text-2xl font-bold text-amber-800 mb-6 text-center">Dein Name</h2>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Bitte gib deinen Namen ein:</label>
+                    <input type="text" id="playerName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent" placeholder="Spielername">
+                </div>
+                <button id="nameSubmitButton" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                    Weiter
+                </button>
+            </div>
         </div>
-      </div>
-      <div class="w-full bg-gray-200 rounded-full h-4 relative overflow-hidden border border-gray-300">
-        <div id="statusBar" class="h-full rounded-l-full transition-all duration-500" style="width: 50%; background-color:#f59e0b;"></div>
-        <div class="absolute inset-0 flex justify-center items-center">
-          <div class="w-0.5 h-full bg-white opacity-75"></div>
+    </div>
+
+    <!-- Multiplayer Lobby Modal -->
+    <div id="multiplayerLobbyModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
+        <div class="bg-white rounded-xl p-8 max-w-lg w-full mx-4 shadow-2xl text-center">
+            <h2 id="lobbyTitle" class="text-2xl font-bold text-amber-800 mb-4">Warte auf Mitspieler...</h2>
+            <p id="lobbyText" class="text-gray-700 mb-6">Teile diesen Link mit deinem Freund, um das Spiel zu starten:</p>
+            <div class="bg-gray-100 p-3 rounded-lg border border-gray-300">
+                <input id="shareLink" type="text" class="w-full bg-transparent text-center text-blue-600" readonly>
+            </div>
+            <button onclick="copyShareLink()" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors">
+                Link kopieren
+            </button>
+            <p id="lobbyStatus" class="mt-6 text-green-600 font-semibold"></p>
         </div>
-      </div>
     </div>
 
-    <!-- Board -->
-    <div class="flex justify-center space-x-2 mb-4 max-w-md mx-auto">
-      <div class="text-center w-1/2">
-        <div id="playerCard" class="relative aspect-[20/38] perspective-1000"></div>
-      </div>
-      <div class="text-center w-1/2">
-        <div id="aiCard" class="relative aspect-[20/38] perspective-1000"></div>
-      </div>
-    </div>
-
-    <!-- Actions -->
-    <div class="bg-white rounded-xl shadow p-2 mt-2 text-center mx-auto flex flex-col items-center justify-center max-w-md w-full">
-      <div id="turnIndicator" class="hidden text-sm font-semibold p-2"></div>
-      <div id="attributeSelection"><h3 class="text-lg font-semibold text-gray-700">Wähle eine Eigenschaft</h3></div>
-      <div id="nextRoundButton" class="hidden w-full mb-1">
-        <button id="btnNext" class="w-full bg-amber-600 hover:bg-amber-800 text-white font-bold py-3 px-8 rounded-xl transition-colors">➡️ Nächster Zug</button>
-      </div>
-      <div id="resultDisplay" class="hidden">
-        <h3 id="resultText" class="text-xl font-bold mb-1"></h3>
-        <p id="resultDetails" class="text-sm text-gray-700"></p>
-      </div>
-      <!-- Lesbare Erklärung nach jedem Zug -->
-      <div id="roundInfo" class="hidden mt-2 text-sm bg-white border border-gray-300 rounded p-3 text-gray-900 shadow"></div>
-    </div>
-  </div>
-
-  <!-- Reflection (nur KI) -->
-  <div id="reflectionModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
-    <div class="bg-white rounded-xl p-8 max-w-lg w-full mx-4 shadow-2xl text-center">
-      <h2 class="text-2xl font-bold text-amber-800 mb-4">🎉 Super gespielt! Zeit zum Reflektieren</h2>
-      <p id="reflectionQuestion" class="text-gray-800 mb-4 text-left"></p>
-      <textarea id="reflectionAnswer" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent min-h-[100px]" placeholder="Deine Begründung…"></textarea>
-      <button id="btnFinalWin" class="mt-6 w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">Weiter zum Ergebnis</button>
-    </div>
-  </div>
-
-  <!-- Game Over -->
-  <div id="gameOverModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-    <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl text-center">
-      <h2 id="gameOverTitle" class="text-3xl font-bold mb-3"></h2>
-      <p id="gameOverText" class="text-gray-700 mb-6"></p>
-      <div class="space-y-2">
-        <button id="btnLeaderboard" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">🏆 Bestenliste</button>
-        <button id="btnReset" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">🔄 Neues Spiel</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Leaderboard -->
-  <div id="leaderboardModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-    <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
-      <h2 class="text-2xl font-bold text-amber-800 mb-6 text-center">🏆 Bestenliste</h2>
-      <div id="leaderboardList" class="space-y-1 mb-6"></div>
-      <button id="btnCloseLeaderboard" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">Schließen</button>
-    </div>
-  </div>
-
-  <!-- Info Modal -->
-  <div id="infoModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4">
-    <div class="bg-white rounded-xl p-8 max-w-lg w-full mx-4 shadow-2xl relative">
-      <button id="btnCloseInfo" class="absolute top-2 right-3 text-2xl text-gray-400 hover:text-gray-600" aria-label="Schließen">&times;</button>
-      <h2 id="infoModalTitle" class="text-2xl font-bold text-amber-800 mb-4">Wissenswertes</h2>
-      <div id="infoModalContent" class="text-gray-900 space-y-2 max-h-[60vh] overflow-y-auto"></div>
-    </div>
-  </div>
-
-  <!-- Firebase + Game Logic -->
-  <script type="module">
-    /* Firebase */
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyCyRXl8-JPr1xTXPDi1VG-eQk6fOnTpqUI",
-      authDomain: "holzquartett-3a177.firebaseapp.com",
-      projectId: "holzquartett-3a177",
-      storageBucket: "holzquartett-3a177.firebasestorage.app",
-      messagingSenderId: "1081595025073",
-      appId: "1:1081595025073:web:bc571fffb6e4f20b27f490",
-      measurementId: "G-HKLWFJE83K"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    /* State */
-    let gameMode = null; // 'ai' | 'multiplayer'
-    let gameId = null;
-    let localPlayerId = null;
-    let unsubscribeGame = null;
-    let localGameState = {};
-
-    const woodCards = [
-      {name: "Eiche", dk: 2, haerte: 85, quellenSchwindenRadial: 4.0, dichte: 650, gewicht: 12000},
-      {name: "Buche", dk: 5, haerte: 80, quellenSchwindenRadial: 5.8, dichte: 720, gewicht: 14000},
-      {name: "Kiefer", dk: 3, haerte: 40, quellenSchwindenRadial: 3.5, dichte: 520, gewicht: 11000},
-      {name: "Fichte", dk: 4, haerte: 35, quellenSchwindenRadial: 3.6, dichte: 450, gewicht: 11000},
-      {name: "Tanne", dk: 4, haerte: 38, quellenSchwindenRadial: 3.5, dichte: 460, gewicht: 10000},
-      {name: "Lärche", dk: 3, haerte: 55, quellenSchwindenRadial: 3.7, dichte: 590, gewicht: 12000},
-      {name: "Birke", dk: 5, haerte: 60, quellenSchwindenRadial: 5.4, dichte: 650, gewicht: 13000},
-      {name: "Ahorn", dk: 5, haerte: 75, quellenSchwindenRadial: 4.8, dichte: 630, gewicht: 12500},
-      {name: "Esche", dk: 5, haerte: 90, quellenSchwindenRadial: 4.9, dichte: 700, gewicht: 13000},
-      {name: "Kirsche", dk: 3, haerte: 70, quellenSchwindenRadial: 4.0, dichte: 600, gewicht: 11500},
-      {name: "Nussbaum", dk: 3, haerte: 65, quellenSchwindenRadial: 4.0, dichte: 640, gewicht: 12000},
-      {name: "Douglasie", dk: 3, haerte: 45, quellenSchwindenRadial: 3.5, dichte: 510, gewicht: 12000},
-      {name: "Zeder", dk: 2, haerte: 42, quellenSchwindenRadial: 2.8, dichte: 480, gewicht: 9500},
-      {name: "Mahagoni", dk: 2, haerte: 55, quellenSchwindenRadial: 3.0, dichte: 550, gewicht: 10500},
-      {name: "Teak", dk: 1, haerte: 60, quellenSchwindenRadial: 2.5, dichte: 650, gewicht: 11000},
-      {name: "Bambus", dk: 4, haerte: 50, quellenSchwindenRadial: 3.0, dichte: 400, gewicht: 18000},
-      {name: "Pappel", dk: 5, haerte: 25, quellenSchwindenRadial: 4.5, dichte: 380, gewicht: 9000},
-      {name: "Weide", dk: 5, haerte: 30, quellenSchwindenRadial: 4.0, dichte: 420, gewicht: 8000},
-      {name: "Linde", dk: 5, haerte: 35, quellenSchwindenRadial: 3.8, dichte: 530, gewicht: 9000},
-      {name: "Ulme", dk: 3, haerte: 75, quellenSchwindenRadial: 4.5, dichte: 680, gewicht: 11500},
-      {name: "Kastanie", dk: 2, haerte: 50, quellenSchwindenRadial: 3.5, dichte: 600, gewicht: 10000},
-      {name: "Robinie", dk: 1, haerte: 80, quellenSchwindenRadial: 3.0, dichte: 730, gewicht: 15000},
-      {name: "Hemlock", dk: 4, haerte: 40, quellenSchwindenRadial: 3.6, dichte: 500, gewicht: 10000},
-      {name: "Zypresse", dk: 2, haerte: 48, quellenSchwindenRadial: 3.0, dichte: 520, gewicht: 9000},
-      {name: "Redwood", dk: 2, haerte: 35, quellenSchwindenRadial: 2.8, dichte: 400, gewicht: 8500},
-      {name: "Hickory", dk: 3, haerte: 95, quellenSchwindenRadial: 5.5, dichte: 750, gewicht: 14000},
-      {name: "Wenge", dk: 2, haerte: 88, quellenSchwindenRadial: 3.8, dichte: 880, gewicht: 16000},
-      {name: "Zebrano", dk: 3, haerte: 70, quellenSchwindenRadial: 4.0, dichte: 750, gewicht: 13000},
-      {name: "Palisander", dk: 2, haerte: 82, quellenSchwindenRadial: 3.0, dichte: 850, gewicht: 16000},
-      {name: "Ebenholz", dk: 1, haerte: 98, quellenSchwindenRadial: 3.2, dichte: 1200, gewicht: 16500}
-    ];
-
-    const attributeInfo = {
-      dk: {icon:'🛡️', name:'Dauerhaftigkeit (DK)'},
-      haerte: {icon:'💎', name:'Druckfestigkeit (N/mm²)'},
-      quellenSchwindenRadial: {icon:'↔️', name:'Quellen/Schwinden (%)'},
-      dichte: {icon:'⚖️', name:'Rohdichte (kg/m³)'},
-      gewicht: {icon:'🏋️', name:'E-Modul (N/mm²)'}
-    };
-
-    /* Simple helpers */
-    const $ = (id)=>document.getElementById(id);
-    function shuffleArray(array){const a=[...array];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a;}
-    function updateStatusBar(playerCount, opponentCount){
-      const total=playerCount+opponentCount; const pct= total>0 ? (playerCount/total)*100 : 50;
-      const bar=$('statusBar'); bar.style.width=`${pct}%`; let color='#f59e0b';
-      if(pct<25) color='#c2410c'; else if(pct<50) color='#f59e0b'; else if(pct>75) color='#16a34a'; else if(pct>50) color='#84cc16';
-      bar.style.backgroundColor=color;
-    }
-
-    /* UI builders */
-    function createCard(cardData, canSelect=false, isPlayer=true, selectedAttr=null){
-      const card=document.createElement('div');
-      card.className=`card-3d w-full h-full relative ${isPlayer?'hover-lift':''}`;
-      const borderColor=isPlayer?'border-amber-400':'border-gray-300';
-      const shadow=isPlayer?'shadow-lg':'shadow-md';
-      const front=document.createElement('div');
-      front.className=`card-front bg-white rounded-xl ${shadow} border-2 ${borderColor} p-3 flex flex-col`;
-
-      const attrs=['dk','haerte','quellenSchwindenRadial','dichte','gewicht'];
-      const attrHtml = attrs.map(key=>{
-        const selCls = selectedAttr===key ? 'category-selected' : 'bg-blue-50';
-        if(canSelect){
-          return `
-            <button data-attr="${key}" class="attr-btn w-full flex justify-between items-center py-1 px-1 ${selCls} hover:bg-blue-100 rounded-xl transition-colors text-left">
-              <div class="flex items-center"><span class="mr-2 text-xs">${attributeInfo[key].icon}</span><div><span class="text-xs font-medium leading-tight">${attributeInfo[key].name.split(' (')[0]}</span><span class="block text-[11px] text-gray-500 leading-tight">(${attributeInfo[key].name.split(' (')[1]||''}</span></div></div>
-              <span class="font-semibold text-blue-600 text-base">${typeof cardData[key]==='number'?cardData[key].toLocaleString('de-DE'):cardData[key]}</span>
-            </button>`;
-        } else {
-          return `
-            <div class="w-full flex justify-between items-center py-1 px-1 ${selCls} rounded-xl">
-              <div class="flex items-center"><span class="mr-2 text-xs">${attributeInfo[key].icon}</span><div><span class="text-xs font-medium leading-tight">${attributeInfo[key].name.split(' (')[0]}</span><span class="block text-[11px] text-gray-500 leading-tight">(${attributeInfo[key].name.split(' (')[1]||''}</span></div></div>
-              <span class="font-semibold text-blue-600 text-base">${typeof cardData[key]==='number'?cardData[key].toLocaleString('de-DE'):cardData[key]}</span>
-            </div>`;
-        }
-      }).join('');
-
-      front.innerHTML = `
-        <div class="flex justify-between items-center w-full mb-1">
-          <h3 class="text-lg font-bold text-amber-800 truncate">${cardData.name}</h3>
-          <button class="info-btn bg-purple-600 text-white rounded-full h-6 w-6 flex items-center justify-center text-xs hover:bg-purple-700" title="Info">💡</button>
+    <!-- Game Container -->
+    <div id="gameContainer" class="hidden max-w-6xl mx-auto px-4 py-4">
+        <!-- Score & Status Panel -->
+        <div class="max-w-md mx-auto mb-3 space-y-1">
+            <div class="flex justify-center space-x-2">
+                <!-- Player Score Box -->
+                <div class="w-1/2 bg-white rounded-xl shadow-lg p-2 text-center">
+                    <p id="playerNameDisplay" class="text-base font-bold text-red-600 truncate"></p>
+                    <p class="text-sm text-gray-500">Karten: <span id="playerCards" class="font-semibold">15</span></p>
+                </div>
+                <!-- Opponent Score Box -->
+                <div class="w-1/2 bg-white rounded-xl shadow-lg p-2 text-center">
+                    <p id="opponentNameDisplay" class="text-base font-bold text-red-600">Computer</p>
+                    <p class="text-sm text-gray-500">Karten: <span id="aiCards" class="font-semibold">15</span></p>
+                </div>
+            </div>
+            <!-- Status Bar -->
+            <div class="w-full bg-gray-200 rounded-full h-4 relative overflow-hidden border border-gray-300">
+                <div id="statusBar" class="h-full rounded-l-full transition-all duration-500" style="width: 50%; background-color: #f59e0b;"></div>
+                <div class="absolute inset-0 flex justify-center items-center">
+                    <div class="w-0.5 h-full bg-white opacity-75"></div>
+                </div>
+            </div>
         </div>
-        <div class="space-y-1 mt-auto">${attrHtml}</div>
-      `;
 
-      const back=document.createElement('div');
-      back.className='card-back bg-gradient-to-br from-amber-300 to-orange-400 rounded-xl shadow-lg border-2 border-amber-300 p-4 flex items-center justify-center relative overflow-hidden';
-      back.innerHTML = `<div class="wood-texture absolute inset-0"></div><div class="text-center z-10"><div class="text-6xl mb-4">🌳</div><h3 class="text-xl font-bold text-white opacity-90">Holzquartett</h3></div>`;
+        <!-- Game Board -->
+        <div class="flex justify-center space-x-2 sm:space-x-2 mb-4 max-w-md mx-auto">
+            <!-- Player Card -->
+            <div class="text-center w-1/2">
+                <div id="playerCard" class="relative aspect-[20/38] perspective-1000"></div>
+            </div>
+            <!-- Opponent Card -->
+            <div class="text-center w-1/2">
+                <div id="aiCard" class="relative aspect-[20/38] perspective-1000"></div>
+            </div>
+        </div>
 
-      card.appendChild(front); card.appendChild(back);
-      return card;
-    }
+        <!-- Action Panel -->
+        <div class="bg-white rounded-xl shadow-lg p-1 mt-4 text-center mx-auto flex flex-col items-center justify-center max-w-md w-full">
+            <div id="turnIndicator" class="hidden text-sm font-semibold p-2"></div>
+            <div id="attributeSelection" class="">
+                 <h3 class="text-lg font-semibold text-gray-700">Wähle eine Eigenschaft!</h3>
+            </div>
+            <div id="nextRoundButton" class="hidden w-full mb-1">
+                 <button onclick="nextRound()" class="w-full bg-amber-600 hover:bg-amber-800 text-white font-bold py-3 px-8 rounded-xl transition-colors">
+                     ➡️ Nächster Zug
+                 </button>
+             </div>
+            <div id="resultDisplay" class="hidden">
+                 <h3 id="resultText" class="text-xl font-bold mb-1"></h3>
+                 <p id="resultDetails" class="text-sm text-gray-600"></p>
+            </div>
+        </div>
+    </div>
 
-    /* Game state (KI) */
-    let aiState = { playerName:'', playerCards:[], aiCards:[], currentPlayerCard:null, currentAiCard:null, gameOver:false, roundInProgress:false, lastSelected:null };
+    <!-- Reflection Modal -->
+    <div id="reflectionModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
+        <div class="bg-white rounded-xl p-8 max-w-lg w-full mx-4 shadow-2xl text-center">
+            <h2 class="text-2xl font-bold text-amber-800 mb-4">🎉 Super gespielt! Zeit zum Reflektieren!</h2>
+            <p id="reflectionQuestion" class="text-gray-700 mb-6 text-left"></p>
+            <textarea id="reflectionAnswer" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent min-h-[100px]" placeholder="Deine Begründung..."></textarea>
+            <button onclick="showFinalWinScreen()" class="mt-6 w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                Weiter zum Ergebnis
+            </button>
+        </div>
+    </div>
 
-    /* Reflection questions (KI) */
-    const reflectionQuestions=[ "Welches Holz würdest du für Gartenmöbel wählen und warum?", "Welche zwei Hölzer sind für einen stark beanspruchten Dielenboden geeignet und warum?" ];
+    <!-- Game Over Modal -->
+    <div id="gameOverModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl text-center">
+            <h2 id="gameOverTitle" class="text-3xl font-bold mb-3"></h2>
+            <p id="gameOverText" class="text-gray-600 mb-6"></p>
+            <div class="space-y-2">
+                <button onclick="showLeaderboard()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg">
+                    🏆 Bestenliste anzeigen
+                </button>
+                <button onclick="resetGame()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg">
+                    🔄 Neues Spiel
+                </button>
+            </div>
+        </div>
+    </div>
 
-    /* Auth + deep link join */
-    onAuthStateChanged(auth, (user)=>{
-      if(!user) return;
-      localPlayerId = user.uid;
-      const params=new URLSearchParams(location.search);
-      const gid=params.get('game');
-      if(gid){ gameMode='multiplayer'; gameId=gid; $('setupModal').classList.add('hidden'); promptNameThenJoin(); }
-    });
+    <!-- Leaderboard Modal -->
+    <div id="leaderboardModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
+            <h2 class="text-2xl font-bold text-amber-800 mb-6 text-center">🏆 Bestenliste</h2>
+            <div id="leaderboardList" class="space-y-1 mb-6"></div>
+            <button onclick="closeLeaderboard()" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg">
+                Schließen
+            </button>
+        </div>
+    </div>
 
-    document.addEventListener('DOMContentLoaded', async ()=>{
-      try{ await signInAnonymously(auth);}catch(e){ console.error('Auth error',e); }
-      $('btnAI').onclick=()=>startNameFlow('ai');
-      $('btnMP').onclick=()=>startNameFlow('multiplayer');
-      $('btnCopyLink').onclick=copyShareLink;
-      $('btnNext').onclick=()=> nextRound();
-      $('btnFinalWin').onclick= showFinalWinScreen;
-      $('btnLeaderboard').onclick= showLeaderboard;
-      $('btnReset').onclick= resetGame;
-      $('btnCloseLeaderboard').onclick= closeLeaderboard;
-      $('btnCloseInfo').onclick= ()=> $('infoModal').classList.add('hidden');
-      window.addEventListener('beforeunload', async ()=>{
-        if(gameMode==='multiplayer' && gameId && localPlayerId){
-          try{ await updateDoc(doc(db,'games',gameId), { [`players.${localPlayerId}.status`]:'offline' }); }catch(_){}
-        }
-      });
-    });
+    <!-- Info Modal -->
+    <div id="infoModal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 px-4">
+        <div class="bg-white rounded-xl p-8 max-w-lg w-full mx-4 shadow-2xl relative">
+            <button onclick="closeInfoModal()" class="absolute top-2 right-3 text-2xl text-gray-400 hover:text-gray-600">&times;</button>
+            <h2 id="infoModalTitle" class="text-2xl font-bold text-amber-800 mb-4">Wissenswertes</h2>
+            <div id="infoModalContent" class="text-gray-700 space-y-2 max-h-[60vh] overflow-y-auto"></div>
+        </div>
+    </div>
 
-    function startNameFlow(mode){
-      const name = ($('playerName').value||'').trim();
-      if(!name){ alert('Bitte gib deinen Namen ein.'); return; }
-      $('setupModal').classList.add('hidden');
-      if(mode==='ai'){ gameMode='ai'; startGameAI(name); }
-      else{ gameMode='multiplayer'; createGame(name); }
-    }
-    function promptNameThenJoin(){
-      const name = prompt('Dein Name?','Spieler');
-      if(!name){ location.search=''; return; }
-      joinGame(gameId, name.trim());
-    }
+    <script type="module">
+        // ===== Firebase Imports =====
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    /* ---- KI-Modus ---- */
-    function startGameAI(playerName){
-      aiState.playerName = playerName;
-      $('playerNameDisplay').textContent = playerName;
-      $('opponentNameDisplay').textContent = 'Computer';
-      const shuffled=shuffleArray(woodCards);
-      aiState.playerCards=shuffled.slice(0,15);
-      aiState.aiCards=shuffled.slice(15,30);
-      aiState.currentPlayerCard=aiState.playerCards[0];
-      aiState.currentAiCard=aiState.aiCards[0];
-      $('gameContainer').classList.remove('hidden');
-      updateAIDisplay();
-      renderAICards();
-    }
-
-    function renderAICards(selected=null, revealAI=false){
-      const pc=$('playerCard'); const ac=$('aiCard');
-      pc.innerHTML=''; ac.innerHTML='';
-      const p = createCard(aiState.currentPlayerCard, true, true, selected);
-      const a = createCard(aiState.currentAiCard, false, false, revealAI?selected:null);
-      if(!revealAI) a.classList.add('card-flipped');
-      pc.appendChild(p); ac.appendChild(a);
-
-      p.querySelectorAll('.attr-btn').forEach(btn=>{
-        btn.onclick=()=> selectAttributeAI(btn.getAttribute('data-attr'));
-      });
-      p.querySelector('.info-btn').onclick=()=> showWoodInfo(aiState.currentPlayerCard.name);
-    }
-
-    function selectAttributeAI(attr){
-      if(aiState.roundInProgress) return;
-      aiState.roundInProgress=true; aiState.lastSelected=attr;
-      const pv=aiState.currentPlayerCard[attr]; const av=aiState.currentAiCard[attr];
-      $('aiCard').querySelector('.card-3d').classList.remove('card-flipped');
-
-      // Disable buttons
-      $('playerCard').querySelectorAll('.attr-btn').forEach(b=>{ b.disabled=true; b.classList.add('opacity-50','cursor-not-allowed'); });
-
-      let playerWins;
-      if(attr==='quellenSchwindenRadial' || attr==='dk'){ playerWins = pv<av ? true : (av<pv ? false : 'tie'); }
-      else { playerWins = pv>av ? true : (av>pv ? false : 'tie'); }
-
-      // Highlight chosen attr gray
-      renderAICards(attr, true);
-
-      const pFront = $('playerCard').querySelector('.card-front');
-      const aFront = $('aiCard').querySelector('.card-front');
-
-      let resultText='', resultClass='text-gray-700';
-      if(playerWins===true){
-        resultText='🎉 Du gewinnst!';
-        resultClass='text-green-600';
-        pFront.classList.add('animate-glow-win'); aFront.classList.add('animate-glow-lose');
-        aiState.playerCards.push(aiState.playerCards.shift(), aiState.aiCards.shift());
-      } else if(playerWins===false){
-        resultText='😞 KI gewinnt!';
-        resultClass='text-red-600';
-        pFront.classList.add('animate-glow-lose'); aFront.classList.add('animate-glow-win');
-        aiState.aiCards.push(aiState.aiCards.shift(), aiState.playerCards.shift());
-      } else {
-        resultText='🤝 Unentschieden';
-        resultClass='text-yellow-600';
-        pFront.classList.remove('animate-glow-win','animate-glow-lose');
-        aFront.classList.remove('animate-glow-win','animate-glow-lose');
-        aiState.playerCards.push(aiState.playerCards.shift());
-        aiState.aiCards.push(aiState.aiCards.shift());
-      }
-
-      $('resultText').textContent = resultText;
-      $('resultText').className = `text-xl font-bold mb-1 ${resultClass}`;
-      $('resultDetails').textContent = `${attributeInfo[attr].name.split(' (')[0]}: ${pv.toLocaleString('de-DE')} vs ${av.toLocaleString('de-DE')}`;
-      $('attributeSelection').classList.add('hidden');
-      $('resultDisplay').classList.remove('hidden');
-      $('nextRoundButton').classList.remove('hidden');
-
-      // Lesbare Erklärung
-      $('roundInfo').innerHTML = `<span class="result-badge ${playerWins===true?'text-green-700':playerWins===false?'text-red-700':'text-yellow-700'}">${attributeInfo[attr].icon} ${attributeInfo[attr].name}</span><br>
-        ${aiState.currentPlayerCard.name} (${pv.toLocaleString('de-DE')}) vs ${aiState.currentAiCard.name} (${av.toLocaleString('de-DE')})`;
-      $('roundInfo').classList.remove('hidden');
-
-      updateAIDisplay();
-      checkGameOverAI();
-    }
-
-    function nextRound(){
-      if(gameMode==='ai'){ return nextRoundAI(); }
-      if(gameMode==='multiplayer'){ return multiplayerNextRound(); }
-    }
-
-    function nextRoundAI(){
-      const pf=$('playerCard').querySelector('.card-front');
-      if(pf) pf.classList.remove('animate-glow-win','animate-glow-lose');
-      if(aiState.playerCards.length===0 || aiState.aiCards.length===0){ return endGameAI(); }
-      aiState.currentPlayerCard=aiState.playerCards[0];
-      aiState.currentAiCard=aiState.aiCards[0];
-      aiState.roundInProgress=false;
-      $('attributeSelection').classList.remove('hidden');
-      $('nextRoundButton').classList.add('hidden');
-      $('resultDisplay').classList.add('hidden');
-      $('roundInfo').classList.add('hidden');
-      renderAICards();
-      updateAIDisplay();
-    }
-
-    function updateAIDisplay(){
-      $('playerCards').textContent = aiState.playerCards.length;
-      $('aiCards').textContent = aiState.aiCards.length;
-      updateStatusBar(aiState.playerCards.length, aiState.aiCards.length);
-    }
-
-    function checkGameOverAI(){
-      if(aiState.playerCards.length===0 || aiState.aiCards.length===0){
-        setTimeout(endGameAI, 1000);
-      }
-    }
-
-    function endGameAI(){
-      const playerWon = aiState.playerCards.length>0;
-      if(playerWon){
-        saveToLeaderboard(aiState.playerName, aiState.playerCards.length);
-        // Reflexion NUR im KI-Modus
-        const idx = Number(localStorage.getItem('reflection_idx')||'0');
-        $('reflectionQuestion').textContent = reflectionQuestions[idx % reflectionQuestions.length];
-        $('reflectionModal').classList.remove('hidden');
-        localStorage.setItem('reflection_idx', String(idx+1));
-      } else {
-        $('gameOverTitle').textContent='😞 Spiel verloren';
-        $('gameOverTitle').className='text-3xl font-bold mb-3 text-red-600';
-        $('gameOverText').textContent='Die KI hat gewonnen. Versuche es erneut.';
-        $('gameOverModal').classList.remove('hidden');
-      }
-    }
-
-    function showFinalWinScreen(){
-      $('reflectionModal').classList.add('hidden');
-      $('reflectionAnswer').value='';
-      $('gameOverTitle').textContent='🎉 Glückwunsch!';
-      $('gameOverTitle').className='text-3xl font-bold mb-3 text-green-600';
-      $('gameOverText').textContent=`Du hast gewonnen, ${aiState.playerName}!`;
-      $('gameOverModal').classList.remove('hidden');
-    }
-
-    /* Leaderboard (lokal) */
-    function saveToLeaderboard(name, score){
-      let lb = JSON.parse(localStorage.getItem('holzquartett-leaderboard')||'[]');
-      lb.push({name,score,date:new Date().toLocaleDateString('de-DE')});
-      lb.sort((a,b)=>b.score-a.score); lb=lb.slice(0,10);
-      localStorage.setItem('holzquartett-leaderboard', JSON.stringify(lb));
-    }
-    function showLeaderboard(){
-      const lb = JSON.parse(localStorage.getItem('holzquartett-leaderboard')||'[]');
-      const list=$('leaderboardList');
-      list.innerHTML = lb.length? lb.map((e,i)=>`<div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg"><span class="font-semibold">${i+1}. ${e.name}</span><span class="text-sm text-gray-600">${e.score} Karten – ${e.date}</span></div>`).join('') : '<p class="text-gray-500 text-center">Noch keine Einträge</p>';
-      $('gameOverModal').classList.add('hidden');
-      $('leaderboardModal').classList.remove('hidden');
-    }
-    function closeLeaderboard(){
-      $('leaderboardModal').classList.add('hidden');
-      $('gameOverModal').classList.remove('hidden');
-    }
-    function resetGame(){
-      if(unsubscribeGame) unsubscribeGame();
-      if(gameId){ try{ deleteDoc(doc(db,'games',gameId)); }catch(_){ } }
-      localGameState={}; gameMode=null; gameId=null; unsubscribeGame=null;
-      aiState={ playerName:'', playerCards:[], aiCards:[], currentPlayerCard:null, currentAiCard:null, gameOver:false, roundInProgress:false, lastSelected:null };
-      $('gameOverModal').classList.add('hidden');
-      $('leaderboardModal').classList.add('hidden');
-      $('reflectionModal').classList.add('hidden');
-      $('gameContainer').classList.add('hidden');
-      $('setupModal').classList.remove('hidden');
-      $('playerName').value='';
-      $('infoModal').classList.add('hidden');
-      $('roundInfo').classList.add('hidden');
-      history.pushState({}, document.title, location.pathname);
-    }
-
-    /* Info modal (statisch verkürzt; hier könntest du dein volles woodInfo-Objekt einsetzen) */
-    const woodInfo = {
-      "Eiche": { info:"Hart, dauerhaft, Gerbstoffe reagieren mit Eisen.", bildBaum:"", bildQuerschnitt:"" },
-      "Buche": { info:"Zäh, gleichmäßig, Möbel und Parkett.", bildBaum:"", bildQuerschnitt:"" },
-      "Fichte": { info:"Leicht, Bauholz, gute Festigkeit/gewicht.", bildBaum:"", bildQuerschnitt:"" }
-    };
-    function showWoodInfo(woodName){
-      $('infoModalTitle').textContent = `Wissenswertes über ${woodName}`;
-      const data = woodInfo[woodName];
-      $('infoModalContent').innerHTML = data ? `<p>${data.info}</p>` : `<p>Keine Daten verfügbar.</p>`;
-      $('infoModal').classList.remove('hidden');
-    }
-
-    /* ---- Multiplayer ---- */
-    function copyShareLink(){ const el=$('shareLink'); el.select(); document.execCommand('copy'); alert('Link kopiert'); }
-
-    async function createGame(playerName){
-      $('multiplayerLobbyModal').classList.remove('hidden');
-      gameId = Math.random().toString(36).substring(2,8).toUpperCase();
-      const baseUrl = location.href.split('?')[0];
-      $('shareLink').value = `${baseUrl}?game=${gameId}`;
-      const gameRef = doc(db,'games',gameId);
-      const init = {
-        gameId, status:'waiting',
-        playerIds:[localPlayerId],
-        players:{ [localPlayerId]:{ name:playerName, cards:[], status:'online' } },
-        createdAt: serverTimestamp()
-      };
-      await setDoc(gameRef, init);
-      listenToGameChanges();
-    }
-
-    async function joinGame(gid, playerName){
-      const ref=doc(db,'games',gid); const snap=await getDoc(ref);
-      if(snap.exists() && snap.data().status==='waiting' && snap.data().playerIds.length===1){
-        $('multiplayerLobbyModal').classList.remove('hidden');
-        $('lobbyTitle').textContent='Spiel wird beigetreten…';
-        $('lobbyText').textContent='Mische Karten…';
-        const shuffled=shuffleArray(woodCards);
-        const p1Id = snap.data().playerIds[0];
-        const update = {
-          status:'playing',
-          playerIds:[p1Id, localPlayerId],
-          [`players.${localPlayerId}`]:{ name:playerName, cards: shuffled.slice(15), status:'online' },
-          [`players.${p1Id}.cards`]: shuffled.slice(0,15),
-          turn: p1Id,
-          currentCards: {
-            [p1Id]: shuffled.slice(0,15)[0],
-            [localPlayerId]: shuffled.slice(15)[0]
-          },
-          lastResult:null,
-          lastActivity: serverTimestamp()
+        // ===== Firebase Config =====
+        const firebaseConfig = {
+            apiKey: "AIzaSyCyRXl8-JPr1xTXPDi1VG-eQk6fOnTpqUI",
+            authDomain: "holzquartett-3a177.firebaseapp.com",
+            projectId: "holzquartett-3a177",
+            storageBucket: "holzquartett-3a177.firebasestorage.app",
+            messagingSenderId: "1081595025073",
+            appId: "1:1081595025073:web:bc571fffb6e4f20b27f490",
+            measurementId: "G-HKLWFJE83K"
         };
-        await updateDoc(ref, update);
-        listenToGameChanges();
-      } else {
-        alert('Spiel nicht gefunden oder voll.');
-        location.search='';
-      }
-    }
 
-    function listenToGameChanges(){
-      const ref=doc(db,'games',gameId);
-      unsubscribeGame = onSnapshot(ref, (snap)=>{
-        if(!snap.exists()){ alert('Spiel beendet'); resetGame(); return; }
-        const data=snap.data(); localGameState=data;
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
 
-        // Game UI
-        $('multiplayerLobbyModal').classList.add('hidden');
-        $('gameContainer').classList.remove('hidden');
-        const opponentId = data.playerIds.find(id=>id!==localPlayerId);
+        // ===== Global State =====
+        let gameMode = null; // 'ai' or 'multiplayer'
+        let gameId = null;
+        let localPlayerId = null;
+        let unsubscribeGame = null; 
+        let localGameState = {};
+        let hasCopiedShareLink = false; // Weiter erst nach "Link kopieren"
 
-        $('playerNameDisplay').textContent = data.players[localPlayerId]?.name || 'Du';
-        $('opponentNameDisplay').textContent = opponentId? data.players[opponentId].name : 'Wartet…';
-        $('playerCards').textContent = data.players[localPlayerId]?.cards?.length ?? 0;
-        $('aiCards').textContent = opponentId? (data.players[opponentId]?.cards?.length ?? 0) : 0;
-        updateStatusBar( Number($('playerCards').textContent), Number($('aiCards').textContent) );
+        // ===== Wood Data =====
+        const woodCards = [
+            {name: "Eiche", dk: 2, haerte: 85, quellenSchwindenRadial: 4.0, dichte: 650, gewicht: 12000},
+            {name: "Buche", dk: 5, haerte: 80, quellenSchwindenRadial: 5.8, dichte: 720, gewicht: 14000},
+            {name: "Kiefer", dk: 3, haerte: 40, quellenSchwindenRadial: 3.5, dichte: 520, gewicht: 11000},
+            {name: "Fichte", dk: 4, haerte: 35, quellenSchwindenRadial: 3.6, dichte: 450, gewicht: 11000},
+            {name: "Tanne", dk: 4, haerte: 38, quellenSchwindenRadial: 3.5, dichte: 460, gewicht: 10000},
+            {name: "Lärche", dk: 3, haerte: 55, quellenSchwindenRadial: 3.7, dichte: 590, gewicht: 12000},
+            {name: "Birke", dk: 5, haerte: 60, quellenSchwindenRadial: 5.4, dichte: 650, gewicht: 13000},
+            {name: "Ahorn", dk: 5, haerte: 75, quellenSchwindenRadial: 4.8, dichte: 630, gewicht: 12500},
+            {name: "Esche", dk: 5, haerte: 90, quellenSchwindenRadial: 4.9, dichte: 700, gewicht: 13000},
+            {name: "Kirsche", dk: 3, haerte: 70, quellenSchwindenRadial: 4.0, dichte: 600, gewicht: 11500},
+            {name: "Nussbaum", dk: 3, haerte: 65, quellenSchwindenRadial: 4.0, dichte: 640, gewicht: 12000},
+            {name: "Douglasie", dk: 3, haerte: 45, quellenSchwindenRadial: 3.5, dichte: 510, gewicht: 12000},
+            {name: "Zeder", dk: 2, haerte: 42, quellenSchwindenRadial: 2.8, dichte: 480, gewicht: 9500},
+            {name: "Mahagoni", dk: 2, haerte: 55, quellenSchwindenRadial: 3.0, dichte: 550, gewicht: 10500},
+            {name: "Teak", dk: 1, haerte: 60, quellenSchwindenRadial: 2.5, dichte: 650, gewicht: 11000},
+            {name: "Bambus", dk: 4, haerte: 50, quellenSchwindenRadial: 3.0, dichte: 400, gewicht: 18000},
+            {name: "Pappel", dk: 5, haerte: 25, quellenSchwindenRadial: 4.5, dichte: 380, gewicht: 9000},
+            {name: "Weide", dk: 5, haerte: 30, quellenSchwindenRadial: 4.0, dichte: 420, gewicht: 8000},
+            {name: "Linde", dk: 5, haerte: 35, quellenSchwindenRadial: 3.8, dichte: 530, gewicht: 9000},
+            {name: "Ulme", dk: 3, haerte: 75, quellenSchwindenRadial: 4.5, dichte: 680, gewicht: 11500},
+            {name: "Kastanie", dk: 2, haerte: 50, quellenSchwindenRadial: 3.5, dichte: 600, gewicht: 10000},
+            {name: "Robinie", dk: 1, haerte: 80, quellenSchwindenRadial: 3.0, dichte: 730, gewicht: 15000},
+            {name: "Hemlock", dk: 4, haerte: 40, quellenSchwindenRadial: 3.6, dichte: 500, gewicht: 10000},
+            {name: "Zypresse", dk: 2, haerte: 48, quellenSchwindenRadial: 3.0, dichte: 520, gewicht: 9000},
+            {name: "Redwood", dk: 2, haerte: 35, quellenSchwindenRadial: 2.8, dichte: 400, gewicht: 8500},
+            {name: "Hickory", dk: 3, haerte: 95, quellenSchwindenRadial: 5.5, dichte: 750, gewicht: 14000},
+            {name: "Wenge", dk: 2, haerte: 88, quellenSchwindenRadial: 3.8, dichte: 880, gewicht: 16000},
+            {name: "Zebrano", dk: 3, haerte: 70, quellenSchwindenRadial: 4.0, dichte: 750, gewicht: 13000},
+            {name: "Palisander", dk: 2, haerte: 82, quellenSchwindenRadial: 3.0, dichte: 850, gewicht: 16000},
+            {name: "Ebenholz", dk: 1, haerte: 98, quellenSchwindenRadial: 3.2, dichte: 1200, gewicht: 16500}
+        ];
 
-        // Render cards with chosen attribute highlight if lastResult exists
-        const selectedAttr = data.lastResult?.attribute || null;
-        displayMultiplayerCards(data, !!data.lastResult, selectedAttr);
+        const woodInfo = {
+          "Eiche": { info: `Eiche (QE) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/eiche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/eiche_2.jpg?raw=true" },
+          "Buche": { info: `Buche (BU) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/buche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/buche_2.jpg?raw=true" },
+          "Kiefer": { info: `Kiefer (KI) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kiefer_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kiefer_2.jpg?raw=true" },
+          "Fichte": { info: `Fichte (FI) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/fichte_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/fichte_2.jpg?raw=true" },
+          "Tanne": { info: `Tanne (TA) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/tanne_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/tanne_2.jpg?raw=true" },
+          "Lärche": { info: `Lärche (LA) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/laerche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/laerche_2.jpg?raw=true" },
+          "Birke": { info: `Birke (BI) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/birke_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/birke_2.jpg?raw=true" },
+          "Ahorn": { info: `Ahorn (AM) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ahorn_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ahorn_2.jpg?raw=true" },
+          "Esche": { info: `Esche (ES) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/esche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/esche_2.jpg?raw=true" },
+          "Kirsche": { info: `Kirsche (KR) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kirsche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kirsche_2.jpg?raw=true" },
+          "Nussbaum": { info: `Nussbaum (NU) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/nussbaum_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/nussbaum_2.jpg?raw=true" },
+          "Douglasie": { info: `Douglasie (DO) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/douglasie_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/douglasie_2.jpg?raw=true" },
+          "Zeder": { info: `Zeder (ZE) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zeder_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zeder_2.jpg?raw=true" },
+          "Mahagoni": { info: `Mahagoni (MA) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/mahagoni_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/mahagoni_2.jpg?raw=true" },
+          "Teak": { info: `Teak (TE) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/teak_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/teak_2.jpg?raw=true" },
+          "Bambus": { info: `Bambus (BA) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/bambus_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/bambus_2.jpg?raw=true" },
+          "Pappel": { info: `Pappel (PA) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/pappel_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/pappel_2.jpg?raw=true" },
+          "Weide": { info: `Weide (WE) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/weide_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/weide_2.jpg?raw=true" },
+          "Linde": { info: `Linde (LI) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/linde_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/linde_2.jpg?raw=true" },
+          "Ulme": { info: `Ulme (UL) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ulme_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ulme_2.jpg?raw=true" },
+          "Kastanie": { info: `Kastanie (KA) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kastanie_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kastanie_2.jpg?raw=true" },
+          "Robinie": { info: `Robinie (RO) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/robinie_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/robinie_2.jpg?raw=true" },
+          "Hemlock": { info: `Hemlock (HE) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/hemlock_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/hemlock_2.jpg?raw=true" },
+          "Zypresse": { info: `Zypresse (ZY) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zypresse_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zypresse_2.jpg?raw=true" },
+          "Redwood": { info: `Redwood (RW) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/redwood_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/redwood_2.jpg?raw=true" },
+          "Hickory": { info: `Hickory (HI) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/hickory_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/hickory_2.jpg?raw=true" },
+          "Wenge": { info: `Wenge (WE-NE) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/wenge_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/wenge_2.jpg?raw=true" },
+          "Zebrano": { info: `Zebrano (ZE-RA) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zebrano_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zebrano_2.jpg?raw=true" },
+          "Palisander": { info: `Palisander (PA) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/palisander_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/palisander_2.jpg?raw=true" },
+          "Ebenholz": { info: `Ebenholz (EB) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ebenholz_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ebenholz_2.jpg?raw=true" }
+        };
 
-        // Turn + result
-        const turnIndicator=$('turnIndicator');
-        const attributeSelection=$('attributeSelection');
-        const resultDisplay=$('resultDisplay');
-        const nextRoundBtn=$('nextRoundButton');
+        const reflectionQuestions = [
+            "Stell dir vor, du sollst einen stabilen und langlebigen Esstisch für eine Familie entwerfen. ...",
+            "Welches Holz würdest du für Gartenmöbel wählen, ...",
+            "Eine Küchenarbeitsplatte muss schnittfest und widerstandsfähig sein. ...",
+            "Für einen stark beanspruchten Dielenboden ...",
+            "Du sollst den Korpus einer Akustikgitarre bauen. ...",
+            "Fenster sind ständig wechselnder Luftfeuchtigkeit ausgesetzt. ...",
+            "Für ein Modellflugzeug oder ein leichtes Regal ...",
+            "Robinie und Lärche sind beide für den Außenbereich beliebt. ...",
+            "Du möchtest einen gebogenen Handlauf ...",
+            "Vergleiche die Rohdichte und den E-Modul von Fichte und Eiche. ...",
+            "Hölzer mit hohem Quell- und Schwindmaß ...",
+            "Ein Hammerstiel muss extrem bruchfest ...",
+            "Bei Eichenholz kann es in Verbindung mit Eisen ...",
+            "Weiche Hölzer wie Fichte oder Kiefer ...",
+            "Für die Herstellung von dekorativen Furnieren ...",
+            "Nenne drei heimische Hölzer ...",
+            "Holz ist ein wichtiger CO₂-Speicher. ...",
+            "Was bedeuten Siegel wie FSC oder PEFC ...",
+            "Teak hat eine exzellente Dauerhaftigkeit (DK 1). ...",
+            "Bambus ist botanisch gesehen ein Gras, ...",
+            "Was könntest du aus einem alten Eichenbalken ...",
+            "Du möchtest ein Möbelstück mit einem starken Hell-Dunkel-Kontrast ...",
+            "Hölzer wie Eiche oder Esche haben ...",
+            "Stell dir vor, du entwirfst ein Kinderspielzeug ...",
+            "Einige Hölzer wie Kirsche oder Lärche ...",
+            "Für ein modernes, minimalistisches Möbelstück ...",
+            "Welches Holz würdest du für den Bau einer rustikalen Almhütte ...",
+            "Du planst ein Schülerprojekt ...",
+            "Ein Kunde wünscht sich für seine Terrasse ...",
+            "Welche Eigenschaft einer Holzart ...",
+            "Wenn du eine neue Kategorie ...",
+        ];
 
-        turnIndicator.classList.remove('hidden');
+        // ===== Attribute Info =====
+        const attributeInfo = {
+            dk: {icon: '🛡️', name: 'Dauerhaftigkeit (DK)', color: 'blue'},
+            haerte: {icon: '💎', name: 'Druckfestigkeit (N/mm²)', color: 'blue'},
+            quellenSchwindenRadial: {icon: '↔️', name: 'Quellen/Schwinden (%)', color: 'blue'},
+            dichte: {icon: '⚖️', name: 'Rohdichte (kg/m³)', color: 'blue'},
+            gewicht: {icon: '🏋️', name: 'E-Modul (N/mm²)', color: 'blue'}
+        };
 
-        if(data.lastResult){
-          attributeSelection.classList.add('hidden');
-          resultDisplay.classList.remove('hidden');
-          nextRoundBtn.classList.remove('hidden');
+        // ===== Local Game State for AI mode =====
+        let aiGame = {
+            playerName: '',
+            playerCards: [],
+            aiCards: [],
+            currentPlayerCard: null,
+            currentAiCard: null,
+            roundInProgress: false
+        };
 
-          const { winnerId, attribute, values } = data.lastResult;
-          let text='', cls='text-gray-700';
-          if(winnerId==='tie'){ text='🤝 Unentschieden'; cls='text-yellow-600'; }
-          else if(winnerId===localPlayerId){ text='🎉 Du gewinnst!'; cls='text-green-600'; }
-          else { text=`😞 ${data.players[winnerId].name} gewinnt!`; cls='text-red-600'; }
-          $('resultText').textContent=text; $('resultText').className=`text-xl font-bold mb-1 ${cls}`;
-          $('resultDetails').textContent = `${attributeInfo[attribute].name.split(' (')[0]}: ${values[localPlayerId]} vs ${values[opponentId]}`;
+        // ===== Auth + Deep Link Join =====
+        document.addEventListener('DOMContentLoaded', async () => {
+            try { await signInAnonymously(auth); } catch (e) { console.error("Firebase Auth Error:", e); }
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    localPlayerId = user.uid;
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const gameIdFromUrl = urlParams.get('game');
+                    if (gameIdFromUrl) {
+                        gameId = gameIdFromUrl;
+                        gameMode = 'multiplayer';
+                        showNamePrompt('join');
+                    }
+                }
+            });
+        });
 
-          // Erklärung
-          $('roundInfo').innerHTML = `<span class="result-badge">${attributeInfo[attribute].icon} ${attributeInfo[attribute].name}</span><br>
-            ${data.players[localPlayerId].name}: ${values[localPlayerId]} · ${data.players[opponentId].name}: ${values[opponentId]}`;
-          $('roundInfo').classList.remove('hidden');
+        window.addEventListener('beforeunload', async () => {
+            if (gameMode === 'multiplayer' && gameId && localPlayerId) {
+                const gameRef = doc(db, "games", gameId);
+                const playerStatusPath = `players.${localPlayerId}.status`;
+                await updateDoc(gameRef, { [playerStatusPath]: "offline" }).catch(() => {});
+            }
+        });
 
-        } else {
-          resultDisplay.classList.add('hidden');
-          nextRoundBtn.classList.add('hidden');
-          $('roundInfo').classList.add('hidden');
-          if(data.turn===localPlayerId){
-            turnIndicator.textContent='Du bist am Zug';
-            turnIndicator.className='text-sm font-semibold p-2 text-green-600';
-            attributeSelection.classList.remove('hidden');
-          } else {
-            turnIndicator.textContent=`${data.players[data.turn]?.name} ist am Zug…`;
-            turnIndicator.className='text-sm font-semibold p-2 text-gray-500';
-            attributeSelection.classList.add('hidden');
-          }
+        // ===== UI Control =====
+        window.showNamePrompt = (mode) => {
+            document.getElementById('setupModal').classList.add('hidden');
+            const nameModal = document.getElementById('nameModal');
+            nameModal.classList.remove('hidden');
+            const nameSubmitButton = document.getElementById('nameSubmitButton');
+            const newButton = nameSubmitButton.cloneNode(true);
+            nameSubmitButton.parentNode.replaceChild(newButton, nameSubmitButton);
+
+            newButton.addEventListener('click', () => {
+                const playerName = document.getElementById('playerName').value.trim();
+                if (!playerName) { alert('Bitte gib deinen Namen ein!'); return; }
+                nameModal.classList.add('hidden');
+
+                if (mode === 'ai') {
+                    gameMode = 'ai';
+                    startGameAI(playerName);
+                } else if (mode === 'multiplayer') {
+                    gameMode = 'multiplayer';
+                    createGame(playerName);
+                } else if (mode === 'join') {
+                    joinGame(gameId, playerName);
+                }
+            });
+        };
+
+        window.copyShareLink = async () => {
+            const linkInput = document.getElementById('shareLink');
+            try {
+                await navigator.clipboard.writeText(linkInput.value);
+            } catch (e) {
+                // Fallback
+                linkInput.focus();
+                linkInput.select();
+                document.execCommand('copy');
+            }
+            hasCopiedShareLink = true;
+            const statusEl = document.getElementById('lobbyStatus');
+            if (statusEl) statusEl.textContent = 'Link kopiert. Warte auf Mitspieler...';
+
+            // Falls der Mitspieler schon beigetreten ist, jetzt fortfahren
+            if (localGameState && (localGameState.status === 'playing' || localGameState.status === 'finished')) {
+                document.getElementById('multiplayerLobbyModal').classList.add('hidden');
+                document.getElementById('gameContainer').classList.remove('hidden');
+                updateMultiplayerUI(localGameState);
+            }
+        };
+
+        // ===== Multiplayer Logic =====
+        async function createGame(playerName) {
+            const lobbyModal = document.getElementById('multiplayerLobbyModal');
+            lobbyModal.classList.remove('hidden');
+            hasCopiedShareLink = false; // Host muss erst "Link kopieren" klicken
+
+            gameId = Math.random().toString(36).substring(2, 8).toUpperCase();
+            const shareLinkInput = document.getElementById('shareLink');
+            const baseUrl = window.location.href.split('?')[0];
+            shareLinkInput.value = `${baseUrl}?game=${gameId}`;
+
+            const gameRef = doc(db, "games", gameId);
+            const initialGameData = {
+                gameId: gameId,
+                status: 'waiting',
+                playerIds: [localPlayerId],
+                players: {
+                    [localPlayerId]: { name: playerName, cards: [], status: 'online' }
+                },
+                createdAt: serverTimestamp()
+            };
+
+            await setDoc(gameRef, initialGameData);
+            listenToGameChanges();
         }
-      });
-    }
 
-    function displayMultiplayerCards(data, revealOpponent, selectedAttr){
-      const opponentId = data.playerIds.find(id=>id!==localPlayerId);
-      const pc=$('playerCard'); const ac=$('aiCard'); pc.innerHTML=''; ac.innerHTML='';
-      const pCard = data.currentCards?.[localPlayerId];
-      const oCard = opponentId? data.currentCards?.[opponentId] : null;
+        async function joinGame(gameIdToJoin, playerName) {
+            const gameRef = doc(db, "games", gameIdToJoin);
+            const gameSnap = await getDoc(gameRef);
 
-      const p = createCard(pCard, data.turn===localPlayerId && !data.lastResult, true, selectedAttr);
-      const a = oCard ? createCard(oCard, false, false, selectedAttr) : null;
+            if (gameSnap.exists() && gameSnap.data().status === 'waiting' && gameSnap.data().playerIds.length === 1) {
+                document.getElementById('lobbyTitle').textContent = "Spiel wird beigetreten...";
+                document.getElementById('lobbyText').textContent = "Moment, die Karten werden gemischt.";
+                document.getElementById('multiplayerLobbyModal').classList.remove('hidden');
+                hasCopiedShareLink = true; // Joiner darf direkt weiter
 
-      if(!revealOpponent && a) a.classList.add('card-flipped');
+                const shuffledCards = shuffleArray(woodCards);
+                const player1Id = gameSnap.data().playerIds[0];
 
-      pc.appendChild(p);
-      if(a){ ac.appendChild(a); }
-      else{ ac.innerHTML = `<div class="card-front bg-gray-200 rounded-xl border-2 border-gray-300 p-3 h-full flex items-center justify-center">Wartet…</div>`; }
+                const gameUpdateData = {
+                    status: 'playing',
+                    playerIds: [player1Id, localPlayerId],
+                    [`players.${localPlayerId}`]: { name: playerName, cards: shuffledCards.slice(15), status: 'online' },
+                    [`players.${player1Id}.cards`]: shuffledCards.slice(0, 15),
+                    turn: player1Id,
+                    currentCards: {
+                        [player1Id]: shuffledCards.slice(0, 15)[0],
+                        [localPlayerId]: shuffledCards.slice(15)[0],
+                    },
+                    lastResult: null,
+                    lastActivity: serverTimestamp()
+                };
 
-      p.querySelectorAll('.attr-btn').forEach(btn=>{
-        btn.onclick=()=> selectAttribute('multiplayer', btn.getAttribute('data-attr'));
-      });
-      p.querySelector('.info-btn').onclick=()=> showWoodInfo(pCard.name);
-
-      // Add glow after result
-      if(data.lastResult){
-        const winnerId=data.lastResult.winnerId;
-        const pFront = pc.querySelector('.card-front');
-        const aFront = $('aiCard').querySelector('.card-front');
-        if(winnerId!=='tie'){
-          if(winnerId===localPlayerId){ pFront.classList.add('animate-glow-win'); if(aFront) aFront.classList.add('animate-glow-lose'); }
-          else { pFront.classList.add('animate-glow-lose'); if(aFront) aFront.classList.add('animate-glow-win'); }
+                await updateDoc(gameRef, gameUpdateData);
+                listenToGameChanges();
+            } else {
+                alert("Spiel nicht gefunden oder bereits voll.");
+                window.location.search = '';
+            }
         }
-      }
-    }
 
-    async function selectAttribute(modeOrAttr, maybeAttr){
-      if(gameMode==='ai') return selectAttributeAI(modeOrAttr);
-      // multiplayer
-      const attribute = maybeAttr;
-      if(!localGameState || localGameState.turn!==localPlayerId || localGameState.lastResult) return;
-      const myCard = localGameState.currentCards[localPlayerId];
-      const opponentId = localGameState.playerIds.find(id=>id!==localPlayerId);
-      const oppCard = localGameState.currentCards[opponentId];
-      const pv=myCard[attribute]; const ov=oppCard[attribute];
-      let myWin;
-      if(attribute==='quellenSchwindenRadial' || attribute==='dk'){ myWin = pv<ov ? true : (ov<pv ? false : 'tie'); }
-      else { myWin = pv>ov ? true : (ov>pv ? false : 'tie'); }
-      const winnerId = myWin==='tie' ? 'tie' : (myWin ? localPlayerId : opponentId);
-      const ref=doc(db,'games',gameId);
-      await updateDoc(ref, {
-        lastResult: { winnerId, attribute, values: { [localPlayerId]: pv, [opponentId]: ov } },
-        lastActivity: serverTimestamp()
-      });
-    }
+        function listenToGameChanges() {
+            const gameRef = doc(db, "games", gameId);
+            unsubscribeGame = onSnapshot(gameRef, (docSnap) => {
+                if (!docSnap.exists()) {
+                    alert("Das Spiel wurde beendet.");
+                    resetGame();
+                    return;
+                }
 
-    async function multiplayerNextRound(){
-      const data=localGameState;
-      const opponentId = data.playerIds.find(id=>id!==localPlayerId);
-      const p1Id = data.playerIds[0], p2Id=data.playerIds[1];
+                const gameData = docSnap.data();
+                localGameState = gameData;
 
-      const p1=[...data.players[p1Id].cards];
-      const p2=[...data.players[p2Id].cards];
-      const c1=p1.shift(); const c2=p2.shift();
+                if (gameData.status === 'playing' || gameData.status === 'finished') {
+                    if (hasCopiedShareLink) {
+                        document.getElementById('multiplayerLobbyModal').classList.add('hidden');
+                        document.getElementById('gameContainer').classList.remove('hidden');
+                        updateMultiplayerUI(gameData);
+                    } else {
+                        const statusEl = document.getElementById('lobbyStatus');
+                        if (statusEl) statusEl.textContent = 'Mitspieler ist beigetreten. Klicke „Link kopieren“, um fortzufahren.';
+                    }
+                }
 
-      const winnerId = data.lastResult?.winnerId || 'tie';
-      if(winnerId===p1Id){ p1.push(c1,c2); }
-      else if(winnerId===p2Id){ p2.push(c1,c2); }
-      else { p1.push(c1); p2.push(c2); }
+                const opponentId = gameData.playerIds.find(id => id !== localPlayerId);
+                if (opponentId && gameData.players[opponentId]?.status === 'offline') {
+                    // Hinweis möglich
+                }
+            });
+        }
 
-      // Endbedingung: eindeutiger Sieger
-      if(p1.length===0 || p2.length===0){
-        const finalWinner = p1.length>0 ? p1Id : p2Id;
-        await updateDoc(doc(db,'games',gameId), { status:'finished', winnerId: finalWinner, lastActivity: serverTimestamp() });
-        showMultiplayerGameOver(finalWinner);
-        return;
-      }
+        function updateMultiplayerUI(gameData) {
+            const opponentId = gameData.playerIds.find(id => id !== localPlayerId);
 
-      const nextTurn = winnerId==='tie' ? data.turn : winnerId;
-      await updateDoc(doc(db,'games',gameId), {
-        lastResult:null,
-        turn: nextTurn,
-        players: {
-          [p1Id]: { ...data.players[p1Id], cards: p1 },
-          [p2Id]: { ...data.players[p2Id], cards: p2 }
-        },
-        currentCards: {
-          [p1Id]: p1[0],
-          [p2Id]: p2[0]
-        },
-        lastActivity: serverTimestamp()
-      });
-    }
+            document.getElementById('playerNameDisplay').textContent = gameData.players[localPlayerId].name;
+            document.getElementById('playerCards').textContent = gameData.players[localPlayerId].cards.length;
 
-    function showMultiplayerGameOver(winnerId){
-      const data=localGameState;
-      const opponentId = data.playerIds.find(id=>id!==localPlayerId);
-      const winnerName = winnerId===localPlayerId? data.players[localPlayerId].name : data.players[opponentId].name;
-      if(winnerId===localPlayerId){
-        $('gameOverTitle').textContent='🎉 Glückwunsch!';
-        $('gameOverTitle').className='text-3xl font-bold mb-3 text-green-600';
-        $('gameOverText').textContent=`Du hast gewonnen, ${winnerName}!`;
-      } else {
-        $('gameOverTitle').textContent='😞 Spiel verloren';
-        $('gameOverTitle').className='text-3xl font-bold mb-3 text-red-600';
-        $('gameOverText').textContent=`${winnerName} hat gewonnen.`;
-      }
-      $('gameOverModal').classList.remove('hidden');
-    }
+            if (opponentId) {
+                document.getElementById('opponentNameDisplay').textContent = gameData.players[opponentId].name;
+                document.getElementById('aiCards').textContent = gameData.players[opponentId].cards.length;
+            } else {
+                document.getElementById('opponentNameDisplay').textContent = "Wartet...";
+                document.getElementById('aiCards').textContent = '...';
+            }
 
-  </script>
+            updateStatusBar(gameData.players[localPlayerId].cards.length, gameData.players[opponentId]?.cards.length || 0);
+            displayMultiplayerCards(gameData);
+
+            const turnIndicator = document.getElementById('turnIndicator');
+            const attributeSelection = document.getElementById('attributeSelection');
+            const resultDisplay = document.getElementById('resultDisplay');
+            const nextRoundBtn = document.getElementById('nextRoundButton');
+
+            turnIndicator.classList.remove('hidden');
+
+            if (gameData.lastResult) {
+                attributeSelection.classList.add('hidden');
+                resultDisplay.classList.remove('hidden');
+                nextRoundBtn.classList.remove('hidden');
+
+                const { winnerId, attribute, values } = gameData.lastResult;
+                const winnerName = winnerId === localPlayerId ? 'Du' : (winnerId === 'tie' ? '' : gameData.players[winnerId]?.name);
+
+                let resultText = winnerId === 'tie' ? `🤝 Unentschieden!` : `🎉 ${winnerName || 'Gegner'} gewinnt!`;
+                if (winnerId !== localPlayerId && winnerId !== 'tie') resultText = `😞 ${winnerName} gewinnt!`;
+
+                document.getElementById('resultText').textContent = resultText;
+                const opponentId2 = gameData.playerIds.find(id => id !== localPlayerId);
+                document.getElementById('resultDetails').textContent = `${attributeInfo[attribute].name.split(' (')[0]}: ${values[localPlayerId]} vs ${values[opponentId2]}`;
+
+            } else {
+                resultDisplay.classList.add('hidden');
+                nextRoundBtn.classList.add('hidden');
+
+                if (gameData.turn === localPlayerId) {
+                    turnIndicator.textContent = "Du bist am Zug!";
+                    turnIndicator.className = 'text-sm font-semibold p-2 text-green-600';
+                    attributeSelection.classList.remove('hidden');
+                } else {
+                    turnIndicator.textContent = `${gameData.players[gameData.turn]?.name} ist am Zug...`;
+                    turnIndicator.className = 'text-sm font-semibold p-2 text-gray-500';
+                    attributeSelection.classList.add('hidden');
+                }
+            }
+        }
+
+        function updateStatusBar(playerCount, opponentCount) {
+            const total = playerCount + opponentCount;
+            const playerPercentage = total > 0 ? (playerCount / total) * 100 : 50;
+
+            const statusBar = document.getElementById('statusBar');
+            if (statusBar) {
+                statusBar.style.width = `${playerPercentage}%`;
+                let color = '#f59e0b'; // amber-500
+                if (playerPercentage < 25) color = '#c2410c';
+                else if (playerPercentage < 50) color = '#f59e0b';
+                else if (playerPercentage > 75) color = '#16a34a';
+                else if (playerPercentage > 50) color = '#84cc16';
+                statusBar.style.backgroundColor = color;
+            }
+        }
+
+        function displayMultiplayerCards(gameData) {
+            const opponentId = gameData.playerIds.find(id => id !== localPlayerId);
+
+            const playerCardContainer = document.getElementById('playerCard');
+            const aiCardContainer = document.getElementById('aiCard');
+
+            playerCardContainer.innerHTML = '';
+            aiCardContainer.innerHTML = '';
+
+            const showOpponentCard = !!gameData.lastResult;
+
+            const playerCard = createCard(gameData.currentCards[localPlayerId], true, true);
+            playerCardContainer.appendChild(playerCard);
+
+            if (opponentId && gameData.currentCards[opponentId]) {
+                const aiCard = createCard(gameData.currentCards[opponentId], showOpponentCard, false);
+                aiCardContainer.appendChild(aiCard);
+            } else {
+                aiCardContainer.innerHTML = `<div class="card-front bg-gray-200 rounded-xl shadow-md border-2 border-gray-300 p-3 flex flex-col items-center justify-center h-full">Wartet auf Spieler 2...</div>`;
+            }
+        }
+
+        async function multiplayerSelectAttribute(attribute) {
+            if (!localGameState || localGameState.turn !== localPlayerId || localGameState.lastResult) return;
+
+            const playerCard = localGameState.currentCards[localPlayerId];
+            const opponentId = localGameState.playerIds.find(id => id !== localPlayerId);
+            const opponentCard = localGameState.currentCards[opponentId];
+
+            const playerValue = playerCard[attribute];
+            const opponentValue = opponentCard[attribute];
+
+            let playerWins;
+            if (attribute === 'quellenSchwindenRadial' || attribute === 'dk') {
+                if (playerValue < opponentValue) playerWins = true;
+                else if (opponentValue < playerValue) playerWins = false;
+                else playerWins = 'tie';
+            } else {
+                if (playerValue > opponentValue) playerWins = true;
+                else if (opponentValue > playerValue) playerWins = false;
+                else playerWins = 'tie';
+            }
+
+            const winnerId = playerWins === 'tie' ? 'tie' : (playerWins ? localPlayerId : opponentId);
+
+            const gameUpdate = {
+                lastResult: {
+                    winnerId: winnerId,
+                    attribute: attribute,
+                    values: {
+                        [localPlayerId]: playerValue,
+                        [opponentId]: opponentValue
+                    }
+                },
+                lastActivity: serverTimestamp()
+            };
+
+            const gameRef = doc(db, "games", gameId);
+            await updateDoc(gameRef, gameUpdate);
+        }
+
+        async function multiplayerNextRound() {
+            if (!localGameState || !localGameState.lastResult) return;
+
+            const winnerId = localGameState.lastResult.winnerId;
+            const player1Id = localGameState.playerIds[0];
+            const player2Id = localGameState.playerIds[1];
+
+            const p1Cards = [...localGameState.players[player1Id].cards];
+            const p2Cards = [...localGameState.players[player2Id].cards];
+
+            const p1Card = p1Cards.shift();
+            const p2Card = p2Cards.shift();
+
+            if (winnerId === player1Id) {
+                p1Cards.push(p1Card, p2Card);
+            } else if (winnerId === player2Id) {
+                p2Cards.push(p1Card, p2Card);
+            } else { // Tie
+                p1Cards.push(p1Card);
+                p2Cards.push(p2Card);
+            }
+
+            if (p1Cards.length === 0 || p2Cards.length === 0) {
+                await updateDoc(doc(db, "games", gameId), { status: 'finished' });
+                endGame(); 
+                return;
+            }
+
+            const nextTurn = winnerId === 'tie' ? localGameState.turn : winnerId;
+
+            const gameUpdate = {
+                'lastResult': null,
+                'turn': nextTurn,
+                'players': {
+                    [player1Id]: { ...localGameState.players[player1Id], cards: p1Cards },
+                    [player2Id]: { ...localGameState.players[player2Id], cards: p2Cards }
+                },
+                'currentCards': {
+                    [player1Id]: p1Cards[0],
+                    [player2Id]: p2Cards[0]
+                },
+                'lastActivity': serverTimestamp()
+            };
+
+            const gameRef = doc(db, "games", gameId);
+            await updateDoc(gameRef, gameUpdate);
+        }
+
+        // ===== Controller for both modes =====
+        window.selectAttribute = function(attribute) {
+            if (gameMode === 'ai') {
+                selectAttributeAI(attribute);
+            } else if (gameMode === 'multiplayer') {
+                multiplayerSelectAttribute(attribute);
+            }
+        };
+
+        window.nextRound = function() {
+            if (gameMode === 'ai') {
+                nextRoundAI();
+            } else if (gameMode === 'multiplayer') {
+                multiplayerNextRound();
+            }
+        };
+
+        // ===== AI Mode Logic =====
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function startGameAI(playerName) {
+            aiGame.playerName = playerName;
+            document.getElementById('playerNameDisplay').textContent = playerName;
+
+            const shuffledCards = shuffleArray(woodCards);
+            aiGame.playerCards = shuffledCards.slice(0, 15);
+            aiGame.aiCards = shuffledCards.slice(15, 30);
+            aiGame.currentPlayerCard = aiGame.playerCards[0];
+            aiGame.currentAiCard = aiGame.aiCards[0];
+
+            document.getElementById('setupModal').classList.add('hidden');
+            document.getElementById('gameContainer').classList.remove('hidden');
+
+            window.scrollTo(0, 0);
+
+            updateDisplayAI();
+            displayCardsAI();
+        }
+
+        function createCard(cardData, isRevealed = true, isPlayer = true) {
+            const card = document.createElement('div');
+            card.className = `card-3d w-full h-full relative cursor-pointer transition-all duration-300 ${isPlayer ? 'hover-lift' : ''}`;
+            if (!isRevealed) card.classList.add('card-flipped');
+
+            const borderColor = isPlayer ? 'border-amber-400' : 'border-gray-300';
+            const shadow = isPlayer ? 'shadow-lg' : 'shadow-md';
+            const cardFront = document.createElement('div');
+            cardFront.className = `card-front bg-white rounded-xl ${shadow} border-2 ${borderColor} p-3 flex flex-col`;
+
+            const canSelect = isPlayer && (
+                (gameMode === 'ai') ||
+                (gameMode === 'multiplayer' && localGameState.turn === localPlayerId && !localGameState.lastResult)
+            );
+
+            const infoButtonHTML = (isPlayer || (gameMode === 'multiplayer' && isRevealed)) ? `
+                <button onclick="showWoodInfo('${cardData.name}')" class="bg-purple-600 text-white rounded-full h-6 w-6 flex-shrink-0 flex items-center justify-center text-xs hover:bg-purple-700">💡</button>
+            ` : '';
+
+            const attributeButtons = canSelect ? `
+                <div class="space-y-1 mt-auto">
+                    <button onclick="selectAttribute('dk')" class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors text-left">
+                        <div class="flex items-center"><span class="mr-2 text-xs">🛡️</span><div><span class="text-xs font-medium leading-tight">Dauerhaftigkeit</span><span class="block text-xs text-gray-500 leading-tight">(DK)</span></div></div><span class="font-semibold text-blue-600 text-base">${cardData.dk}</span>
+                    </button>
+                    <button onclick="selectAttribute('haerte')" class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors text-left">
+                         <div class="flex items-center"><span class="mr-2 text-xs">💎</span><div><span class="text-xs font-medium leading-tight">Druckfestigkeit</span><span class="block text-xs text-gray-500 leading-tight">(N/mm²)</span></div></div><span class="font-semibold text-blue-600 text-base">${cardData.haerte}</span>
+                    </button>
+                    <button onclick="selectAttribute('quellenSchwindenRadial')" class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors text-left">
+                         <div class="flex items-center"><span class="mr-2 text-xs">↔️</span><div><span class="text-xs font-medium leading-tight">Quellen/Schw.</span><span class="block text-xs text-gray-500 leading-tight">(%)</span></div></div><span class="font-semibold text-blue-600 text-base">${cardData.quellenSchwindenRadial}</span>
+                    </button>
+                    <button onclick="selectAttribute('dichte')" class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors text-left">
+                         <div class="flex items-center"><span class="mr-2 text-xs">⚖️</span><div><span class="text-xs font-medium leading-tight">Rohdichte</span><span class="block text-xs text-gray-500 leading-tight">(kg/m³)</span></div></div><span class="font-semibold text-blue-600 text-base">${cardData.dichte}</span>
+                    </button>
+                    <button onclick="selectAttribute('gewicht')" class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors text-left">
+                         <div class="flex items-center"><span class="mr-2 text-xs">🏋️</span><div><span class="text-xs font-medium leading-tight">E-Modul</span><span class="block text-xs text-gray-500 leading-tight">(N/mm²)</span></div></div><span class="font-semibold text-blue-600 text-base">${cardData.gewicht.toLocaleString('de-DE')}</span>
+                    </button>
+                </div>
+            ` : `
+                <div class="space-y-1 mt-auto">
+                    <div class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 rounded-xl text-left"><div class="flex items-center"><span class="mr-2 text-xs">🛡️</span><div><span class="text-xs font-medium leading-tight">Dauerhaftigkeit</span><span class="block text-xs text-gray-500 leading-tight">(DK)</span></div></div><span class="font-semibold text-blue-600 text-base">${cardData.dk}</span></div>
+                    <div class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 rounded-xl text-left"><div class="flex items-center"><span class="mr-2 text-xs">💎</span><div><span class="text-xs font-medium leading-tight">Druckfestigkeit</span><span class="block text-xs text-gray-500 leading-tight">(N/mm²)</span></div></div><span class="font-semibold text-blue-600 text-base">${cardData.haerte}</span></div>
+                    <div class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 rounded-xl text-left"><div class="flex items-center"><span class="mr-2 text-xs">↔️</span><div><span class="text-xs font-medium leading-tight">Quellen/Schw.</span><span class="block text-xs text-gray-500 leading-tight">(%)</span></div></div><span class="font-semibold text-blue-600 text-base">${cardData.quellenSchwindenRadial}</span></div>
+                    <div class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 rounded-xl text-left"><div class="flex items-center"><span class="mr-2 text-xs">⚖️</span><div><span class="text-xs font-medium leading-tight">Rohdichte</span><span class="block text-xs text-gray-500 leading-tight">(kg/m³)</span></div></div><span class="font-semibold text-blue-600 text-base">${cardData.dichte}</span></div>
+                    <div class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 rounded-xl text-left"><div class="flex items-center"><span class="mr-2 text-xs">🏋️</span><div><span class="text-xs font-medium leading-tight">E-Modul</span><span class="block text-xs text-gray-500 leading-tight">(N/mm²)</span></div></div><span class="font-bold text-blue-600 text-base">${cardData.gewicht.toLocaleString('de-DE')}</span></div>
+                </div>
+            `;
+
+            const woodData = woodInfo[cardData.name] || woodInfo[Object.keys(woodInfo).find(k => k.toLowerCase() === cardData.name.toLowerCase())];
+            const treeImage = woodData ? woodData.bildBaum : 'https://placehold.co/36x36/d1d5db/374151?text=?';
+
+            cardFront.innerHTML = `
+                <div class="flex justify-between items-center w-full mb-1">
+                    <div class="flex items-center space-x-2 flex-1 min-w-0">
+                        <img src="${treeImage}" alt="${cardData.name}" class="w-9 h-9 object-cover rounded-full border-2 border-amber-200 flex-shrink-0">
+                        <h3 class="text-lg font-bold text-amber-800 truncate">${cardData.name}</h3>
+                    </div>
+                    <div class="flex-shrink-0">${infoButtonHTML}</div>
+                </div>
+                ${attributeButtons}
+            `;
+
+            const cardBack = document.createElement('div');
+            cardBack.className = 'card-back bg-gradient-to-br from-amber-300 to-orange-400 rounded-xl shadow-lg border-2 border-amber-300 p-4 flex items-center justify-center relative overflow-hidden';
+            cardBack.innerHTML = `<div class="wood-texture absolute inset-0"></div><div class="text-center z-10"><div class="text-6xl mb-4">🌳</div><h3 class="text-xl font-bold text-white opacity-90">Holzquartett</h3></div>`;
+
+            card.appendChild(cardFront);
+            card.appendChild(cardBack);
+            return card;
+        }
+
+        function displayCardsAI() {
+            const playerCardContainer = document.getElementById('playerCard');
+            const aiCardContainer = document.getElementById('aiCard');
+            playerCardContainer.innerHTML = '';
+            aiCardContainer.innerHTML = '';
+            playerCardContainer.appendChild(createCard(aiGame.currentPlayerCard, true, true));
+            aiCardContainer.appendChild(createCard(aiGame.currentAiCard, false, false));
+        }
+
+        function selectAttributeAI(attribute) {
+            if (aiGame.roundInProgress) return;
+            aiGame.roundInProgress = true;
+
+            const playerValue = aiGame.currentPlayerCard[attribute];
+            const aiValue = aiGame.currentAiCard[attribute];
+
+            document.getElementById('aiCard').querySelector('.card-3d').classList.remove('card-flipped');
+
+            const attributeButtons = document.querySelectorAll('#playerCard .space-y-1 > button');
+            attributeButtons.forEach(button => {
+                button.disabled = true;
+                button.classList.add('cursor-not-allowed', 'opacity-50');
+            });
+
+            let playerWins;
+            if (attribute === 'quellenSchwindenRadial' || attribute === 'dk') {
+                if (playerValue < aiValue) playerWins = true; else if (aiValue < playerValue) playerWins = false; else playerWins = 'tie';
+            } else {
+                if (playerValue > aiValue) playerWins = true; else if (aiValue > playerValue) playerWins = false; else playerWins = 'tie';
+            }
+
+            let resultText, resultClass;
+            if (playerWins === true) {
+                resultText = `🎉 Du gewinnst!`;
+                resultClass = 'text-green-600';
+                highlightAttribute(attribute, 'win');
+                aiGame.playerCards.push(aiGame.playerCards.shift(), aiGame.aiCards.shift());
+                document.getElementById('playerCard').querySelector('.card-front').classList.add('animate-glow-win');
+            } else if (playerWins === false) {
+                resultText = `😞 KI gewinnt!`;
+                resultClass = 'text-red-600';
+                highlightAttribute(attribute, 'lose');
+                aiGame.aiCards.push(aiGame.aiCards.shift(), aiGame.playerCards.shift());
+                document.getElementById('playerCard').querySelector('.card-front').classList.add('animate-glow-lose');
+            } else {
+                resultText = `🤝 Unentschieden!`;
+                resultClass = 'text-yellow-600';
+                highlightAttribute(attribute, 'tie');
+                aiGame.playerCards.push(aiGame.playerCards.shift());
+                aiGame.aiCards.push(aiGame.aiCards.shift());
+            }
+
+            document.getElementById('resultText').textContent = resultText;
+            document.getElementById('resultText').className = `text-xl font-bold mb-1 ${resultClass}`;
+            document.getElementById('resultDetails').textContent = `${attributeInfo[attribute].name.split(' (')[0]}: ${playerValue.toLocaleString('de-DE')} vs ${aiValue.toLocaleString('de-DE')}`;
+
+            document.getElementById('attributeSelection').classList.add('hidden');
+            document.getElementById('resultDisplay').classList.remove('hidden');
+            document.getElementById('nextRoundButton').classList.remove('hidden');
+
+            updateDisplayAI();
+            checkGameOverAI();
+        }
+
+        function highlightAttribute(attribute, result) {
+            let playerBgColor = '', aiBgColor = '';
+            if (result === 'win') { playerBgColor = 'bg-green-200'; aiBgColor = 'bg-gray-200'; }
+            else if (result === 'lose') { playerBgColor = 'bg-red-200'; aiBgColor = 'bg-green-200'; }
+            else { playerBgColor = 'bg-yellow-200'; aiBgColor = 'bg-yellow-200'; }
+
+            const attributeSelectors = {'dk': 0, 'haerte': 1, 'quellenSchwindenRadial': 2, 'dichte': 3, 'gewicht': 4};
+            const idx = attributeSelectors[attribute];
+
+            document.querySelectorAll('#playerCard .space-y-1 > *')[idx].classList.replace('bg-blue-50', playerBgColor);
+            document.querySelectorAll('#aiCard .space-y-1 > *')[idx].classList.replace('bg-blue-50', aiBgColor);
+        }
+
+        function nextRoundAI() {
+            const pf = document.getElementById('playerCard').querySelector('.card-front');
+            if (pf) pf.classList.remove('animate-glow-win', 'animate-glow-lose');
+            if (aiGame.playerCards.length === 0 || aiGame.aiCards.length === 0) { endGameAI(); return; }
+
+            aiGame.currentPlayerCard = aiGame.playerCards[0];
+            aiGame.currentAiCard = aiGame.aiCards[0];
+            aiGame.roundInProgress = false;
+
+            document.getElementById('attributeSelection').classList.remove('hidden');
+            document.getElementById('nextRoundButton').classList.add('hidden');
+            document.getElementById('resultDisplay').classList.add('hidden');
+
+            displayCardsAI();
+            updateDisplayAI();
+        }
+
+        function updateDisplayAI() {
+            const playerCount = aiGame.playerCards.length;
+            const opponentCount = aiGame.aiCards.length;
+            document.getElementById('playerCards').textContent = playerCount;
+            document.getElementById('aiCards').textContent = opponentCount;
+            updateStatusBar(playerCount, opponentCount);
+        }
+
+        function checkGameOverAI() {
+            if (aiGame.playerCards.length === 0 || aiGame.aiCards.length === 0) {
+                setTimeout(endGameAI, 1200);
+            }
+        }
+
+        function endGame() {
+            if (gameMode === 'ai') { endGameAI(); return; }
+            const playerWon = localGameState.players[localPlayerId].cards.length > 0;
+            if (playerWon) {
+                saveToLeaderboard(localGameState.players[localPlayerId].name, localGameState.players[localPlayerId].cards.length);
+                let qi = parseInt(localStorage.getItem('reflectionQuestionIndex') || '0');
+                document.getElementById('reflectionQuestion').textContent = reflectionQuestions[qi];
+                document.getElementById('reflectionModal').classList.remove('hidden');
+                qi = (qi + 1) % reflectionQuestions.length;
+                localStorage.setItem('reflectionQuestionIndex', qi.toString());
+            } else {
+                document.getElementById('gameOverTitle').textContent = '😞 Spiel verloren';
+                document.getElementById('gameOverTitle').className = `text-3xl font-bold mb-3 text-red-600`;
+                document.getElementById('gameOverText').textContent = `Dein Mitspieler hat gewonnen. Versuche es nochmal!`;
+                document.getElementById('gameOverModal').classList.remove('hidden');
+            }
+        }
+
+        function endGameAI() {
+            const playerWon = aiGame.playerCards.length > 0;
+            if (playerWon) {
+                saveToLeaderboard(aiGame.playerName, aiGame.playerCards.length);
+                let qi = parseInt(localStorage.getItem('reflectionQuestionIndex') || '0');
+                document.getElementById('reflectionQuestion').textContent = reflectionQuestions[qi];
+                document.getElementById('reflectionModal').classList.remove('hidden');
+                qi = (qi + 1) % reflectionQuestions.length;
+                localStorage.setItem('reflectionQuestionIndex', qi.toString());
+            } else {
+                document.getElementById('gameOverTitle').textContent = '😞 Spiel verloren';
+                document.getElementById('gameOverTitle').className = `text-3xl font-bold mb-3 text-red-600`;
+                document.getElementById('gameOverText').textContent = `Die KI hat gewonnen. Versuche es nochmal!`;
+                document.getElementById('gameOverModal').classList.remove('hidden');
+            }
+        }
+
+        window.showFinalWinScreen = function() {
+            document.getElementById('reflectionModal').classList.add('hidden');
+            document.getElementById('reflectionAnswer').value = '';
+            document.getElementById('gameOverTitle').textContent = '🎉 Glückwunsch!';
+            document.getElementById('gameOverTitle').className = `text-3xl font-bold mb-3 text-green-600`;
+            const winnerName = gameMode === 'ai' ? aiGame.playerName : localGameState.players[localPlayerId].name;
+            document.getElementById('gameOverText').textContent = `Du hast gewonnen, ${winnerName}! Du hast alle Karten gesammelt.`;
+            document.getElementById('gameOverModal').classList.remove('hidden');
+        };
+
+        function saveToLeaderboard(playerName, score) {
+            let leaderboard = JSON.parse(localStorage.getItem('holzquartett-leaderboard') || '[]');
+            leaderboard.push({ name: playerName, score: score, date: new Date().toLocaleDateString('de-DE') });
+            leaderboard.sort((a, b) => b.score - a.score);
+            localStorage.setItem('holzquartett-leaderboard', JSON.stringify(leaderboard.slice(0, 10)));
+        }
+
+        window.showLeaderboard = function() {
+            const leaderboard = JSON.parse(localStorage.getItem('holzquartett-leaderboard') || '[]');
+            const list = document.getElementById('leaderboardList');
+            if (leaderboard.length === 0) {
+                list.innerHTML = '<p class="text-gray-500 text-center">Noch keine Einträge</p>';
+            } else {
+                list.innerHTML = leaderboard.map((e, i) => `<div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg"><span class="font-semibold">${i + 1}. ${e.name}</span><span class="text-sm text-gray-600">${e.score} Karten - ${e.date}</span></div>`).join('');
+            }
+            document.getElementById('gameOverModal').classList.add('hidden');
+            document.getElementById('leaderboardModal').classList.remove('hidden');
+        };
+
+        window.closeLeaderboard = function() {
+            document.getElementById('leaderboardModal').classList.add('hidden');
+            document.getElementById('gameOverModal').classList.remove('hidden');
+        };
+
+        window.resetGame = async function() {
+            if (unsubscribeGame) unsubscribeGame();
+            if (gameMode === 'multiplayer' && gameId) {
+                try { await deleteDoc(doc(db, "games", gameId)); } catch {}
+            }
+
+            aiGame = { playerName: '', playerCards: [], aiCards: [], currentPlayerCard: null, currentAiCard: null, roundInProgress: false };
+            gameMode = null; gameId = null; unsubscribeGame = null;
+
+            document.getElementById('gameOverModal').classList.add('hidden');
+            document.getElementById('leaderboardModal').classList.add('hidden');
+            document.getElementById('reflectionModal').classList.add('hidden');
+            document.getElementById('gameContainer').classList.add('hidden');
+            document.getElementById('setupModal').classList.remove('hidden');
+            document.getElementById('playerName').value = '';
+            document.getElementById('infoModal').classList.add('hidden');
+            document.getElementById('reflectionAnswer').value = '';
+            window.history.pushState({}, document.title, window.location.pathname);
+        };
+
+        window.showWoodInfo = function(woodName) {
+            const modal = document.getElementById('infoModal');
+            document.getElementById('infoModalTitle').textContent = `Wissenswertes über ${woodName}`;
+            const content = document.getElementById('infoModalContent');
+            const infoData = woodInfo[woodName] || woodInfo[Object.keys(woodInfo).find(k => k.toLowerCase() === woodName.toLowerCase())];
+
+            if (infoData) {
+                content.innerHTML = `<p>${infoData.info}</p><div class="space-y-4 mt-4"><div><h4 class="font-semibold mb-2 text-center">Baum</h4><img src="${infoData.bildBaum}" alt="Bild von ${woodName} Baum" class="w-full h-auto rounded-lg object-cover" onerror="this.style.display='none'"></div><div><h4 class="font-semibold mb-2 text-center">Querschnitt</h4><img src="${infoData.bildQuerschnitt}" alt="Bild von ${woodName} Querschnitt" class="w-full h-auto rounded-lg object-cover" onerror="this.style.display='none'"></div></div>`;
+            } else {
+                content.innerHTML = "<p>Für diese Holzart sind aktuell keine Informationen verfügbar.</p>";
+            }
+            modal.classList.remove('hidden');
+        };
+
+        window.closeInfoModal = function() {
+            document.getElementById('infoModal').classList.add('hidden');
+        };
+    </script>
 </body>
 </html>
