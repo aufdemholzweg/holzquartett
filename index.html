@@ -270,7 +270,7 @@
     <script type="module">
         // ===== Firebase Imports =====
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, deleteDoc, collection, query, orderBy, limit, getDocs, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         // ===== Firebase Config =====
@@ -553,13 +553,21 @@
                 
                 const playerCardFront = document.getElementById('playerCard').querySelector('.card-front');
                 const opponentCardFront = document.getElementById('aiCard').querySelector('.card-front');
+                const statusBar = document.getElementById('statusBar');
 
                 if (winnerId === localPlayerId) {
                     playerCardFront.classList.add('animate-glow-win');
-                    opponentCardFront.classList.add('animate-glow-lose');
+                    if (statusBar) {
+                        statusBar.classList.add('status-flash-win');
+                        setTimeout(() => statusBar.classList.remove('status-flash-win'), 1200);
+                    }
+                    triggerWinStarAnimation();
                 } else if (winnerId !== 'tie') {
-                    opponentCardFront.classList.add('animate-glow-win');
                     playerCardFront.classList.add('animate-glow-lose');
+                    if (statusBar) {
+                        statusBar.classList.add('status-flash-lose');
+                        setTimeout(() => statusBar.classList.remove('status-flash-lose'), 1200);
+                    }
                 }
 
             } else {
@@ -641,6 +649,11 @@
         }
 
         async function multiplayerNextRound() {
+            const pf = document.getElementById('playerCard')?.querySelector('.card-front');
+            if(pf) pf.classList.remove('animate-glow-win', 'animate-glow-lose');
+            const af = document.getElementById('aiCard')?.querySelector('.card-front');
+            if(af) af.classList.remove('animate-glow-win', 'animate-glow-lose');
+
             if (!localGameState || !localGameState.lastResult) return;
             if (localGameState.turn !== localPlayerId && localGameState.lastResult.winnerId !== localPlayerId && localGameState.lastResult.winnerId !== 'tie') return;
 
@@ -812,7 +825,6 @@
 
             let resultText, resultClass;
             const playerCardFront = document.getElementById('playerCard').querySelector('.card-front');
-            const opponentCardFront = document.getElementById('aiCard').querySelector('.card-front');
             const statusBar = document.getElementById('statusBar');
             
             if (playerWins === true) {
