@@ -95,7 +95,7 @@
 
         .falling-star {
             position: absolute;
-            font-size: 3.5rem; /* 56px */
+            font-size: 7rem; /* 112px */
             z-index: 100;
             animation: fall-and-fade 1.2s ease-in forwards;
         }
@@ -757,7 +757,7 @@
             const woodData = woodInfo[cardData.name] || woodInfo[Object.keys(woodInfo).find(k => k.toLowerCase() === cardData.name.toLowerCase())];
             const treeImage = woodData ? woodData.bildBaum : 'https://placehold.co/36x36/d1d5db/374151?text=?';
 
-            const woodIconHTML = `<img src="${treeImage}" alt="${cardData.name}" id="wood-image-icon-${cardData.name.replace(/\s+/g, '-')}" class="${isRoundOver && isPlayer ? 'hidden' : ''} w-9 h-9 object-cover rounded-full border-2 border-amber-200 flex-shrink-0 absolute top-2 right-2">`;
+            const woodIconHTML = `<img src="${treeImage}" alt="${cardData.name}" id="wood-image-icon-${cardData.name.replace(/\s+/g, '-')}" class="${isRoundOver && isPlayer ? 'hidden' : ''} w-9 h-9 object-cover rounded-full border-2 border-amber-200 flex-shrink-0">`;
             
             const attributeButtons = canSelect ? `
                 <div class="space-y-1 mt-auto">
@@ -790,11 +790,13 @@
             cardFront.innerHTML = `
                 <div class="flex justify-between items-center w-full mb-1">
                     <div class="flex items-center space-x-2 flex-1 min-w-0">
-                         <h3 class="text-lg font-bold text-amber-800 truncate">${cardData.name}</h3>
+                        ${!isPlayer ? woodIconHTML : ''}
+                        <h3 class="text-lg font-bold text-amber-800 truncate">${cardData.name}</h3>
+                    </div>
+                    <div class="flex-shrink-0">
+                        ${isPlayer ? (isRoundOver ? infoButtonHTML : woodIconHTML) : ''}
                     </div>
                 </div>
-                ${woodIconHTML}
-                ${isPlayer ? infoButtonHTML : ''}
                 ${attributeButtons}
             `;
 
@@ -948,7 +950,7 @@
             star.textContent = '⭐';
             star.className = 'falling-star';
 
-            star.style.left = `${startRect.left - containerRect.left + startRect.width / 2 - 20}px`;
+            star.style.left = `${startRect.left - containerRect.left + startRect.width / 2 - 56}px`;
             star.style.top = `${startRect.top - containerRect.top - 20}px`;
             
             const endY = endRect.top - startRect.top + endRect.height / 2;
