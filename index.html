@@ -7,32 +7,32 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
+        
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             font-weight: 300;
         }
-
+        
         .card-3d {
             transform-style: preserve-3d;
             transition: transform 0.6s;
         }
-
+        
         .card-flipped {
             transform: rotateY(180deg);
         }
-
+        
         .card-front, .card-back {
             backface-visibility: hidden;
             position: absolute;
             width: 100%;
             height: 100%;
         }
-
+        
         .card-back {
             transform: rotateY(180deg);
         }
-
+        
         .wood-texture {
             background: linear-gradient(45deg, #8B4513 25%, transparent 25%), 
                         linear-gradient(-45deg, #8B4513 25%, transparent 25%), 
@@ -43,7 +43,7 @@
             background-color: #D2B48C;
             opacity: 0.1;
         }
-
+        
         .animate-pop-in {
             animation: pop-in 0.5s ease-out forwards;
         }
@@ -55,7 +55,7 @@
         .animate-glow-lose {
             animation: glow-lose 1.2s ease-out;
         }
-
+        
         @keyframes pop-in {
             0% { transform: scale(0); opacity: 0; }
             70% { transform: scale(1.2); opacity: 1; }
@@ -69,72 +69,16 @@
         }
 
         @keyframes glow-lose {
-            0% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0); }
-    .border-flash-win { animation: border-win 1.2s ease-out; border-width: 3px !important; border-style: solid; }
-    .border-flash-lose { animation: border-lose 1.2s ease-out; border-width: 3px !important; border-style: solid; }
-    @keyframes border-win {
-      0% { border-color: rgba(34,197,94,0); }     /* green-500 */
-      50% { border-color: rgba(34,197,94,1); }
-      100% { border-color: rgba(34,197,94,0); }
-    }
-    @keyframes border-lose {
-      0% { border-color: rgba(239,68,68,0); }     /* red-500 */
-      50% { border-color: rgba(239,68,68,1); }
-      100% { border-color: rgba(239,68,68,0); }
-    }
-     /* red-400 */
+            0% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0); } /* red-400 */
             50% { box-shadow: 0 0 30px 15px rgba(248, 113, 113, 0.6); }
             100% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0); }
         }
-
+        
         .hover-lift:hover {
             transform: translateY(-4px);
             box-shadow: 0 10px 25px rgba(0,0,0,0.15);
         }
     </style>
-    <script>
-        // Preload card images for better performance
-        const imageUrls = [
-          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/eiche_1.jpg?raw=true",
-          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/buche_1.jpg?raw=true",
-          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kiefer_1.jpg?raw=true",
-          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/fichte_1.jpg?raw=true",
-          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/tanne_1.jpg?raw=true",
-          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/laerche_1.jpg?raw=true",
-          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/birke_1.jpg?raw=true",
-          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ahorn_1.jpg?raw=true",
-          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/esche_1.jpg?raw=true",
-          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kirsche_1.jpg?raw=true",
-          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/nussbaum_1.jpg?raw=true",
-          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/douglasie_1.jpg?raw=true",
-          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zeder_1.jpg?raw=true",
-          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/mahagoni_1.jpg?raw=true",
-          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/teak_1.jpg?raw=true",
-          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/bambus_1.jpg?raw=true",
-          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/pappel_1.jpg?raw=true",
-          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/weide_1.jpg?raw=true",
-          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/linde_1.jpg?raw=true",
-          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ulme_1.jpg?raw=true",
-          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kastanie_1.jpg?raw=true",
-          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/robinie_1.jpg?raw=true",
-          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/hemlock_1.jpg?raw=true",
-          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zypresse_1.jpg?raw=true",
-          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/redwood_1.jpg?raw=true",
-          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/hickory_1.jpg?raw=true",
-          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/wenge_1.jpg?raw=true",
-          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zebrano_1.jpg?raw=true",
-          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/palisander_1.jpg?raw=true",
-          "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ebenholz_1.jpg?raw=true"
-        ];
-        imageUrls.forEach(url => {
-            if (!url) return;
-            const link = document.createElement('link');
-            link.rel = 'preload';
-            link.as = 'image';
-            link.href = url;
-            document.head.appendChild(link);
-        });
-    </script>
 </head>
 <body class="bg-gradient-to-br from-amber-50 to-orange-100 min-h-screen">
     <!-- Header -->
@@ -150,10 +94,10 @@
         <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl text-center">
             <h2 class="text-2xl font-bold text-amber-800 mb-6">Spielmodus wählen</h2>
             <div class="space-y-4">
-                <button onclick="showNamePrompt('ai')" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors text-lg">
+                <button onclick="window.showNamePrompt('ai')" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors text-lg">
                     🎮 Gegen Computer spielen
                 </button>
-                <button onclick="showNamePrompt('multiplayer')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors text-lg">
+                <button onclick="window.showNamePrompt('multiplayer')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors text-lg">
                     🧑‍🤝‍🧑 Mit Freund online spielen
                 </button>
             </div>
@@ -184,12 +128,13 @@
             <div class="bg-gray-100 p-3 rounded-lg border border-gray-300">
                 <input id="shareLink" type="text" class="w-full bg-transparent text-center text-blue-600" readonly>
             </div>
-            <button onclick="copyShareLink()" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors">
+            <button onclick="window.copyShareLink()" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors">
                 Link kopieren
             </button>
             <p id="lobbyStatus" class="mt-6 text-green-600 font-semibold"></p>
         </div>
     </div>
+
 
     <!-- Game Container -->
     <div id="gameContainer" class="hidden max-w-6xl mx-auto px-4 py-4">
@@ -235,7 +180,7 @@
                  <h3 class="text-lg font-semibold text-gray-700">Wähle eine Eigenschaft!</h3>
             </div>
             <div id="nextRoundButton" class="hidden w-full mb-1">
-                 <button onclick="nextRound()" class="w-full bg-amber-600 hover:bg-amber-800 text-white font-bold py-3 px-8 rounded-xl transition-colors">
+                 <button onclick="window.nextRound()" class="w-full bg-amber-600 hover:bg-amber-800 text-white font-bold py-3 px-8 rounded-xl transition-colors">
                      ➡️ Nächster Zug
                  </button>
              </div>
@@ -252,7 +197,7 @@
             <h2 class="text-2xl font-bold text-amber-800 mb-4">🎉 Super gespielt! Zeit zum Reflektieren!</h2>
             <p id="reflectionQuestion" class="text-gray-700 mb-6 text-left"></p>
             <textarea id="reflectionAnswer" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent min-h-[100px]" placeholder="Deine Begründung..."></textarea>
-            <button onclick="showFinalWinScreen()" class="mt-6 w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+            <button onclick="window.showFinalWinScreen()" class="mt-6 w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
                 Weiter zum Ergebnis
             </button>
         </div>
@@ -264,10 +209,10 @@
             <h2 id="gameOverTitle" class="text-3xl font-bold mb-3"></h2>
             <p id="gameOverText" class="text-gray-600 mb-6"></p>
             <div class="space-y-2">
-                <button onclick="showLeaderboard()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg">
+                <button onclick="window.showLeaderboard()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg">
                     🏆 Bestenliste anzeigen
                 </button>
-                <button onclick="resetGame()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg">
+                <button onclick="window.resetGame()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg">
                     🔄 Neues Spiel
                 </button>
             </div>
@@ -279,7 +224,7 @@
         <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
             <h2 class="text-2xl font-bold text-amber-800 mb-6 text-center">🏆 Bestenliste</h2>
             <div id="leaderboardList" class="space-y-1 mb-6"></div>
-            <button onclick="closeLeaderboard()" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg">
+            <button onclick="window.closeLeaderboard()" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg">
                 Schließen
             </button>
         </div>
@@ -288,7 +233,7 @@
     <!-- Info Modal -->
     <div id="infoModal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 px-4">
         <div class="bg-white rounded-xl p-8 max-w-lg w-full mx-4 shadow-2xl relative">
-            <button onclick="closeInfoModal()" class="absolute top-2 right-3 text-2xl text-gray-400 hover:text-gray-600">&times;</button>
+            <button onclick="window.closeInfoModal()" class="absolute top-2 right-3 text-2xl text-gray-400 hover:text-gray-600">&times;</button>
             <h2 id="infoModalTitle" class="text-2xl font-bold text-amber-800 mb-4">Wissenswertes</h2>
             <div id="infoModalContent" class="text-gray-700 space-y-2 max-h-[60vh] overflow-y-auto"></div>
         </div>
@@ -298,14 +243,14 @@
         // ===== Firebase Imports =====
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, deleteDoc, collection, query, orderBy, limit, getDocs, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         // ===== Firebase Config =====
         const firebaseConfig = {
             apiKey: "AIzaSyCyRXl8-JPr1xTXPDi1VG-eQk6fOnTpqUI",
             authDomain: "holzquartett-3a177.firebaseapp.com",
             projectId: "holzquartett-3a177",
-            storageBucket: "holzquartett-3a177.firebasestorage.app",
+            storageBucket: "holzquartett-3a177.appspot.com",
             messagingSenderId: "1081595025073",
             appId: "1:1081595025073:web:bc571fffb6e4f20b27f490",
             measurementId: "G-HKLWFJE83K"
@@ -314,6 +259,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
+        const appId = firebaseConfig.projectId; // Verwenden der projectId als appId für Pfade
 
         // ===== Global State =====
         let gameMode = null; // 'ai' or 'multiplayer'
@@ -358,7 +304,7 @@
         ];
 
         const woodInfo = {
-            "Eiche": { info: `Eiche (QE) Die Eiche zählt zu den bedeutendsten heimischen Laubhölzern Europas. Ihr Holz ist hart, schwer und sehr dauerhaft, was sie zu einem bevorzugten Werkstoff im Innen‑ und Außenbereich macht. Besonders charakteristisch sind die hohen Gerbstoffanteile, die das Holz widerstandsfähig gegen Pilze und Schädlinge machen – gleichzeitig können sie beim Kontakt mit Eisen zu Verfärbungen führen. Eichenholz ist grobporig und zeigt einen deutlichen Übergang zwischen Früh- und Spätholz, wodurch die Jahresringe klar sichtbar sind. Diese ausgeprägte Maserung sorgt für eine markante, lebendige Optik. Verwendung: Möbel, Fußböden, Treppen, Fassdauben (z. B. für Weinfässer), Schiffbau, Terrassen, Brücken, Fachwerk. Funfact: Bereits in der Antike galt die Eiche als Symbol für Stärke und Beständigkeit – sie ziert bis heute zahlreiche Wappen und Münzen.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/eiche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/eiche_2.jpg?raw=true" },
+          "Eiche": { info: `Eiche (QE) Die Eiche zählt zu den bedeutendsten heimischen Laubhölzern Europas. Ihr Holz ist hart, schwer und sehr dauerhaft, was sie zu einem bevorzugten Werkstoff im Innen‑ und Außenbereich macht. Besonders charakteristisch sind die hohen Gerbstoffanteile, die das Holz widerstandsfähig gegen Pilze und Schädlinge machen – gleichzeitig können sie beim Kontakt mit Eisen zu Verfärbungen führen. Eichenholz ist grobporig und zeigt einen deutlichen Übergang zwischen Früh- und Spätholz, wodurch die Jahresringe klar sichtbar sind. Diese ausgeprägte Maserung sorgt für eine markante, lebendige Optik. Verwendung: Möbel, Fußböden, Treppen, Fassdauben (z. B. für Weinfässer), Schiffbau, Terrassen, Brücken, Fachwerk. Funfact: Bereits in der Antike galt die Eiche als Symbol für Stärke und Beständigkeit – sie ziert bis heute zahlreiche Wappen und Münzen.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/eiche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/eiche_2.jpg?raw=true" },
           "Buche": { info: `Buche (BU) Die Buche ist ein gleichmäßig strukturiertes Hartholz heimischer Wälder. Ihr Holz ist zäh, biegsam und relativ harzarm, wodurch es sich sehr gut für Möbel und Parkett eignet. Buchenholz ist ringporig mit mittelgroßen Poren im Frühholz und dichterem Spätholz, sodass die Übergänge dezent sichtbar sind – die Jahresringe sind gut erkennbar, aber nicht grob. Verwendung: Möbel, Parkett, Furniere, Sperrholz, Innenausbau. Funfact: Buchenholz war lange Zeit typisch fürs Wagenrad – wegen seiner Kombination aus Zähigkeit und Elastizität.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/buche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/buche_2.jpg?raw=true" },
           "Kiefer": { info: `Kiefer (KI) Kiefer ist ein weit verbreitetes Nadelholz mit markanter Jahresringstruktur. Es ist weich, harzhaltig und relativ leicht zu bearbeiten. Das Holz zeigt keine ausgeprägten großen Poren wie Laubhölzer, sondern eine eher gleichmäßige Zellstruktur – Jahresringe und Harzkanäle sind sichtbar. Verwendung: Bauholz, Dachstühle, Innenausbau, Möbel, Paneele. Funfact: Kiefernharz wurde früher als Klebstoff oder als Bestandteil von Salben und Dichtungsmaterialien verwendet.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kiefer_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kiefer_2.jpg?raw=true" },
           "Fichte": { info: `Fichte (FI) Fichte ist ein klassisches Bauholz mit guter Festigkeit bei geringem Gewicht. Es lässt sich leicht bearbeiten und vielfach einsetzen. Das Holz weist eine feine Zellstruktur auf, ohne große Poren – Jahresringe sind erkennbar, aber nicht grob. Verwendung: Bauholz, Innenverkleidung, Dach, Möbel, Paneele. Funfact: In vielen Gebirgsregionen war Fichtenholz über Jahrhunderte hinweg der Standard für Dachkonstruktionen und Sägewerke.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/fichte_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/fichte_2.jpg?raw=true" },
@@ -389,7 +335,6 @@
           "Palisander": { info: `Palisander (PA) Palisanderholz ist dekorativ, fest und langlebig – mit attraktiven Farbtönen. Zerstreutporig mit feiner Struktur und gleichmäßiger Porenverteilung. Verwendung: Gitarren, Möbel, Furniere. Funfact: Palisanderholz war früher oft exklusiv für edle Musikinstrumente und Intarsien reserviert.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/palisander_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/palisander_2.jpg?raw=true" },
           "Ebenholz": { info: `Ebenholz (EB) Ebenholz ist eines der härtesten Hölzer – fast tiefschwarz und sehr dicht. Zerstreutporig mit extrem feinen Poren, kaum sichtbar – Porenstruktur sehr fein. Verwendung: Klaviertasten, Intarsien, Luxusdekore. Funfact: Ebenholz wurde im alten Ägypten für Statuetten und Schmuckstücke verwendet – wegen seiner tiefen Farbe und Seltenheit.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ebenholz_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ebenholz_2.jpg?raw=true" }
         };
-
 
         const reflectionQuestions = [
             "Stell dir vor, du sollst einen stabilen und langlebigen Esstisch für eine Familie entwerfen. ...",
@@ -425,17 +370,7 @@
             "Wenn du eine neue Kategorie ...",
         ];
 
-        // ===== Attribute Info =====
-        const attributeInfo = {
-            dk: {icon: '🛡️', name: 'Dauerhaftigkeit (DK)', color: 'blue'},
-            haerte: {icon: '💎', name: 'Druckfestigkeit (N/mm²)', color: 'blue'},
-            quellenSchwindenRadial: {icon: '↔️', name: 'Quellen/Schwinden (%)', color: 'blue'},
-            dichte: {icon: '⚖️', name: 'Rohdichte (kg/m³)', color: 'blue'},
-            gewicht: {icon: '🏋️', name: 'E-Modul (N/mm²)', color: 'blue'}
-        };
-
-        // ===== Local Game State for AI mode =====
-        let aiGame = {
+        let aiGameState = {
             playerName: '',
             playerCards: [],
             aiCards: [],
@@ -444,6 +379,14 @@
             roundInProgress: false
         };
 
+        const attributeInfo = {
+            dk: {icon: '🛡️', name: 'Dauerhaftigkeit (DK)', color: 'blue'},
+            haerte: {icon: '💎', name: 'Druckfestigkeit (N/mm²)', color: 'blue'},
+            quellenSchwindenRadial: {icon: '↔️', name: 'Quellen/Schwinden (%)', color: 'blue'},
+            dichte: {icon: '⚖️', name: 'Rohdichte (kg/m³)', color: 'blue'},
+            gewicht: {icon: '🏋️', name: 'E-Modul (N/mm²)', color: 'blue'}
+        };
+        
         // ===== Auth + Deep Link Join =====
         document.addEventListener('DOMContentLoaded', async () => {
             try { await signInAnonymously(auth); } catch (e) { console.error("Firebase Auth Error:", e); }
@@ -806,6 +749,15 @@
         };
 
         // ===== AI Mode Logic =====
+        let aiGame = {
+            playerName: '',
+            playerCards: [],
+            aiCards: [],
+            currentPlayerCard: null,
+            currentAiCard: null,
+            roundInProgress: false
+        };
+
         function shuffleArray(array) {
             const shuffled = [...array];
             for (let i = shuffled.length - 1; i > 0; i--) {
@@ -845,7 +797,7 @@
             cardFront.className = `card-front bg-white rounded-xl ${shadow} border-2 ${borderColor} p-3 flex flex-col`;
 
             const canSelect = isPlayer && (
-                (gameMode === 'ai') ||
+                (gameMode === 'ai' && !aiGame.roundInProgress) ||
                 (gameMode === 'multiplayer' && localGameState.turn === localPlayerId && !localGameState.lastResult)
             );
 
@@ -1016,7 +968,7 @@
             if (gameMode === 'ai') { endGameAI(); return; }
             const playerWon = localGameState.players[localPlayerId].cards.length > 0;
             if (playerWon) {
-                saveWinForLeaderboard(localGameState.players[localPlayerId].name, localGameState.players[localPlayerId].cards.length);
+                saveToLeaderboard(localGameState.players[localPlayerId].name, localGameState.players[localPlayerId].cards.length);
                 let qi = parseInt(localStorage.getItem('reflectionQuestionIndex') || '0');
                 document.getElementById('reflectionQuestion').textContent = reflectionQuestions[qi];
                 document.getElementById('reflectionModal').classList.remove('hidden');
@@ -1033,7 +985,7 @@
         function endGameAI() {
             const playerWon = aiGame.playerCards.length > 0;
             if (playerWon) {
-                saveWinForLeaderboard(aiGame.playerName, aiGame.playerCards.length);
+                saveToLeaderboard(aiGame.playerName, aiGame.playerCards.length);
                 let qi = parseInt(localStorage.getItem('reflectionQuestionIndex') || '0');
                 document.getElementById('reflectionQuestion').textContent = reflectionQuestions[qi];
                 document.getElementById('reflectionModal').classList.remove('hidden');
@@ -1057,50 +1009,60 @@
             document.getElementById('gameOverModal').classList.remove('hidden');
         };
 
-        function saveWinForLeaderboard(playerName, score) {
-            let leaderboard = JSON.parse(localStorage.getItem('holzquartett-leaderboard') || '[]');
-            leaderboard.push({ name: playerName, score: score, date: new Date().toLocaleDateString('de-DE') });
-            leaderboard.sort((a, b) => b.score - a.score);
-            localStorage.setItem('holzquartett-leaderboard', JSON.stringify(leaderboard.slice(0, 10)));
+        async function saveToLeaderboard(playerName) {
+            if (!playerName) return;
+            const leaderboardRef = doc(db, `leaderboard`, playerName);
+            try {
+                await setDoc(leaderboardRef, {
+                    name: playerName,
+                    wins: increment(1),
+                    lastWin: serverTimestamp()
+                }, { merge: true });
+            } catch (error) {
+                console.error("Error updating leaderboard:", error);
+            }
         }
 
-        window.showLeaderboard = function() {
-    // Prefer new v2 storage
-    let leaderboard = JSON.parse(localStorage.getItem('holzquartett-leaderboard-v2') || '[]');
-    // Fallback migrate on the fly if empty but old exists
-    if ((!leaderboard || leaderboard.length === 0) && localStorage.getItem('holzquartett-leaderboard')) {
-        const old = JSON.parse(localStorage.getItem('holzquartett-leaderboard') || '[]');
-        const counts = {};
-        old.forEach(e => { const n = (e && e.name) ? e.name : 'Unbekannt'; counts[n] = (counts[n] || 0) + 1; });
-        leaderboard = Object.entries(counts).map(([name, points]) => ({ name, points, lastWin: new Date().toISOString() }));
-        leaderboard.sort((a, b) => (b.points - a.points));
-        localStorage.setItem('holzquartett-leaderboard-v2', JSON.stringify(leaderboard.slice(0, 10)));
-    }
-    const list = document.getElementById('leaderboardList');
-    if (!leaderboard || leaderboard.length === 0) {
-        list.innerHTML = '<p class="text-gray-500 text-center">Noch keine Einträge</p>';
-    } else {
-        list.innerHTML = leaderboard.map((e, i) =>
-            `<div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                <span class="font-semibold">${i + 1}. ${e.name}</span>
-                <span class="text-sm text-gray-600">${e.points} Punkte</span>
-            </div>`
-        ).join('');
-    }
-    document.getElementById('gameOverModal').classList.add('hidden');
-    document.getElementById('leaderboardModal').classList.remove('hidden');
-};;
+        window.showLeaderboard = async function() {
+            const list = document.getElementById('leaderboardList');
+            list.innerHTML = '<p class="text-gray-500 text-center">Lade Bestenliste...</p>';
+            
+            document.getElementById('gameOverModal').classList.add('hidden');
+            document.getElementById('leaderboardModal').classList.remove('hidden');
+            
+            try {
+                const leaderboardCol = collection(db, `leaderboard`);
+                const q = query(leaderboardCol, orderBy("wins", "desc"), limit(10));
+                const querySnapshot = await getDocs(q);
+
+                if (querySnapshot.empty) {
+                    list.innerHTML = '<p class="text-gray-500 text-center">Noch keine Einträge</p>';
+                    return;
+                }
+                
+                const leaderboardData = [];
+                querySnapshot.forEach((doc) => {
+                    leaderboardData.push(doc.data());
+                });
+
+                list.innerHTML = leaderboardData.map((e, i) =>
+                    `<div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                        <span class="font-semibold">${i + 1}. ${e.name}</span>
+                        <span class="text-sm text-gray-600">${e.wins} Siege</span>
+                    </div>`
+                ).join('');
+
+            } catch (error) {
+                console.error("Error fetching leaderboard:", error);
+                list.innerHTML = '<p class="text-red-500 text-center">Fehler beim Laden der Bestenliste.</p>';
+            }
+        };
 
         window.closeLeaderboard = function() {
             document.getElementById('leaderboardModal').classList.add('hidden');
             document.getElementById('gameOverModal').classList.remove('hidden');
-        }
-window.resetLeaderboard = function() {
-    localStorage.removeItem('holzquartett-leaderboard-v2');
-    alert('Bestenliste zurückgesetzt.');
-};
-;
-
+        };
+        
         window.resetGame = async function() {
             if (unsubscribeGame) unsubscribeGame();
             if (gameMode === 'multiplayer' && gameId) {
@@ -1141,3 +1103,4 @@ window.resetLeaderboard = function() {
     </script>
 </body>
 </html>
+
