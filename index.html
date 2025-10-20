@@ -286,13 +286,15 @@
         let localGameState = {};
         let hasCopiedShareLink = false;
 
-        // Sound Effects
+        // ===== Sound Effects (Added chime) =====
         const sounds = {
             flip: new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_139083c224.mp3'),
-            win: new Audio('https://cdn.pixabay.com/audio/2022/11/22/audio_2c5552a862.mp3')
+            win: new Audio('https://cdn.pixabay.com/audio/2022/11/22/audio_2c5552a862.mp3'),
+            chime: new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c744c8.mp3') // <<< NEU
         };
-        sounds.flip.volume = 0.5; // Optional: Adjust volume
-        sounds.win.volume = 0.4;  // Optional: Adjust volume
+        sounds.flip.volume = 0.5;
+        sounds.win.volume = 0.4;
+        sounds.chime.volume = 0.6; // <<< NEU
 
         function playSound(sound) {
             sound.currentTime = 0; // Rewind to start
@@ -497,7 +499,7 @@
                 aiCardElement?.classList.remove('animate-glow-win', 'animate-glow-lose');
                 if (winnerId === localPlayerId) { playerCardElement?.classList.add('animate-glow-win'); if (statusBarElement) { /* status bar flash win */ } triggerWinStarAnimation(); }
                 else if (winnerId !== 'tie') { playerCardElement?.classList.add('animate-glow-lose'); aiCardElement?.classList.add('animate-glow-win'); if (statusBarElement) { /* status bar flash lose */ } }
-                window.scrollTo({ top: 0, behavior: 'smooth' }); // <<< SCROLL HIER
+                window.scrollTo({ top: 0, behavior: 'smooth' }); // <<< SCROLL MULTIPLAYER
             } else {
                  roundSoundPlayed = false;
                 resultDisplay.classList.add('hidden');
@@ -626,7 +628,7 @@
                 else { resultText = `🤝 Unentschieden!`; resultClass = 'text-yellow-600'; }
                 document.getElementById('resultText').textContent = resultText; document.getElementById('resultText').className = `text-xl font-bold mb-1 ${resultClass}`; document.getElementById('resultDetails').textContent = `${attributeInfo[attribute].name.split(' (')[0]}: ${playerValue.toLocaleString('de-DE')} vs ${aiValue.toLocaleString('de-DE')}`; document.getElementById('attributeSelection').classList.add('hidden'); document.getElementById('resultDisplay').classList.remove('hidden'); document.getElementById('nextRoundButton').classList.remove('hidden');
                 updateDisplayAI(); checkGameOverAI();
-                window.scrollTo({ top: 0, behavior: 'smooth' }); // <<< SCROLL HIER
+                window.scrollTo({ top: 0, behavior: 'smooth' }); // <<< SCROLL AI PLAYER
             }, 600);
         }
 
@@ -653,7 +655,7 @@
                  else { resultText = `🤝 Unentschieden!`; resultClass = 'text-yellow-600'; }
                 document.getElementById('resultText').textContent = resultText; document.getElementById('resultText').className = `text-xl font-bold mb-1 ${resultClass}`; document.getElementById('resultDetails').textContent = `${attributeInfo[chosenAttribute].name.split(' (')[0]}: ${playerValue.toLocaleString('de-DE')} vs ${aiValue.toLocaleString('de-DE')}`; document.getElementById('attributeSelection').classList.add('hidden'); document.getElementById('resultDisplay').classList.remove('hidden'); document.getElementById('nextRoundButton').classList.remove('hidden');
                 updateDisplayAI(); checkGameOverAI();
-                window.scrollTo({ top: 0, behavior: 'smooth' }); // <<< SCROLL HIER
+                window.scrollTo({ top: 0, behavior: 'smooth' }); // <<< SCROLL AI TURN
             }, 1500);
         }
 
@@ -682,9 +684,29 @@
         function checkGameOverAI() { /* ... checkGameOverAI unchanged ... */
              if (aiGame.roundInProgress) { if (aiGame.playerCards.length === 0 || aiGame.aiCards.length === 0) { setTimeout(endGameAI, 300); } }
         }
-        function triggerWinStarAnimation() { /* ... triggerWinStarAnimation unchanged ... */
-             const animationContainer = document.getElementById('animationContainer'); const playerScoreBox = document.getElementById('playerScoreBox'); const statusBar = document.getElementById('statusBar'); if (!animationContainer || !playerScoreBox || !statusBar) return; const startRect = statusBar.getBoundingClientRect(); const endRect = playerScoreBox.getBoundingClientRect(); const containerRect = animationContainer.getBoundingClientRect(); const star = document.createElement('div'); star.textContent = '⭐'; star.className = 'falling-star'; const playerBarWidth = startRect.width * (parseFloat(statusBar.style.width) / 100); star.style.left = `${startRect.left - containerRect.left + (playerBarWidth / 2) - 20}px`; star.style.top = `${startRect.top - containerRect.top - 20}px`; const endY = (endRect.top + endRect.height / 2) - (startRect.top); star.style.setProperty('--end-y', `${endY}px`); animationContainer.appendChild(star); setTimeout(() => { star.remove(); }, 1200);
+
+        // --- Modified triggerWinStarAnimation (added chime sound) ---
+        function triggerWinStarAnimation() {
+             const animationContainer = document.getElementById('animationContainer');
+             const playerScoreBox = document.getElementById('playerScoreBox');
+             const statusBar = document.getElementById('statusBar');
+             if (!animationContainer || !playerScoreBox || !statusBar) return;
+             const startRect = statusBar.getBoundingClientRect();
+             const endRect = playerScoreBox.getBoundingClientRect();
+             const containerRect = animationContainer.getBoundingClientRect();
+             const star = document.createElement('div');
+             star.textContent = '⭐';
+             star.className = 'falling-star';
+             const playerBarWidth = startRect.width * (parseFloat(statusBar.style.width) / 100);
+             star.style.left = `${startRect.left - containerRect.left + (playerBarWidth / 2) - 20}px`;
+             star.style.top = `${startRect.top - containerRect.top - 20}px`;
+             const endY = (endRect.top + endRect.height / 2) - (startRect.top);
+             star.style.setProperty('--end-y', `${endY}px`);
+             animationContainer.appendChild(star);
+             playSound(sounds.chime); // <<< PLAY CHIME SOUND
+             setTimeout(() => { star.remove(); }, 1200);
         }
+
         function endGame() { /* ... endGame unchanged ... */
              console.log(`Game ended. Mode: ${gameMode}`); if (gameMode === 'ai') { if (!document.getElementById('gameOverModal').classList.contains('hidden') || !document.getElementById('reflectionModal').classList.contains('hidden')){ /* Modal already shown */ } else { endGameAI(); } } else if (gameMode === 'multiplayer') { const finalPlayerCards = localGameState?.players?.[localPlayerId]?.cards?.length ?? 0; const opponentId = localGameState?.playerIds?.find(id => id !== localPlayerId); const finalOpponentCards = localGameState?.players?.[opponentId]?.cards?.length ?? 0; const playerWon = finalPlayerCards > finalOpponentCards; const isDraw = finalPlayerCards === 0 && finalOpponentCards === 0; if (isDraw) { showGameOverScreen(null); } else if (playerWon) { saveToLeaderboard(localGameState.players[localPlayerId].name); showReflectionOrWinScreen(); } else { showGameOverScreen(false); } } else { console.warn("endGame called without a valid gameMode set."); }
         }
