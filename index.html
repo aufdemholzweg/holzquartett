@@ -270,7 +270,7 @@
     <script type="module">
         // ===== Firebase Imports =====
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, deleteDoc, collection, query, orderBy, limit, getDocs, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         // ===== Firebase Config =====
@@ -821,7 +821,6 @@
                 highlightAttribute(attribute, 'win');
                 aiGame.playerCards.push(aiGame.playerCards.shift(), aiGame.aiCards.shift());
                 if(playerCardFront) playerCardFront.classList.add('animate-glow-win');
-                if(opponentCardFront) opponentCardFront.classList.add('animate-glow-lose');
                 if (statusBar) {
                     statusBar.classList.add('status-flash-win');
                     setTimeout(() => statusBar.classList.remove('status-flash-win'), 1200);
@@ -834,7 +833,6 @@
                 highlightAttribute(attribute, 'lose');
                 aiGame.aiCards.push(aiGame.aiCards.shift(), aiGame.playerCards.shift());
                 if(playerCardFront) playerCardFront.classList.add('animate-glow-lose');
-                if(opponentCardFront) opponentCardFront.classList.add('animate-glow-win');
                 if (statusBar) {
                     statusBar.classList.add('status-flash-lose');
                     setTimeout(() => statusBar.classList.remove('status-flash-lose'), 1200);
@@ -1053,5 +1051,4 @@
     </script>
 </body>
 </html>
-
 
