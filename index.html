@@ -31,7 +31,7 @@
         
         .card-back {
             transform: rotateY(180deg);
-            background-image: url('https://github.com/aufdemholzweg/holzquartett/blob/cc18ea7acf6c6f4b6fd40af36188298a7ddfa4c1/images/background_front.jpg');
+            background-image: url('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/65fd843a4db1ee434faaf81a32f77951a5afb72a/images/background_card.jpg');
             background-size: cover;
             background-position: center;
         }
@@ -109,7 +109,7 @@
             100% { transform: translateY(var(--end-y)) scale(0.3); opacity: 0; }
         }
         .card-background {
-            background-image: url('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/9a5397271660d417a0b8820c061780b5417f66cb/images/background_front.jpg');
+            background-image: url('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/e7cfc18394e2e7f2d0b91df1138b0d7bc7930699/images/background_front.jpg');
             background-size: cover;
             background-position: center;
         }
@@ -307,7 +307,7 @@
         let aiGame = {
             playerName: '', playerCards: [], aiCards: [], currentPlayerCard: null, currentAiCard: null, roundInProgress: false
         };
-
+        
         // ===== Wood Data =====
         const woodCards = [
             {name: "Eiche", dk: 2, haerte: 85, quellenSchwindenRadial: 4.0, dichte: 650, gewicht: 12000}, {name: "Buche", dk: 5, haerte: 80, quellenSchwindenRadial: 5.8, dichte: 720, gewicht: 14000}, {name: "Kiefer", dk: 3, haerte: 40, quellenSchwindenRadial: 3.5, dichte: 520, gewicht: 11000}, {name: "Fichte", dk: 4, haerte: 35, quellenSchwindenRadial: 3.6, dichte: 450, gewicht: 11000}, {name: "Tanne", dk: 4, haerte: 38, quellenSchwindenRadial: 3.5, dichte: 460, gewicht: 10000}, {name: "Lärche", dk: 3, haerte: 55, quellenSchwindenRadial: 3.7, dichte: 590, gewicht: 12000}, {name: "Birke", dk: 5, haerte: 60, quellenSchwindenRadial: 5.4, dichte: 650, gewicht: 13000}, {name: "Ahorn", dk: 5, haerte: 75, quellenSchwindenRadial: 4.8, dichte: 630, gewicht: 12500}, {name: "Esche", dk: 5, haerte: 90, quellenSchwindenRadial: 4.9, dichte: 700, gewicht: 13000}, {name: "Kirsche", dk: 3, haerte: 70, quellenSchwindenRadial: 4.0, dichte: 600, gewicht: 11500}, {name: "Nussbaum", dk: 3, haerte: 65, quellenSchwindenRadial: 4.0, dichte: 640, gewicht: 12000}, {name: "Douglasie", dk: 3, haerte: 45, quellenSchwindenRadial: 3.5, dichte: 510, gewicht: 12000}, {name: "Zeder", dk: 2, haerte: 42, quellenSchwindenRadial: 2.8, dichte: 480, gewicht: 9500}, {name: "Mahagoni", dk: 2, haerte: 55, quellenSchwindenRadial: 3.0, dichte: 550, gewicht: 10500}, {name: "Teak", dk: 1, haerte: 60, quellenSchwindenRadial: 2.5, dichte: 650, gewicht: 11000}, {name: "Bambus", dk: 4, haerte: 50, quellenSchwindenRadial: 3.0, dichte: 400, gewicht: 18000}, {name: "Pappel", dk: 5, haerte: 25, quellenSchwindenRadial: 4.5, dichte: 380, gewicht: 9000}, {name: "Weide", dk: 5, haerte: 30, quellenSchwindenRadial: 4.0, dichte: 420, gewicht: 8000}, {name: "Linde", dk: 5, haerte: 35, quellenSchwindenRadial: 3.8, dichte: 530, gewicht: 9000}, {name: "Ulme", dk: 3, haerte: 75, quellenSchwindenRadial: 4.5, dichte: 680, gewicht: 11500}, {name: "Kastanie", dk: 2, haerte: 50, quellenSchwindenRadial: 3.5, dichte: 600, gewicht: 10000}, {name: "Robinie", dk: 1, haerte: 80, quellenSchwindenRadial: 3.0, dichte: 730, gewicht: 15000}, {name: "Hemlock", dk: 4, haerte: 40, quellenSchwindenRadial: 3.6, dichte: 500, gewicht: 10000}, {name: "Zypresse", dk: 2, haerte: 48, quellenSchwindenRadial: 3.0, dichte: 520, gewicht: 9000}, {name: "Redwood", dk: 2, haerte: 35, quellenSchwindenRadial: 2.8, dichte: 400, gewicht: 8500}, {name: "Hickory", dk: 3, haerte: 95, quellenSchwindenRadial: 5.5, dichte: 750, gewicht: 14000}, {name: "Wenge", dk: 2, haerte: 88, quellenSchwindenRadial: 3.8, dichte: 880, gewicht: 16000}, {name: "Zebrano", dk: 3, haerte: 70, quellenSchwindenRadial: 4.0, dichte: 750, gewicht: 13000}, {name: "Palisander", dk: 2, haerte: 82, quellenSchwindenRadial: 3.0, dichte: 850, gewicht: 16000}, {name: "Ebenholz", dk: 1, haerte: 98, quellenSchwindenRadial: 3.2, dichte: 1200, gewicht: 16500}
@@ -349,11 +349,7 @@
         const reflectionQuestions = [
             "Stell dir vor, du sollst einen stabilen und langlebigen Esstisch für eine Familie entwerfen. ...", "Welches Holz würdest du für Gartenmöbel wählen, ...", "Eine Küchenarbeitsplatte muss schnittfest und widerstandsfähig sein. ...", "Für einen stark beanspruchten Dielenboden ...", "Du sollst den Korpus einer Akustikgitarre bauen. ...", "Fenster sind ständig wechselnder Luftfeuchtigkeit ausgesetzt. ...", "Für ein Modellflugzeug oder ein leichtes Regal ...", "Robinie und Lärche sind beide für den Außenbereich beliebt. ...", "Du möchtest einen gebogenen Handlauf ...", "Vergleiche die Rohdichte und den E-Modul von Fichte und Eiche. ...", "Hölzer mit hohem Quell- und Schwindmaß ...", "Ein Hammerstiel muss extrem bruchfest ...", "Bei Eichenholz kann es in Verbindung mit Eisen ...", "Weiche Hölzer wie Fichte oder Kiefer ...", "Für die Herstellung von dekorativen Furnieren ...", "Nenne drei heimische Hölzer ...", "Holz ist ein wichtiger CO₂-Speicher. ...", "Was bedeuten Siegel wie FSC oder PEFC ...", "Teak hat eine exzellente Dauerhaftigkeit (DK 1). ...", "Bambus ist botanisch gesehen ein Gras, ...", "Was könntest du aus einem alten Eichenbalken ...", "Du möchtest ein Möbelstück mit einem starken Hell-Dunkel-Kontrast ...", "Hölzer wie Eiche oder Esche haben ...", "Stell dir vor, du entwirfst ein Kinderspielzeug ...", "Einige Hölzer wie Kirsche oder Lärche ...", "Für ein modernes, minimalistisches Möbelstück ...", "Welches Holz würdest du für den Bau einer rustikalen Almhütte ...", "Du planst ein Schülerprojekt ...", "Ein Kunde wünscht sich für seine Terrasse ...", "Welche Eigenschaft einer Holzart ...", "Wenn du eine neue Kategorie ...",
         ];
-
-        let aiGameState = {
-            playerName: '', playerCards: [], aiCards: [], currentPlayerCard: null, currentAiCard: null, roundInProgress: false
-        };
-
+        
         const attributeInfo = {
             dk: {icon: '🛡️', name: 'Dauerhaftigkeit (DK)', color: 'blue'},
             haerte: {icon: '💎', name: 'Druckfestigkeit (N/mm²)', color: 'blue'},
