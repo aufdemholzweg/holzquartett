@@ -778,12 +778,10 @@
             cardFront.innerHTML = `
                 <div class="flex justify-between items-center w-full mb-1">
                     <div class="flex items-center space-x-2 flex-1 min-w-0">
-                        <div class="relative w-9 h-9 flex-shrink-0">
-                            <img src="${treeImage}" alt="${cardData.name}" id="wood-image-icon-${cardData.name}" class="w-full h-full object-cover rounded-full border-2 border-amber-200">
-                             ${isPlayer ? `<button id="player-info-button-${cardData.name}" onclick="window.showWoodInfo('${cardData.name}')" class="hidden absolute inset-0 bg-purple-600 text-white rounded-full flex items-center justify-center text-lg hover:bg-purple-700">💡</button>` : ''}
-                        </div>
+                        <img src="${treeImage}" alt="${cardData.name}" id="wood-image-icon-${cardData.name}" class="w-9 h-9 object-cover rounded-full border-2 border-amber-200 flex-shrink-0">
                         <h3 class="text-lg font-bold text-amber-800 truncate">${cardData.name}</h3>
                     </div>
+                    <div class="flex-shrink-0">${infoButtonHTML}</div>
                 </div>
                 ${attributeButtons}
             `;
