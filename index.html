@@ -1,1076 +1,1091 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Holz-Quartett</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            font-weight: 300;
-        }
-        
-        .card-3d {
-            transform-style: preserve-3d;
-            transition: transform 0.6s;
-        }
-        
-        .card-flipped {
-            transform: rotateY(180deg);
-        }
-        
-        .card-front, .card-back {
-            backface-visibility: hidden;
-            position: absolute;
-            width: 100%;
-            height: 100%;
-        }
-        
-        .card-back {
-            transform: rotateY(180deg);
-            background-image: url('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/65fd843a4db1ee434faaf81a32f77951a5afb72a/images/background_card.jpg');
-            background-size: cover;
-            background-position: center;
-        }
-        
-        .wood-texture {
-            background: linear-gradient(45deg, #8B4513 25%, transparent 25%), 
-                        linear-gradient(-45deg, #8B4513 25%, transparent 25%), 
-                        linear-gradient(45deg, transparent 75%, #8B4513 75%), 
-                        linear-gradient(-45deg, transparent 75%, #8B4513 75%);
-            background-size: 20px 20px;
-            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
-            background-color: #D2B48C;
-            opacity: 0.1;
-        }
-        
-        .animate-pop-in {
-            animation: pop-in 0.5s ease-out forwards;
-        }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Holz-Quartett</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-weight: 300;
+        }
+        
+        .card-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+        
+        .card-flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .card-front, .card-back {
+            backface-visibility: hidden;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .card-back {
+            transform: rotateY(180deg);
+            background-image: url('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/65fd843a4db1ee434faaf81a32f77951a5afb72a/images/background_card.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .wood-texture {
+            background: linear-gradient(45deg, #8B4513 25%, transparent 25%), 
+                        linear-gradient(-45deg, #8B4513 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, #8B4513 75%), 
+                        linear-gradient(-45deg, transparent 75%, #8B4513 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            background-color: #D2B48C;
+            opacity: 0.1;
+        }
+        
+        .animate-pop-in {
+            animation: pop-in 0.5s ease-out forwards;
+        }
 
-        .animate-glow-win {
-            animation: glow-win 1.2s ease-out;
-        }
+        .animate-glow-win {
+            animation: glow-win 1.2s ease-out;
+        }
 
-        .animate-glow-lose {
-            animation: glow-lose 1.2s ease-out;
-        }
-        
-        @keyframes pop-in {
-            0% { transform: scale(0); opacity: 0; }
-            70% { transform: scale(1.2); opacity: 1; }
-            100% { transform: scale(1); }
-        }
+        .animate-glow-lose {
+            animation: glow-lose 1.2s ease-out;
+        }
+        
+        @keyframes pop-in {
+            0% { transform: scale(0); opacity: 0; }
+            70% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); }
+  _     }
 
-        @keyframes glow-win {
-            0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); } /* green-400 */
-            50% { box-shadow: 0 0 30px 15px rgba(74, 222, 128, 0.6); }
-            100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
-        }
+        @keyframes glow-win {
+            0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); } /* green-400 */
+            50% { box-shadow: 0 0 30px 15px rgba(74, 222, 128, 0.6); }
+            100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+        }
 
-        @keyframes glow-lose {
-            0% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0); } /* red-400 */
-            50% { box-shadow: 0 0 30px 15px rgba(248, 113, 113, 0.6); }
-            100% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0); }
-        }
-        
-        .hover-lift:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-        }
+        @keyframes glow-lose {
+            0% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0); } /* red-400 */
+            50% { box-shadow: 0 0 30px 15px rgba(248, 113, 113, 0.6); }
+            100% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0); }
+        }
+        
+        .hover-lift:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
 
-        .status-flash-win {
-            animation: flash-green 1.2s ease-out;
-        }
-        .status-flash-lose {
-            animation: flash-red 1.2s ease-out;
-        }
+        .status-flash-win {
+            animation: flash-green 1.2s ease-out;
+        }
+        .status-flash-lose {
+            animation: flash-red 1.2s ease-out;
+        }
 
-        @keyframes flash-green {
-          50% { background-color: #22c55e; box-shadow: 0 0 15px #22c55e; }
-        }
-        @keyframes flash-red {
-          50% { background-color: #ef4444; box-shadow: 0 0 15px #ef4444; }
-        }
+        @keyframes flash-green {
+          50% { background-color: #22c55e; box-shadow: 0 0 15px #22c55e; }
+        }
+        @keyframes flash-red {
+          50% { background-color: #ef4444; box-shadow: 0 0 15px #ef4444; }
+        }
 
-        .falling-star {
-            position: absolute;
-            font-size: 7rem; /* 112px */
-            z-index: 100;
-            animation: fall-and-fade 1.2s ease-in forwards;
-        }
+        .falling-star {
+            position: absolute;
+            font-size: 7rem; /* 112px */
+            z-index: 100;
+            animation: fall-and-fade 1.2s ease-in forwards;
+        }
 
-        @keyframes fall-and-fade {
-            0% { transform: translateY(-30px) scale(1.5); opacity: 0; }
-            30% { transform: translateY(0) scale(1); opacity: 1; }
-            100% { transform: translateY(var(--end-y)) scale(0.3); opacity: 0; }
-        }
-        .card-background {
-            background-image: url('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/e7cfc18394e2e7f2d0b91df1138b0d7bc7930699/images/background_front.jpg');
-            background-size: cover;
-            background-position: center;
-        }
-    </style>
+        @keyframes fall-and-fade {
+            0% { transform: translateY(-30px) scale(1.5); opacity: 0; }
+            30% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(var(--end-y)) scale(0.3); opacity: 0; }
+        }
+        .card-background {
+            background-image: url('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/e7cfc18394e2e7f2d0b91df1138b0d7bc7930699/images/background_front.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
 </head>
 <body class="bg-gradient-to-br from-amber-50 to-orange-100 min-h-screen">
-    <!-- Header -->
-    <header class="bg-white shadow-sm border-b-2 border-amber-200">
-        <div class="max-w-6xl mx-auto px-4 p-3">
-            <h1 class="text-2xl font-bold text-amber-800 text-center">🌳 Holz-Quartett</h1>
-            <p class="text-xs text-gray-500 text-center mt-1">von Christopher Lehr, in Verbindung mit meiner Masterarbeit</p>
-        </div>
-    </header>
-
-    <!-- Game Mode Selection Modal -->
-    <div id="setupModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl text-center">
-            <h2 class="text-2xl font-bold text-amber-800 mb-6">Spielmodus wählen</h2>
-            <div class="space-y-4">
-                <button onclick="window.showNamePrompt('ai')" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors text-lg">
-                    🎮 Gegen Computer spielen
-                </button>
-                <button onclick="window.showNamePrompt('multiplayer')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors text-lg">
-                    🧑‍🤝‍🧑 Mit Freund online spielen
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Name Input Modal -->
-    <div id="nameModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
-            <h2 class="text-2xl font-bold text-amber-800 mb-6 text-center">Dein Name</h2>
-            <div class="space-y-3">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Bitte gib deinen Namen ein:</label>
-                    <input type="text" id="playerName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent" placeholder="Spielername">
-                </div>
-                <button id="nameSubmitButton" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
-                    Weiter
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Multiplayer Lobby Modal -->
-    <div id="multiplayerLobbyModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
-        <div class="bg-white rounded-xl p-8 max-w-lg w-full mx-4 shadow-2xl text-center">
-            <h2 id="lobbyTitle" class="text-2xl font-bold text-amber-800 mb-4">Warte auf Mitspieler...</h2>
-            <p id="lobbyText" class="text-gray-700 mb-6">Teile diesen Link mit deinem Freund, um das Spiel zu starten:</p>
-            <div class="bg-gray-100 p-3 rounded-lg border border-gray-300">
-                <input id="shareLink" type="text" class="w-full bg-transparent text-center text-blue-600" readonly>
-            </div>
-            <button onclick="window.copyShareLink()" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors">
-                Link kopieren
-            </button>
-            <p id="lobbyStatus" class="mt-6 text-green-600 font-semibold"></p>
-        </div>
-    </div>
-
-
-    <!-- Game Container -->
-    <div id="gameContainer" class="hidden max-w-6xl mx-auto px-4 py-4 relative">
-        <div id="animationContainer" class="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden"></div>
-        <!-- Score & Status Panel -->
-        <div class="max-w-md mx-auto mb-3 space-y-1">
-            <div class="flex justify-center space-x-2">
-                <!-- Player Score Box -->
-                <div id="playerScoreBox" class="w-1/2 bg-white rounded-xl shadow-lg p-2 text-center relative">
-                    <p id="playerNameDisplay" class="text-base font-bold text-amber-600 truncate"></p>
-                    <p class="text-sm text-gray-500">Karten: <span id="playerCards" class="font-semibold">15</span></p>
-                </div>
-                <!-- Opponent Score Box -->
-                <div class="w-1/2 bg-white rounded-xl shadow-lg p-2 text-center">
-                    <p id="opponentNameDisplay" class="text-base font-bold text-red-600">Computer</p>
-                    <p class="text-sm text-gray-500">Karten: <span id="aiCards" class="font-semibold">15</span></p>
-                </div>
-            </div>
-            <!-- Status Bar -->
-            <div class="w-full bg-gray-200 rounded-full h-4 relative overflow-hidden border border-gray-300">
-                <div id="statusBar" class="h-full rounded-l-full transition-all duration-500" style="width: 50%; background-color: #f59e0b;"></div>
-                <div class="absolute inset-0 flex justify-center items-center">
-                    <div class="w-0.5 h-full bg-white opacity-75"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Game Board -->
-        <div class="flex justify-center space-x-2 sm:space-x-2 mb-4 max-w-md mx-auto">
-            <!-- Player Card -->
-            <div class="text-center w-1/2">
-                <div id="playerCard" class="relative aspect-[20/38] perspective-1000"></div>
-            </div>
-            <!-- Opponent Card -->
-            <div class="text-center w-1/2">
-                <div id="aiCard" class="relative aspect-[20/38] perspective-1000"></div>
-            </div>
-        </div>
-
-        <!-- Action Panel -->
-        <div class="bg-white rounded-xl shadow-lg p-1 mt-4 text-center mx-auto flex flex-col items-center justify-center max-w-md w-full">
-            <div id="turnIndicator" class="hidden text-sm font-semibold p-2"></div>
-            <div id="attributeSelection" class="">
-                 <h3 class="text-lg font-semibold text-gray-700">Wähle eine Eigenschaft!</h3>
-            </div>
-            <div id="nextRoundButton" class="hidden w-full mb-1">
-                 <button onclick="window.nextRound()" class="w-full bg-amber-600 hover:bg-amber-800 text-white font-bold py-3 px-8 rounded-xl transition-colors">
-                     ➡️ Nächster Zug
-                 </button>
-             </div>
-            <div id="resultDisplay" class="hidden">
-                 <h3 id="resultText" class="text-xl font-bold mb-1"></h3>
-                 <p id="resultDetails" class="text-sm text-gray-600"></p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Reflection Modal -->
-    <div id="reflectionModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
-        <div class="bg-white rounded-xl p-8 max-w-lg w-full mx-4 shadow-2xl text-center">
-            <h2 class="text-2xl font-bold text-amber-800 mb-4">🎉 Super gespielt! Zeit zum Reflektieren!</h2>
-            <p id="reflectionQuestion" class="text-gray-700 mb-6 text-left"></p>
-            <textarea id="reflectionAnswer" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent min-h-[100px]" placeholder="Deine Begründung..."></textarea>
-            <button onclick="window.showFinalWinScreen()" class="mt-6 w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
-                Weiter zum Ergebnis
-            </button>
-        </div>
-    </div>
-
-    <!-- Game Over Modal -->
-    <div id="gameOverModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl text-center">
-            <h2 id="gameOverTitle" class="text-3xl font-bold mb-3"></h2>
-            <p id="gameOverText" class="text-gray-600 mb-6"></p>
-            <div class="space-y-2">
-                <button onclick="window.showLeaderboard()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg">
-                    🏆 Bestenliste anzeigen
-                </button>
-                <button onclick="window.resetGame()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg">
-                    🔄 Neues Spiel
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Leaderboard Modal -->
-    <div id="leaderboardModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
-            <h2 class="text-2xl font-bold text-amber-800 mb-6 text-center">🏆 Bestenliste</h2>
-            <div id="leaderboardList" class="space-y-1 mb-6"></div>
-            <button onclick="window.closeLeaderboard()" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg">
-                Schließen
-            </button>
-        </div>
-    </div>
-
-    <!-- Info Modal -->
-    <div id="infoModal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 px-4">
-        <div class="bg-white rounded-xl p-8 max-w-lg w-full mx-4 shadow-2xl relative">
-            <button onclick="window.closeInfoModal()" class="absolute top-2 right-3 text-2xl text-gray-400 hover:text-gray-600">&times;</button>
-            <h2 id="infoModalTitle" class="text-2xl font-bold text-amber-800 mb-4">Wissenswertes</h2>
-            <div id="infoModalContent" class="text-gray-700 space-y-2 max-h-[60vh] overflow-y-auto"></div>
-        </div>
-    </div>
-
-    <script type="module">
-        // ===== Firebase Imports =====
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, deleteDoc, collection, query, orderBy, limit, getDocs, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-        // ===== Firebase Config =====
-        const firebaseConfig = {
-            apiKey: "AIzaSyCyRXl8-JPr1xTXPDi1VG-eQk6fOnTpqUI",
-            authDomain: "holzquartett-3a177.firebaseapp.com",
-            projectId: "holzquartett-3a177",
-            storageBucket: "holzquartett-3a177.appspot.com",
-            messagingSenderId: "1081595025073",
-            appId: "1:1081595025073:web:bc571fffb6e4f20b27f490",
-            measurementId: "G-HKLWFJE83K"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-        const appId = firebaseConfig.projectId;
-
-        // ===== Global State =====
-        let gameMode = null;
-        let gameId = null;
-        let localPlayerId = null;
-        let unsubscribeGame = null; 
-        let localGameState = {};
-        let hasCopiedShareLink = false;
-
-        // ===== Wood Data =====
-        const woodCards = [
-            {name: "Eiche", dk: 2, haerte: 85, quellenSchwindenRadial: 4.0, dichte: 650, gewicht: 12000}, {name: "Buche", dk: 5, haerte: 80, quellenSchwindenRadial: 5.8, dichte: 720, gewicht: 14000}, {name: "Kiefer", dk: 3, haerte: 40, quellenSchwindenRadial: 3.5, dichte: 520, gewicht: 11000}, {name: "Fichte", dk: 4, haerte: 35, quellenSchwindenRadial: 3.6, dichte: 450, gewicht: 11000}, {name: "Tanne", dk: 4, haerte: 38, quellenSchwindenRadial: 3.5, dichte: 460, gewicht: 10000}, {name: "Lärche", dk: 3, haerte: 55, quellenSchwindenRadial: 3.7, dichte: 590, gewicht: 12000}, {name: "Birke", dk: 5, haerte: 60, quellenSchwindenRadial: 5.4, dichte: 650, gewicht: 13000}, {name: "Ahorn", dk: 5, haerte: 75, quellenSchwindenRadial: 4.8, dichte: 630, gewicht: 12500}, {name: "Esche", dk: 5, haerte: 90, quellenSchwindenRadial: 4.9, dichte: 700, gewicht: 13000}, {name: "Kirsche", dk: 3, haerte: 70, quellenSchwindenRadial: 4.0, dichte: 600, gewicht: 11500}, {name: "Nussbaum", dk: 3, haerte: 65, quellenSchwindenRadial: 4.0, dichte: 640, gewicht: 12000}, {name: "Douglasie", dk: 3, haerte: 45, quellenSchwindenRadial: 3.5, dichte: 510, gewicht: 12000}, {name: "Zeder", dk: 2, haerte: 42, quellenSchwindenRadial: 2.8, dichte: 480, gewicht: 9500}, {name: "Mahagoni", dk: 2, haerte: 55, quellenSchwindenRadial: 3.0, dichte: 550, gewicht: 10500}, {name: "Teak", dk: 1, haerte: 60, quellenSchwindenRadial: 2.5, dichte: 650, gewicht: 11000}, {name: "Bambus", dk: 4, haerte: 50, quellenSchwindenRadial: 3.0, dichte: 400, gewicht: 18000}, {name: "Pappel", dk: 5, haerte: 25, quellenSchwindenRadial: 4.5, dichte: 380, gewicht: 9000}, {name: "Weide", dk: 5, haerte: 30, quellenSchwindenRadial: 4.0, dichte: 420, gewicht: 8000}, {name: "Linde", dk: 5, haerte: 35, quellenSchwindenRadial: 3.8, dichte: 530, gewicht: 9000}, {name: "Ulme", dk: 3, haerte: 75, quellenSchwindenRadial: 4.5, dichte: 680, gewicht: 11500}, {name: "Kastanie", dk: 2, haerte: 50, quellenSchwindenRadial: 3.5, dichte: 600, gewicht: 10000}, {name: "Robinie", dk: 1, haerte: 80, quellenSchwindenRadial: 3.0, dichte: 730, gewicht: 15000}, {name: "Hemlock", dk: 4, haerte: 40, quellenSchwindenRadial: 3.6, dichte: 500, gewicht: 10000}, {name: "Zypresse", dk: 2, haerte: 48, quellenSchwindenRadial: 3.0, dichte: 520, gewicht: 9000}, {name: "Redwood", dk: 2, haerte: 35, quellenSchwindenRadial: 2.8, dichte: 400, gewicht: 8500}, {name: "Hickory", dk: 3, haerte: 95, quellenSchwindenRadial: 5.5, dichte: 750, gewicht: 14000}, {name: "Wenge", dk: 2, haerte: 88, quellenSchwindenRadial: 3.8, dichte: 880, gewicht: 16000}, {name: "Zebrano", dk: 3, haerte: 70, quellenSchwindenRadial: 4.0, dichte: 750, gewicht: 13000}, {name: "Palisander", dk: 2, haerte: 82, quellenSchwindenRadial: 3.0, dichte: 850, gewicht: 16000}, {name: "Ebenholz", dk: 1, haerte: 98, quellenSchwindenRadial: 3.2, dichte: 1200, gewicht: 16500}
-        ];
-
-        const woodInfo = {
-          "Eiche": { info: `Eiche (QE) Die Eiche zählt zu den bedeutendsten heimischen Laubhölzern Europas. Ihr Holz ist hart, schwer und sehr dauerhaft, was sie zu einem bevorzugten Werkstoff im Innen‑ und Außenbereich macht. Besonders charakteristisch sind die hohen Gerbstoffanteile, die das Holz widerstandsfähig gegen Pilze und Schädlinge machen – gleichzeitig können sie beim Kontakt mit Eisen zu Verfärbungen führen. Eichenholz ist grobporig und zeigt einen deutlichen Übergang zwischen Früh- und Spätholz, wodurch die Jahresringe klar sichtbar sind. Diese ausgeprägte Maserung sorgt für eine markante, lebendige Optik. Verwendung: Möbel, Fußböden, Treppen, Fassdauben (z. B. für Weinfässer), Schiffbau, Terrassen, Brücken, Fachwerk. Funfact: Bereits in der Antike galt die Eiche als Symbol für Stärke und Beständigkeit – sie ziert bis heute zahlreiche Wappen und Münzen.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/eiche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/eiche_2.jpg?raw=true" },
-          "Buche": { info: `Buche (BU) Die Buche ist ein gleichmäßig strukturiertes Hartholz heimischer Wälder. Ihr Holz ist zäh, biegsam und relativ harzarm, wodurch es sich sehr gut für Möbel und Parkett eignet. Buchenholz ist ringporig mit mittelgroßen Poren im Frühholz und dichterem Spätholz, sodass die Übergänge dezent sichtbar sind – die Jahresringe sind gut erkennbar, aber nicht grob. Verwendung: Möbel, Parkett, Furniere, Sperrholz, Innenausbau. Funfact: Buchenholz war lange Zeit typisch fürs Wagenrad – wegen seiner Kombination aus Zähigkeit und Elastizität.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/buche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/buche_2.jpg?raw=true" },
-          "Kiefer": { info: `Kiefer (KI) Kiefer ist ein weit verbreitetes Nadelholz mit markanter Jahresringstruktur. Es ist weich, harzhaltig und relativ leicht zu bearbeiten. Das Holz zeigt keine ausgeprägten großen Poren wie Laubhölzer, sondern eine eher gleichmäßige Zellstruktur – Jahresringe und Harzkanäle sind sichtbar. Verwendung: Bauholz, Dachstühle, Innenausbau, Möbel, Paneele. Funfact: Kiefernharz wurde früher als Klebstoff oder als Bestandteil von Salben und Dichtungsmaterialien verwendet.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kiefer_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kiefer_2.jpg?raw=true" },
-          "Fichte": { info: `Fichte (FI) Fichte ist ein klassisches Bauholz mit guter Festigkeit bei geringem Gewicht. Es lässt sich leicht bearbeiten und vielfach einsetzen. Das Holz weist eine feine Zellstruktur auf, ohne große Poren – Jahresringe sind erkennbar, aber nicht grob. Verwendung: Bauholz, Innenverkleidung, Dach, Möbel, Paneele. Funfact: In vielen Gebirgsregionen war Fichtenholz über Jahrhunderte hinweg der Standard für Dachkonstruktionen und Sägewerke.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/fichte_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/fichte_2.jpg?raw=true" },
-          "Tanne": { info: `Tanne (TA) Tanne ist ein harzarmes, vergleichsweise feines Nadelholz, das oft als Alternative zur Fichte verwendet wird. Die Struktur ähnelt der Fichte: feine Fasern, dezente Jahresringe, keine ausgeprägten Poren. Verwendung: Innenausbau, Möbel, Paneele, Bauholz. Funfact: Da Tanne weniger Harz enthält, ist sie angenehmer in Räumen einzusetzen, da sie weniger Geruch abgibt.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/tanne_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/tanne_2.jpg?raw=true" },
-          "Lärche": { info: `Lärche (LA) Lärche ist bekannt für ihre natürliche Witterungsbeständigkeit und schöne Farbe. Sie kombiniert Elastizität mit Festigkeit. Das Holz zeigt ausgeprägte Jahresringe und Harzkanäle – die Struktur ist deutlich sichtbar. Verwendung: Fassadenholz, Fenster, Terrassen, Außenbau, Möbel. Funfact: Lärchenholz wird häufig ohne chemische Behandlung im Außenbereich eingesetzt und erhält mit der Zeit eine edle Vergrauung.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/laerche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/laerche_2.jpg?raw=true" },
-          "Birke": { info: `Birke (BI) Birke ist ein helles, dekoratives Holz mit feiner, gleichmäßiger Struktur. Es überzeugt durch gute Biegsamkeit. Das Holz ist zerstreutporig – Poren sind fein verteilt, ohne große Unterschiede zwischen Früh- und Spätholz. Verwendung: Möbel, Furniere, Sperrholz, Innenausbau. Funfact: Birkenrinde wurde früher als wasserabweisendes Material für Behälter und Boote genutzt.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/birke_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/birke_2.jpg?raw=true" },
-          "Ahorn": { info: `Ahorn (AM) Ahorn ist hart, hell und elegant – ideal für feine Möbel, Instrumente und Designanwendungen. Es handelt sich ebenfalls um ein zerstreutporiges Holz mit gleichmäßiger Porenverteilung, ohne starke Übergänge zwischen Früh‑ und Spätholz. Verwendung: Möbel, Parkett, Instrumente, Schneidebretter. Funfact: Aus Ahorn gewinnt man auch Ahornsirup – allerdings aus nordamerikanischen Arten, nicht unbedingt jene zum Möbelbau.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ahorn_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ahorn_2.jpg?raw=true" },
-          "Esche": { info: `Esche (ES) Die Esche ist ein besonders zähes, elastisches Holz mit hoher Festigkeit. Sie zeigt ringporige Struktur mit deutlich sichtbaren Poren im Frühholz und schmaleren Poren im Spätholz. Verwendung: Werkzeugstiele, Sportgeräte, Möbel, Parkett, Innenausbau. Funfact: In der Antike wurden Wagenräder und Speichen häufig aus Esche gefertigt – wegen ihrer elastischen Eigenschaften.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/esche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/esche_2.jpg?raw=true" },
-          "Kirsche": { info: `Kirsche (KR) Kirschbaumholz besitzt warme rote Töne, die mit Licht nachdunkeln, und eine edle Struktur. Ringporig mit deutlichem Übergang zwischen Früh- und Spätholz – Jahresringe sind gut sichtbar. Verwendung: Möbel, Furniere, Innenausbau, Dekor. Funfact: Kirschholz wird oft in Möbeln verwendet, die mit der Zeit “reifer” aussehen – die Farbe verbessert sich mit Alterung.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kirsche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kirsche_2.jpg?raw=true" },
-          "Nussbaum": { info: `Nussbaum (NU) Nussbaumholz ist dunkel, dekorativ und sehr hochwertig. Das Kernholz hat oft starken Farbkontrast zum Splintholz. Es ist zerstreutporig – Poren sind fein über die Fläche verteilt, oft mit dekorativen Maserungen. Verwendung: Möbel, Furniere, Intarsien, edle Ausstattungen. Funfact: Walnuss (Nussbaum) war schon in der Renaissance sehr geschätzt und zierte viele königliche Möbelstücke.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/nussbaum_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/nussbaum_2.jpg?raw=true" },
-          "Douglasie": { info: `Douglasie (DO) Douglasienholz ist robust, witterungsbeständig und häufig im Außenbau eingesetzt. Die Struktur ist klar erkennbar – deutliche Jahresringe mit Transition zwischen Früh‑ und Spätholz. Verwendung: Bauholz, Fassaden, Dach, Möbel im Außenbereich. Funfact: Die Douglasie stammt ursprünglich aus Nordamerika, ist aber auch in Europa weit verbreitet und wird großgezogen.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/douglasie_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/douglasie_2.jpg?raw=true" },
-          "Zeder": { info: `Zeder (ZE) Zedernholz duftet angenehm und besitzt von Natur aus eine Resistenz gegen Insektenbefall und Feuchtigkeit. Die Struktur ist fein mit gleichmäßigen Poren – kein starker Kontrast zwischen Früh- und Spätholz. Verwendung: Möbel, Fassaden, Innenraum, Schränke. Funfact: Zedernholz wird oft in Kleiderschränken eingesetzt, weil es den unverwechselbaren Duft und Insektenabwehr besitzt.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zeder_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zeder_2.jpg?raw=true" },
-          "Mahagoni": { info: `Mahagoni (MA) Mahagoni ist ein tropisches Edelholz mit hoher Dauerhaftigkeit und edler Farbe. Es ist zerstreutporig – Poren gleichmäßig verteilt und oft mit dekorativer Kernholzstruktur. Verwendung: Möbel, Fenster, Luxusausstattung, Bootsbau. Funfact: In manchen Ländern ist Mahagoni wegen seiner Seltenheit streng reguliert und unterliegt Artenschutzbestimmungen.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/mahagoni_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/mahagoni_2.jpg?raw=true" },
-          "Teak": { info: `Teak (TE) Teak ist extrem witterungsbeständig durch hohen Öl- und Harzgehalt – ideal für Außenmöbel und Schiffsbau. Die Struktur ist fein zerstreutporig, mit dekorativem Erscheinungsbild und gleichmäßiger Porenverteilung. Verwendung: Gartenmöbel, Terrassen, Boote, Fenster, Außenbereich. Funfact: Teakholz war früher für den Bau von Kriegsschiffen sehr gefragt wegen seiner Dauerhaftigkeit und Wasserbeständigkeit.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/teak_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/teak_2.jpg?raw=true" },
-          "Bambus": { info: `Bambus (BA) Bambus ist botanisch gesehen kein Holz, sondern ein Gras – dennoch extrem stabil und vielseitig verwendbar. Die Struktur ist röhrenartig und weist keine klassischen Poren wie Harthölzer auf. Verwendung: Fußböden, Möbel, Treppen, nachhaltiger Bau. Funfact: Bambus wächst so schnell, dass einzelne Stangen innerhalb weniger Monate über einen Meter wachsen können.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/bambus_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/bambus_2.jpg?raw=true" },
-          "Pappel": { info: `Pappel (PA) Pappelholz ist sehr leicht und weich – weniger tragfähig, aber gut bearbeitbar. Feine Struktur, fast keine großen Poren – Jahresringe nur dezent sichtbar. Verwendung: Leichtbau, Verpackungen, Möbel mit geringer Belastung. Funfact: Pappelholz wird oft für Modellbau oder Flugzeuginnenräume verwendet, wo Leichtigkeit zählt.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/pappel_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/pappel_2.jpg?raw=true" },
-          "Weide": { info: `Weide (WE) Weidenholz ist elastisch und biegsam – traditionell für Flechtarbeiten und Körbe verwendet. Die Struktur ist fein zerstreutporig, Poren kaum markant. Verwendung: Flechtwerk, Gartenbau, leichte Möbel. Funfact: Weidenruten werden seit Jahrhunderten für Korbgeflechte, Zäune und Rankhilfen genutzt.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/weide_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/weide_2.jpg?raw=true" },
-          "Linde": { info: `Linde (LI) Lindenholz ist weich, homogen und gut schnitzbar – ideal für feine Holzarbeiten. Fein zerstreutporig und gleichmäßig, ohne großen Porenkontrast. Verwendung: Intarsien, geschnitzte Dekors, Möbel, Modellbau. Funfact: Lindenholz war traditionell das Holz der Bildhauer und Orgelbauer im Mittelalter.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/linde_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/linde_2.jpg?raw=true" },
-          "Ulme": { info: `Ulme (UL) Ulmenholz ist zäh und eher hart – früher oft für Möbel und Reparaturen verwendet. Ringporig mit markanten Poren und gelegentlichem unruhigem Faserverlauf. Verwendung: Möbel, Innenausbau, Reparaturholz. Funfact: Ulmenholz hat früher im Wagen- und Möbelbau Bedeutung gehabt, besonders dort, wo Biegung gefragt war.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ulme_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ulme_2.jpg?raw=true" },
-          "Kastanie": { info: `Kastanie (KA) Kastanienholz ist ähnlich der Eiche wetterbeständig, mit warmem Farbton und markanter Struktur. Ringporig mit klar sichtbaren Jahresringen und deutlichem Übergang. Verwendung: Außenbau, Möbel, Balken, Gartenholz. Funfact: Kastanienholz wurde oft in historischen Bauwerken als wetterbeständige Alternative zur Eiche verwendet.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kastanie_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kastanie_2.jpg?raw=true" },
-          "Robinie": { info: `Robinie (RO) Robinienholz ist eines der härtesten europäischen Hölzer und sehr dauerhaft im Freien. Ringporig mit feinen Poren und schmalem Übergang – die Struktur ist weniger kontrastreich. Verwendung: Gartenholz, Terrassen, Balken, Zäune. Funfact: Robinie wird oft als „europäisches Teak“ genannt, weil es ähnliche Eigenschaften wie Tropenholz zeigt.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/robinie_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/robinie_2.jpg?raw=true" },
-          "Hemlock": { info: `Hemlock (HE) Hemlock ist ein nördliches Nadelholz mit feiner Struktur, weich und gleichmäßig. Die Porenstruktur ähnelt einfacher Zellstruktur; Jahresringe dezent sichtbar. Verwendung: Innenausbau, Paneele, Bauholz. Funfact: Hemlock wird oft im Möbel- und Leichtbau verwendet, wenn gutes Verhältnis zwischen Gewicht und Stabilität gefragt ist.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/hemlock_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/hemlock_2.jpg?raw=true" },
-          "Zypresse": { info: `Zypresse (ZY) Zypressenholz duftet gut und ist natürlich resistent gegen Feuchtigkeit und Schädlinge. Die Struktur ist fein und gleichmäßig, mit moderatem Porencharakter. Verwendung: Außen- und Gartenholz, Möbel, Fassaden. Funfact: Zypresse wurde in mediterranen Regionen oft zur Holzverkleidung von Kirchen und Tempeln verwendet.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zypresse_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zypresse_2.jpg?raw=true" },
-          "Redwood": { info: `Redwood (RW) Redwood ist ein leichtes Tropenholz mit guter Dauerhaftigkeit und dekorativer Farbe. Zerstreutporig mit feiner Textur, Poren gleichmäßig verteilt. Verwendung: Außenholz, Zäune, Gartenkonstruktionen. Funfact: Der Küstenmammutbaum (Redwood) zählt zu den höchsten Bäumen der Welt.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/redwood_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/redwood_2.jpg?raw=true" },
-          "Hickory": { info: `Hickory (HI) Hickory ist ein ausgesprochen zähes und hartes Holz – ideal für stark beanspruchte Teile. Ringporig mit ausgeprägten Poren im Frühholz und klaren Jahresringen. Verwendung: Werkzeugstiele, Sportgeräte, Möbel mit hoher Belastung. Funfact: Hickory war traditionell Material für Peitschen, Wurfstöcke und Arbeitsgeräte.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/hickory_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/hickory_2.jpg?raw=true" },
-          "Wenge": { info: `Wenge (WE-NE) Wenge ist ein dunkles Tropenholz mit hoher Härte und dekorativer Maserung. Zerstreutporig mit feinen Poren – oft Streifenzeichnung sichtbar. Verwendung: Luxusmöbel, Parkett, Furniere. Funfact: Wegen seiner tiefen, dunklen Farbe wird Wenge oft in Kontrasten zu hellem Holz kombiniert.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/wenge_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/wenge_2.jpg?raw=true" },
-          "Zebrano": { info: `Zebrano (ZE-RA) Zebrano zeichnet sich durch seine markante Streifenoptik aus – dekorativ und auffällig. Die Porenstruktur ist zerstreutporig, oft mit deutlichem Maserungseffekt. Verwendung: Designmöbel, Furniere, Dekorationen. Funfact: Zebrano wird oft für luxuriöse Intarsien und Furnierarbeiten verwendet.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zebrano_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zebrano_2.jpg?raw=true" },
-          "Palisander": { info: `Palisander (PA) Palisanderholz ist dekorativ, fest und langlebig – mit attraktiven Farbtönen. Zerstreutporig mit feiner Struktur und gleichmäßiger Porenverteilung. Verwendung: Gitarren, Möbel, Furniere. Funfact: Palisanderholz war früher oft exklusiv für edle Musikinstrumente und Intarsien reserviert.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/palisander_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/palisander_2.jpg?raw=true" },
-          "Ebenholz": { info: `Ebenholz (EB) Ebenholz ist eines der härtesten Hölzer – fast tiefschwarz und sehr dicht. Zerstreutporig mit extrem feinen Poren, kaum sichtbar – Porenstruktur sehr fein. Verwendung: Klaviertasten, Intarsien, Luxusdekore. Funfact: Ebenholz wurde im alten Ägypten für Statuetten und Schmuckstücke verwendet – wegen seiner tiefen Farbe und Seltenheit.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ebenholz_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ebenholz_2.jpg?raw=true" }
-        };
-
-        const reflectionQuestions = [
-            "Stell dir vor, du sollst einen stabilen und langlebigen Esstisch für eine Familie entwerfen. ...", "Welches Holz würdest du für Gartenmöbel wählen, ...", "Eine Küchenarbeitsplatte muss schnittfest und widerstandsfähig sein. ...", "Für einen stark beanspruchten Dielenboden ...", "Du sollst den Korpus einer Akustikgitarre bauen. ...", "Fenster sind ständig wechselnder Luftfeuchtigkeit ausgesetzt. ...", "Für ein Modellflugzeug oder ein leichtes Regal ...", "Robinie und Lärche sind beide für den Außenbereich beliebt. ...", "Du möchtest einen gebogenen Handlauf ...", "Vergleiche die Rohdichte und den E-Modul von Fichte und Eiche. ...", "Hölzer mit hohem Quell- und Schwindmaß ...", "Ein Hammerstiel muss extrem bruchfest ...", "Bei Eichenholz kann es in Verbindung mit Eisen ...", "Weiche Hölzer wie Fichte oder Kiefer ...", "Für die Herstellung von dekorativen Furnieren ...", "Nenne drei heimische Hölzer ...", "Holz ist ein wichtiger CO₂-Speicher. ...", "Was bedeuten Siegel wie FSC oder PEFC ...", "Teak hat eine exzellente Dauerhaftigkeit (DK 1). ...", "Bambus ist botanisch gesehen ein Gras, ...", "Was könntest du aus einem alten Eichenbalken ...", "Du möchtest ein Möbelstück mit einem starken Hell-Dunkel-Kontrast ...", "Hölzer wie Eiche oder Esche haben ...", "Stell dir vor, du entwirfst ein Kinderspielzeug ...", "Einige Hölzer wie Kirsche oder Lärche ...", "Für ein modernes, minimalistisches Möbelstück ...", "Welches Holz würdest du für den Bau einer rustikalen Almhütte ...", "Du planst ein Schülerprojekt ...", "Ein Kunde wünscht sich für seine Terrasse ...", "Welche Eigenschaft einer Holzart ...", "Wenn du eine neue Kategorie ...",
-        ];
-
-        const attributeInfo = {
-            dk: {icon: '🛡️', name: 'Dauerhaftigkeit (DK)', color: 'blue'},
-            haerte: {icon: '💎', name: 'Druckfestigkeit (N/mm²)', color: 'blue'},
-            quellenSchwindenRadial: {icon: '↔️', name: 'Quellen/Schwinden (%)', color: 'blue'},
-            dichte: {icon: '⚖️', name: 'Rohdichte (kg/m³)', color: 'blue'},
-            gewicht: {icon: '🏋️', name: 'E-Modul (N/mm²)', color: 'blue'}
-        };
-        
-        let aiGame = { playerName: '', playerCards: [], aiCards: [], currentPlayerCard: null, currentAiCard: null, roundInProgress: false };
-        
-        // ===== Auth + Deep Link Join =====
-        document.addEventListener('DOMContentLoaded', async () => {
-            try { await signInAnonymously(auth); } catch (e) { console.error("Firebase Auth Error:", e); }
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    localPlayerId = user.uid;
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const gameIdFromUrl = urlParams.get('game');
-                    if (gameIdFromUrl) {
-                        gameId = gameIdFromUrl;
-                        gameMode = 'multiplayer';
-                        window.showNamePrompt('join');
-                    }
-                }
-            });
-        });
-
-        window.addEventListener('beforeunload', async () => {
-            if (gameMode === 'multiplayer' && gameId && localPlayerId) {
-                const gameRef = doc(db, "games", gameId);
-                const playerStatusPath = `players.${localPlayerId}.status`;
-                await updateDoc(gameRef, { [playerStatusPath]: "offline" }).catch(() => {});
-            }
-        });
-
-        // ===== UI Control =====
-        window.showNamePrompt = (mode) => {
-            document.getElementById('setupModal').classList.add('hidden');
-            const nameModal = document.getElementById('nameModal');
-            nameModal.classList.remove('hidden');
-            const nameSubmitButton = document.getElementById('nameSubmitButton');
-            const newButton = nameSubmitButton.cloneNode(true);
-            nameSubmitButton.parentNode.replaceChild(newButton, nameSubmitButton);
-
-            newButton.addEventListener('click', () => {
-                const playerName = document.getElementById('playerName').value.trim();
-                if (!playerName) { alert('Bitte gib deinen Namen ein!'); return; }
-                nameModal.classList.add('hidden');
-
-                if (mode === 'ai') {
-                    gameMode = 'ai';
-                    startGameAI(playerName);
-                } else if (mode === 'multiplayer') {
-                    gameMode = 'multiplayer';
-                    createGame(playerName);
-                } else if (mode === 'join') {
-                    joinGame(gameId, playerName);
-                }
-            });
-        };
-
-        window.copyShareLink = async () => {
-            const linkInput = document.getElementById('shareLink');
-            try {
-                await navigator.clipboard.writeText(linkInput.value);
-            } catch (e) {
-                linkInput.select();
-                document.execCommand('copy');
-            }
-            hasCopiedShareLink = true;
-            const statusEl = document.getElementById('lobbyStatus');
-            if (statusEl) statusEl.textContent = 'Link kopiert. Warte auf Mitspieler...';
-
-            if (localGameState && (localGameState.status === 'playing' || localGameState.status === 'finished')) {
-                document.getElementById('multiplayerLobbyModal').classList.add('hidden');
-                document.getElementById('gameContainer').classList.remove('hidden');
-                updateMultiplayerUI(localGameState);
-            }
-        };
-
-        // ===== Multiplayer Logic =====
-        async function createGame(playerName) {
-            const lobbyModal = document.getElementById('multiplayerLobbyModal');
-            lobbyModal.classList.remove('hidden');
-            hasCopiedShareLink = false;
-
-            gameId = Math.random().toString(36).substring(2, 8).toUpperCase();
-            const shareLinkInput = document.getElementById('shareLink');
-            const baseUrl = window.location.href.split('?')[0];
-            shareLinkInput.value = `${baseUrl}?game=${gameId}`;
-
-            const gameRef = doc(db, "games", gameId);
-            const initialGameData = {
-                gameId: gameId,
-                status: 'waiting',
-                playerIds: [localPlayerId],
-                players: {
-                    [localPlayerId]: { name: playerName, cards: [], status: 'online' }
-                },
-                createdAt: serverTimestamp()
-            };
-
-            await setDoc(gameRef, initialGameData);
-            listenToGameChanges();
-        }
-
-        async function joinGame(gameIdToJoin, playerName) {
-            const gameRef = doc(db, "games", gameIdToJoin);
-            const gameSnap = await getDoc(gameRef);
-
-            if (gameSnap.exists() && gameSnap.data().status === 'waiting' && gameSnap.data().playerIds.length === 1) {
-                document.getElementById('lobbyTitle').textContent = "Spiel wird beigetreten...";
-                document.getElementById('lobbyText').textContent = "Moment, die Karten werden gemischt.";
-                document.getElementById('multiplayerLobbyModal').classList.remove('hidden');
-                hasCopiedShareLink = true;
-
-                const shuffledCards = shuffleArray(woodCards);
-                const player1Id = gameSnap.data().playerIds[0];
-
-                const gameUpdateData = {
-                    status: 'playing',
-                    playerIds: [player1Id, localPlayerId],
-                    [`players.${localPlayerId}`]: { name: playerName, cards: shuffledCards.slice(15), status: 'online' },
-                    [`players.${player1Id}.cards`]: shuffledCards.slice(0, 15),
-                    turn: player1Id,
-                    currentCards: {
-                        [player1Id]: shuffledCards.slice(0, 15)[0],
-                        [localPlayerId]: shuffledCards.slice(15)[0],
-                    },
-                    lastResult: null,
-                    lastActivity: serverTimestamp()
-                };
-
-                await updateDoc(gameRef, gameUpdateData);
-                listenToGameChanges();
-            } else {
-                alert("Spiel nicht gefunden oder bereits voll.");
-                window.location.search = '';
-            }
-        }
-
-        function listenToGameChanges() {
-            const gameRef = doc(db, "games", gameId);
-            unsubscribeGame = onSnapshot(gameRef, (docSnap) => {
-                if (!docSnap.exists()) {
-                    alert("Das Spiel wurde beendet.");
-                    resetGame();
-                    return;
-                }
-
-                const gameData = docSnap.data();
-                localGameState = gameData;
-
-                if (gameData.status === 'playing' || gameData.status === 'finished') {
-                    if (hasCopiedShareLink) {
-                        document.getElementById('multiplayerLobbyModal').classList.add('hidden');
-                        document.getElementById('gameContainer').classList.remove('hidden');
-                        updateMultiplayerUI(gameData);
-                    } else {
-                        const statusEl = document.getElementById('lobbyStatus');
-                        if (statusEl) statusEl.textContent = 'Mitspieler ist beigetreten. Klicke „Link kopieren“, um fortzufahren.';
-                    }
-                }
-
-                const opponentId = gameData.playerIds.find(id => id !== localPlayerId);
-                if (opponentId && gameData.players[opponentId]?.status === 'offline') {
-                    // alert('Dein Mitspieler hat das Spiel verlassen.');
-                }
-            });
-        }
-
-        function updateMultiplayerUI(gameData) {
-            const opponentId = gameData.playerIds.find(id => id !== localPlayerId);
-
-            document.getElementById('playerNameDisplay').textContent = gameData.players[localPlayerId].name;
-            document.getElementById('playerCards').textContent = gameData.players[localPlayerId].cards.length;
-
-            if (opponentId) {
-                document.getElementById('opponentNameDisplay').textContent = gameData.players[opponentId].name;
-                document.getElementById('aiCards').textContent = gameData.players[opponentId].cards.length;
-            } else {
-                document.getElementById('opponentNameDisplay').textContent = "Wartet...";
-                document.getElementById('aiCards').textContent = '...';
-            }
-
-            updateStatusBar(gameData.players[localPlayerId].cards.length, gameData.players[opponentId]?.cards.length || 0);
-            displayMultiplayerCards(gameData);
-
-            const turnIndicator = document.getElementById('turnIndicator');
-            const attributeSelection = document.getElementById('attributeSelection');
-            const resultDisplay = document.getElementById('resultDisplay');
-            const nextRoundBtn = document.getElementById('nextRoundButton');
-
-            turnIndicator.classList.remove('hidden');
-
-            if (gameData.lastResult) {
-                attributeSelection.classList.add('hidden');
-                resultDisplay.classList.remove('hidden');
-                nextRoundBtn.classList.remove('hidden');
-
-                const { winnerId, attribute, values } = gameData.lastResult;
-                const winnerName = winnerId === localPlayerId ? 'Du' : (winnerId === 'tie' ? '' : gameData.players[winnerId]?.name);
-
-                let resultText = winnerId === 'tie' ? `🤝 Unentschieden!` : `🎉 ${winnerName || 'Gegner'} gewinnt!`;
-                if (winnerId !== localPlayerId && winnerId !== 'tie') resultText = `😞 ${winnerName} gewinnt!`;
-
-                document.getElementById('resultText').textContent = resultText;
-                const opponentId2 = gameData.playerIds.find(id => id !== localPlayerId);
-                document.getElementById('resultDetails').textContent = `${attributeInfo[attribute].name.split(' (')[0]}: ${values[localPlayerId]} vs ${values[opponentId2]}`;
-                
-                const playerCardFront = document.getElementById('playerCard').querySelector('.card-front');
-                const statusBar = document.getElementById('statusBar');
-
-                if (winnerId === localPlayerId) {
-                    if (playerCardFront) playerCardFront.classList.add('animate-glow-win');
-                    if (statusBar) {
-                        statusBar.classList.add('status-flash-win');
-                        setTimeout(() => statusBar.classList.remove('status-flash-win'), 1200);
-                    }
-                    triggerWinStarAnimation();
-                } else if (winnerId !== 'tie') {
-                    if (playerCardFront) playerCardFront.classList.add('animate-glow-lose');
-                    if (statusBar) {
-                        statusBar.classList.add('status-flash-lose');
-                        setTimeout(() => statusBar.classList.remove('status-flash-lose'), 1200);
-                    }
-                }
-
-            } else {
-                resultDisplay.classList.add('hidden');
-                nextRoundBtn.classList.add('hidden');
-
-                if (gameData.turn === localPlayerId) {
-                    turnIndicator.textContent = "Du bist am Zug!";
-                    turnIndicator.className = 'text-sm font-semibold p-2 text-green-600';
-                    attributeSelection.classList.remove('hidden');
-                } else {
-                    turnIndicator.textContent = `${gameData.players[gameData.turn]?.name} ist am Zug...`;
-                    turnIndicator.className = 'text-sm font-semibold p-2 text-gray-500';
-                    attributeSelection.classList.add('hidden');
-                }
-            }
-        }
-
-        function updateStatusBar(playerCount, opponentCount) {
-            const total = playerCount + opponentCount;
-            const playerPercentage = total > 0 ? (playerCount / total) * 100 : 50;
-
-            const statusBar = document.getElementById('statusBar');
-            if (statusBar) {
-                statusBar.style.width = `${playerPercentage}%`;
-                let color = '#f59e0b'; // amber-500
-                if (playerPercentage < 25) color = '#c2410c';
-                else if (playerPercentage < 50) color = '#f59e0b';
-                else if (playerPercentage > 75) color = '#16a34a';
-                else if (playerPercentage > 50) color = '#84cc16';
-                statusBar.style.backgroundColor = color;
-            }
-        }
-
-        function displayMultiplayerCards(gameData) {
-            const opponentId = gameData.playerIds.find(id => id !== localPlayerId);
-            const playerCardContainer = document.getElementById('playerCard');
-            const aiCardContainer = document.getElementById('aiCard');
-            playerCardContainer.innerHTML = '';
-            aiCardContainer.innerHTML = '';
-
-            const showOpponentCard = !!gameData.lastResult;
-
-            const playerCard = createCard(gameData.currentCards[localPlayerId], true, true);
-            playerCardContainer.appendChild(playerCard);
-
-            if (opponentId && gameData.currentCards[opponentId]) {
-                const aiCard = createCard(gameData.currentCards[opponentId], showOpponentCard, false);
-                aiCardContainer.appendChild(aiCard);
-            } else {
-                aiCardContainer.innerHTML = `<div class="card-front bg-gray-200 rounded-xl shadow-md border-2 border-gray-300 p-3 flex flex-col items-center justify-center h-full">Wartet auf Spieler 2...</div>`;
-            }
-        }
-
-        async function multiplayerSelectAttribute(attribute) {
-            if (!localGameState || localGameState.turn !== localPlayerId || localGameState.lastResult) return;
-
-            const playerCard = localGameState.currentCards[localPlayerId];
-            const opponentId = localGameState.playerIds.find(id => id !== localPlayerId);
-            const opponentCard = localGameState.currentCards[opponentId];
-
-            const playerValue = playerCard[attribute];
-            const opponentValue = opponentCard[attribute];
-
-            let playerWins;
-            if (attribute === 'quellenSchwindenRadial' || attribute === 'dk') {
-                if (playerValue < opponentValue) playerWins = true; else if (opponentValue < playerValue) playerWins = false; else playerWins = 'tie';
-            } else {
-                if (playerValue > opponentValue) playerWins = true; else if (opponentValue > playerValue) playerWins = false; else playerWins = 'tie';
-            }
-
-            const winnerId = playerWins === 'tie' ? 'tie' : (playerWins ? localPlayerId : opponentId);
-            
-            const gameUpdate = {
-                lastResult: { winnerId, attribute, values: { [localPlayerId]: playerValue, [opponentId]: opponentValue } },
-                lastActivity: serverTimestamp()
-            };
-            await updateDoc(doc(db, "games", gameId), gameUpdate);
-        }
-
-        async function multiplayerNextRound() {
-            const pf = document.getElementById('playerCard')?.querySelector('.card-front');
-            if(pf) pf.classList.remove('animate-glow-win', 'animate-glow-lose');
-            const af = document.getElementById('aiCard')?.querySelector('.card-front');
-            if(af) af.classList.remove('animate-glow-win', 'animate-glow-lose');
-
-            if (!localGameState || !localGameState.lastResult) return;
-            if (localGameState.turn !== localPlayerId && localGameState.lastResult.winnerId !== localPlayerId && localGameState.lastResult.winnerId !== 'tie') return;
-
-            const { winnerId } = localGameState.lastResult;
-            const [player1Id, player2Id] = localGameState.playerIds;
-
-            const p1Cards = [...localGameState.players[player1Id].cards];
-            const p2Cards = [...localGameState.players[player2Id].cards];
-
-            const p1Card = p1Cards.shift();
-            const p2Card = p2Cards.shift();
-
-            if (winnerId === player1Id) p1Cards.push(p1Card, p2Card);
-            else if (winnerId === player2Id) p2Cards.push(p1Card, p2Card);
-            else { p1Cards.push(p1Card); p2Cards.push(p2Card); }
-
-            if (p1Cards.length === 0 || p2Cards.length === 0) {
-                await updateDoc(doc(db, "games", gameId), { status: 'finished' });
-                endGame(); 
-                return;
-            }
-
-            const nextTurn = winnerId === 'tie' ? localGameState.turn : winnerId;
-            const gameUpdate = {
-                'lastResult': null, 'turn': nextTurn,
-                'players': {
-                    [player1Id]: { ...localGameState.players[player1Id], cards: p1Cards },
-                    [player2Id]: { ...localGameState.players[player2Id], cards: p2Cards }
-                },
-                'currentCards': { [player1Id]: p1Cards[0], [player2Id]: p2Cards[0] },
-                'lastActivity': serverTimestamp()
-            };
-            await updateDoc(doc(db, "games", gameId), gameUpdate);
-        }
-
-        // ===== Controller for both modes =====
-        window.selectAttribute = function(attribute) {
-            if (gameMode === 'ai') {
-                selectAttributeAI(attribute);
-            } else if (gameMode === 'multiplayer') {
-                multiplayerSelectAttribute(attribute);
-            }
-        };
-        window.nextRound = function() {
-            if (gameMode === 'ai') {
-                nextRoundAI();
-            } else if (gameMode === 'multiplayer') {
-                multiplayerNextRound();
-            }
-        };
-
-        // ===== AI Mode Logic =====
-        function shuffleArray(array) {
-            const shuffled = [...array];
-            for (let i = shuffled.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-            }
-            return shuffled;
-        }
-
-        function startGameAI(playerName) {
-            aiGame.playerName = playerName;
-            document.getElementById('playerNameDisplay').textContent = playerName;
-            const shuffledCards = shuffleArray(woodCards);
-            aiGame.playerCards = shuffledCards.slice(0, 15);
-            aiGame.aiCards = shuffledCards.slice(15, 30);
-            aiGame.currentPlayerCard = aiGame.playerCards[0];
-            aiGame.currentAiCard = aiGame.aiCards[0];
-            document.getElementById('gameContainer').classList.remove('hidden');
-            window.scrollTo(0, 0);
-            updateDisplayAI();
-            displayCardsAI();
-        }
-
-        function createCard(cardData, isRevealed = true, isPlayer = true) {
-            const card = document.createElement('div');
-            card.className = `card-3d w-full h-full relative cursor-pointer transition-all duration-300 ${isPlayer ? 'hover-lift' : ''}`;
-            if (!isRevealed) card.classList.add('card-flipped');
-
-            const borderColor = isPlayer ? 'border-amber-400' : 'border-gray-300';
-            const shadow = isPlayer ? 'shadow-lg' : 'shadow-md';
-            const cardFront = document.createElement('div');
-            cardFront.className = `card-front card-background rounded-xl ${shadow} border-2 ${borderColor} p-3 flex flex-col`;
-
-            const canSelect = isPlayer && ( (gameMode === 'ai' && !aiGame.roundInProgress) || (gameMode === 'multiplayer' && localGameState.turn === localPlayerId && !localGameState.lastResult));
-            
-            const isRoundOver = (gameMode === 'ai' && aiGame.roundInProgress) || (gameMode === 'multiplayer' && localGameState.lastResult);
-            
-            const infoButtonHTML = isPlayer ? `
-                <button id="player-info-button-${cardData.name.replace(/\s+/g, '-')}" onclick="window.showWoodInfo('${cardData.name}')" class="${isRoundOver ? '' : 'hidden'} bg-purple-600 text-white rounded-full h-9 w-9 flex items-center justify-center text-lg hover:bg-purple-700 absolute top-2 left-2">💡</button>
-            ` : '';
-            
-            const woodData = woodInfo[cardData.name] || woodInfo[Object.keys(woodInfo).find(k => k.toLowerCase() === cardData.name.toLowerCase())];
-            const treeImage = woodData ? woodData.bildBaum : 'https://placehold.co/36x36/d1d5db/374151?text=?';
-
-            const woodIconHTML = `<img src="${treeImage}" alt="${cardData.name}" id="wood-image-icon-${cardData.name.replace(/\s+/g, '-')}" class="${isRoundOver && isPlayer ? 'hidden' : ''} w-9 h-9 object-cover rounded-full border-2 border-amber-200 flex-shrink-0 absolute top-2 left-2">`;
-            
-            const attributeButtons = canSelect ? `
-                <div class="space-y-1 mt-auto">
-                    <button onclick="window.selectAttribute('dk')" class="w-full flex justify-between items-center py-1 px-1 bg-amber-100 hover:bg-amber-200 rounded-xl transition-colors text-left border border-amber-600">
-                        <div class="flex items-center"><span class="mr-2 text-xs">🛡️</span><div><span class="text-xs font-medium leading-tight">Dauerhaftigkeit</span><span class="block text-xs text-gray-500 leading-tight">(DK)</span></div></div><span class="font-semibold text-amber-700 text-base">${cardData.dk}</span>
-                    </button>
-                    <button onclick="window.selectAttribute('haerte')" class="w-full flex justify-between items-center py-1 px-1 bg-amber-100 hover:bg-amber-200 rounded-xl transition-colors text-left border border-amber-600">
-                         <div class="flex items-center"><span class="mr-2 text-xs">💎</span><div><span class="text-xs font-medium leading-tight">Druckfestigkeit</span><span class="block text-xs text-gray-500 leading-tight">(N/mm²)</span></div></div><span class="font-semibold text-amber-700 text-base">${cardData.haerte}</span>
-                    </button>
-                    <button onclick="window.selectAttribute('quellenSchwindenRadial')" class="w-full flex justify-between items-center py-1 px-1 bg-amber-100 hover:bg-amber-200 rounded-xl transition-colors text-left border border-amber-600">
-                         <div class="flex items-center"><span class="mr-2 text-xs">↔️</span><div><span class="text-xs font-medium leading-tight">Quellen/Schw.</span><span class="block text-xs text-gray-500 leading-tight">(%)</span></div></div><span class="font-semibold text-amber-700 text-base">${cardData.quellenSchwindenRadial}</span>
-                    </button>
-                    <button onclick="window.selectAttribute('dichte')" class="w-full flex justify-between items-center py-1 px-1 bg-amber-100 hover:bg-amber-200 rounded-xl transition-colors text-left border border-amber-600">
-                         <div class="flex items-center"><span class="mr-2 text-xs">⚖️</span><div><span class="text-xs font-medium leading-tight">Rohdichte</span><span class="block text-xs text-gray-500 leading-tight">(kg/m³)</span></div></div><span class="font-semibold text-amber-700 text-base">${cardData.dichte}</span>
-                    </button>
-                    <button onclick="window.selectAttribute('gewicht')" class="w-full flex justify-between items-center py-1 px-1 bg-amber-100 hover:bg-amber-200 rounded-xl transition-colors text-left border border-amber-600">
-                         <div class="flex items-center"><span class="mr-2 text-xs">🏋️</span><div><span class="text-xs font-medium leading-tight">E-Modul</span><span class="block text-xs text-gray-500 leading-tight">(N/mm²)</span></div></div><span class="font-semibold text-amber-700 text-base">${cardData.gewicht.toLocaleString('de-DE')}</span>
-                    </button>
-                </div>
-            ` : `
-                <div class="space-y-1 mt-auto">
-                    <div class="w-full flex justify-between items-center py-1 px-1 bg-amber-100 rounded-xl text-left border border-amber-600"><div class="flex items-center"><span class="mr-2 text-xs">🛡️</span><div><span class="text-xs font-medium leading-tight">Dauerhaftigkeit</span><span class="block text-xs text-gray-500 leading-tight">(DK)</span></div></div><span class="font-semibold text-amber-700 text-base">${cardData.dk}</span></div>
-                    <div class="w-full flex justify-between items-center py-1 px-1 bg-amber-100 rounded-xl text-left border border-amber-600"><div class="flex items-center"><span class="mr-2 text-xs">💎</span><div><span class="text-xs font-medium leading-tight">Druckfestigkeit</span><span class="block text-xs text-gray-500 leading-tight">(N/mm²)</span></div></div><span class="font-semibold text-amber-700 text-base">${cardData.haerte}</span></div>
-                    <div class="w-full flex justify-between items-center py-1 px-1 bg-amber-100 rounded-xl text-left border border-amber-600"><div class="flex items-center"><span class="mr-2 text-xs">↔️</span><div><span class="text-xs font-medium leading-tight">Quellen/Schw.</span><span class="block text-xs text-gray-500 leading-tight">(%)</span></div></div><span class="font-semibold text-amber-700 text-base">${cardData.quellenSchwindenRadial}</span></div>
-                    <div class="w-full flex justify-between items-center py-1 px-1 bg-amber-100 rounded-xl text-left border border-amber-600"><div class="flex items-center"><span class="mr-2 text-xs">⚖️</span><div><span class="text-xs font-medium leading-tight">Rohdichte</span><span class="block text-xs text-gray-500 leading-tight">(kg/m³)</span></div></div><span class="font-semibold text-amber-700 text-base">${cardData.dichte}</span></div>
-                    <div class="w-full flex justify-between items-center py-1 px-1 bg-amber-100 rounded-xl text-left border border-amber-600"><div class="flex items-center"><span class="mr-2 text-xs">🏋️</span><div><span class="text-xs font-medium leading-tight">E-Modul</span><span class="block text-xs text-gray-500 leading-tight">(N/mm²)</span></div></div><span class="font-bold text-amber-700 text-base">${cardData.gewicht.toLocaleString('de-DE')}</span></div>
-                </div>
-            `;
-
-            cardFront.innerHTML = `
-                <div class="flex justify-center items-center w-full mb-1">
-                    <h3 class="text-lg font-bold text-amber-800 truncate">${cardData.name}</h3>
-                </div>
-                ${isPlayer ? woodIconHTML : ''}
-                ${isPlayer ? infoButtonHTML : ''}
-                ${attributeButtons}
-            `;
-
-            const cardBack = document.createElement('div');
-            cardBack.className = 'card-back rounded-xl shadow-lg border-2 border-amber-300 p-4 flex items-center justify-center relative overflow-hidden';
-
-            card.appendChild(cardFront);
-            card.appendChild(cardBack);
-            return card;
-        }
-
-        function displayCardsAI() {
-            const playerCardContainer = document.getElementById('playerCard');
-            const aiCardContainer = document.getElementById('aiCard');
-            playerCardContainer.innerHTML = '';
-            aiCardContainer.innerHTML = '';
-            playerCardContainer.appendChild(createCard(aiGame.currentPlayerCard, true, true));
-            aiCardContainer.appendChild(createCard(aiGame.currentAiCard, false, false));
-        }
-
-        function selectAttributeAI(attribute) {
-            if (aiGame.roundInProgress) return;
-            aiGame.roundInProgress = true;
-
-            const playerValue = aiGame.currentPlayerCard[attribute];
-            const aiValue = aiGame.currentAiCard[attribute];
-            
-            document.getElementById('aiCard').querySelector('.card-3d').classList.remove('card-flipped');
-
-            const attributeButtons = document.querySelectorAll('#playerCard .space-y-1 > button');
-            attributeButtons.forEach(button => { button.disabled = true; button.classList.add('cursor-not-allowed', 'opacity-50'); });
-
-            let playerWins;
-            if (attribute === 'quellenSchwindenRadial' || attribute === 'dk') {
-                if (playerValue < aiValue) playerWins = true; else if (aiValue < playerValue) playerWins = false; else playerWins = 'tie';
-            } else {
-                if (playerValue > aiValue) playerWins = true; else if (aiValue > playerValue) playerWins = false; else playerWins = 'tie';
-            }
-
-            let resultText, resultClass;
-            const playerCardFront = document.getElementById('playerCard').querySelector('.card-front');
-            const statusBar = document.getElementById('statusBar');
-            
-            if (playerWins === true) {
-                resultText = `🎉 Du gewinnst!`;
-                resultClass = 'text-green-600';
-                highlightAttribute(attribute, 'win');
-                aiGame.playerCards.push(aiGame.playerCards.shift(), aiGame.aiCards.shift());
-                if(playerCardFront) playerCardFront.classList.add('animate-glow-win');
-                if (statusBar) {
-                    statusBar.classList.add('status-flash-win');
-                    setTimeout(() => statusBar.classList.remove('status-flash-win'), 1200);
-                }
-                triggerWinStarAnimation();
-
-            } else if (playerWins === false) {
-                resultText = `😞 KI gewinnt!`;
-                resultClass = 'text-red-600';
-                highlightAttribute(attribute, 'lose');
-                aiGame.aiCards.push(aiGame.aiCards.shift(), aiGame.playerCards.shift());
-                if(playerCardFront) playerCardFront.classList.add('animate-glow-lose');
-                if (statusBar) {
-                    statusBar.classList.add('status-flash-lose');
-                    setTimeout(() => statusBar.classList.remove('status-flash-lose'), 1200);
-                }
-            } else {
-                resultText = `🤝 Unentschieden!`;
-                resultClass = 'text-yellow-600';
-                highlightAttribute(attribute, 'tie');
-                aiGame.playerCards.push(aiGame.playerCards.shift());
-                aiGame.aiCards.push(aiGame.aiCards.shift());
-            }
-
-            document.getElementById('resultText').textContent = resultText;
-            document.getElementById('resultText').className = `text-xl font-bold mb-1 ${resultClass}`;
-            document.getElementById('resultDetails').textContent = `${attributeInfo[attribute].name.split(' (')[0]}: ${playerValue.toLocaleString('de-DE')} vs ${aiValue.toLocaleString('de-DE')}`;
-            
-            document.getElementById('attributeSelection').classList.add('hidden');
-            document.getElementById('resultDisplay').classList.remove('hidden');
-            document.getElementById('nextRoundButton').classList.remove('hidden');
-            
-            const woodIcon = document.getElementById(`wood-image-icon-${aiGame.currentPlayerCard.name.replace(/\s+/g, '-')}`);
-            const infoButton = document.getElementById(`player-info-button-${aiGame.currentPlayerCard.name.replace(/\s+/g, '-')}`);
-            if(woodIcon) woodIcon.classList.add('hidden');
-            if(infoButton) infoButton.classList.remove('hidden');
-
-
-            updateDisplayAI();
-            checkGameOverAI();
-        }
-
-        function highlightAttribute(attribute, result) {
-            let playerBgColor = 'bg-gray-300', aiBgColor = 'bg-gray-300';
-
-            const idx = {'dk': 0, 'haerte': 1, 'quellenSchwindenRadial': 2, 'dichte': 3, 'gewicht': 4}[attribute];
-            
-            document.querySelectorAll('#playerCard .space-y-1 > *')[idx].classList.replace('bg-amber-100', playerBgColor);
-            document.querySelectorAll('#aiCard .space-y-1 > *')[idx].classList.replace('bg-amber-100', aiBgColor);
-        }
-
-        function nextRoundAI() {
-            const pf = document.getElementById('playerCard').querySelector('.card-front');
-            if (pf) pf.classList.remove('animate-glow-win', 'animate-glow-lose');
-            const af = document.getElementById('aiCard').querySelector('.card-front');
-            if (af) af.classList.remove('animate-glow-win', 'animate-glow-lose');
-
-            if (aiGame.playerCards.length === 0 || aiGame.aiCards.length === 0) { endGameAI(); return; }
-
-            aiGame.currentPlayerCard = aiGame.playerCards[0];
-            aiGame.currentAiCard = aiGame.aiCards[0];
-            aiGame.roundInProgress = false;
-
-            document.getElementById('attributeSelection').classList.remove('hidden');
-            document.getElementById('nextRoundButton').classList.add('hidden');
-            document.getElementById('resultDisplay').classList.add('hidden');
-
-            displayCardsAI();
-            updateDisplayAI();
-        }
-
-        function updateDisplayAI() {
-            const playerCount = aiGame.playerCards.length;
-            const opponentCount = aiGame.aiCards.length;
-            document.getElementById('playerCards').textContent = playerCount;
-            document.getElementById('aiCards').textContent = opponentCount;
-            updateStatusBar(playerCount, opponentCount);
-        }
-
-        function checkGameOverAI() {
-            if (aiGame.playerCards.length === 0 || aiGame.aiCards.length === 0) {
-                setTimeout(endGameAI, 1200);
-            }
-        }
-        
-        function triggerWinStarAnimation() {
-            const animationContainer = document.getElementById('animationContainer');
-            const playerScoreBox = document.getElementById('playerScoreBox');
-            const statusBar = document.getElementById('statusBar');
-
-            if (!animationContainer || !playerScoreBox || !statusBar) return;
-
-            const startRect = statusBar.getBoundingClientRect();
-            const endRect = playerScoreBox.getBoundingClientRect();
-            const containerRect = animationContainer.getBoundingClientRect();
-
-            const star = document.createElement('div');
-            star.textContent = '⭐';
-            star.className = 'falling-star';
-
-            star.style.left = `${startRect.left - containerRect.left + startRect.width / 2 - 20}px`;
-            star.style.top = `${startRect.top - containerRect.top - 20}px`;
-            
-            const endY = endRect.top - startRect.top + endRect.height / 2;
-            star.style.setProperty('--end-y', `${endY}px`);
-
-            animationContainer.appendChild(star);
-
-            setTimeout(() => { star.remove(); }, 1200);
-        }
-
-        function endGame() {
-            if (gameMode === 'ai') { endGameAI(); return; }
-            const playerWon = localGameState.players[localPlayerId].cards.length > 0;
-            if (playerWon) {
-                saveToLeaderboard(localGameState.players[localPlayerId].name);
-                let qi = parseInt(localStorage.getItem('reflectionQuestionIndex') || '0');
-                document.getElementById('reflectionQuestion').textContent = reflectionQuestions[qi];
-                document.getElementById('reflectionModal').classList.remove('hidden');
-                qi = (qi + 1) % reflectionQuestions.length;
-                localStorage.setItem('reflectionQuestionIndex', qi.toString());
-            } else {
-                document.getElementById('gameOverTitle').textContent = '😞 Spiel verloren';
-                document.getElementById('gameOverTitle').className = `text-3xl font-bold mb-3 text-red-600`;
-                document.getElementById('gameOverText').textContent = `Dein Mitspieler hat gewonnen. Versuche es nochmal!`;
-                document.getElementById('gameOverModal').classList.remove('hidden');
-            }
-        }
-
-        function endGameAI() {
-            const playerWon = aiGame.playerCards.length > 0;
-            if (playerWon) {
-                saveToLeaderboard(aiGame.playerName);
-                let qi = parseInt(localStorage.getItem('reflectionQuestionIndex') || '0');
-                document.getElementById('reflectionQuestion').textContent = reflectionQuestions[qi];
-                document.getElementById('reflectionModal').classList.remove('hidden');
-                qi = (qi + 1) % reflectionQuestions.length;
-                localStorage.setItem('reflectionQuestionIndex', qi.toString());
-            } else {
-                document.getElementById('gameOverTitle').textContent = '😞 Spiel verloren';
-                document.getElementById('gameOverTitle').className = `text-3xl font-bold mb-3 text-red-600`;
-                document.getElementById('gameOverText').textContent = `Die KI hat gewonnen. Versuche es nochmal!`;
-                document.getElementById('gameOverModal').classList.remove('hidden');
-            }
-        }
-
-        window.showFinalWinScreen = function() {
-            document.getElementById('reflectionModal').classList.add('hidden');
-            document.getElementById('reflectionAnswer').value = '';
-            document.getElementById('gameOverTitle').textContent = '🎉 Glückwunsch!';
-            document.getElementById('gameOverTitle').className = `text-3xl font-bold mb-3 text-green-600`;
-            const winnerName = gameMode === 'ai' ? aiGame.playerName : localGameState.players[localPlayerId].name;
-            document.getElementById('gameOverText').textContent = `Du hast gewonnen, ${winnerName}! Du hast alle Karten gesammelt.`;
-            document.getElementById('gameOverModal').classList.remove('hidden');
-        };
-
-        async function saveToLeaderboard(playerName) {
-            if (!playerName) return;
-            const leaderboardRef = doc(db, "leaderboard", playerName);
-            try {
-                await setDoc(leaderboardRef, { name: playerName, wins: increment(1), lastWin: serverTimestamp() }, { merge: true });
-            } catch (error) {
-                console.error("Error updating leaderboard:", error);
-            }
-        }
-
-        window.showLeaderboard = async function() {
-            const list = document.getElementById('leaderboardList');
-            list.innerHTML = '<p class="text-gray-500 text-center">Lade Bestenliste...</p>';
-            
-            document.getElementById('gameOverModal').classList.add('hidden');
-            document.getElementById('leaderboardModal').classList.remove('hidden');
-            
-            try {
-                const q = query(collection(db, "leaderboard"), orderBy("wins", "desc"), limit(10));
-                const querySnapshot = await getDocs(q);
-                if (querySnapshot.empty) {
-                    list.innerHTML = '<p class="text-gray-500 text-center">Noch keine Einträge</p>';
-                    return;
-                }
-                list.innerHTML = querySnapshot.docs.map((doc, i) => `<div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg"><span class="font-semibold">${i + 1}. ${doc.data().name}</span><span class="text-sm text-gray-600">${doc.data().wins} Siege</span></div>`).join('');
-            } catch (error) {
-                console.error("Error fetching leaderboard:", error);
-                list.innerHTML = '<p class="text-red-500 text-center">Fehler beim Laden der Bestenliste.</p>';
-            }
-        };
-
-        window.closeLeaderboard = function() {
-            document.getElementById('leaderboardModal').classList.add('hidden');
-            document.getElementById('gameOverModal').classList.remove('hidden');
-        };
-        
-        window.resetGame = async function() {
-            if (unsubscribeGame) unsubscribeGame();
-            if (gameMode === 'multiplayer' && gameId) {
-                try { await deleteDoc(doc(db, "games", gameId)); } catch {}
-            }
-
-            aiGame = { playerName: '', playerCards: [], aiCards: [], currentPlayerCard: null, currentAiCard: null, roundInProgress: false };
-            gameMode = null; gameId = null; unsubscribeGame = null;
-
-            document.getElementById('gameOverModal').classList.add('hidden');
-            document.getElementById('leaderboardModal').classList.add('hidden');
-            document.getElementById('reflectionModal').classList.add('hidden');
-            document.getElementById('gameContainer').classList.add('hidden');
-            document.getElementById('setupModal').classList.remove('hidden');
-            document.getElementById('playerName').value = '';
-            document.getElementById('infoModal').classList.add('hidden');
-            document.getElementById('reflectionAnswer').value = '';
-            window.history.pushState({}, document.title, window.location.pathname);
-        };
-
-        window.showWoodInfo = function(woodName) {
-            const modal = document.getElementById('infoModal');
-            document.getElementById('infoModalTitle').textContent = `Wissenswertes über ${woodName}`;
-            const content = document.getElementById('infoModalContent');
-            const infoData = woodInfo[woodName] || woodInfo[Object.keys(woodInfo).find(k => k.toLowerCase() === woodName.toLowerCase())];
-
-            if (infoData) {
-                content.innerHTML = `<p>${infoData.info}</p><div class="space-y-4 mt-4"><div><h4 class="font-semibold mb-2 text-center">Baum</h4><img src="${infoData.bildBaum}" alt="Bild von ${woodName} Baum" class="w-full h-auto rounded-lg object-cover" onerror="this.style.display='none'"></div><div><h4 class="font-semibold mb-2 text-center">Querschnitt</h4><img src="${infoData.bildQuerschnitt}" alt="Bild von ${woodName} Querschnitt" class="w-full h-auto rounded-lg object-cover" onerror="this.style.display='none'"></div></div>`;
-            } else {
-                content.innerHTML = "<p>Für diese Holzart sind aktuell keine Informationen verfügbar.</p>";
-            }
-            modal.classList.remove('hidden');
-        };
-
-        window.closeInfoModal = function() {
-            document.getElementById('infoModal').classList.add('hidden');
-        };
-
-    </script>
+        <header class="bg-white shadow-sm border-b-2 border-amber-200">
+        <div class="max-w-6xl mx-auto px-4 p-3">
+            <h1 class="text-2xl font-bold text-amber-800 text-center">🌳 Holz-Quartett</h1>
+            <p class="text-xs text-gray-500 text-center mt-1">von Christopher Lehr, in Verbindung mit meiner Masterarbeit</p>
+        </div>
+    </header>
+
+        <div id="setupModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl text-center">
+            <h2 class="text-2xl font-bold text-amber-800 mb-6">Spielmodus wählen</h2>
+            <div class="space-y-4">
+                <button onclick="window.showNamePrompt('ai')" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors text-lg">
+                    🎮 Gegen Computer spielen
+                </button>
+                <button onclick="window.showNamePrompt('multiplayer')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors text-lg">
+                    🧑‍🤝‍🧑 Mit Freund online spielen
+                </button>
+            </div>
+        </div>
+    </div>
+
+        <div id="nameModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
+            <h2 class="text-2xl font-bold text-amber-800 mb-6 text-center">Dein Name</h2>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Bitte gib deinen Namen ein:</label>
+                    <input type="text" id="playerName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent" placeholder="Spielername">
+                </div>
+                <button id="nameSubmitButton" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                    Weiter
+                </button>
+            </div>
+        </div>
+    </div>
+
+        <div id="multiplayerLobbyModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
+        <div class="bg-white rounded-xl p-8 max-w-lg w-full mx-4 shadow-2xl text-center">
+            <h2 id="lobbyTitle" class="text-2xl font-bold text-amber-800 mb-4">Warte auf Mitspieler...</h2>
+            <p id="lobbyText" class="text-gray-700 mb-6">Teile diesen Link mit deinem Freund, um das Spiel zu starten:</p>
+            <div class="bg-gray-100 p-3 rounded-lg border border-gray-300">
+                <input id="shareLink" type="text" class="w-full bg-transparent text-center text-blue-600" readonly>
+            </div>
+            <button onclick="window.copyShareLink()" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors">
+                Link kopieren
+            </button>
+            <p id="lobbyStatus" class="mt-6 text-green-600 font-semibold"></p>
+        </div>
+    </div>
+
+
+        <div id="gameContainer" class="hidden max-w-6xl mx-auto px-4 py-4 relative">
+        <div id="animationContainer" class="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden"></div>
+                <div class="max-w-md mx-auto mb-3 space-y-1">
+            <div class="flex justify-center space-x-2">
+                                <div id="playerScoreBox" class="w-1/2 bg-white rounded-xl shadow-lg p-2 text-center relative">
+                    <p id="playerNameDisplay" class="text-base font-bold text-amber-600 truncate"></p>
+                    <p class="text-sm text-gray-500">Karten: <span id="playerCards" class="font-semibold">15</span></p>
+                </div>
+                                <div class="w-1/2 bg-white rounded-xl shadow-lg p-2 text-center">
+                    <p id="opponentNameDisplay" class="text-base font-bold text-red-600">Computer</p>
+                    <p class="text-sm text-gray-500">Karten: <span id="aiCards" class="font-semibold">15</span></p>
+á             </div>
+            </div>
+                        <div class="w-full bg-gray-200 rounded-full h-4 relative overflow-hidden border border-gray-300">
+                <div id="statusBar" class="h-full rounded-l-full transition-all duration-500" style="width: 50%; background-color: #f59e0b;"></div>
+                <div class="absolute inset-0 flex justify-center items-center">
+                    <div class="w-0.5 h-full bg-white opacity-75"></div>
+                </div>
+            </div>
+        </div>
+
+                <div class="flex justify-center space-x-2 sm:space-x-2 mb-4 max-w-md mx-auto">
+                        <div class="text-center w-1/2">
+                <div id="playerCard" class="relative aspect-[20/38] perspective-1000"></div>
+            </div>
+                        <div class="text-center w-1/2">
+                <div id="aiCard" class="relative aspect-[20/38] perspective-1000"></div>
+            </div>
+        </div>
+
+                <div class="bg-white rounded-xl shadow-lg p-1 mt-4 text-center mx-auto flex flex-col items-center justify-center max-w-md w-full">
+            <div id="turnIndicator" class="hidden text-sm font-semibold p-2"></div>
+            <div id="attributeSelection" class="">
+                 <h3 class="text-lg font-semibold text-gray-700">Wähle eine Eigenschaft!</h3>
+            </div>
+            <div id="nextRoundButton" class="hidden w-full mb-1">
+                 <button onclick="window.nextRound()" class="w-full bg-amber-600 hover:bg-amber-800 text-white font-bold py-3 px-8 rounded-xl transition-colors">
+                     ➡️ Nächster Zug
+                 </button>
+             </div>
+            <div id="resultDisplay" class="hidden">
+                 <h3 id="resultText" class="text-xl font-bold mb-1"></h3>
+                 <p id="resultDetails" class="text-sm text-gray-600"></p>
+            </div>
+        </div>
+    </div>
+
+        <div id="reflectionModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
+        <div class="bg-white rounded-xl p-8 max-w-lg w-full mx-4 shadow-2xl text-center">
+            <h2 class="text-2xl font-bold text-amber-800 mb-4">🎉 Super gespielt! Zeit zum Reflektieren!</h2>
+            <p id="reflectionQuestion" class="text-gray-700 mb-6 text-left"></p>
+            <textarea id="reflectionAnswer" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent min-h-[100px]" placeholder="Deine Begründung..."></textarea>
+            <button onclick="window.showFinalWinScreen()" class="mt-6 w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                Weiter zum Ergebnis
+            </button>
+        </div>
+    </div>
+
+        <div id="gameOverModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl text-center">
+            <h2 id="gameOverTitle" class="text-3xl font-bold mb-3"></h2>
+            <p id="gameOverText" class="text-gray-600 mb-6"></p>
+            <div class="space-y-2">
+                <button onclick="window.showLeaderboard()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg">
+                    🏆 Bestenliste anzeigen
+                </button>
+                <button onclick="window.resetGame()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg">
+                    🔄 Neues Spiel
+                </button>
+            </div>
+        </div>
+    </div>
+
+        <div id="leaderboardModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+S     <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
+            <h2 class="text-2xl font-bold text-amber-800 mb-6 text-center">🏆 Bestenliste</h2>
+            <div id="leaderboardList" class="space-y-1 mb-6"></div>
+            <button onclick="window.closeLeaderboard()" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg">
+                Schließen
+            </button>
+        </div>
+    </div>
+
+        <div id="infoModal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 px-4">
+        <div class="bg-white rounded-xl p-8 max-w-lg w-full mx-4 shadow-2xl relative">
+            <button onclick="window.closeInfoModal()" class="absolute top-2 right-3 text-2xl text-gray-400 hover:text-gray-600">&times;</button>
+            <h2 id="infoModalTitle" class="text-2xl font-bold text-amber-800 mb-4">Wissenswertes</h2>
+            <div id="infoModalContent" class="text-gray-700 space-y-2 max-h-[60vh] overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        // ===== Firebase Imports =====
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, deleteDoc, collection, query, orderBy, limit, getDocs, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        // ===== Firebase Config =====
+        const firebaseConfig = {
+            apiKey: "AIzaSyCyRXl8-JPr1xTXPDi1VG-eQk6fOnTpqUI",
+            authDomain: "holzquartett-3a177.firebaseapp.com",
+            projectId: "holzquartett-3a177",
+            storageBucket: "holzquartett-3a177.appspot.com",
+            messagingSenderId: "1081595025073",
+            appId: "1:1081595025073:web:bc571fffb6e4f20b27f490",
+            measurementId: "G-HKLWFJE83K"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        const appId = firebaseConfig.projectId;
+
+        // ===== Global State =====
+        let gameMode = null;
+        let gameId = null;
+        let localPlayerId = null;
+        let unsubscribeGame = null; 
+        let localGameState = {};
+        let hasCopiedShareLink = false;
+
+        // NEU: Sound-Effekte
+        const sounds = {
+            flip: new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_139083c224.mp3'),
+            win: new Audio('https://cdn.pixabay.com/audio/2022/11/22/audio_2c5552a862.mp3')
+        };
+        // Setze die Lautstärke (optional)
+        sounds.flip.volume = 0.5;
+        sounds.win.volume = 0.4;
+
+        function playSound(sound) {
+            sound.currentTime = 0; // Sound von vorne abspielen
+            sound.play().catch(e => console.log("Sound-Fehler:", e));
+        }
+        // NEU: Flag für Multiplayer-Sounds, um Spam zu verhindern
+        let roundSoundPlayed = false;
+        // ENDE NEU
+
+        // ===== Wood Data =====
+        const woodCards = [
+            {name: "Eiche", dk: 2, haerte: 85, quellenSchwindenRadial: 4.0, dichte: 650, gewicht: 12000}, {name: "Buche", dk: 5, haerte: 80, quellenSchwindenRadial: 5.8, dichte: 720, gewicht: 14000}, {name: "Kiefer", dk: 3, haerte: 40, quellenSchwindenRadial: 3.5, dichte: 520, gewicht: 11000}, {name: "Fichte", dk: 4, haerte: 35, quellenSchwindenRadial: 3.6, dichte: 450, gewicht: 11000}, {name: "Tanne", dk: 4, haerte: 38, quellenSchwindenRadial: 3.5, dichte: 460, gewicht: 10000}, {name: "Lärche", dk: 3, haerte: 55, quellenSchwindenRadial: 3.7, dichte: 590, gewicht: 12000}, {name: "Birke", dk: 5, haerte: 60, quellenSchwindenRadial: 5.4, dichte: 650, gewicht: 13000}, {name: "Ahorn", dk: 5, haerte: 75, quellenSchwindenRadial: 4.8, dichte: 630, gewicht: 12500}, {name: "Esche", dk: 5, haerte: 90, quellenSchwindenRadial: 4.9, dichte: 700, gewicht: 13000}, {name: "Kirsche", dk: 3, haerte: 70, quellenSchwindenRadial: 4.0, dichte: 600, gewicht: 11500}, {name: "Nussbaum", dk: 3, haerte: 65, quellenSchwindenRadial: 4.0, dichte: 640, gewicht: 12000}, {name: "Douglasie", dk: 3, haerte: 45, quellenSchwindenRadial: 3.5, dichte: 510, gewicht: 12000}, {name: "Zeder", dk: 2, haerte: 42, quellenSchwindenRadial: 2.8, dichte: 480, gewicht: 9500}, {name: "Mahagoni", dk: 2, haerte: 55, quellenSchwindenRadial: 3.0, dichte: 550, gewicht: 10500}, {name: "Teak", dk: 1, haerte: 60, quellenSchwindenRadial: 2.5, dichte: 650, gewicht: 11000}, {name: "Bambus", dk: 4, haerte: 50, quellenSchwindenRadial: 3.0, dichte: 400, gewicht: 18000}, {name: "Pappel", dk: 5, haerte: 25, quellenSchwindenRadial: 4.5, dichte: 380, gewicht: 9000}, {name: "Weide", dk: 5, haerte: 30, quellenSchwindenRadial: 4.0, dichte: 420, gewicht: 8000}, {name: "Linde", dk: 5, haerte: 35, quellenSchwindenRadial: 3.8, dichte: 530, gewicht: 9000}, {name: "Ulme", dk: 3, haerte: 75, quellenSchwindenRadial: 4.5, dichte: 680, gewicht: 11500}, {name: "Kastanie", dk: 2, haerte: 50, quellenSchwindenRadial: 3.5, dichte: 600, gewicht: 10000}, {name: "Robinie", dk: 1, haerte: 80, quellenSchwindenRadial: 3.0, dichte: 730, gewicht: 15000}, {name: "Hemlock", dk: 4, haerte: 40, quellenSchwindenRadial: 3.6, dichte: 500, gewicht: 10000}, {name: "Zypresse", dk: 2, haerte: 48, quellenSchwindenRadial: 3.0, dichte: 520, gewicht: 9000}, {name: "Redwood", dk: 2, haerte: 35, quellenSchwindenRadial: 2.8, dichte: 400, gewicht: 8500}, {name: "Hickory", dk: 3, haerte: 95, quellenSchwindenRadial: 5.5, dichte: 750, gewicht: 14000}, {name: "Wenge", dk: 2, haerte: 88, quellenSchwindenRadial: 3.8, dichte: 880, gewicht: 16000}, {name: "Zebrano", dk: 3, haerte: 70, quellenSchwindenRadial: 4.0, dichte: 750, gewicht: 13000}, {name: "Palisander", dk: 2, haerte: 82, quellenSchwindenRadial: 3.0, dichte: 850, gewicht: 16000}, {name: "Ebenholz", dk: 1, haerte: 98, quellenSchwindenRadial: 3.2, dichte: 1200, gewicht: 16500}
+        ];
+
+        const woodInfo = {
+          "Eiche": { info: `Eiche (QE) Die Eiche zählt zu den bedeutendsten heimischen Laubhölzern Europas. Ihr Holz ist hart, schwer und sehr dauerhaft, was sie zu einem bevorzugten Werkstoff im Innen‑ und Außenbereich macht. Besonders charakteristisch sind die hohen Gerbstoffanteile, die das Holz widerstandsfähig gegen Pilze und Schädlinge machen – gleichzeitig können sie beim Kontakt mit Eisen zu Verfärbungen führen. Eichenholz ist grobporig und zeigt einen deutlichen Übergang zwischen Früh- und Spätholz, wodurch die Jahresringe klar sichtbar sind. Diese ausgeprägte Maserung sorgt für eine markante, lebendige Optik. Verwendung: Möbel, Fußböden, Treppen, Fassdauben (z. B. für Weinfässer), Schiffbau, Terrassen, Brücken, Fachwerk. Funfact: Bereits in der Antike galt die Eiche als Symbol für Stärke und Beständigkeit – sie ziert bis heute zahlreiche Wappen und Münzen.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/eiche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/eiche_2.jpg?raw=true" },
+          "Buche": { info: `Buche (BU) Die Buche ist ein gleichmäßig strukturiertes Hartholz heimischer Wälder. Ihr Holz ist zäh, biegsam und relativ harzarm, wodurch es sich sehr gut für Möbel und Parkett eignet. Buchenholz ist ringporig mit mittelgroßen Poren im Frühholz und dichterem Spätholz, sodass die Übergänge dezent sichtbar sind – die Jahresringe sind gut erkennbar, aber nicht grob. Verwendung: Möbel, Parkett, Furniere, Sperrholz, Innenausbau. Funfact: Buchenholz war lange Zeit typisch fürs Wagenrad – wegen seiner Kombination aus Zähigkeit und Elastizität.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/buche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/buche_2.jpg?raw=true" },
+          "Kiefer": { info: `Kiefer (KI) Kiefer ist ein weit verbreitetes Nadelholz mit markanter Jahresringstruktur. Es ist weich, harzhaltig und relativ leicht zu bearbeiten. Das Holz zeigt keine ausgeprägten großen Poren wie Laubhölzer, sondern eine eher gleichmäßige Zellstruktur – Jahresringe und Harzkanäle sind sichtbar. Verwendung: Bauholz, Dachstühle, Innenausbau, Möbel, Paneele. Funfact: Kiefernharz wurde früher als Klebstoff oder als Bestandteil von Salben und Dichtungsmaterialien verwendet.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kiefer_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kiefer_2.jpg?raw=true" },
+          "Fichte": { info: `Fichte (FI) Fichte ist ein klassisches Bauholz mit guter Festigkeit bei geringem Gewicht. Es lässt sich leicht bearbeiten und vielfach einsetzen. Das Holz weist eine feine Zellstruktur auf, ohne große Poren – Jahresringe sind erkennbar, aber nicht grob. Verwendung: Bauholz, Innenverkleidung, Dach, Möbel, Paneele. Funfact: In vielen Gebirgsregionen war Fichtenholz über Jahrhunderte hinweg der Standard für Dachkonstruktionen und Sägewerke.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/fichte_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/fichte_2.jpg?raw=true" },
+          "Tanne": { info: `Tanne (TA) Tanne ist ein harzarmes, vergleichsweise feines Nadelholz, das oft als Alternative zur Fichte verwendet wird. Die Struktur ähnelt der Fichte: feine Fasern, dezente Jahresringe, keine ausgeprägten Poren. Verwendung: Innenausbau, Möbel, Paneele, Bauholz. Funfact: Da Tanne weniger Harz enthält, ist sie angenehmer in Räumen einzusetzen, da sie weniger Geruch abgibt.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/tanne_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/tanne_2.jpg?raw=true" },
+          "Lärche": { info: `Lärche (LA) Lärche ist bekannt für ihre natürliche Witterungsbeständigkeit und schöne Farbe. Sie kombiniert Elastizität mit Festigkeit. Das Holz zeigt ausgeprägte Jahresringe und Harzkanäle – die Struktur ist deutlich sichtbar. Verwendung: Fassadenholz, Fenster, Terrassen, Außenbau, Möbel. Funfact: Lärchenholz wird häufig ohne chemische Behandlung im Außenbereich eingesetzt und erhält mit der Zeit eine edle Vergrauung.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/laerche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/laerche_2.jpg?raw=true" },
+          "Birke": { info: `Birke (BI) Birke ist ein helles, dekoratives Holz mit feiner, gleichmäßiger Struktur. Es überzeugt durch gute Biegsamkeit. Das Holz ist zerstreutporig – Poren sind fein verteilt, ohne große Unterschiede zwischen Früh- und Spätholz. Verwendung: Möbel, Furniere, Sperrholz, Innenausbau. Funfact: Birkenrinde wurde früher als wasserabweisendes Material für Behälter und Boote genutzt.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/birke_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/birke_2.jpg?raw=true" },
+          "Ahorn": { info: `Ahorn (AM) Ahorn ist hart, hell und elegant – ideal für feine Möbel, Instrumente und Designanwendungen. Es handelt sich ebenfalls um ein zerstreutporiges Holz mit gleichmäßiger Porenverteilung, ohne starke Übergänge zwischen Früh‑ und Spätholz. Verwendung: Möbel, Parkett, Instrumente, Schneidebretter. Funfact: Aus Ahorn gewinnt man auch Ahornsirup – allerdings aus nordamerikanischen Arten, nicht unbedingt jene zum Möbelbau.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ahorn_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ahorn_2.jpg?raw=true" },
+          "Esche": { info: `Esche (ES) Die Esche ist ein besonders zähes, elastisches Holz mit hoher Festigkeit. Sie zeigt ringporige Struktur mit deutlich sichtbaren Poren im Frühholz und schmaleren Poren im Spätholz. Verwendung: Werkzeugstiele, Sportgeräte, Möbel, Parkett, Innenausbau. Funfact: In der Antike wurden Wagenräder und Speichen häufig aus Esche gefertigt – wegen ihrer elastischen Eigenschaften.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/esche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/esche_2.jpg?raw=true" },
+          "Kirsche": { info: `Kirsche (KR) Kirschbaumholz besitzt warme rote Töne, die mit Licht nachdunkeln, und eine edle Struktur. Ringporig mit deutlichem Übergang zwischen Früh- und Spätholz – Jahresringe sind gut sichtbar. Verwendung: Möbel, Furniere, Innenausbau, Dekor. Funfact: Kirschholz wird oft in Möbeln verwendet, die mit der Zeit “reifer” aussehen – die Farbe verbessert sich mit Alterung.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kirsche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kirsche_2.jpg?raw=true" },
+          "Nussbaum": { info: `Nussbaum (NU) Nussbaumholz ist dunkel, dekorativ und sehr hochwertig. Das Kernholz hat oft starken Farbkontrast zum Splintholz. Es ist zerstreutporig – Poren sind fein über die Fläche verteilt, oft mit dekorativen Maserungen. Verwendung: Möbel, Furniere, Intarsien, edle Ausstattungen. Funfact: Walnuss (Nussbaum) war schon in der Renaissance sehr geschätzt und zierte viele königliche Möbelstücke.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/nussbaum_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/nussbaum_2.jpg?raw=true" },
+          "Douglasie": { info: `Douglasie (DO) Douglasienholz ist robust, witterungsbeständig und häufig im Außenbau eingesetzt. Die Struktur ist klar erkennbar – deutliche Jahresringe mit Transition zwischen Früh‑ und Spätholz. Verwendung: Bauholz, Fassaden, Dach, Möbel im Außenbereich. Funfact: Die Douglasie stammt ursprünglich aus Nordamerika, ist aber auch in Europa weit verbreitet und wird großgezogen.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/douglasie_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/douglasie_2.jpg?raw=true" },
+          "Zeder": { info: `Zeder (ZE) Zedernholz duftet angenehm und besitzt von Natur aus eine Resistenz gegen Insektenbefall und Feuchtigkeit. Die Struktur ist fein mit gleichmäßigen Poren – kein starker Kontrast zwischen Früh- und Spätholz. Verwendung: Möbel, Fassaden, Innenraum, Schränke. Funfact: Zedernholz wird oft in Kleiderschränken eingesetzt, weil es den unverwechselbaren Duft und Insektenabwehr besitzt.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zeder_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zeder_2.jpg?raw=true" },
+          "Mahagoni": { info: `Mahagoni (MA) Mahagoni ist ein tropisches Edelholz mit hoher Dauerhaftigkeit und edler Farbe. Es ist zerstreutporig – Poren gleichmäßig verteilt und oft mit dekorativer Kernholzstruktur. Verwendung: Möbel, Fenster, Luxusausstattung, Bootsbau. Funfact: In manchen Ländern ist Mahagoni wegen seiner Seltenheit streng reguliert und unterliegt Artenschutzbestimmungen.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/mahagoni_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/mahagoni_2.jpg?raw=true" },
+          "Teak": { info: `Teak (TE) Teak ist extrem witterungsbeständig durch hohen Öl- und Harzgehalt – ideal für Außenmöbel und Schiffsbau. Die Struktur ist fein zerstreutporig, mit dekorativem Erscheinungsbild und gleichmäßiger Porenverteilung. Verwendung: Gartenmöbel, Terrassen, Boote, Fenster, Außenbereich. Funfact: Teakholz war früher für den Bau von Kriegsschiffen sehr gefragt wegen seiner Dauerhaftigkeit und Wasserbeständigkeit.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/teak_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/teak_2.jpg?raw=true" },
+          "Bambus": { info: `Bambus (BA) Bambus ist botanisch gesehen kein Holz, sondern ein Gras – dennoch extrem stabil und vielseitig verwendbar. Die Struktur ist röhrenartig und weist keine klassischen Poren wie Harthölzer auf. Verwendung: Fußböden, Möbel, Treppen, nachhaltiger Bau. Funfact: Bambus wächst so schnell, dass einzelne Stangen innerhalb weniger Monate über einen Meter wachsen können.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/bambus_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/bambus_2.jpg?raw=true" },
+          "Pappel": { info: `Pappel (PA) Pappelholz ist sehr leicht und weich – weniger tragfähig, aber gut bearbeitbar. Feine Struktur, fast keine großen Poren – Jahresringe nur dezent sichtbar. Verwendung: Leichtbau, Verpackungen, Möbel mit geringer Belastung. Funfact: Pappelholz wird oft für Modellbau oder Flugzeuginnenräume verwendet, wo Leichtigkeit zählt.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/pappel_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/pappel_2.jpg?raw=true" },
+          "Weide": { info: `Weide (WE) Weidenholz ist elastisch und biegsam – traditionell für Flechtarbeiten und Körbe verwendet. Die Struktur ist fein zerstreutporig, Poren kaum markant. Verwendung: Flechtwerk, Gartenbau, leichte Möbel. Funfact: Weidenruten werden seit Jahrhunderten für Korbgeflechte, Zäune und Rankhilfen genutzt.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/weide_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/weide_2.jpg?raw=true" },
+          "Linde": { info: `Linde (LI) Lindenholz ist weich, homogen und gut schnitzbar – ideal für feine Holzarbeiten. Fein zerstreutporig und gleichmäßig, ohne großen Porenkontrast. Verwendung: Intarsien, geschnitzte Dekors, Möbel, Modellbau. Funfact: Lindenholz war traditionell das Holz der Bildhauer und Orgelbauer im Mittelalter.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/linde_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/linde_2.jpg?raw=true" },
+          "Ulme": { info: `Ulme (UL) Ulmenholz ist zäh und eher hart – früher oft für Möbel und Reparaturen verwendet. Ringporig mit markanten Poren und gelegentlichem unruhigem Faserverlauf. Verwendung: Möbel, Innenausbau, Reparaturholz. Funfact: Ulmenholz hat früher im Wagen- und Möbelbau Bedeutung gehabt, besonders dort, wo Biegung gefragt war.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ulme_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ulme_2.jpg?raw=true" },
+          "Kastanie": { info: `Kastanie (KA) Kastanienholz ist ähnlich der Eiche wetterbeständig, mit warmem Farbton und markanter Struktur. Ringporig mit klar sichtbaren Jahresringen und deutlichem Übergang. Verwendung: Außenbau, Möbel, Balken, Gartenholz. Funfact: Kastanienholz wurde oft in historischen Bauwerken als wetterbeständige Alternative zur Eiche verwendet.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kastanie_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kastanie_2.jpg?raw=true" },
+          "Robinie": { info: `Robinie (RO) Robinienholz ist eines der härtesten europäischen Hölzer und sehr dauerhaft im Freien. Ringporig mit feinen Poren und schmalem Übergang – die Struktur ist weniger kontrastreich. Verwendung: Gartenholz, Terrassen, Balken, Zäune. Funfact: Robinie wird oft als „europäisches Teak“ genannt, weil es ähnliche Eigenschaften wie Tropenholz zeigt.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/robinie_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/robinie_2.jpg?raw=true" },
+          "Hemlock": { info: `Hemlock (HE) Hemlock ist ein nördliches Nadelholz mit feiner Struktur, weich und gleichmäßig. Die Porenstruktur ähnelt einfacher Zellstruktur; Jahresringe dezent sichtbar. Verwendung: Innenausbau, Paneele, Bauholz. Funfact: Hemlock wird oft im Möbel- und Leichtbau verwendet, wenn gutes Verhältnis zwischen Gewicht und Stabilität gefragt ist.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/hemlock_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/hemlock_2.jpg?raw=true" },
+          "Zypresse": { info: `Zypresse (ZY) Zypressenholz duftet gut und ist natürlich resistent gegen Feuchtigkeit und Schädlinge. Die Struktur ist fein und gleichmäßig, mit moderatem Porencharakter. Verwendung: Außen- und Gartenholz, Möbel, Fassaden. Funfact: Zypresse wurde in mediterranen Regionen oft zur Holzverkleidung von Kirchen und Tempeln verwendet.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zypresse_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zypresse_2.jpg?raw=true" },
+          "Redwood": { info: `Redwood (RW) Redwood ist ein leichtes Tropenholz mit guter Dauerhaftigkeit und dekorativer Farbe. Zerstreutporig mit feiner Textur, Poren gleichmäßig verteilt. Verwendung: Außenholz, Zäune, Gartenkonstruktionen. Funfact: Der Küstenmammutbaum (Redwood) zählt zu den höchsten Bäumen der Welt.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/redwood_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/redwood_2.jpg?raw=true" },
+          "Hickory": { info: `Hickory (HI) Hickory ist ein ausgesprochen zähes und hartes Holz – ideal für stark beanspruchte Teile. Ringporig mit ausgeprägten Poren im Frühholz und klaren Jahresringen. Verwendung: Werkzeugstiele, Sportgeräte, Möbel mit hoher Belastung. Funfact: Hickory war traditionell Material für Peitschen, Wurfstöcke und Arbeitsgeräte.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/hickory_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/hickory_2.jpg?raw=true" },
+          "Wenge": { info: `Wenge (WE-NE) Wenge ist ein dunkles Tropenholz mit hoher Härte und dekorativer Maserung. Zerstreutporig mit feinen Poren – oft Streifenzeichnung sichtbar. Verwendung: Luxusmöbel, Parkett, Furniere. Funfact: Wegen seiner tiefen, dunklen Farbe wird Wenge oft in Kontrasten zu hellem Holz kombiniert.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/wenge_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/wenge_2.jpg?raw=true" },
+          "Zebrano": { info: `Zebrano (ZE-RA) Zebrano zeichnet sich durch seine markante Streifenoptik aus – dekorativ und auffällig. Die Porenstruktur ist zerstreutporig, oft mit deutlichem Maserungseffekt. Verwendung: Designmöbel, Furniere, Dekorationen. Funfact: Zebrano wird oft für luxuriöse Intarsien und Furnierarbeiten verwendet.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zebrano_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zebrano_2.jpg?raw=true" },
+          "Palisander": { info: `Palisander (PA) Palisanderholz ist dekorativ, fest und langlebig – mit attraktiven Farbtönen. Zerstreutporig mit feiner Struktur und gleichmäßiger Porenverteilung. Verwendung: Gitarren, Möbel, Furniere. Funfact: Palisanderholz war früher oft exklusiv für edle Musikinstrumente und Intarsien reserviert.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/palisander_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/palisander_2.jpg?raw=true" },
+          "Ebenholz": { info: `Ebenholz (EB) Ebenholz ist eines der härtesten Hölzer – fast tiefschwarz und sehr dicht. Zerstreutporig mit extrem feinen Poren, kaum sichtbar – Porenstruktur sehr fein. Verwendung: Klaviertasten, Intarsien, Luxusdekore. Funfact: Ebenholz wurde im alten Ägypten für Statuetten und Schmuckstücke verwendet – wegen seiner tiefen Farbe und Seltenheit.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ebenholz_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ebenholz_2.jpg?raw=true" }
+        };
+
+        const reflectionQuestions = [
+            "Stell dir vor, du sollst einen stabilen und langlebigen Esstisch für eine Familie entwerfen. ...", "Welches Holz würdest du für Gartenmöbel wählen, ...", "Eine Küchenarbeitsplatte muss schnittfest und widerstandsfähig sein. ...", "Für einen stark beanspruchten Dielenboden ...", "Du sollst den Korpus einer Akustikgitarre bauen. ...", "Fenster sind ständig wechselnder Luftfeuchtigkeit ausgesetzt. ...", "Für ein Modellflugzeug oder ein leichtes Regal ...", "Robinie und Lärche sind beide für den Außenbereich beliebt. ...", "Du möchtest einen gebogenen Handlauf ...", "Vergleiche die Rohdichte und den E-Modul von Fichte und Eiche. ...", "Hölzer mit hohem Quell- und Schwindmaß ...", "Ein Hammerstiel muss extrem bruchfest ...", "Bei Eichenholz kann es in Verbindung mit Eisen ...", "Weiche Hölzer wie Fichte oder Kiefer ...", "Für die Herstellung von dekorativen Furnieren ...", "Nenne drei heimische Hölzer ...", "Holz ist ein wichtiger CO₂-Speicher. ...", "Was bedeuten Siegel wie FSC oder PEFC ...", "Teak hat eine exzellente Dauerhaftigkeit (DK 1). ...", "Bambus ist botanisch gesehen ein Gras, ...", "Was könntest du aus einem alten Eichenbalken ...", "Du möchtest ein Möbelstück mit einem starken Hell-Dunkel-Kontrast ...", "Hölzer wie Eiche oder Esche haben ...", "Stell dir vor, du entwirfst ein Kinderspielzeug ...", "Einige Hölzer wie Kirsche oder Lärche ...", "Für ein modernes, minimalistisches Möbelstück ...", "Welches Holz würdest du für den Bau einer rustikalen Almhütte ...", "Du planst ein Schülerprojekt ...", "Ein Kunde wünscht sich für seine Terrasse ...", "Welche Eigenschaft einer Holzart ...", "Wenn du eine neue Kategorie ...",
+        ];
+
+        const attributeInfo = {
+            dk: {icon: '🛡️', name: 'Dauerhaftigkeit (DK)', color: 'blue'},
+            haerte: {icon: '💎', name: 'Druckfestigkeit (N/mm²)', color: 'blue'},
+            quellenSchwindenRadial: {icon: '↔️', name: 'Quellen/Schwinden (%)', color: 'blue'},
+            dichte: {icon: '⚖️', name: 'Rohdichte (kg/m³)', color: 'blue'},
+            gewicht: {icon: '🏋️', name: 'E-Modul (N/mm²)', color: 'blue'}
+        };
+        
+        let aiGame = { playerName: '', playerCards: [], aiCards: [], currentPlayerCard: null, currentAiCard: null, roundInProgress: false };
+        
+        // ===== Auth + Deep Link Join =====
+        document.addEventListener('DOMContentLoaded', async () => {
+            try { await signInAnonymously(auth); } catch (e) { console.error("Firebase Auth Error:", e); }
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    localPlayerId = user.uid;
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const gameIdFromUrl = urlParams.get('game');
+                    if (gameIdFromUrl) {
+                        gameId = gameIdFromUrl;
+                        gameMode = 'multiplayer';
+                        window.showNamePrompt('join');
+                    }
+                }
+            });
+        });
+
+        window.addEventListener('beforeunload', async () => {
+            if (gameMode === 'multiplayer' && gameId && localPlayerId) {
+                const gameRef = doc(db, "games", gameId);
+                const playerStatusPath = `players.${localPlayerId}.status`;
+                await updateDoc(gameRef, { [playerStatusPath]: "offline" }).catch(() => {});
+            }
+        });
+
+        // ===== UI Control =====
+        window.showNamePrompt = (mode) => {
+            document.getElementById('setupModal').classList.add('hidden');
+            const nameModal = document.getElementById('nameModal');
+            nameModal.classList.remove('hidden');
+            const nameSubmitButton = document.getElementById('nameSubmitButton');
+            const newButton = nameSubmitButton.cloneNode(true);
+            nameSubmitButton.parentNode.replaceChild(newButton, nameSubmitButton);
+
+            newButton.addEventListener('click', () => {
+                const playerName = document.getElementById('playerName').value.trim();
+                if (!playerName) { alert('Bitte gib deinen Namen ein!'); return; }
+                nameModal.classList.add('hidden');
+
+                if (mode === 'ai') {
+                    gameMode = 'ai';
+                    startGameAI(playerName);
+                } else if (mode === 'multiplayer') {
+                    gameMode = 'multiplayer';
+                    createGame(playerName);
+                } else if (mode === 'join') {
+                    joinGame(gameId, playerName);
+                }
+            });
+        };
+
+        window.copyShareLink = async () => {
+            const linkInput = document.getElementById('shareLink');
+            try {
+                await navigator.clipboard.writeText(linkInput.value);
+            } catch (e) {
+                linkInput.select();
+                document.execCommand('copy');
+            }
+            hasCopiedShareLink = true;
+            const statusEl = document.getElementById('lobbyStatus');
+            if (statusEl) statusEl.textContent = 'Link kopiert. Warte auf Mitspieler...';
+
+            if (localGameState && (localGameState.status === 'playing' || localGameState.status === 'finished')) {
+                document.getElementById('multiplayerLobbyModal').classList.add('hidden');
+                document.getElementById('gameContainer').classList.remove('hidden');
+                updateMultiplayerUI(localGameState);
+            }
+        };
+
+        // ===== Multiplayer Logic =====
+        async function createGame(playerName) {
+            const lobbyModal = document.getElementById('multiplayerLobbyModal');
+            lobbyModal.classList.remove('hidden');
+            hasCopiedShareLink = false;
+
+            gameId = Math.random().toString(36).substring(2, 8).toUpperCase();
+            const shareLinkInput = document.getElementById('shareLink');
+            const baseUrl = window.location.href.split('?')[0];
+            shareLinkInput.value = `${baseUrl}?game=${gameId}`;
+
+            const gameRef = doc(db, "games", gameId);
+            const initialGameData = {
+                gameId: gameId,
+                status: 'waiting',
+                playerIds: [localPlayerId],
+                players: {
+                    [localPlayerId]: { name: playerName, cards: [], status: 'online' }
+                },
+                createdAt: serverTimestamp()
+            };
+
+            await setDoc(gameRef, initialGameData);
+            listenToGameChanges();
+        }
+
+        async function joinGame(gameIdToJoin, playerName) {
+            const gameRef = doc(db, "games", gameIdToJoin);
+            const gameSnap = await getDoc(gameRef);
+
+            if (gameSnap.exists() && gameSnap.data().status === 'waiting' && gameSnap.data().playerIds.length === 1) {
+                document.getElementById('lobbyTitle').textContent = "Spiel wird beigetreten...";
+                document.getElementById('lobbyText').textContent = "Moment, die Karten werden gemischt.";
+                document.getElementById('multiplayerLobbyModal').classList.remove('hidden');
+                hasCopiedShareLink = true;
+
+                const shuffledCards = shuffleArray(woodCards);
+                const player1Id = gameSnap.data().playerIds[0];
+
+                const gameUpdateData = {
+                    status: 'playing',
+                    playerIds: [player1Id, localPlayerId],
+                    [`players.${localPlayerId}`]: { name: playerName, cards: shuffledCards.slice(15), status: 'online' },
+                    [`players.${player1Id}.cards`]: shuffledCards.slice(0, 15),
+                    turn: player1Id,
+                    currentCards: {
+                        [player1Id]: shuffledCards.slice(0, 15)[0],
+                        [localPlayerId]: shuffledCards.slice(15)[0],
+                    },
+                    lastResult: null,
+                    lastActivity: serverTimestamp()
+                };
+
+                await updateDoc(gameRef, gameUpdateData);
+                listenToGameChanges();
+            } else {
+                alert("Spiel nicht gefunden oder bereits voll.");
+                window.location.search = '';
+            }
+        }
+
+        function listenToGameChanges() {
+            const gameRef = doc(db, "games", gameId);
+            unsubscribeGame = onSnapshot(gameRef, (docSnap) => {
+                if (!docSnap.exists()) {
+                    alert("Das Spiel wurde beendet.");
+                    resetGame();
+                    return;
+                }
+
+                const gameData = docSnap.data();
+                localGameState = gameData;
+
+                if (gameData.status === 'playing' || gameData.status === 'finished') {
+                    if (hasCopiedShareLink) {
+                        document.getElementById('multiplayerLobbyModal').classList.add('hidden');
+                        document.getElementById('gameContainer').classList.remove('hidden');
+                        updateMultiplayerUI(gameData);
+                    } else {
+                        const statusEl = document.getElementById('lobbyStatus');
+                        if (statusEl) statusEl.textContent = 'Mitspieler ist beigetreten. Klicke „Link kopieren“, um fortzufahren.';
+                    }
+                }
+
+                const opponentId = gameData.playerIds.find(id => id !== localPlayerId);
+                if (opponentId && gameData.players[opponentId]?.status === 'offline') {
+                    // alert('Dein Mitspieler hat das Spiel verlassen.');
+                }
+            });
+        }
+
+        function updateMultiplayerUI(gameData) {
+            const opponentId = gameData.playerIds.find(id => id !== localPlayerId);
+
+            document.getElementById('playerNameDisplay').textContent = gameData.players[localPlayerId].name;
+            document.getElementById('playerCards').textContent = gameData.players[localPlayerId].cards.length;
+
+            if (opponentId) {
+                document.getElementById('opponentNameDisplay').textContent = gameData.players[opponentId].name;
+                document.getElementById('aiCards').textContent = gameData.players[opponentId].cards.length;
+            } else {
+                document.getElementById('opponentNameDisplay').textContent = "Wartet...";
+                document.getElementById('aiCards').textContent = '...';
+            }
+
+            updateStatusBar(gameData.players[localPlayerId].cards.length, gameData.players[opponentId]?.cards.length || 0);
+            displayMultiplayerCards(gameData);
+
+            const turnIndicator = document.getElementById('turnIndicator');
+            const attributeSelection = document.getElementById('attributeSelection');
+            const resultDisplay = document.getElementById('resultDisplay');
+            const nextRoundBtn = document.getElementById('nextRoundButton');
+
+            turnIndicator.classList.remove('hidden');
+
+            if (gameData.lastResult) {
+                // NEU: Sounds für Runden-Ergebnis abspielen
+                if (!roundSoundPlayed) {
+                    roundSoundPlayed = true;
+                    playSound(sounds.flip); // Flip-Sound, wenn das Ergebnis feststeht
+                    
+                    const { winnerId } = gameData.lastResult;
+                    if (winnerId === localPlayerId) {
+                        playSound(sounds.win); // Win-Sound, wenn man selbst gewonnen hat
+                    }
+                }
+                // ENDE NEU
+
+                attributeSelection.classList.add('hidden');
+                resultDisplay.classList.remove('hidden');
+                nextRoundBtn.classList.remove('hidden');
+
+                const { winnerId, attribute, values } = gameData.lastResult;
+                const winnerName = winnerId === localPlayerId ? 'Du' : (winnerId === 'tie' ? '' : gameData.players[winnerId]?.name);
+
+                let resultText = winnerId === 'tie' ? `🤝 Unentschieden!` : `🎉 ${winnerName || 'Gegner'} gewinnt!`;
+                if (winnerId !== localPlayerId && winnerId !== 'tie') resultText = `😞 ${winnerName} gewinnt!`;
+
+                document.getElementById('resultText').textContent = resultText;
+                const opponentId2 = gameData.playerIds.find(id => id !== localPlayerId);
+                document.getElementById('resultDetails').textContent = `${attributeInfo[attribute].name.split(' (')[0]}: ${values[localPlayerId]} vs ${values[opponentId2]}`;
+                
+                const playerCardFront = document.getElementById('playerCard').querySelector('.card-front');
+                const statusBar = document.getElementById('statusBar');
+
+                if (winnerId === localPlayerId) {
+                    if (playerCardFront) playerCardFront.classList.add('animate-glow-win');
+                    if (statusBar) {
+                        statusBar.classList.add('status-flash-win');
+                        setTimeout(() => statusBar.classList.remove('status-flash-win'), 1200);
+                    }
+                    triggerWinStarAnimation();
+                } else if (winnerId !== 'tie') {
+                    if (playerCardFront) playerCardFront.classList.add('animate-glow-lose');
+                    if (statusBar) {
+                        statusBar.classList.add('status-flash-lose');
+                        setTimeout(() => statusBar.classList.remove('status-flash-lose'), 1200);
+                    }
+                }
+
+            } else {
+                roundSoundPlayed = false; // NEU: Sound-Flag für die nächste Runde zurücksetzen
+
+                resultDisplay.classList.add('hidden');
+                nextRoundBtn.classList.add('hidden');
+
+                if (gameData.turn === localPlayerId) {
+                    turnIndicator.textContent = "Du bist am Zug!";
+                    turnIndicator.className = 'text-sm font-semibold p-2 text-green-600';
+                    attributeSelection.classList.remove('hidden');
+                } else {
+                    turnIndicator.textContent = `${gameData.players[gameData.turn]?.name} ist am Zug...`;
+                    turnIndicator.className = 'text-sm font-semibold p-2 text-gray-500';
+                    attributeSelection.classList.add('hidden');
+                }
+            }
+        }
+
+        function updateStatusBar(playerCount, opponentCount) {
+            const total = playerCount + opponentCount;
+            const playerPercentage = total > 0 ? (playerCount / total) * 100 : 50;
+
+            const statusBar = document.getElementById('statusBar');
+            if (statusBar) {
+                statusBar.style.width = `${playerPercentage}%`;
+                let color = '#f59e0b'; // amber-500
+                if (playerPercentage < 25) color = '#c2410c';
+                else if (playerPercentage < 50) color = '#f59e0b';
+                else if (playerPercentage > 75) color = '#16a34a';
+                else if (playerPercentage > 50) color = '#84cc16';
+                statusBar.style.backgroundColor = color;
+            }
+        }
+
+        function displayMultiplayerCards(gameData) {
+            const opponentId = gameData.playerIds.find(id => id !== localPlayerId);
+            const playerCardContainer = document.getElementById('playerCard');
+            const aiCardContainer = document.getElementById('aiCard');
+            playerCardContainer.innerHTML = '';
+            aiCardContainer.innerHTML = '';
+
+            const showOpponentCard = !!gameData.lastResult;
+
+            const playerCard = createCard(gameData.currentCards[localPlayerId], true, true);
+            playerCardContainer.appendChild(playerCard);
+
+            if (opponentId && gameData.currentCards[opponentId]) {
+                const aiCard = createCard(gameData.currentCards[opponentId], showOpponentCard, false);
+                aiCardContainer.appendChild(aiCard);
+            } else {
+                aiCardContainer.innerHTML = `<div class="card-front bg-gray-200 rounded-xl shadow-md border-2 border-gray-300 p-3 flex flex-col items-center justify-center h-full">Wartet auf Spieler 2...</div>`;
+            }
+        }
+
+        async function multiplayerSelectAttribute(attribute) {
+            if (!localGameState || localGameState.turn !== localPlayerId || localGameState.lastResult) return;
+
+            const playerCard = localGameState.currentCards[localPlayerId];
+            const opponentId = localGameState.playerIds.find(id => id !== localPlayerId);
+            const opponentCard = localGameState.currentCards[opponentId];
+
+            const playerValue = playerCard[attribute];
+            const opponentValue = opponentCard[attribute];
+
+            let playerWins;
+            if (attribute === 'quellenSchwindenRadial' || attribute === 'dk') {
+                if (playerValue < opponentValue) playerWins = true; else if (opponentValue < playerValue) playerWins = false; else playerWins = 'tie';
+            } else {
+                if (playerValue > opponentValue) playerWins = true; else if (opponentValue > playerValue) playerWins = false; else playerWins = 'tie';
+            }
+
+            const winnerId = playerWins === 'tie' ? 'tie' : (playerWins ? localPlayerId : opponentId);
+            
+            const gameUpdate = {
+                lastResult: { winnerId, attribute, values: { [localPlayerId]: playerValue, [opponentId]: opponentValue } },
+                lastActivity: serverTimestamp()
+            };
+            await updateDoc(doc(db, "games", gameId), gameUpdate);
+        }
+
+        async function multiplayerNextRound() {
+            const pf = document.getElementById('playerCard')?.querySelector('.card-front');
+            if(pf) pf.classList.remove('animate-glow-win', 'animate-glow-lose');
+            const af = document.getElementById('aiCard')?.querySelector('.card-front');
+            if(af) af.classList.remove('animate-glow-win', 'animate-glow-lose');
+
+            if (!localGameState || !localGameState.lastResult) return;
+            if (localGameState.turn !== localPlayerId && localGameState.lastResult.winnerId !== localPlayerId && localGameState.lastResult.winnerId !== 'tie') return;
+
+            const { winnerId } = localGameState.lastResult;
+            const [player1Id, player2Id] = localGameState.playerIds;
+
+            const p1Cards = [...localGameState.players[player1Id].cards];
+            const p2Cards = [...localGameState.players[player2Id].cards];
+
+            const p1Card = p1Cards.shift();
+            const p2Card = p2Cards.shift();
+
+            if (winnerId === player1Id) p1Cards.push(p1Card, p2Card);
+            else if (winnerId === player2Id) p2Cards.push(p1Card, p2Card);
+            else { p1Cards.push(p1Card); p2Cards.push(p2Card); }
+
+            if (p1Cards.length === 0 || p2Cards.length === 0) {
+                await updateDoc(doc(db, "games", gameId), { status: 'finished' });
+                endGame(); 
+                return;
+            }
+
+            const nextTurn = winnerId === 'tie' ? localGameState.turn : winnerId;
+Â           const gameUpdate = {
+                'lastResult': null, 'turn': nextTurn,
+                'players': {
+                    [player1Id]: { ...localGameState.players[player1Id], cards: p1Cards },
+                    [player2Id]: { ...localGameState.players[player2Id], cards: p2Cards }
+                },
+                'currentCards': { [player1Id]: p1Cards[0], [player2Id]: p2Cards[0] },
+                'lastActivity': serverTimestamp()
+            };
+            await updateDoc(doc(db, "games", gameId), gameUpdate);
+        }
+
+        // ===== Controller for both modes =====
+        window.selectAttribute = function(attribute) {
+            if (gameMode === 'ai') {
+                selectAttributeAI(attribute);
+            } else if (gameMode === 'multiplayer') {
+                multiplayerSelectAttribute(attribute);
+            }
+        };
+        window.nextRound = function() {
+            if (gameMode === 'ai') {
+                nextRoundAI();
+            } else if (gameMode === 'multiplayer') {
+                multiplayerNextRound();
+            }
+        };
+
+        // ===== AI Mode Logic =====
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function startGameAI(playerName) {
+            aiGame.playerName = playerName;
+            document.getElementById('playerNameDisplay').textContent = playerName;
+            const shuffledCards = shuffleArray(woodCards);
+            aiGame.playerCards = shuffledCards.slice(0, 15);
+            aiGame.aiCards = shuffledCards.slice(15, 30);
+            aiGame.currentPlayerCard = aiGame.playerCards[0];
+            aiGame.currentAiCard = aiGame.aiCards[0];
+            document.getElementById('gameContainer').classList.remove('hidden');
+            window.scrollTo(0, 0);
+            updateDisplayAI();
+            displayCardsAI();
+        }
+
+        function createCard(cardData, isRevealed = true, isPlayer = true) {
+            const card = document.createElement('div');
+            card.className = `card-3d w-full h-full relative cursor-pointer transition-all duration-300 ${isPlayer ? 'hover-lift' : ''}`;
+            if (!isRevealed) card.classList.add('card-flipped');
+
+            const borderColor = isPlayer ? 'border-amber-400' : 'border-gray-300';
+            const shadow = isPlayer ? 'shadow-lg' : 'shadow-md';
+            const cardFront = document.createElement('div');
+            cardFront.className = `card-front card-background rounded-xl ${shadow} border-2 ${borderColor} p-3 flex flex-col`;
+
+            const canSelect = isPlayer && ( (gameMode === 'ai' && !aiGame.roundInProgress) || (gameMode === 'multiplayer' && localGameState.turn === localPlayerId && !localGameState.lastResult));
+            
+            const isRoundOver = (gameMode === 'ai' && aiGame.roundInProgress) || (gameMode === 'multiplayer' && localGameState.lastResult);
+            
+            const infoButtonHTML = isPlayer ? `
+                <button id="player-info-button-${cardData.name.replace(/\s+/g, '-')}" onclick="window.showWoodInfo('${cardData.name}')" class="${isRoundOver ? '' : 'hidden'} bg-purple-600 text-white rounded-full h-9 w-9 flex items-center justify-center text-lg hover:bg-purple-700 absolute top-2 left-2">💡</button>
+            ` : '';
+            
+            const woodData = woodInfo[cardData.name] || woodInfo[Object.keys(woodInfo).find(k => k.toLowerCase() === cardData.name.toLowerCase())];
+            const treeImage = woodData ? woodData.bildBaum : 'https://placehold.co/36x36/d1d5db/374151?text=?';
+
+            const woodIconHTML = `<img src="${treeImage}" alt="${cardData.name}" id="wood-image-icon-${cardData.name.replace(/\s+/g, '-')}" class="${isRoundOver && isPlayer ? 'hidden' : ''} w-9 h-9 object-cover rounded-full border-2 border-amber-200 flex-shrink-0 absolute top-2 left-2">`;
+            
+            const attributeButtons = canSelect ? `
+                <div class="space-y-1 mt-auto">
+                    <button onclick="window.selectAttribute('dk')" class="w-full flex justify-between items-center py-1 px-1 bg-amber-100 hover:bg-amber-200 rounded-xl transition-colors text-left border border-amber-600">
+                        <div class="flex items-center"><span class="mr-2 text-xs">🛡️</span><div><span class="text-xs font-medium leading-tight">Dauerhaftigkeit</span><span class="block text-xs text-gray-500 leading-tight">(DK)</span></div></div><span class="font-semibold text-amber-700 text-base">${cardData.dk}</span>
+                    </button>
+                    <button onclick="window.selectAttribute('haerte')" class="w-full flex justify-between items-center py-1 px-1 bg-amber-100 hover:bg-amber-200 rounded-xl transition-colors text-left border border-amber-600">
+                         <div class="flex items-center"><span class="mr-2 text-xs">💎</span><div><span class="text-xs font-medium leading-tight">Druckfestigkeit</span><span class="block text-xs text-gray-500 leading-tight">(N/mm²)</span></div></div><span class="font-semibold text-amber-700 text-base">${cardData.haerte}</span>
+                    </button>
+                    <button onclick="window.selectAttribute('quellenSchwindenRadial')" class="w-full flex justify-between items-center py-1 px-1 bg-amber-100 hover:bg-amber-200 rounded-xl transition-colors text-left border border-amber-600">
+                         <div class="flex items-center"><span class="mr-2 text-xs">↔️</span><div><span class="text-xs font-medium leading-tight">Quellen/Schw.</span><span class="block text-xs text-gray-500 leading-tight">(%)</span></div></div><span class="font-semibold text-amber-700 text-base">${cardData.quellenSchwindenRadial}</span>
+                    </button>
+                    <button onclick="window.selectAttribute('dichte')" class="w-full flex justify-between items-center py-1 px-1 bg-amber-100 hover:bg-amber-200 rounded-xl transition-colors text-left border border-amber-600">
+                         <div class="flex items-center"><span class="mr-2 text-xs">⚖️</span><div><span class="text-xs font-medium leading-tight">Rohdichte</span><span class="block text-xs text-gray-500 leading-tight">(kg/m³)</span></div></div><span class="font-semibold text-amber-700 text-base">${cardData.dichte}</span>
+                    </button>
+                    <button onclick="window.selectAttribute('gewicht')" class="w-full flex justify-between items-center py-1 px-1 bg-amber-100 hover:bg-amber-200 rounded-xl transition-colors text-left border border-amber-600">
+Â                        <div class="flex items-center"><span class="mr-2 text-xs">🏋️</span><div><span class="text-xs font-medium leading-tight">E-Modul</span><span class="block text-xs text-gray-500 leading-tight">(N/mm²)</span></div></div><span class="font-semibold text-amber-700 text-base">${cardData.gewicht.toLocaleString('de-DE')}</span>
+                    </button>
+                </div>
+            ` : `
+                <div class="space-y-1 mt-auto">
+                    <div class="w-full flex justify-between items-center py-1 px-1 bg-amber-100 rounded-xl text-left border border-amber-600"><div class="flex items-center"><span class="mr-2 text-xs">🛡️</span><div><span class="text-xs font-medium leading-tight">Dauerhaftigkeit</span><span class="block text-xs text-gray-500 leading-tight">(DK)</span></div></div><span class="font-semibold text-amber-700 text-base">${cardData.dk}</span></div>
+                    <div class="w-full flex justify-between items-center py-1 px-1 bg-amber-100 rounded-xl text-left border border-amber-600"><div class="flex items-center"><span class="mr-2 text-xs">💎</span><div><span class="text-xs font-medium leading-tight">Druckfestigkeit</span><span class="block text-xs text-gray-500 leading-tight">(N/mm²)</span></div></div><span class="font-semibold text-amber-700 text-base">${cardData.haerte}</span></div>
+                    <div class="w-full flex justify-between items-center py-1 px-1 bg-amber-100 rounded-xl text-left border border-amber-600"><div class="flex items-center"><span class="mr-2 text-xs">↔️</span><div><span class="text-xs font-medium leading-tight">Quellen/Schw.</span><span class="block text-xs text-gray-500 leading-tight">(%)</span></div></div><span class="font-semibold text-amber-700 text-base">${cardData.quellenSchwindenRadial}</span></div>
+                    <div class="w-full flex justify-between items-center py-1 px-1 bg-amber-100 rounded-xl text-left border border-amber-600"><div class="flex items-center"><span class="mr-2 text-xs">⚖️</span><div><span class="text-xs font-medium leading-tight">Rohdichte</span><span class="block text-xs text-gray-500 leading-tight">(kg/m³)</span></div></div><span class="font-semibold text-amber-700 text-base">${cardData.dichte}</span></div>
+                    <div class="w-full flex justify-between items-center py-1 px-1 bg-amber-100 rounded-xl text-left border border-amber-600"><div class="flex items-center"><span class="mr-2 text-xs">🏋️</span><div><span class="text-xs font-medium leading-tight">E-Modul</span><span class="block text-xs text-gray-500 leading-tight">(N/mm²)</span></div></div><span class="font-bold text-amber-700 text-base">${cardData.gewicht.toLocaleString('de-DE')}</span></div>
+                </div>
+            `;
+
+            cardFront.innerHTML = `
+                <div class="flex justify-center items-center w-full mb-1">
+                    <h3 class="text-lg font-bold text-amber-800 truncate">${cardData.name}</h3>
+                </div>
+                ${isPlayer ? woodIconHTML : ''}
+                ${isPlayer ? infoButtonHTML : ''}
+                ${attributeButtons}
+            `;
+
+            const cardBack = document.createElement('div');
+            cardBack.className = 'card-back rounded-xl shadow-lg border-2 border-amber-300 p-4 flex items-center justify-center relative overflow-hidden';
+
+            card.appendChild(cardFront);
+            card.appendChild(cardBack);
+            return card;
+        }
+
+        function displayCardsAI() {
+            const playerCardContainer = document.getElementById('playerCard');
+            const aiCardContainer = document.getElementById('aiCard');
+            playerCardContainer.innerHTML = '';
+            aiCardContainer.innerHTML = '';
+            playerCardContainer.appendChild(createCard(aiGame.currentPlayerCard, true, true));
+á         aiCardContainer.appendChild(createCard(aiGame.currentAiCard, false, false));
+        }
+
+        function selectAttributeAI(attribute) {
+            if (aiGame.roundInProgress) return;
+            aiGame.roundInProgress = true;
+
+            const playerValue = aiGame.currentPlayerCard[attribute];
+            const aiValue = aiGame.currentAiCard[attribute];
+            
+            document.getElementById('aiCard').querySelector('.card-3d').classList.remove('card-flipped');
+            playSound(sounds.flip); // NEU: Flip-Sound abspielen
+
+            const attributeButtons = document.querySelectorAll('#playerCard .space-y-1 > button');
+            attributeButtons.forEach(button => { button.disabled = true; button.classList.add('cursor-not-allowed', 'opacity-50'); });
+
+            let playerWins;
+            if (attribute === 'quellenSchwindenRadial' || attribute === 'dk') {
+                if (playerValue < aiValue) playerWins = true; else if (aiValue < playerValue) playerWins = false; else playerWins = 'tie';
+            } else {
+                if (playerValue > aiValue) playerWins = true; else if (aiValue > playerValue) playerWins = false; else playerWins = 'tie';
+            }
+
+            let resultText, resultClass;
+            const playerCardFront = document.getElementById('playerCard').querySelector('.card-front');
+            const statusBar = document.getElementById('statusBar');
+            
+            if (playerWins === true) {
+                resultText = `🎉 Du gewinnst!`;
+                resultClass = 'text-green-600';
+                highlightAttribute(attribute, 'win');
+                aiGame.playerCards.push(aiGame.playerCards.shift(), aiGame.aiCards.shift());
+                if(playerCardFront) playerCardFront.classList.add('animate-glow-win');
+                if (statusBar) {
+                    statusBar.classList.add('status-flash-win');
+s                   setTimeout(() => statusBar.classList.remove('status-flash-win'), 1200);
+                }
+                triggerWinStarAnimation();
+                playSound(sounds.win); // NEU: Win-Sound abspielen
+
+            } else if (playerWins === false) {
+                resultText = `😞 KI gewinnt!`;
+                resultClass = 'text-red-600';
+                highlightAttribute(attribute, 'lose');
+                aiGame.aiCards.push(aiGame.aiCards.shift(), aiGame.playerCards.shift());
+                if(playerCardFront) playerCardFront.classList.add('animate-glow-lose');
+          _       if (statusBar) {
+                    statusBar.classList.add('status-flash-lose');
+                    setTimeout(() => statusBar.classList.remove('status-flash-lose'), 1200);
+                }
+            } else {
+                resultText = `🤝 Unentschieden!`;
+T               resultClass = 'text-yellow-600';
+                highlightAttribute(attribute, 'tie');
+                aiGame.playerCards.push(aiGame.playerCards.shift());
+                aiGame.aiCards.push(aiGame.aiCards.shift());
+            }
+
+            document.getElementById('resultText').textContent = resultText;
+            document.getElementById('resultText').className = `text-xl font-bold mb-1 ${resultClass}`;
+            document.getElementById('resultDetails').textContent = `${attributeInfo[attribute].name.split(' (')[0]}: ${playerValue.toLocaleString('de-DE')} vs ${aiValue.toLocaleString('de-DE')}`;
+            
+            document.getElementById('attributeSelection').classList.add('hidden');
+            document.getElementById('resultDisplay').classList.remove('hidden');
+            document.getElementById('nextRoundButton').classList.remove('hidden');
+            
+            const woodIcon = document.getElementById(`wood-image-icon-${aiGame.currentPlayerCard.name.replace(/\s+/g, '-')}`);
+            const infoButton = document.getElementById(`player-info-button-${aiGame.currentPlayerCard.name.replace(/\s+/g, '-')}`);
+            if(woodIcon) woodIcon.classList.add('hidden');
+            if(infoButton) infoButton.classList.remove('hidden');
+
+
+line-height: 1.25;         updateDisplayAI();
+            checkGameOverAI();
+        }
+
+        function highlightAttribute(attribute, result) {
+            let playerBgColor = 'bg-gray-300', aiBgColor = 'bg-gray-300';
+
+            const idx = {'dk': 0, 'haerte': 1, 'quellenSchwindenRadial': 2, 'dichte': 3, 'gewicht': 4}[attribute];
+            
+            document.querySelectorAll('#playerCard .space-y-1 > *')[idx].classList.replace('bg-amber-100', playerBgColor);
+            document.querySelectorAll('#aiCard .space-y-1 > *')[idx].classList.replace('bg-amber-100', aiBgColor);
+        }
+
+        function nextRoundAI() {
+            const pf = document.getElementById('playerCard').querySelector('.card-front');
+            if (pf) pf.classList.remove('animate-glow-win', 'animate-glow-lose');
+            const af = document.getElementById('aiCard').querySelector('.card-front');
+            if (af) af.classList.remove('animate-glow-win', 'animate-glow-lose');
+
+            if (aiGame.playerCards.length === 0 || aiGame.aiCards.length === 0) { endGameAI(); return; }
+
+            aiGame.currentPlayerCard = aiGame.playerCards[0];
+            aiGame.currentAiCard = aiGame.aiCards[0];
+            aiGame.roundInProgress = false;
+
+            document.getElementById('attributeSelection').classList.remove('hidden');
+s           document.getElementById('nextRoundButton').classList.add('hidden');
+            document.getElementById('resultDisplay').classList.add('hidden');
+
+            displayCardsAI();
+            updateDisplayAI();
+        }
+
+        function updateDisplayAI() {
+            const playerCount = aiGame.playerCards.length;
+            const opponentCount = aiGame.aiCards.length;
+            document.getElementById('playerCards').textContent = playerCount;
+            document.getElementById('aiCards').textContent = opponentCount;
+            updateStatusBar(playerCount, opponentCount);
+        }
+
+        function checkGameOverAI() {
+            if (aiGame.playerCards.length === 0 || aiGame.aiCards.length === 0) {
+                setTimeout(endGameAI, 1200);
+            }
+        }
+        
+        function triggerWinStarAnimation() {
+            const animationContainer = document.getElementById('animationContainer');
+            const playerScoreBox = document.getElementById('playerScoreBox');
+            const statusBar = document.getElementById('statusBar');
+
+            if (!animationContainer || !playerScoreBox || !statusBar) return;
+
+            const startRect = statusBar.getBoundingClientRect();
+            const endRect = playerScoreBox.getBoundingClientRect();
+            const containerRect = animationContainer.getBoundingClientRect();
+
+            const star = document.createElement('div');
+CH           star.textContent = '⭐';
+            star.className = 'falling-star';
+
+            star.style.left = `${startRect.left - containerRect.left + startRect.width / 2 - 20}px`;
+            star.style.top = `${startRect.top - containerRect.top - 20}px`;
+            
+            const endY = endRect.top - startRect.top + endRect.height / 2;
+            star.style.setProperty('--end-y', `${endY}px`);
+
+            animationContainer.appendChild(star);
+
+            setTimeout(() => { star.remove(); }, 1200);
+Examples       }
+
+        function endGame() {
+            if (gameMode === 'ai') { endGameAI(); return; }
+            const playerWon = localGameState.players[localPlayerId].cards.length > 0;
+            if (playerWon) {
+                saveToLeaderboard(localGameState.players[localPlayerId].name);
+                let qi = parseInt(localStorage.getItem('reflectionQuestionIndex') || '0');
+                document.getElementById('reflectionQuestion').textContent = reflectionQuestions[qi];
+                document.getElementById('reflectionModal').classList.remove('hidden');
+EX               qi = (qi + 1) % reflectionQuestions.length;
+                localStorage.setItem('reflectionQuestionIndex', qi.toString());
+            } else {
+                document.getElementById('gameOverTitle').textContent = '😞 Spiel verloren';
+                document.getElementById('gameOverTitle').className = `text-3xl font-bold mb-3 text-red-600`;
+                document.getElementById('gameOverText').textContent = `Dein Mitspieler hat gewonnen. Versuche es nochmal!`;
+                document.getElementById('gameOverModal').classList.remove('hidden');
+      t   }
+        }
+
+        function endGameAI() {
+            const playerWon = aiGame.playerCards.length > 0;
+            if (playerWon) {
+                saveToLeaderboard(aiGame.playerName);
+                let qi = parseInt(localStorage.getItem('reflectionQuestionIndex') || '0');
+                document.getElementById('reflectionQuestion').textContent = reflectionQuestions[qi];
+    Source         document.getElementById('reflectionModal').classList.remove('hidden');
+                qi = (qi + 1) % reflectionQuestions.length;
+                localStorage.setItem('reflectionQuestionIndex', qi.toString());
+            } else {
+                document.getElementById('gameOverTitle').textContent = '😞 Spiel verloren';
+s               document.getElementById('gameOverTitle').className = `text-3xl font-bold mb-3 text-red-600`;
+                document.getElementById('gameOverText').textContent = `Die KI hat gewonnen. Versuche es nochmal!`;
+                document.getElementById('gameOverModal').classList.remove('hidden');
+            }
+        }
+
+        window.showFinalWinScreen = function() {
+S         document.getElementById('reflectionModal').classList.add('hidden');
+            document.getElementById('reflectionAnswer').value = '';
+            document.getElementById('gameOverTitle').textContent = '🎉 Glückwunsch!';
+            document.getElementById('gameOverTitle').className = `text-3xl font-bold mb-3 text-green-600`;
+            const winnerName = gameMode === 'ai' ? aiGame.playerName : localGameState.players[localPlayerId].name;
+            document.getElementById('gameOverText').textContent = `Du hast gewonnen, ${winnerName}! Du hast alle Karten gesammelt.`;
+s           document.getElementById('gameOverModal').classList.remove('hidden');
+        };
+
+        async function saveToLeaderboard(playerName) {
+            if (!playerName) return;
+            const leaderboardRef = doc(db, "leaderboard", playerName);
+s         try {
+                await setDoc(leaderboardRef, { name: playerName, wins: increment(1), lastWin: serverTimestamp() }, { merge: true });
+            } catch (error) {
+                console.error("Error updating leaderboard:", error);
+            }
+        }
+
+        window.showLeaderboard = async function() {
+            const list = document.getElementById('leaderboardList');
+            list.innerHTML = '<p class="text-gray-500 text-center">Lade Bestenliste...</p>';
+            
+            document.getElementById('gameOverModal').classList.add('hidden');
+            document.getElementById('leaderboardModal').classList.remove('hidden');
+            
+            try {
+                const q = query(collection(db, "leaderboard"), orderBy("wins", "desc"), limit(10));
+Methods             const querySnapshot = await getDocs(q);
+                if (querySnapshot.empty) {
+                    list.innerHTML = '<p class="text-gray-500 text-center">Noch keine Einträge</p>';
+New                   return;
+                }
+                list.innerHTML = querySnapshot.docs.map((doc, i) => `<div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg"><span class="font-semibold">${i + 1}. ${doc.data().name}</span><span class="text-sm text-gray-600">${doc.data().wins} Siege</span></div>`).join('');
+            } catch (error) {
+                console.error("Error fetching leaderboard:", error);
+                list.innerHTML = '<p class="text-red-500 text-center">Fehler beim Laden der Bestenliste.</p>';
+            }
+        };
+
+        window.closeLeaderboard = function() {
+            document.getElementById('leaderboardModal').classList.add('hidden');
+            document.getElementById('gameOverModal').classList.remove('hidden');
+        };
+        
+        window.resetGame = async function() {
+            if (unsubscribeGame) unsubscribeGame();
+            if (gameMode === 'multiplayer' && gameId) {
+                try { await deleteDoc(doc(db, "games", gameId)); } catch {}
+            }
+
+            aiGame = { playerName: '', playerCards: [], aiCards: [], currentPlayerCard: null, currentAiCard: null, roundInProgress: false };
+            gameMode = null; gameId = null; unsubscribeGame = null;
+
+            document.getElementById('gameOverModal').classList.add('hidden');
+            document.getElementById('leaderboardModal').classList.add('hidden');
+            document.getElementById('reflectionModal').classList.add('hidden');
+E           document.getElementById('gameContainer').classList.add('hidden');
+            document.getElementById('setupModal').classList.remove('hidden');
+            document.getElementById('playerName').value = '';
+            document.getElementById('infoModal').classList.add('hidden');
+            document.getElementById('reflectionAnswer').value = '';
+            window.history.pushState({}, document.title, window.location.pathname);
+Services       };
+
+        window.showWoodInfo = function(woodName) {
+            const modal = document.getElementById('infoModal');
+            document.getElementById('infoModalTitle').textContent = `Wissenswertes über ${woodName}`;
+            const content = document.getElementById('infoModalContent');
+            const infoData = woodInfo[woodName] || woodInfo[Object.keys(woodInfo).find(k => k.toLowerCase() === woodName.toLowerCase())];
+
+Example             if (infoData) {
+                content.innerHTML = `<p>${infoData.info}</p><div class="space-y-4 mt-4"><div><h4 class="font-semibold mb-2 text-center">Baum</h4><img src="${infoData.bildBaum}" alt="Bild von ${woodName} Baum" class="w-full h-auto rounded-lg object-cover" onerror="this.style.display='none'"></div><div><h4 class="font-semibold mb-2 text-center">Querschnitt</h4><img src="${infoData.bildQuerschnitt}" alt="Bild von ${woodName} Querschnitt" class="w-full h-auto rounded-lg object-cover" onerror="this.style.display='none'"></div></div>`;
+            } else {
+                content.innerHTML = "<p>Für diese Holzart sind aktuell keine Informationen verfügbar.</p>";
+            }
+            modal.classList.remove('hidden');
+        };
+
+        window.closeInfoModal = function() {
+            document.getElementById('infoModal').classList.add('hidden');
+s       };
+
+    </script>
 </body>
 </html>
-
