@@ -304,10 +304,7 @@
         let unsubscribeGame = null; 
         let localGameState = {};
         let hasCopiedShareLink = false;
-        let aiGame = {
-            playerName: '', playerCards: [], aiCards: [], currentPlayerCard: null, currentAiCard: null, roundInProgress: false
-        };
-        
+
         // ===== Wood Data =====
         const woodCards = [
             {name: "Eiche", dk: 2, haerte: 85, quellenSchwindenRadial: 4.0, dichte: 650, gewicht: 12000}, {name: "Buche", dk: 5, haerte: 80, quellenSchwindenRadial: 5.8, dichte: 720, gewicht: 14000}, {name: "Kiefer", dk: 3, haerte: 40, quellenSchwindenRadial: 3.5, dichte: 520, gewicht: 11000}, {name: "Fichte", dk: 4, haerte: 35, quellenSchwindenRadial: 3.6, dichte: 450, gewicht: 11000}, {name: "Tanne", dk: 4, haerte: 38, quellenSchwindenRadial: 3.5, dichte: 460, gewicht: 10000}, {name: "Lärche", dk: 3, haerte: 55, quellenSchwindenRadial: 3.7, dichte: 590, gewicht: 12000}, {name: "Birke", dk: 5, haerte: 60, quellenSchwindenRadial: 5.4, dichte: 650, gewicht: 13000}, {name: "Ahorn", dk: 5, haerte: 75, quellenSchwindenRadial: 4.8, dichte: 630, gewicht: 12500}, {name: "Esche", dk: 5, haerte: 90, quellenSchwindenRadial: 4.9, dichte: 700, gewicht: 13000}, {name: "Kirsche", dk: 3, haerte: 70, quellenSchwindenRadial: 4.0, dichte: 600, gewicht: 11500}, {name: "Nussbaum", dk: 3, haerte: 65, quellenSchwindenRadial: 4.0, dichte: 640, gewicht: 12000}, {name: "Douglasie", dk: 3, haerte: 45, quellenSchwindenRadial: 3.5, dichte: 510, gewicht: 12000}, {name: "Zeder", dk: 2, haerte: 42, quellenSchwindenRadial: 2.8, dichte: 480, gewicht: 9500}, {name: "Mahagoni", dk: 2, haerte: 55, quellenSchwindenRadial: 3.0, dichte: 550, gewicht: 10500}, {name: "Teak", dk: 1, haerte: 60, quellenSchwindenRadial: 2.5, dichte: 650, gewicht: 11000}, {name: "Bambus", dk: 4, haerte: 50, quellenSchwindenRadial: 3.0, dichte: 400, gewicht: 18000}, {name: "Pappel", dk: 5, haerte: 25, quellenSchwindenRadial: 4.5, dichte: 380, gewicht: 9000}, {name: "Weide", dk: 5, haerte: 30, quellenSchwindenRadial: 4.0, dichte: 420, gewicht: 8000}, {name: "Linde", dk: 5, haerte: 35, quellenSchwindenRadial: 3.8, dichte: 530, gewicht: 9000}, {name: "Ulme", dk: 3, haerte: 75, quellenSchwindenRadial: 4.5, dichte: 680, gewicht: 11500}, {name: "Kastanie", dk: 2, haerte: 50, quellenSchwindenRadial: 3.5, dichte: 600, gewicht: 10000}, {name: "Robinie", dk: 1, haerte: 80, quellenSchwindenRadial: 3.0, dichte: 730, gewicht: 15000}, {name: "Hemlock", dk: 4, haerte: 40, quellenSchwindenRadial: 3.6, dichte: 500, gewicht: 10000}, {name: "Zypresse", dk: 2, haerte: 48, quellenSchwindenRadial: 3.0, dichte: 520, gewicht: 9000}, {name: "Redwood", dk: 2, haerte: 35, quellenSchwindenRadial: 2.8, dichte: 400, gewicht: 8500}, {name: "Hickory", dk: 3, haerte: 95, quellenSchwindenRadial: 5.5, dichte: 750, gewicht: 14000}, {name: "Wenge", dk: 2, haerte: 88, quellenSchwindenRadial: 3.8, dichte: 880, gewicht: 16000}, {name: "Zebrano", dk: 3, haerte: 70, quellenSchwindenRadial: 4.0, dichte: 750, gewicht: 13000}, {name: "Palisander", dk: 2, haerte: 82, quellenSchwindenRadial: 3.0, dichte: 850, gewicht: 16000}, {name: "Ebenholz", dk: 1, haerte: 98, quellenSchwindenRadial: 3.2, dichte: 1200, gewicht: 16500}
@@ -349,7 +346,7 @@
         const reflectionQuestions = [
             "Stell dir vor, du sollst einen stabilen und langlebigen Esstisch für eine Familie entwerfen. ...", "Welches Holz würdest du für Gartenmöbel wählen, ...", "Eine Küchenarbeitsplatte muss schnittfest und widerstandsfähig sein. ...", "Für einen stark beanspruchten Dielenboden ...", "Du sollst den Korpus einer Akustikgitarre bauen. ...", "Fenster sind ständig wechselnder Luftfeuchtigkeit ausgesetzt. ...", "Für ein Modellflugzeug oder ein leichtes Regal ...", "Robinie und Lärche sind beide für den Außenbereich beliebt. ...", "Du möchtest einen gebogenen Handlauf ...", "Vergleiche die Rohdichte und den E-Modul von Fichte und Eiche. ...", "Hölzer mit hohem Quell- und Schwindmaß ...", "Ein Hammerstiel muss extrem bruchfest ...", "Bei Eichenholz kann es in Verbindung mit Eisen ...", "Weiche Hölzer wie Fichte oder Kiefer ...", "Für die Herstellung von dekorativen Furnieren ...", "Nenne drei heimische Hölzer ...", "Holz ist ein wichtiger CO₂-Speicher. ...", "Was bedeuten Siegel wie FSC oder PEFC ...", "Teak hat eine exzellente Dauerhaftigkeit (DK 1). ...", "Bambus ist botanisch gesehen ein Gras, ...", "Was könntest du aus einem alten Eichenbalken ...", "Du möchtest ein Möbelstück mit einem starken Hell-Dunkel-Kontrast ...", "Hölzer wie Eiche oder Esche haben ...", "Stell dir vor, du entwirfst ein Kinderspielzeug ...", "Einige Hölzer wie Kirsche oder Lärche ...", "Für ein modernes, minimalistisches Möbelstück ...", "Welches Holz würdest du für den Bau einer rustikalen Almhütte ...", "Du planst ein Schülerprojekt ...", "Ein Kunde wünscht sich für seine Terrasse ...", "Welche Eigenschaft einer Holzart ...", "Wenn du eine neue Kategorie ...",
         ];
-        
+
         const attributeInfo = {
             dk: {icon: '🛡️', name: 'Dauerhaftigkeit (DK)', color: 'blue'},
             haerte: {icon: '💎', name: 'Druckfestigkeit (N/mm²)', color: 'blue'},
@@ -357,6 +354,8 @@
             dichte: {icon: '⚖️', name: 'Rohdichte (kg/m³)', color: 'blue'},
             gewicht: {icon: '🏋️', name: 'E-Modul (N/mm²)', color: 'blue'}
         };
+        
+        let aiGame = { playerName: '', playerCards: [], aiCards: [], currentPlayerCard: null, currentAiCard: null, roundInProgress: false };
         
         // ===== Auth + Deep Link Join =====
         document.addEventListener('DOMContentLoaded', async () => {
@@ -760,29 +759,29 @@
             
             const attributeButtons = canSelect ? `
                 <div class="space-y-1 mt-auto">
-                    <button onclick="window.selectAttribute('dk')" class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors text-left">
-                        <div class="flex items-center"><span class="mr-2 text-xs">🛡️</span><div><span class="text-xs font-medium leading-tight">Dauerhaftigkeit</span><span class="block text-xs text-gray-500 leading-tight">(DK)</span></div></div><span class="font-semibold text-blue-600 text-base">${cardData.dk}</span>
+                    <button onclick="window.selectAttribute('dk')" class="w-full flex justify-between items-center py-1 px-1 bg-amber-100 hover:bg-amber-200 rounded-xl transition-colors text-left border border-amber-600">
+                        <div class="flex items-center"><span class="mr-2 text-xs">🛡️</span><div><span class="text-xs font-medium leading-tight">Dauerhaftigkeit</span><span class="block text-xs text-gray-500 leading-tight">(DK)</span></div></div><span class="font-semibold text-amber-700 text-base">${cardData.dk}</span>
                     </button>
-                    <button onclick="window.selectAttribute('haerte')" class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors text-left">
-                         <div class="flex items-center"><span class="mr-2 text-xs">💎</span><div><span class="text-xs font-medium leading-tight">Druckfestigkeit</span><span class="block text-xs text-gray-500 leading-tight">(N/mm²)</span></div></div><span class="font-semibold text-blue-600 text-base">${cardData.haerte}</span>
+                    <button onclick="window.selectAttribute('haerte')" class="w-full flex justify-between items-center py-1 px-1 bg-amber-100 hover:bg-amber-200 rounded-xl transition-colors text-left border border-amber-600">
+                         <div class="flex items-center"><span class="mr-2 text-xs">💎</span><div><span class="text-xs font-medium leading-tight">Druckfestigkeit</span><span class="block text-xs text-gray-500 leading-tight">(N/mm²)</span></div></div><span class="font-semibold text-amber-700 text-base">${cardData.haerte}</span>
                     </button>
-                    <button onclick="window.selectAttribute('quellenSchwindenRadial')" class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors text-left">
-                         <div class="flex items-center"><span class="mr-2 text-xs">↔️</span><div><span class="text-xs font-medium leading-tight">Quellen/Schw.</span><span class="block text-xs text-gray-500 leading-tight">(%)</span></div></div><span class="font-semibold text-blue-600 text-base">${cardData.quellenSchwindenRadial}</span>
+                    <button onclick="window.selectAttribute('quellenSchwindenRadial')" class="w-full flex justify-between items-center py-1 px-1 bg-amber-100 hover:bg-amber-200 rounded-xl transition-colors text-left border border-amber-600">
+                         <div class="flex items-center"><span class="mr-2 text-xs">↔️</span><div><span class="text-xs font-medium leading-tight">Quellen/Schw.</span><span class="block text-xs text-gray-500 leading-tight">(%)</span></div></div><span class="font-semibold text-amber-700 text-base">${cardData.quellenSchwindenRadial}</span>
                     </button>
-                    <button onclick="window.selectAttribute('dichte')" class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors text-left">
-                         <div class="flex items-center"><span class="mr-2 text-xs">⚖️</span><div><span class="text-xs font-medium leading-tight">Rohdichte</span><span class="block text-xs text-gray-500 leading-tight">(kg/m³)</span></div></div><span class="font-semibold text-blue-600 text-base">${cardData.dichte}</span>
+                    <button onclick="window.selectAttribute('dichte')" class="w-full flex justify-between items-center py-1 px-1 bg-amber-100 hover:bg-amber-200 rounded-xl transition-colors text-left border border-amber-600">
+                         <div class="flex items-center"><span class="mr-2 text-xs">⚖️</span><div><span class="text-xs font-medium leading-tight">Rohdichte</span><span class="block text-xs text-gray-500 leading-tight">(kg/m³)</span></div></div><span class="font-semibold text-amber-700 text-base">${cardData.dichte}</span>
                     </button>
-                    <button onclick="window.selectAttribute('gewicht')" class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors text-left">
-                         <div class="flex items-center"><span class="mr-2 text-xs">🏋️</span><div><span class="text-xs font-medium leading-tight">E-Modul</span><span class="block text-xs text-gray-500 leading-tight">(N/mm²)</span></div></div><span class="font-semibold text-blue-600 text-base">${cardData.gewicht.toLocaleString('de-DE')}</span>
+                    <button onclick="window.selectAttribute('gewicht')" class="w-full flex justify-between items-center py-1 px-1 bg-amber-100 hover:bg-amber-200 rounded-xl transition-colors text-left border border-amber-600">
+                         <div class="flex items-center"><span class="mr-2 text-xs">🏋️</span><div><span class="text-xs font-medium leading-tight">E-Modul</span><span class="block text-xs text-gray-500 leading-tight">(N/mm²)</span></div></div><span class="font-semibold text-amber-700 text-base">${cardData.gewicht.toLocaleString('de-DE')}</span>
                     </button>
                 </div>
             ` : `
                 <div class="space-y-1 mt-auto">
-                    <div class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 rounded-xl text-left"><div class="flex items-center"><span class="mr-2 text-xs">🛡️</span><div><span class="text-xs font-medium leading-tight">Dauerhaftigkeit</span><span class="block text-xs text-gray-500 leading-tight">(DK)</span></div></div><span class="font-semibold text-blue-600 text-base">${cardData.dk}</span></div>
-                    <div class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 rounded-xl text-left"><div class="flex items-center"><span class="mr-2 text-xs">💎</span><div><span class="text-xs font-medium leading-tight">Druckfestigkeit</span><span class="block text-xs text-gray-500 leading-tight">(N/mm²)</span></div></div><span class="font-semibold text-blue-600 text-base">${cardData.haerte}</span></div>
-                    <div class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 rounded-xl text-left"><div class="flex items-center"><span class="mr-2 text-xs">↔️</span><div><span class="text-xs font-medium leading-tight">Quellen/Schw.</span><span class="block text-xs text-gray-500 leading-tight">(%)</span></div></div><span class="font-semibold text-blue-600 text-base">${cardData.quellenSchwindenRadial}</span></div>
-                    <div class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 rounded-xl text-left"><div class="flex items-center"><span class="mr-2 text-xs">⚖️</span><div><span class="text-xs font-medium leading-tight">Rohdichte</span><span class="block text-xs text-gray-500 leading-tight">(kg/m³)</span></div></div><span class="font-semibold text-blue-600 text-base">${cardData.dichte}</span></div>
-                    <div class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 rounded-xl text-left"><div class="flex items-center"><span class="mr-2 text-xs">🏋️</span><div><span class="text-xs font-medium leading-tight">E-Modul</span><span class="block text-xs text-gray-500 leading-tight">(N/mm²)</span></div></div><span class="font-bold text-blue-600 text-base">${cardData.gewicht.toLocaleString('de-DE')}</span></div>
+                    <div class="w-full flex justify-between items-center py-1 px-1 bg-amber-100 rounded-xl text-left border border-amber-600"><div class="flex items-center"><span class="mr-2 text-xs">🛡️</span><div><span class="text-xs font-medium leading-tight">Dauerhaftigkeit</span><span class="block text-xs text-gray-500 leading-tight">(DK)</span></div></div><span class="font-semibold text-amber-700 text-base">${cardData.dk}</span></div>
+                    <div class="w-full flex justify-between items-center py-1 px-1 bg-amber-100 rounded-xl text-left border border-amber-600"><div class="flex items-center"><span class="mr-2 text-xs">💎</span><div><span class="text-xs font-medium leading-tight">Druckfestigkeit</span><span class="block text-xs text-gray-500 leading-tight">(N/mm²)</span></div></div><span class="font-semibold text-amber-700 text-base">${cardData.haerte}</span></div>
+                    <div class="w-full flex justify-between items-center py-1 px-1 bg-amber-100 rounded-xl text-left border border-amber-600"><div class="flex items-center"><span class="mr-2 text-xs">↔️</span><div><span class="text-xs font-medium leading-tight">Quellen/Schw.</span><span class="block text-xs text-gray-500 leading-tight">(%)</span></div></div><span class="font-semibold text-amber-700 text-base">${cardData.quellenSchwindenRadial}</span></div>
+                    <div class="w-full flex justify-between items-center py-1 px-1 bg-amber-100 rounded-xl text-left border border-amber-600"><div class="flex items-center"><span class="mr-2 text-xs">⚖️</span><div><span class="text-xs font-medium leading-tight">Rohdichte</span><span class="block text-xs text-gray-500 leading-tight">(kg/m³)</span></div></div><span class="font-semibold text-amber-700 text-base">${cardData.dichte}</span></div>
+                    <div class="w-full flex justify-between items-center py-1 px-1 bg-amber-100 rounded-xl text-left border border-amber-600"><div class="flex items-center"><span class="mr-2 text-xs">🏋️</span><div><span class="text-xs font-medium leading-tight">E-Modul</span><span class="block text-xs text-gray-500 leading-tight">(N/mm²)</span></div></div><span class="font-bold text-amber-700 text-base">${cardData.gewicht.toLocaleString('de-DE')}</span></div>
                 </div>
             `;
 
@@ -888,8 +887,8 @@
 
             const idx = {'dk': 0, 'haerte': 1, 'quellenSchwindenRadial': 2, 'dichte': 3, 'gewicht': 4}[attribute];
             
-            document.querySelectorAll('#playerCard .space-y-1 > *')[idx].classList.replace('bg-blue-50', playerBgColor);
-            document.querySelectorAll('#aiCard .space-y-1 > *')[idx].classList.replace('bg-blue-50', aiBgColor);
+            document.querySelectorAll('#playerCard .space-y-1 > *')[idx].classList.replace('bg-amber-100', playerBgColor);
+            document.querySelectorAll('#aiCard .space-y-1 > *')[idx].classList.replace('bg-amber-100', aiBgColor);
         }
 
         function nextRoundAI() {
