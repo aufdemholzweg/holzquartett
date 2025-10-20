@@ -63,7 +63,7 @@
             0% { transform: scale(0); opacity: 0; }
             70% { transform: scale(1.2); opacity: 1; }
             100% { transform: scale(1); }
-  _     }
+        }
 
         @keyframes glow-win {
             0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); } /* green-400 */
@@ -178,7 +178,7 @@
                                 <div class="w-1/2 bg-white rounded-xl shadow-lg p-2 text-center">
                     <p id="opponentNameDisplay" class="text-base font-bold text-red-600">Computer</p>
                     <p class="text-sm text-gray-500">Karten: <span id="aiCards" class="font-semibold">15</span></p>
-á             </div>
+                </div>
             </div>
                         <div class="w-full bg-gray-200 rounded-full h-4 relative overflow-hidden border border-gray-300">
                 <div id="statusBar" class="h-full rounded-l-full transition-all duration-500" style="width: 50%; background-color: #f59e0b;"></div>
@@ -241,7 +241,7 @@
     </div>
 
         <div id="leaderboardModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-S     <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
+        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
             <h2 class="text-2xl font-bold text-amber-800 mb-6 text-center">🏆 Bestenliste</h2>
             <div id="leaderboardList" class="space-y-1 mb-6"></div>
             <button onclick="window.closeLeaderboard()" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg">
@@ -255,7 +255,7 @@ S     <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
             <button onclick="window.closeInfoModal()" class="absolute top-2 right-3 text-2xl text-gray-400 hover:text-gray-600">&times;</button>
             <h2 id="infoModalTitle" class="text-2xl font-bold text-amber-800 mb-4">Wissenswertes</h2>
             <div id="infoModalContent" class="text-gray-700 space-y-2 max-h-[60vh] overflow-y-auto"></div>
-        </div>
+section     </div>
     </div>
 
     <script type="module">
@@ -590,7 +590,7 @@ S     <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
             } else {
                 roundSoundPlayed = false; // NEU: Sound-Flag für die nächste Runde zurücksetzen
 
-                resultDisplay.classList.add('hidden');
+s               resultDisplay.classList.add('hidden');
                 nextRoundBtn.classList.add('hidden');
 
                 if (gameData.turn === localPlayerId) {
@@ -696,12 +696,12 @@ S     <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
             }
 
             const nextTurn = winnerId === 'tie' ? localGameState.turn : winnerId;
-Â           const gameUpdate = {
+            const gameUpdate = {
                 'lastResult': null, 'turn': nextTurn,
                 'players': {
                     [player1Id]: { ...localGameState.players[player1Id], cards: p1Cards },
                     [player2Id]: { ...localGameState.players[player2Id], cards: p2Cards }
-                },
+              S },
                 'currentCards': { [player1Id]: p1Cards[0], [player2Id]: p2Cards[0] },
                 'lastActivity': serverTimestamp()
             };
@@ -714,7 +714,7 @@ S     <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
                 selectAttributeAI(attribute);
             } else if (gameMode === 'multiplayer') {
                 multiplayerSelectAttribute(attribute);
-            }
+A         }
         };
         window.nextRound = function() {
             if (gameMode === 'ai') {
@@ -742,7 +742,7 @@ S     <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
             aiGame.aiCards = shuffledCards.slice(15, 30);
             aiGame.currentPlayerCard = aiGame.playerCards[0];
             aiGame.currentAiCard = aiGame.aiCards[0];
-            document.getElementById('gameContainer').classList.remove('hidden');
+s         document.getElementById('gameContainer').classList.remove('hidden');
             window.scrollTo(0, 0);
             updateDisplayAI();
             displayCardsAI();
@@ -786,7 +786,7 @@ S     <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
                          <div class="flex items-center"><span class="mr-2 text-xs">⚖️</span><div><span class="text-xs font-medium leading-tight">Rohdichte</span><span class="block text-xs text-gray-500 leading-tight">(kg/m³)</span></div></div><span class="font-semibold text-amber-700 text-base">${cardData.dichte}</span>
                     </button>
                     <button onclick="window.selectAttribute('gewicht')" class="w-full flex justify-between items-center py-1 px-1 bg-amber-100 hover:bg-amber-200 rounded-xl transition-colors text-left border border-amber-600">
-Â                        <div class="flex items-center"><span class="mr-2 text-xs">🏋️</span><div><span class="text-xs font-medium leading-tight">E-Modul</span><span class="block text-xs text-gray-500 leading-tight">(N/mm²)</span></div></div><span class="font-semibold text-amber-700 text-base">${cardData.gewicht.toLocaleString('de-DE')}</span>
+                         <div class="flex items-center"><span class="mr-2 text-xs">🏋️</span><div><span class="text-xs font-medium leading-tight">E-Modul</span><span class="block text-xs text-gray-500 leading-tight">(N/mm²)</span></div></div><span class="font-semibold text-amber-700 text-base">${cardData.gewicht.toLocaleString('de-DE')}</span>
                     </button>
                 </div>
             ` : `
@@ -794,7 +794,7 @@ S     <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
                     <div class="w-full flex justify-between items-center py-1 px-1 bg-amber-100 rounded-xl text-left border border-amber-600"><div class="flex items-center"><span class="mr-2 text-xs">🛡️</span><div><span class="text-xs font-medium leading-tight">Dauerhaftigkeit</span><span class="block text-xs text-gray-500 leading-tight">(DK)</span></div></div><span class="font-semibold text-amber-700 text-base">${cardData.dk}</span></div>
                     <div class="w-full flex justify-between items-center py-1 px-1 bg-amber-100 rounded-xl text-left border border-amber-600"><div class="flex items-center"><span class="mr-2 text-xs">💎</span><div><span class="text-xs font-medium leading-tight">Druckfestigkeit</span><span class="block text-xs text-gray-500 leading-tight">(N/mm²)</span></div></div><span class="font-semibold text-amber-700 text-base">${cardData.haerte}</span></div>
                     <div class="w-full flex justify-between items-center py-1 px-1 bg-amber-100 rounded-xl text-left border border-amber-600"><div class="flex items-center"><span class="mr-2 text-xs">↔️</span><div><span class="text-xs font-medium leading-tight">Quellen/Schw.</span><span class="block text-xs text-gray-500 leading-tight">(%)</span></div></div><span class="font-semibold text-amber-700 text-base">${cardData.quellenSchwindenRadial}</span></div>
-                    <div class="w-full flex justify-between items-center py-1 px-1 bg-amber-100 rounded-xl text-left border border-amber-600"><div class="flex items-center"><span class="mr-2 text-xs">⚖️</span><div><span class="text-xs font-medium leading-tight">Rohdichte</span><span class="block text-xs text-gray-500 leading-tight">(kg/m³)</span></div></div><span class="font-semibold text-amber-700 text-base">${cardData.dichte}</span></div>
+s                 <div class="w-full flex justify-between items-center py-1 px-1 bg-amber-100 rounded-xl text-left border border-amber-600"><div class="flex items-center"><span class="mr-2 text-xs">⚖️</span><div><span class="text-xs font-medium leading-tight">Rohdichte</span><span class="block text-xs text-gray-500 leading-tight">(kg/m³)</span></div></div><span class="font-semibold text-amber-700 text-base">${cardData.dichte}</span></div>
                     <div class="w-full flex justify-between items-center py-1 px-1 bg-amber-100 rounded-xl text-left border border-amber-600"><div class="flex items-center"><span class="mr-2 text-xs">🏋️</span><div><span class="text-xs font-medium leading-tight">E-Modul</span><span class="block text-xs text-gray-500 leading-tight">(N/mm²)</span></div></div><span class="font-bold text-amber-700 text-base">${cardData.gewicht.toLocaleString('de-DE')}</span></div>
                 </div>
             `;
@@ -822,7 +822,7 @@ S     <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
             playerCardContainer.innerHTML = '';
             aiCardContainer.innerHTML = '';
             playerCardContainer.appendChild(createCard(aiGame.currentPlayerCard, true, true));
-á         aiCardContainer.appendChild(createCard(aiGame.currentAiCard, false, false));
+            aiCardContainer.appendChild(createCard(aiGame.currentAiCard, false, false));
         }
 
         function selectAttributeAI(attribute) {
@@ -857,7 +857,7 @@ S     <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
                 if(playerCardFront) playerCardFront.classList.add('animate-glow-win');
                 if (statusBar) {
                     statusBar.classList.add('status-flash-win');
-s                   setTimeout(() => statusBar.classList.remove('status-flash-win'), 1200);
+                    setTimeout(() => statusBar.classList.remove('status-flash-win'), 1200);
                 }
                 triggerWinStarAnimation();
                 playSound(sounds.win); // NEU: Win-Sound abspielen
@@ -868,20 +868,20 @@ s                   setTimeout(() => statusBar.classList.remove('status
                 highlightAttribute(attribute, 'lose');
                 aiGame.aiCards.push(aiGame.aiCards.shift(), aiGame.playerCards.shift());
                 if(playerCardFront) playerCardFront.classList.add('animate-glow-lose');
-          _       if (statusBar) {
+                if (statusBar) {
                     statusBar.classList.add('status-flash-lose');
                     setTimeout(() => statusBar.classList.remove('status-flash-lose'), 1200);
                 }
             } else {
                 resultText = `🤝 Unentschieden!`;
-T               resultClass = 'text-yellow-600';
+                resultClass = 'text-yellow-600';
                 highlightAttribute(attribute, 'tie');
                 aiGame.playerCards.push(aiGame.playerCards.shift());
                 aiGame.aiCards.push(aiGame.aiCards.shift());
             }
 
             document.getElementById('resultText').textContent = resultText;
-            document.getElementById('resultText').className = `text-xl font-bold mb-1 ${resultClass}`;
+s           document.getElementById('resultText').className = `text-xl font-bold mb-1 ${resultClass}`;
             document.getElementById('resultDetails').textContent = `${attributeInfo[attribute].name.split(' (')[0]}: ${playerValue.toLocaleString('de-DE')} vs ${aiValue.toLocaleString('de-DE')}`;
             
             document.getElementById('attributeSelection').classList.add('hidden');
@@ -893,8 +893,7 @@ T               resultClass = 'text-yellow-600';
             if(woodIcon) woodIcon.classList.add('hidden');
             if(infoButton) infoButton.classList.remove('hidden');
 
-
-line-height: 1.25;         updateDisplayAI();
+d           updateDisplayAI();
             checkGameOverAI();
         }
 
@@ -909,7 +908,7 @@ line-height: 1.25;         updateDisplayAI();
 
         function nextRoundAI() {
             const pf = document.getElementById('playerCard').querySelector('.card-front');
-            if (pf) pf.classList.remove('animate-glow-win', 'animate-glow-lose');
+OS         if (pf) pf.classList.remove('animate-glow-win', 'animate-glow-lose');
             const af = document.getElementById('aiCard').querySelector('.card-front');
             if (af) af.classList.remove('animate-glow-win', 'animate-glow-lose');
 
@@ -920,7 +919,7 @@ line-height: 1.25;         updateDisplayAI();
             aiGame.roundInProgress = false;
 
             document.getElementById('attributeSelection').classList.remove('hidden');
-s           document.getElementById('nextRoundButton').classList.add('hidden');
+            document.getElementById('nextRoundButton').classList.add('hidden');
             document.getElementById('resultDisplay').classList.add('hidden');
 
             displayCardsAI();
@@ -929,7 +928,7 @@ s           document.getElementById('nextRoundButton').classList.add('hidde
 
         function updateDisplayAI() {
             const playerCount = aiGame.playerCards.length;
-            const opponentCount = aiGame.aiCards.length;
+i           const opponentCount = aiGame.aiCards.length;
             document.getElementById('playerCards').textContent = playerCount;
             document.getElementById('aiCards').textContent = opponentCount;
             updateStatusBar(playerCount, opponentCount);
@@ -953,19 +952,19 @@ s           document.getElementById('nextRoundButton').classList.add('hidde
             const containerRect = animationContainer.getBoundingClientRect();
 
             const star = document.createElement('div');
-CH           star.textContent = '⭐';
+            star.textContent = '⭐';
             star.className = 'falling-star';
 
             star.style.left = `${startRect.left - containerRect.left + startRect.width / 2 - 20}px`;
             star.style.top = `${startRect.top - containerRect.top - 20}px`;
             
             const endY = endRect.top - startRect.top + endRect.height / 2;
-            star.style.setProperty('--end-y', `${endY}px`);
+s           star.style.setProperty('--end-y', `${endY}px`);
 
             animationContainer.appendChild(star);
 
             setTimeout(() => { star.remove(); }, 1200);
-Examples       }
+        }
 
         function endGame() {
             if (gameMode === 'ai') { endGameAI(); return; }
@@ -975,14 +974,14 @@ Examples       }
                 let qi = parseInt(localStorage.getItem('reflectionQuestionIndex') || '0');
                 document.getElementById('reflectionQuestion').textContent = reflectionQuestions[qi];
                 document.getElementById('reflectionModal').classList.remove('hidden');
-EX               qi = (qi + 1) % reflectionQuestions.length;
+                qi = (qi + 1) % reflectionQuestions.length;
                 localStorage.setItem('reflectionQuestionIndex', qi.toString());
             } else {
                 document.getElementById('gameOverTitle').textContent = '😞 Spiel verloren';
-                document.getElementById('gameOverTitle').className = `text-3xl font-bold mb-3 text-red-600`;
+ar             document.getElementById('gameOverTitle').className = `text-3xl font-bold mb-3 text-red-600`;
                 document.getElementById('gameOverText').textContent = `Dein Mitspieler hat gewonnen. Versuche es nochmal!`;
                 document.getElementById('gameOverModal').classList.remove('hidden');
-      t   }
+    t   }
         }
 
         function endGameAI() {
@@ -991,31 +990,31 @@ EX               qi = (qi + 1) % reflectionQuestions.length;
                 saveToLeaderboard(aiGame.playerName);
                 let qi = parseInt(localStorage.getItem('reflectionQuestionIndex') || '0');
                 document.getElementById('reflectionQuestion').textContent = reflectionQuestions[qi];
-    Source         document.getElementById('reflectionModal').classList.remove('hidden');
+                document.getElementById('reflectionModal').classList.remove('hidden');
                 qi = (qi + 1) % reflectionQuestions.length;
                 localStorage.setItem('reflectionQuestionIndex', qi.toString());
             } else {
                 document.getElementById('gameOverTitle').textContent = '😞 Spiel verloren';
-s               document.getElementById('gameOverTitle').className = `text-3xl font-bold mb-3 text-red-600`;
+                document.getElementById('gameOverTitle').className = `text-3xl font-bold mb-3 text-red-600`;
                 document.getElementById('gameOverText').textContent = `Die KI hat gewonnen. Versuche es nochmal!`;
                 document.getElementById('gameOverModal').classList.remove('hidden');
             }
         }
 
         window.showFinalWinScreen = function() {
-S         document.getElementById('reflectionModal').classList.add('hidden');
+            document.getElementById('reflectionModal').classList.add('hidden');
             document.getElementById('reflectionAnswer').value = '';
             document.getElementById('gameOverTitle').textContent = '🎉 Glückwunsch!';
             document.getElementById('gameOverTitle').className = `text-3xl font-bold mb-3 text-green-600`;
             const winnerName = gameMode === 'ai' ? aiGame.playerName : localGameState.players[localPlayerId].name;
             document.getElementById('gameOverText').textContent = `Du hast gewonnen, ${winnerName}! Du hast alle Karten gesammelt.`;
-s           document.getElementById('gameOverModal').classList.remove('hidden');
+            document.getElementById('gameOverModal').classList.remove('hidden');
         };
 
         async function saveToLeaderboard(playerName) {
             if (!playerName) return;
             const leaderboardRef = doc(db, "leaderboard", playerName);
-s         try {
+            try {
                 await setDoc(leaderboardRef, { name: playerName, wins: increment(1), lastWin: serverTimestamp() }, { merge: true });
             } catch (error) {
                 console.error("Error updating leaderboard:", error);
@@ -1023,18 +1022,18 @@ s         try {
         }
 
         window.showLeaderboard = async function() {
-            const list = document.getElementById('leaderboardList');
+s         const list = document.getElementById('leaderboardList');
             list.innerHTML = '<p class="text-gray-500 text-center">Lade Bestenliste...</p>';
             
             document.getElementById('gameOverModal').classList.add('hidden');
             document.getElementById('leaderboardModal').classList.remove('hidden');
-            
+  B           
             try {
                 const q = query(collection(db, "leaderboard"), orderBy("wins", "desc"), limit(10));
-Methods             const querySnapshot = await getDocs(q);
+                const querySnapshot = await getDocs(q);
                 if (querySnapshot.empty) {
                     list.innerHTML = '<p class="text-gray-500 text-center">Noch keine Einträge</p>';
-New                   return;
+                    return;
                 }
                 list.innerHTML = querySnapshot.docs.map((doc, i) => `<div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg"><span class="font-semibold">${i + 1}. ${doc.data().name}</span><span class="text-sm text-gray-600">${doc.data().wins} Siege</span></div>`).join('');
             } catch (error) {
@@ -1045,7 +1044,7 @@ New                   return;
 
         window.closeLeaderboard = function() {
             document.getElementById('leaderboardModal').classList.add('hidden');
-            document.getElementById('gameOverModal').classList.remove('hidden');
+  S         document.getElementById('gameOverModal').classList.remove('hidden');
         };
         
         window.resetGame = async function() {
@@ -1060,21 +1059,21 @@ New                   return;
             document.getElementById('gameOverModal').classList.add('hidden');
             document.getElementById('leaderboardModal').classList.add('hidden');
             document.getElementById('reflectionModal').classList.add('hidden');
-E           document.getElementById('gameContainer').classList.add('hidden');
+s           document.getElementById('gameContainer').classList.add('hidden');
             document.getElementById('setupModal').classList.remove('hidden');
             document.getElementById('playerName').value = '';
             document.getElementById('infoModal').classList.add('hidden');
             document.getElementById('reflectionAnswer').value = '';
             window.history.pushState({}, document.title, window.location.pathname);
-Services       };
+        };
 
         window.showWoodInfo = function(woodName) {
             const modal = document.getElementById('infoModal');
             document.getElementById('infoModalTitle').textContent = `Wissenswertes über ${woodName}`;
             const content = document.getElementById('infoModalContent');
-            const infoData = woodInfo[woodName] || woodInfo[Object.keys(woodInfo).find(k => k.toLowerCase() === woodName.toLowerCase())];
+  Examples         const infoData = woodInfo[woodName] || woodInfo[Object.keys(woodInfo).find(k => k.toLowerCase() === woodName.toLowerCase())];
 
-Example             if (infoData) {
+            if (infoData) {
                 content.innerHTML = `<p>${infoData.info}</p><div class="space-y-4 mt-4"><div><h4 class="font-semibold mb-2 text-center">Baum</h4><img src="${infoData.bildBaum}" alt="Bild von ${woodName} Baum" class="w-full h-auto rounded-lg object-cover" onerror="this.style.display='none'"></div><div><h4 class="font-semibold mb-2 text-center">Querschnitt</h4><img src="${infoData.bildQuerschnitt}" alt="Bild von ${woodName} Querschnitt" class="w-full h-auto rounded-lg object-cover" onerror="this.style.display='none'"></div></div>`;
             } else {
                 content.innerHTML = "<p>Für diese Holzart sind aktuell keine Informationen verfügbar.</p>";
@@ -1084,7 +1083,7 @@ Example             if (infoData) {
 
         window.closeInfoModal = function() {
             document.getElementById('infoModal').classList.add('hidden');
-s       };
+        };
 
     </script>
 </body>
