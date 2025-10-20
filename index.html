@@ -105,6 +105,11 @@
             30% { transform: translateY(0) scale(1); opacity: 1; }
             100% { transform: translateY(var(--end-y)) scale(0.3); opacity: 0; }
         }
+        .card-background {
+            background-image: url('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/c080828c9cf4a70e5bc90c8afdfc61ac47e40a6b/images/background.jpg');
+            background-size: cover;
+            background-position: center;
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-amber-50 to-orange-100 min-h-screen">
@@ -739,11 +744,21 @@
             const borderColor = isPlayer ? 'border-amber-400' : 'border-gray-300';
             const shadow = isPlayer ? 'shadow-lg' : 'shadow-md';
             const cardFront = document.createElement('div');
-            cardFront.className = `card-front bg-white rounded-xl ${shadow} border-2 ${borderColor} p-3 flex flex-col`;
+            cardFront.className = `card-front card-background rounded-xl ${shadow} border-2 ${borderColor} p-3 flex flex-col`;
 
             const canSelect = isPlayer && ( (gameMode === 'ai' && !aiGame.roundInProgress) || (gameMode === 'multiplayer' && localGameState.turn === localPlayerId && !localGameState.lastResult));
-            const infoButtonHTML = (isPlayer || (gameMode === 'multiplayer' && isRevealed)) ? `<button onclick="window.showWoodInfo('${cardData.name}')" class="bg-purple-600 text-white rounded-full h-6 w-6 flex-shrink-0 flex items-center justify-center text-xs hover:bg-purple-700">💡</button>` : '';
+            
+            const isRoundOver = (gameMode === 'ai' && aiGame.roundInProgress) || (gameMode === 'multiplayer' && localGameState.lastResult);
+            
+            const infoButtonHTML = isPlayer ? `
+                <button id="player-info-button-${cardData.name.replace(/\s+/g, '-')}" onclick="window.showWoodInfo('${cardData.name}')" class="${isRoundOver ? '' : 'hidden'} bg-purple-600 text-white rounded-full h-9 w-9 flex items-center justify-center text-lg hover:bg-purple-700 absolute top-2 right-2">💡</button>
+            ` : '';
+            
+            const woodData = woodInfo[cardData.name] || woodInfo[Object.keys(woodInfo).find(k => k.toLowerCase() === cardData.name.toLowerCase())];
+            const treeImage = woodData ? woodData.bildBaum : 'https://placehold.co/36x36/d1d5db/374151?text=?';
 
+            const woodIconHTML = `<img src="${treeImage}" alt="${cardData.name}" id="wood-image-icon-${cardData.name.replace(/\s+/g, '-')}" class="${isRoundOver && isPlayer ? 'hidden' : ''} w-9 h-9 object-cover rounded-full border-2 border-amber-200 flex-shrink-0 absolute top-2 right-2">`;
+            
             const attributeButtons = canSelect ? `
                 <div class="space-y-1 mt-auto">
                     <button onclick="window.selectAttribute('dk')" class="w-full flex justify-between items-center py-1 px-1 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors text-left">
@@ -772,17 +787,14 @@
                 </div>
             `;
 
-            const woodData = woodInfo[cardData.name] || woodInfo[Object.keys(woodInfo).find(k => k.toLowerCase() === cardData.name.toLowerCase())];
-            const treeImage = woodData ? woodData.bildBaum : 'https://placehold.co/36x36/d1d5db/374151?text=?';
-
             cardFront.innerHTML = `
                 <div class="flex justify-between items-center w-full mb-1">
                     <div class="flex items-center space-x-2 flex-1 min-w-0">
-                        <img src="${treeImage}" alt="${cardData.name}" id="wood-image-icon-${cardData.name}" class="w-9 h-9 object-cover rounded-full border-2 border-amber-200 flex-shrink-0">
-                        <h3 class="text-lg font-bold text-amber-800 truncate">${cardData.name}</h3>
+                         <h3 class="text-lg font-bold text-amber-800 truncate">${cardData.name}</h3>
                     </div>
-                    <div class="flex-shrink-0">${infoButtonHTML}</div>
                 </div>
+                ${woodIconHTML}
+                ${isPlayer ? infoButtonHTML : ''}
                 ${attributeButtons}
             `;
 
@@ -865,8 +877,8 @@
             document.getElementById('resultDisplay').classList.remove('hidden');
             document.getElementById('nextRoundButton').classList.remove('hidden');
             
-            const woodIcon = document.getElementById(`wood-image-icon-${aiGame.currentPlayerCard.name}`);
-            const infoButton = document.getElementById(`player-info-button-${aiGame.currentPlayerCard.name}`);
+            const woodIcon = document.getElementById(`wood-image-icon-${aiGame.currentPlayerCard.name.replace(/\s+/g, '-')}`);
+            const infoButton = document.getElementById(`player-info-button-${aiGame.currentPlayerCard.name.replace(/\s+/g, '-')}`);
             if(woodIcon) woodIcon.classList.add('hidden');
             if(infoButton) infoButton.classList.remove('hidden');
 
