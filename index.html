@@ -292,12 +292,12 @@
             flip: new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_139083c224.mp3'),
             win: new Audio('https://github.com/aufdemholzweg/holzquartett/blob/894e048eea71ba49921abfe6827bd8dc723f8c2d/gewonnen.mp3?raw=true'), // <<< MODIFIED URL
             chime: new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c744c8.mp3'),
-            starWin: new Audio('https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3')
+            starWin: new Audio('https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3') // <<< MODIFIED: Replaced placeholder
         };
         sounds.flip.volume = 0.5;
         sounds.win.volume = 0.4; // Keep previous volume or adjust as needed
         sounds.chime.volume = 0.6;
-        sounds.starWin.volume = 0.7;
+        sounds.starWin.volume = 0.7; // <<< MODIFIED
 
         function playSound(sound) {
             sound.currentTime = 0; // Rewind to start
@@ -589,9 +589,12 @@
             let attributeHTML = '<div class="space-y-1 mt-auto">';
             for (const attrKey in attributeInfo) {
                 if (Object.hasOwnProperty.call(attributeInfo, attrKey)) {
-                    const attr = attributeInfo[attrKey]; const value = cardData?.[attrKey] ?? '?'; const formattedValue = typeof value === 'number' ? value.toLocaleString('de-DE') : value; const valueUnit = attr.name.match(/\(([^)]+)\)/); const unitText = valueUnit ? `<span class="block text-[10px] sm:text-xs text-gray-500 leading-tight">${valueUnit[0]}</span>` : ''; const nameText = attr.name.replace(/\s*\(([^)]+)\)/, ''); const baseBgClass = canSelectAttributes ? 'bg-amber-100' : 'bg-amber-50'; const hoverBgClass = canSelectAttributes ? 'hover:bg-amber-200' : ''; const borderClass = canSelectAttributes ? 'border-amber-600' : 'border-amber-300'; const textClass = canSelectAttributes ? 'text-amber-700' : 'text-amber-800'; const commonClasses = `w-full flex justify-between items-center py-0.5 sm:py-1 px-1 rounded-lg text-left border ${borderClass} ${baseBgClass}`; const interactiveClasses = `${hoverBgClass} transition-colors`;
-                    if (canSelectAttributes) { attributeHTML += `<button onclick="window.selectAttribute('${attrKey}')" class="${commonClasses} ${interactiveClasses}"><div class="flex items-center space-x-1 sm:space-x-2"><span class="text-xs sm:text-sm">${attr.icon}</span><div><span class="text-[11px] sm:text-xs font-medium leading-tight">${nameText}</span>${unitText}</div></div><span class="font-semibold ${textClass} text-sm sm:text-base">${formattedValue}</span></button>`; }
-                    else { attributeHTML += `<div class="${commonClasses}"><div class="flex items-center space-x-1 sm:space-x-2"><span class="text-xs sm:text-sm">${attr.icon}</span><div><span class="text-[11px] sm:text-xs font-medium leading-tight text-gray-700">${nameText}</span>${unitText}</div></div><span class="font-semibold ${textClass} text-sm sm:text-base">${formattedValue}</span></div>`; }
+                    const attr = attributeInfo[attrKey]; const value = cardData?.[attrKey] ?? '?'; const formattedValue = typeof value === 'number' ? value.toLocaleString('de-DE') : value; const valueUnit = attr.name.match(/\(([^)]+)\)/); const unitText = valueUnit ? `<span class="block text-[10px] sm:text-xs text-gray-500 leading-tight">${valueUnit[0]}</span>` : ''; const nameText = attr.name.replace(/\s*\(([^)]+)\)/, '');
+                    // <<< MODIFIED: Shortened label for quellenSchwindenRadial >>>
+                    const displayName = (attrKey === 'quellenSchwindenRadial') ? 'Quellen/Schw.' : nameText;
+                    const baseBgClass = canSelectAttributes ? 'bg-amber-100' : 'bg-amber-50'; const hoverBgClass = canSelectAttributes ? 'hover:bg-amber-200' : ''; const borderClass = canSelectAttributes ? 'border-amber-600' : 'border-amber-300'; const textClass = canSelectAttributes ? 'text-amber-700' : 'text-amber-800'; const commonClasses = `w-full flex justify-between items-center py-0.5 sm:py-1 px-1 rounded-lg text-left border ${borderClass} ${baseBgClass}`; const interactiveClasses = `${hoverBgClass} transition-colors`;
+                    if (canSelectAttributes) { attributeHTML += `<button onclick="window.selectAttribute('${attrKey}')" class="${commonClasses} ${interactiveClasses}"><div class="flex items-center space-x-1 sm:space-x-2"><span class="text-xs sm:text-sm">${attr.icon}</span><div><span class="text-[11px] sm:text-xs font-medium leading-tight">${displayName}</span>${unitText}</div></div><span class="font-semibold ${textClass} text-sm sm:text-base">${formattedValue}</span></button>`; } // Used displayName
+                    else { attributeHTML += `<div class="${commonClasses}"><div class="flex items-center space-x-1 sm:space-x-2"><span class="text-xs sm:text-sm">${attr.icon}</span><div><span class="text-[11px] sm:text-xs font-medium leading-tight text-gray-700">${displayName}</span>${unitText}</div></div><span class="font-semibold ${textClass} text-sm sm:text-base">${formattedValue}</span></div>`; } // Used displayName
                 }
             } attributeHTML += '</div>';
             cardFront.innerHTML = `<div class="flex justify-between items-center w-full mb-2 px-1 h-9 sm:h-10"><h3 class="text-base sm:text-lg font-bold text-amber-800 truncate text-left mr-2">${cardName}</h3>${headerRightContent}</div>${attributeHTML}`;
