@@ -134,7 +134,16 @@
                     🧑‍🤝‍🧑 Mit Freund online spielen
                 </button>
             </div>
-        </div>
+
+            <div class="mt-6 flex items-center justify-center space-x-2">
+                <span class="text-gray-700">🔈 Ton Aus</span>
+                <label for="soundToggle" class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="soundToggle" class="sr-only peer">
+                    <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-2 peer-focus:ring-amber-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-600"></div>
+                </label>
+                <span class="text-gray-700">🔊 Ton An</span>
+            </div>
+            </div>
     </div>
 
     <div id="nameModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -286,6 +295,7 @@
         let unsubscribeGame = null;
         let localGameState = {};
         let hasCopiedShareLink = false;
+        let isMuted = false; // <<< NEU: Globale Variable für Tonstatus
 
         // ===== Sound Effects (Updated win sound URL) =====
         const sounds = {
@@ -295,15 +305,17 @@
             starWin: new Audio('https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3') // <<< MODIFIED: Replaced placeholder
         };
         sounds.flip.volume = 0.5;
-        sounds.win.volume = 0.4; // Keep previous volume or adjust as needed
+        sounds.win.volume = 0.4;
         sounds.chime.volume = 0.6;
-        sounds.starWin.volume = 0.7; // <<< MODIFIED
+        sounds.starWin.volume = 0.7;
 
+        // ===== MODIFIED playSound function =====
         function playSound(sound) {
+            if (isMuted) return; // <<< NEU: Nichts abspielen, wenn stummgeschaltet
             sound.currentTime = 0; // Rewind to start
             sound.play().catch(e => console.log("Sound playback error:", e)); // Play and catch potential errors
         }
-        let roundSoundPlayed = false; // Flag for multiplayer to prevent sound spam
+        let roundSoundPlayed = false;
 
         // ===== Wood Data =====
         const woodCards = [ /* ... woodCards data ... */
@@ -567,7 +579,7 @@
             displayCardsAI();
         }
 
-       // --- Modified createCard (checks aiGame.turn, updated header layout) ---
+       // --- Modified createCard (checks aiGame.turn, updated header layout, shortened label) ---
         function createCard(cardData, isRevealed = true, isPlayer = true) {
             const card = document.createElement('div');
             card.className = `card-3d w-full h-full relative ${isPlayer ? 'cursor-pointer hover-lift' : ''} transition-all duration-300`;
@@ -747,6 +759,27 @@
         window.closeInfoModal = function() { /* ... closeInfoModal unchanged ... */
              document.getElementById('infoModal').classList.add('hidden');
         };
+
+        // ===== Ton-Schalter Initialisierung und Event Listener =====
+        const soundToggleButton = document.getElementById('soundToggle');
+
+        // Initialen Status aus localStorage laden (oder default: nicht stumm)
+        const savedMuteStatus = localStorage.getItem('holzquartett_isMuted');
+        isMuted = savedMuteStatus === 'true'; // Setze globale Variable
+        soundToggleButton.checked = !isMuted; // Setze Schalter-Zustand
+
+        // Event Listener für den Schalter
+        soundToggleButton.addEventListener('change', (event) => {
+            isMuted = !event.target.checked; // Wenn checked, ist NICHT stumm
+            localStorage.setItem('holzquartett_isMuted', isMuted); // Status speichern
+            console.log("Ton ist", isMuted ? "AUS" : "AN");
+
+            // Optional: Test-Sound abspielen, wenn Ton eingeschaltet wird
+            if (!isMuted) {
+                // Spiele einen kurzen Sound zur Bestätigung, z.B. chime
+                playSound(sounds.chime);
+            }
+        });
 
     </script>
 </body>
