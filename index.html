@@ -287,17 +287,17 @@
         let localGameState = {};
         let hasCopiedShareLink = false;
 
-        // ===== Sound Effects (Added starWin) =====
+        // ===== Sound Effects (Added starWin with actual URL) =====
         const sounds = {
             flip: new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_139083c224.mp3'),
             win: new Audio('https://cdn.pixabay.com/audio/2022/11/22/audio_2c5552a862.mp3'),
             chime: new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c744c8.mp3'),
-            starWin: new Audio('PLACEHOLDER_GITHUB_SOUND_URL.mp3') // <<< NEU: Füge hier deinen Link ein
+            starWin: new Audio('https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3') // <<< MODIFIED: Replaced placeholder
         };
         sounds.flip.volume = 0.5;
         sounds.win.volume = 0.4;
         sounds.chime.volume = 0.6;
-        sounds.starWin.volume = 0.7; // <<< NEU (Optional volume)
+        sounds.starWin.volume = 0.7; // <<< MODIFIED
 
         function playSound(sound) {
             sound.currentTime = 0; // Rewind to start
@@ -688,7 +688,7 @@
              if (aiGame.roundInProgress) { if (aiGame.playerCards.length === 0 || aiGame.aiCards.length === 0) { setTimeout(endGameAI, 300); } }
         }
 
-        // --- Modified triggerWinStarAnimation (added chime sound) ---
+        // --- Modified triggerWinStarAnimation (added starWin sound) ---
         function triggerWinStarAnimation() {
              const animationContainer = document.getElementById('animationContainer');
              const playerScoreBox = document.getElementById('playerScoreBox');
@@ -706,7 +706,7 @@
              const endY = (endRect.top + endRect.height / 2) - (startRect.top);
              star.style.setProperty('--end-y', `${endY}px`);
              animationContainer.appendChild(star);
-             playSound(sounds.chime); // <<< PLAY CHIME SOUND
+             playSound(sounds.chime); // Play original chime
              playSound(sounds.starWin); // <<< PLAY STARWIN SOUND
              setTimeout(() => { star.remove(); }, 1200);
         }
