@@ -129,7 +129,6 @@
             <button onclick="window.showGameRules()" class="absolute top-3 right-3 text-2xl text-gray-400 hover:text-gray-600 transition-colors" aria-label="Spielregeln anzeigen">
                 ℹ️
             </button>
-
             <h2 class="text-2xl font-bold text-amber-800 mb-6">Spielmodus wählen</h2>
             <div class="space-y-4">
                 <button onclick="window.showNamePrompt('ai')" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors text-lg">
@@ -183,8 +182,7 @@
 
     <div id="gameContainer" class="hidden max-w-6xl mx-auto px-4 py-4 relative">
         <div id="animationContainer" class="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden"></div>
-        <div class="max-w-md mx-auto mb-1 space-y-1">
-            <div class="flex justify-center space-x-2">
+        <div class="max-w-md mx-auto mb-1 space-y-1"> <div class="flex justify-center space-x-2">
                 <div id="playerScoreBox" class="w-1/2 bg-white rounded-xl shadow-lg p-2 text-center relative">
                     <p id="playerNameDisplay" class="text-base font-bold text-amber-600 truncate"></p>
                     <p class="text-sm text-gray-500">Karten: <span id="playerCards" class="font-semibold">15</span></p>
@@ -303,20 +301,21 @@
         let hasCopiedShareLink = false;
         let isMuted = false;
 
-        // ===== Sound Effects (Re-organized and 'lose' sound changed) =====
+        // ===== Sound Effects (Updated 'lose' sound) =====
         const sounds = {
             flip: new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_139083c224.mp3'),
-            winRound: new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c744c8.mp3'), // Renamed 'chime' to 'winRound'
-            winGame: new Audio('https://github.com/aufdemholzweg/holzquartett/blob/894e048eea71ba49921abfe6827bd8dc723f8c2d/gewonnen.mp3?raw=true'), // Renamed 'win' to 'winGame'
-            lose: new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_1c5d9997b6.mp3') // <<< NEUER 'LOSE' SOUND
-            // Removed starWin as it was redundant with winChime
+            win: new Audio('https://github.com/aufdemholzweg/holzquartett/blob/894e048eea71ba49921abfe6827bd8dc723f8c2d/gewonnen.mp3?raw=true'),
+            chime: new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c744c8.mp3'),
+            starWin: new Audio('https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3'),
+            lose: new Audio('https://cdn.pixabay.com/audio/2022/03/10/audio_941650c1f5.mp3') // <<< MODIFIED URL
         };
         sounds.flip.volume = 0.5;
-        sounds.winRound.volume = 0.6;
-        sounds.winGame.volume = 0.4;
-        sounds.lose.volume = 0.6; // Adjusted volume
+        sounds.win.volume = 0.4;
+        sounds.chime.volume = 0.6;
+        sounds.starWin.volume = 0.7;
+        sounds.lose.volume = 0.5;
 
-        // Preload sounds
+        // <<< NEU: Sounds vorab laden für bessere Zuverlässigkeit >>>
         Object.values(sounds).forEach(sound => {
             sound.preload = 'auto';
         });
@@ -502,9 +501,10 @@
                 if (!roundSoundPlayed) { 
                     roundSoundPlayed = true; 
                     playSound(sounds.flip); 
-                    // <<< LOGIK VEREINFACHT: starWin löst Chime aus, 'lose' spielt bei Niederlage >>>
-                    if (gameData.lastResult.winnerId !== localPlayerId && gameData.lastResult.winnerId !== 'tie') {
-                         playSound(sounds.lose);
+                    if (gameData.lastResult.winnerId === localPlayerId) {
+                        playSound(sounds.win);
+                    } else if (gameData.lastResult.winnerId !== 'tie') { // <<< NEU
+                         playSound(sounds.lose); // <<< NEU
                     }
                 }
                 attributeSelection.classList.add('hidden');
@@ -535,7 +535,7 @@
                 aiCardElement?.classList.remove('animate-glow-win', 'animate-glow-lose');
                 if (winnerId === localPlayerId) { playerCardElement?.classList.add('animate-glow-win'); if (statusBarElement) { statusBarElement.classList.add('status-flash-win'); setTimeout(() => statusBarElement.classList.remove('status-flash-win'), 1200); } triggerWinStarAnimation(); }
                 else if (winnerId !== 'tie') { playerCardElement?.classList.add('animate-glow-lose'); aiCardElement?.classList.add('animate-glow-win'); if (statusBarElement) { statusBarElement.classList.add('status-flash-lose'); setTimeout(() => statusBarElement.classList.remove('status-flash-lose'), 1200); } }
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                window.scrollTo({ top: 0, behavior: 'smooth' }); // <<< SCROLL MULTIPLAYER
             } else {
                  roundSoundPlayed = false;
                 resultDisplay.classList.add('hidden');
@@ -623,10 +623,11 @@
             for (const attrKey in attributeInfo) {
                 if (Object.hasOwnProperty.call(attributeInfo, attrKey)) {
                     const attr = attributeInfo[attrKey]; const value = cardData?.[attrKey] ?? '?'; const formattedValue = typeof value === 'number' ? value.toLocaleString('de-DE') : value; const valueUnit = attr.name.match(/\(([^)]+)\)/); const unitText = valueUnit ? `<span class="block text-[10px] sm:text-xs text-gray-500 leading-tight">${valueUnit[0]}</span>` : ''; const nameText = attr.name.replace(/\s*\(([^)]+)\)/, '');
+                    // <<< MODIFIED: Shortened label for quellenSchwindenRadial >>>
                     const displayName = (attrKey === 'quellenSchwindenRadial') ? 'Quellen/Schw.' : nameText;
                     const baseBgClass = canSelectAttributes ? 'bg-amber-100' : 'bg-amber-50'; const hoverBgClass = canSelectAttributes ? 'hover:bg-amber-200' : ''; const borderClass = canSelectAttributes ? 'border-amber-600' : 'border-amber-300'; const textClass = canSelectAttributes ? 'text-amber-700' : 'text-amber-800'; const commonClasses = `w-full flex justify-between items-center py-0.5 sm:py-1 px-1 rounded-lg text-left border ${borderClass} ${baseBgClass}`; const interactiveClasses = `${hoverBgClass} transition-colors`;
-                    if (canSelectAttributes) { attributeHTML += `<button onclick="window.selectAttribute('${attrKey}')" class="${commonClasses} ${interactiveClasses}"><div class="flex items-center space-x-1 sm:space-x-2"><span class="text-xs sm:text-sm">${attr.icon}</span><div><span class="text-[11px] sm:text-xs font-medium leading-tight">${displayName}</span>${unitText}</div></div><span class="font-semibold ${textClass} text-sm sm:text-base">${formattedValue}</span></button>`; }
-                    else { attributeHTML += `<div class="${commonClasses}"><div class="flex items-center space-x-1 sm:space-x-2"><span class="text-xs sm:text-sm">${attr.icon}</span><div><span class="text-[11px] sm:text-xs font-medium leading-tight text-gray-700">${displayName}</span>${unitText}</div></div><span class="font-semibold ${textClass} text-sm sm:text-base">${formattedValue}</span></div>`; }
+                    if (canSelectAttributes) { attributeHTML += `<button onclick="window.selectAttribute('${attrKey}')" class="${commonClasses} ${interactiveClasses}"><div class="flex items-center space-x-1 sm:space-x-2"><span class="text-xs sm:text-sm">${attr.icon}</span><div><span class="text-[11px] sm:text-xs font-medium leading-tight">${displayName}</span>${unitText}</div></div><span class="font-semibold ${textClass} text-sm sm:text-base">${formattedValue}</span></button>`; } // Used displayName
+                    else { attributeHTML += `<div class="${commonClasses}"><div class="flex items-center space-x-1 sm:space-x-2"><span class="text-xs sm:text-sm">${attr.icon}</span><div><span class="text-[11px] sm:text-xs font-medium leading-tight text-gray-700">${displayName}</span>${unitText}</div></div><span class="font-semibold ${textClass} text-sm sm:text-base">${formattedValue}</span></div>`; } // Used displayName
                 }
             } attributeHTML += '</div>';
             cardFront.innerHTML = `<div class="flex justify-between items-center w-full mb-2 px-1 h-9 sm:h-10"><h3 class="text-base sm:text-lg font-bold text-amber-800 truncate text-left mr-2">${cardName}</h3>${headerRightContent}</div>${attributeHTML}`;
@@ -639,7 +640,7 @@
             const playerCardContainer = document.getElementById('playerCard'); const aiCardContainer = document.getElementById('aiCard'); playerCardContainer.innerHTML = ''; aiCardContainer.innerHTML = ''; if (aiGame.currentPlayerCard) { playerCardContainer.appendChild(createCard(aiGame.currentPlayerCard, true, true)); } else { playerCardContainer.innerHTML = `<div class="card-front bg-gray-200 ...">Keine Karte</div>`; } if (aiGame.currentAiCard) { const revealAICard = aiGame.roundInProgress; aiCardContainer.appendChild(createCard(aiGame.currentAiCard, revealAICard, false)); } else { aiCardContainer.innerHTML = `<div class="card-front bg-gray-200 ...">Keine Karte</div>`; }
         }
 
-        // --- Modified selectAttributeAI (simplified win sound, added lose sound) ---
+        // --- Modified selectAttributeAI (added 'lose' sound) ---
         function selectAttributeAI(attribute) {
             if (aiGame.roundInProgress || aiGame.turn !== 'player' || !aiGame.currentPlayerCard || !aiGame.currentAiCard || !attributeInfo[attribute]) return;
             aiGame.roundInProgress = true;
@@ -661,8 +662,8 @@
                  let resultText, resultClass; const playerCardFront = document.getElementById('playerCard')?.querySelector('.card-front'); const aiCardFront = document.getElementById('aiCard')?.querySelector('.card-front'); const statusBar = document.getElementById('statusBar');
                 const attributeIndex = Object.keys(attributeInfo).indexOf(attribute);
                  if (attributeIndex !== -1) { const playerRow = playerCardFront?.querySelector(`.space-y-1 > *:nth-child(${attributeIndex + 1})`); const opponentRow = aiCardFront?.querySelector(`.space-y-1 > *:nth-child(${attributeIndex + 1})`); const highlightClass = 'bg-yellow-200'; const playerCurrentBg = playerRow?.classList.toString().match(/bg-(amber|gray|yellow)-[0-9]+/)?.[0]; const opponentCurrentBg = opponentRow?.classList.toString().match(/bg-(amber|gray|yellow)-[0-9]+/)?.[0]; if (playerRow) { if (playerCurrentBg) playerRow.classList.remove(playerCurrentBg); playerRow.classList.add(highlightClass); } if (opponentRow) { if (opponentCurrentBg) opponentRow.classList.remove(opponentCurrentBg); opponentRow.classList.add(highlightClass); } }
-                if (playerWins === true) { resultText = `🎉 Du gewinnst!`; resultClass = 'text-green-600'; playerCardFront?.classList.add('animate-glow-win'); if (statusBar) { statusBar.classList.add('status-flash-win'); setTimeout(() => statusBar.classList.remove('status-flash-win'), 1200); } triggerWinStarAnimation(); /* playSound(sounds.win) removed */ }
-                else if (playerWins === false) { resultText = `😞 KI gewinnt!`; resultClass = 'text-red-600'; playerCardFront?.classList.add('animate-glow-lose'); aiCardFront?.classList.add('animate-glow-win'); if (statusBar) { statusBar.classList.add('status-flash-lose'); setTimeout(() => statusBar.classList.remove('status-flash-lose'), 1200); } playSound(sounds.lose); }
+                if (playerWins === true) { resultText = `🎉 Du gewinnst!`; resultClass = 'text-green-600'; playerCardFront?.classList.add('animate-glow-win'); if (statusBar) { statusBar.classList.add('status-flash-win'); setTimeout(() => statusBar.classList.remove('status-flash-win'), 1200); } triggerWinStarAnimation(); playSound(sounds.win); }
+                else if (playerWins === false) { resultText = `😞 KI gewinnt!`; resultClass = 'text-red-600'; playerCardFront?.classList.add('animate-glow-lose'); aiCardFront?.classList.add('animate-glow-win'); if (statusBar) { statusBar.classList.add('status-flash-lose'); setTimeout(() => statusBar.classList.remove('status-flash-lose'), 1200); } playSound(sounds.lose); } // <<< 'lose' sound
                 else { resultText = `🤝 Unentschieden!`; resultClass = 'text-yellow-600'; }
                 document.getElementById('resultText').textContent = resultText; document.getElementById('resultText').className = `text-lg sm:text-xl font-bold ${resultClass}`; document.getElementById('resultDetails').textContent = `${attributeInfo[attribute].name.split(' (')[0]}: ${playerValue.toLocaleString('de-DE')} vs ${aiValue.toLocaleString('de-DE')}`; document.getElementById('attributeSelection').classList.add('hidden'); document.getElementById('resultDisplay').classList.remove('hidden'); document.getElementById('nextRoundButton').classList.remove('hidden');
                 updateDisplayAI(); checkGameOverAI();
@@ -670,7 +671,7 @@
             }, 600);
         }
 
-        // --- Modified aiSelectAttribute (simplified win sound, added 'lose' sound) ---
+        // --- Modified aiSelectAttribute (added 'lose' sound) ---
         function aiSelectAttribute() {
             if (aiGame.roundInProgress || aiGame.turn !== 'ai' || !aiGame.currentPlayerCard || !aiGame.currentAiCard) return;
             aiGame.roundInProgress = true;
@@ -688,8 +689,8 @@
                 let resultText, resultClass; const playerCardFront = document.getElementById('playerCard')?.querySelector('.card-front'); const aiCardFront = document.getElementById('aiCard')?.querySelector('.card-front'); const statusBar = document.getElementById('statusBar');
                 const attributeIndex = Object.keys(attributeInfo).indexOf(chosenAttribute);
                  if (attributeIndex !== -1) { const playerRow = playerCardFront?.querySelector(`.space-y-1 > *:nth-child(${attributeIndex + 1})`); const opponentRow = aiCardFront?.querySelector(`.space-y-1 > *:nth-child(${attributeIndex + 1})`); const highlightClass = 'bg-yellow-200'; const playerCurrentBg = playerRow?.classList.toString().match(/bg-(amber|gray|yellow)-[0-9]+/)?.[0]; const opponentCurrentBg = opponentRow?.classList.toString().match(/bg-(amber|gray|yellow)-[0-9]+/)?.[0]; if (playerRow) { if (playerCurrentBg) playerRow.classList.remove(playerCurrentBg); playerRow.classList.add(highlightClass); } if (opponentRow) { if (opponentCurrentBg) opponentRow.classList.remove(opponentCurrentBg); opponentRow.classList.add(highlightClass); } }
-                 if (playerWins === true) { resultText = `🎉 Du gewinnst!`; resultClass = 'text-green-600'; playerCardFront?.classList.add('animate-glow-win'); aiCardFront?.classList.add('animate-glow-lose'); if (statusBar) { statusBar.classList.add('status-flash-win'); setTimeout(() => statusBar.classList.remove('status-flash-win'), 1200); } triggerWinStarAnimation(); /* playSound(sounds.win) removed */ }
-                 else if (playerWins === false) { resultText = `😞 KI gewinnt!`; resultClass = 'text-red-600'; playerCardFront?.classList.add('animate-glow-lose'); aiCardFront?.classList.add('animate-glow-win'); if (statusBar) { statusBar.classList.add('status-flash-lose'); setTimeout(() => statusBar.classList.remove('status-flash-lose'), 1200); } playSound(sounds.lose); }
+                 if (playerWins === true) { resultText = `🎉 Du gewinnst!`; resultClass = 'text-green-600'; playerCardFront?.classList.add('animate-glow-win'); aiCardFront?.classList.add('animate-glow-lose'); if (statusBar) { statusBar.classList.add('status-flash-win'); setTimeout(() => statusBar.classList.remove('status-flash-win'), 1200); } triggerWinStarAnimation(); playSound(sounds.win); }
+                 else if (playerWins === false) { resultText = `😞 KI gewinnt!`; resultClass = 'text-red-600'; playerCardFront?.classList.add('animate-glow-lose'); aiCardFront?.classList.add('animate-glow-win'); if (statusBar) { statusBar.classList.add('status-flash-lose'); setTimeout(() => statusBar.classList.remove('status-flash-lose'), 1200); } playSound(sounds.lose); } // <<< 'lose' sound
                  else { resultText = `🤝 Unentschieden!`; resultClass = 'text-yellow-600'; }
                 document.getElementById('resultText').textContent = resultText; document.getElementById('resultText').className = `text-lg sm:text-xl font-bold ${resultClass}`; document.getElementById('resultDetails').textContent = `${attributeInfo[chosenAttribute].name.split(' (')[0]}: ${playerValue.toLocaleString('de-DE')} vs ${aiValue.toLocaleString('de-DE')}`; document.getElementById('attributeSelection').classList.add('hidden'); document.getElementById('resultDisplay').classList.remove('hidden'); document.getElementById('nextRoundButton').classList.remove('hidden');
                 updateDisplayAI(); checkGameOverAI();
@@ -723,7 +724,7 @@
              if (aiGame.roundInProgress) { if (aiGame.playerCards.length === 0 || aiGame.aiCards.length === 0) { setTimeout(endGameAI, 300); } }
         }
 
-        // --- Modified triggerWinStarAnimation (plays 'winChime') ---
+        // --- Modified triggerWinStarAnimation (added starWin sound) ---
         function triggerWinStarAnimation() {
              const animationContainer = document.getElementById('animationContainer');
              const playerScoreBox = document.getElementById('playerScoreBox');
@@ -741,8 +742,8 @@
              const endY = (endRect.top + endRect.height / 2) - (startRect.top);
              star.style.setProperty('--end-y', `${endY}px`);
              animationContainer.appendChild(star);
-             playSound(sounds.winChime); // <<< PLAYS CHIME FOR ROUND WIN
-             // playSound(sounds.starWin); // <<< Removed redundant sound
+             playSound(sounds.chime); // Play original chime
+             playSound(sounds.starWin); // <<< PLAY STARWIN SOUND
              setTimeout(() => { star.remove(); }, 1200);
         }
 
@@ -758,20 +759,8 @@
         window.showFinalWinScreen = function() { /* ... showFinalWinScreen unchanged ... */
              document.getElementById('reflectionModal').classList.add('hidden'); document.getElementById('reflectionAnswer').value = ''; showGameOverScreen(true);
         };
-
-        // --- Modified showGameOverScreen (plays 'winGame' fanfare) ---
-         function showGameOverScreen(didPlayerWin) {
-             document.getElementById('reflectionModal').classList.add('hidden'); document.getElementById('leaderboardModal').classList.add('hidden'); const titleEl = document.getElementById('gameOverTitle'); const textEl = document.getElementById('gameOverText'); const modalEl = document.getElementById('gameOverModal');
-             if (didPlayerWin === true) { 
-                 titleEl.textContent = '🎉 Glückwunsch!'; titleEl.className = `text-3xl font-bold mb-3 text-green-600`; const winnerName = (gameMode === 'ai' ? aiGame.playerName : localGameState?.players?.[localPlayerId]?.name) || 'Du'; textEl.textContent = `Du hast gewonnen, ${winnerName}! Du hast alle Karten gesammelt.`;
-                 playSound(sounds.winGame); // <<< PLAY FANFARE FOR GAME WIN
-             } else if (didPlayerWin === false) { 
-                 titleEl.textContent = '😞 Spiel verloren'; titleEl.className = `text-3xl font-bold mb-3 text-red-600`; const opponentName = (gameMode === 'ai' ? 'Die KI' : localGameState?.players?.[localGameState.playerIds?.find(id => id !== localPlayerId)]?.name) || 'Dein Gegner'; textEl.textContent = `${opponentName} hat gewonnen. Versuche es nochmal!`;
-                 // Optional: playSound(sounds.lose); // Can add a game-lose sound here too
-             } else { 
-                 titleEl.textContent = '🤝 Unentschieden!'; titleEl.className = `text-3xl font-bold mb-3 text-yellow-600`; textEl.textContent = `Das Spiel endet unentschieden!`;
-             }
-             modalEl.classList.remove('hidden');
+         function showGameOverScreen(didPlayerWin) { /* ... showGameOverScreen unchanged ... */
+             document.getElementById('reflectionModal').classList.add('hidden'); document.getElementById('leaderboardModal').classList.add('hidden'); const titleEl = document.getElementById('gameOverTitle'); const textEl = document.getElementById('gameOverText'); const modalEl = document.getElementById('gameOverModal'); if (didPlayerWin === true) { titleEl.textContent = '🎉 Glückwunsch!'; titleEl.className = `text-3xl font-bold mb-3 text-green-600`; const winnerName = (gameMode === 'ai' ? aiGame.playerName : localGameState?.players?.[localPlayerId]?.name) || 'Du'; textEl.textContent = `Du hast gewonnen, ${winnerName}! Du hast alle Karten gesammelt.`; } else if (didPlayerWin === false) { titleEl.textContent = '😞 Spiel verloren'; titleEl.className = `text-3xl font-bold mb-3 text-red-600`; const opponentName = (gameMode === 'ai' ? 'Die KI' : localGameState?.players?.[localGameState.playerIds?.find(id => id !== localPlayerId)]?.name) || 'Dein Gegner'; textEl.textContent = `${opponentName} hat gewonnen. Versuche es nochmal!`; } else { titleEl.textContent = '🤝 Unentschieden!'; titleEl.className = `text-3xl font-bold mb-3 text-yellow-600`; textEl.textContent = `Das Spiel endet unentschieden!`; } modalEl.classList.remove('hidden');
          }
         async function saveToLeaderboard(playerName) { /* ... saveToLeaderboard unchanged ... */
             if (!playerName) return; const safePlayerName = playerName.replace(/[.#$[\]]/g, '_'); const leaderboardRef = doc(db, "leaderboard", safePlayerName); try { await setDoc(leaderboardRef, { name: playerName, wins: increment(1), lastWin: serverTimestamp() }, { merge: true }); console.log(`Leaderboard updated for ${playerName}`); } catch (error) { console.error("Error updating leaderboard:", error); }
@@ -831,7 +820,7 @@
              document.getElementById('infoModal').classList.add('hidden');
         };
 
-        // ===== Ton-Schalter Initialisierung und Event Listener (MODIFIED) =====
+        // ===== Ton-Schalter Initialisierung und Event Listener =====
         const soundToggleButton = document.getElementById('soundToggle');
 
         // Initialen Status aus localStorage laden (oder default: nicht stumm)
@@ -845,19 +834,10 @@
             localStorage.setItem('holzquartett_isMuted', isMuted); // Status speichern
             console.log("Ton ist", isMuted ? "AUS" : "AN");
 
+            // Optional: Test-Sound abspielen, wenn Ton eingeschaltet wird
             if (!isMuted) {
-                // <<< NEUER UNLOCK-CODE START >>>
-                // Play and immediately pause all sounds to "unlock" them for the browser
-                // This helps prevent browsers from blocking audio that isn't "user-initiated"
-                Object.values(sounds).forEach(sound => {
-                    sound.play().then(() => {
-                        sound.pause();
-                        sound.currentTime = 0;
-                    }).catch(e => { /* Optional: handle errors, e.g. console.log("Audio unlock failed") */ });
-                });
-                // <<< NEUER UNLOCK-CODE ENDE >>>
-                
-                playSound(sounds.winChime); // Play test sound (the short chime)
+                // Spiele einen kurzen Sound zur Bestätigung, z.B. chime
+                playSound(sounds.chime);
             }
         });
 
