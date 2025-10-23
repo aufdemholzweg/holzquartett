@@ -127,8 +127,9 @@
         <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl text-center relative">
             
             <button onclick="window.showGameRules()" class="absolute top-3 right-3 text-2xl text-gray-400 hover:text-gray-600 transition-colors" aria-label="Spielregeln anzeigen">
-                ℹ️
+                ❓
             </button>
+
             <h2 class="text-2xl font-bold text-amber-800 mb-6">Spielmodus wählen</h2>
             <div class="space-y-4">
                 <button onclick="window.showNamePrompt('ai')" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors text-lg">
@@ -140,12 +141,12 @@
             </div>
 
             <div class="mt-6 flex items-center justify-center space-x-2">
-                <span class="text-gray-700">🔇</span>
+                <span class="text-gray-700">🔇 Ton Aus</span>
                 <label for="soundToggle" class="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" id="soundToggle" class="sr-only peer">
                     <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-2 peer-focus:ring-amber-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-600"></div>
                 </label>
-                <span class="text-gray-700">🔊</span>
+                <span class="text-gray-700">🔊 Ton An</span>
             </div>
             </div>
     </div>
@@ -182,7 +183,8 @@
 
     <div id="gameContainer" class="hidden max-w-6xl mx-auto px-4 py-4 relative">
         <div id="animationContainer" class="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden"></div>
-        <div class="max-w-md mx-auto mb-1 space-y-1"> <div class="flex justify-center space-x-2">
+        <div class="max-w-md mx-auto mb-1 space-y-1">
+            <div class="flex justify-center space-x-2">
                 <div id="playerScoreBox" class="w-1/2 bg-white rounded-xl shadow-lg p-2 text-center relative">
                     <p id="playerNameDisplay" class="text-base font-bold text-amber-600 truncate"></p>
                     <p class="text-sm text-gray-500">Karten: <span id="playerCards" class="font-semibold">15</span></p>
@@ -299,30 +301,36 @@
         let unsubscribeGame = null;
         let localGameState = {};
         let hasCopiedShareLink = false;
-        let isMuted = false;
+        let isMuted = true; // Start muted, user must enable
 
-        // ===== Sound Effects (Updated 'lose' sound) =====
+        // ===== Sound Effects (Re-organized and 'lose' sound changed) =====
         const sounds = {
             flip: new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_139083c224.mp3'),
-            win: new Audio('https://github.com/aufdemholzweg/holzquartett/blob/894e048eea71ba49921abfe6827bd8dc723f8c2d/gewonnen.mp3?raw=true'),
-            chime: new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c744c8.mp3'),
-            starWin: new Audio('https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3'),
-            lose: new Audio('https://cdn.pixabay.com/audio/2022/03/10/audio_941650c1f5.mp3') // <<< MODIFIED URL
+            winRound: new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c744c8.mp3'), // Short chime for round win
+            loseRound: new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_1c5d9997b6.mp3'), // Short thump for round lose
+            winGame: new Audio('https://github.com/aufdemholzweg/holzquartett/blob/894e048eea71ba49921abfe6827bd8dc723f8c2d/gewonnen.mp3?raw=true') // Long fanfare for game win
         };
         sounds.flip.volume = 0.5;
-        sounds.win.volume = 0.4;
-        sounds.chime.volume = 0.6;
-        sounds.starWin.volume = 0.7;
-        sounds.lose.volume = 0.5;
+        sounds.winRound.volume = 0.6;
+        sounds.loseRound.volume = 0.6;
+        sounds.winGame.volume = 0.4;
 
-        // <<< NEU: Sounds vorab laden für bessere Zuverlässigkeit >>>
+        // Preload sounds
         Object.values(sounds).forEach(sound => {
             sound.preload = 'auto';
         });
 
-        // ===== MODIFIED playSound function =====
+        // ===== playSound function =====
         function playSound(sound) {
             if (isMuted) return;
+            // Stop other sounds before playing a new one
+            Object.values(sounds).forEach(s => {
+                if (s !== sound) {
+                    s.pause();
+                    s.currentTime = 0;
+                }
+            });
+            
             sound.currentTime = 0;
             sound.play().catch(e => console.log("Sound playback error:", e));
         }
@@ -482,7 +490,7 @@
             }, (error) => { console.error("Error listening to game changes:", error); });
         }
         
-        // --- Modified updateMultiplayerUI (added 'lose' sound) ---
+        // --- Modified updateMultiplayerUI (simplified sound logic) ---
         function updateMultiplayerUI(gameData) {
             if (!gameData || !gameData.players || !gameData.playerIds) { console.error("Incomplete game data received:", gameData); return; }
             const opponentId = gameData.playerIds.find(id => id !== localPlayerId);
@@ -501,11 +509,10 @@
                 if (!roundSoundPlayed) { 
                     roundSoundPlayed = true; 
                     playSound(sounds.flip); 
-                    if (gameData.lastResult.winnerId === localPlayerId) {
-                        playSound(sounds.win);
-                    } else if (gameData.lastResult.winnerId !== 'tie') { // <<< NEU
-                         playSound(sounds.lose); // <<< NEU
+                    if (gameData.lastResult.winnerId !== localPlayerId && gameData.lastResult.winnerId !== 'tie') {
+                         playSound(sounds.loseRound); // <<< MODIFIED
                     }
+                    // Win sound is now triggered by triggerWinStarAnimation
                 }
                 attributeSelection.classList.add('hidden');
                 resultDisplay.classList.remove('hidden');
@@ -535,7 +542,7 @@
                 aiCardElement?.classList.remove('animate-glow-win', 'animate-glow-lose');
                 if (winnerId === localPlayerId) { playerCardElement?.classList.add('animate-glow-win'); if (statusBarElement) { statusBarElement.classList.add('status-flash-win'); setTimeout(() => statusBarElement.classList.remove('status-flash-win'), 1200); } triggerWinStarAnimation(); }
                 else if (winnerId !== 'tie') { playerCardElement?.classList.add('animate-glow-lose'); aiCardElement?.classList.add('animate-glow-win'); if (statusBarElement) { statusBarElement.classList.add('status-flash-lose'); setTimeout(() => statusBarElement.classList.remove('status-flash-lose'), 1200); } }
-                window.scrollTo({ top: 0, behavior: 'smooth' }); // <<< SCROLL MULTIPLAYER
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             } else {
                  roundSoundPlayed = false;
                 resultDisplay.classList.add('hidden');
@@ -640,7 +647,7 @@
             const playerCardContainer = document.getElementById('playerCard'); const aiCardContainer = document.getElementById('aiCard'); playerCardContainer.innerHTML = ''; aiCardContainer.innerHTML = ''; if (aiGame.currentPlayerCard) { playerCardContainer.appendChild(createCard(aiGame.currentPlayerCard, true, true)); } else { playerCardContainer.innerHTML = `<div class="card-front bg-gray-200 ...">Keine Karte</div>`; } if (aiGame.currentAiCard) { const revealAICard = aiGame.roundInProgress; aiCardContainer.appendChild(createCard(aiGame.currentAiCard, revealAICard, false)); } else { aiCardContainer.innerHTML = `<div class="card-front bg-gray-200 ...">Keine Karte</div>`; }
         }
 
-        // --- Modified selectAttributeAI (added 'lose' sound) ---
+        // --- Modified selectAttributeAI (simplified win/lose sound) ---
         function selectAttributeAI(attribute) {
             if (aiGame.roundInProgress || aiGame.turn !== 'player' || !aiGame.currentPlayerCard || !aiGame.currentAiCard || !attributeInfo[attribute]) return;
             aiGame.roundInProgress = true;
@@ -662,8 +669,8 @@
                  let resultText, resultClass; const playerCardFront = document.getElementById('playerCard')?.querySelector('.card-front'); const aiCardFront = document.getElementById('aiCard')?.querySelector('.card-front'); const statusBar = document.getElementById('statusBar');
                 const attributeIndex = Object.keys(attributeInfo).indexOf(attribute);
                  if (attributeIndex !== -1) { const playerRow = playerCardFront?.querySelector(`.space-y-1 > *:nth-child(${attributeIndex + 1})`); const opponentRow = aiCardFront?.querySelector(`.space-y-1 > *:nth-child(${attributeIndex + 1})`); const highlightClass = 'bg-yellow-200'; const playerCurrentBg = playerRow?.classList.toString().match(/bg-(amber|gray|yellow)-[0-9]+/)?.[0]; const opponentCurrentBg = opponentRow?.classList.toString().match(/bg-(amber|gray|yellow)-[0-9]+/)?.[0]; if (playerRow) { if (playerCurrentBg) playerRow.classList.remove(playerCurrentBg); playerRow.classList.add(highlightClass); } if (opponentRow) { if (opponentCurrentBg) opponentRow.classList.remove(opponentCurrentBg); opponentRow.classList.add(highlightClass); } }
-                if (playerWins === true) { resultText = `🎉 Du gewinnst!`; resultClass = 'text-green-600'; playerCardFront?.classList.add('animate-glow-win'); if (statusBar) { statusBar.classList.add('status-flash-win'); setTimeout(() => statusBar.classList.remove('status-flash-win'), 1200); } triggerWinStarAnimation(); playSound(sounds.win); }
-                else if (playerWins === false) { resultText = `😞 KI gewinnt!`; resultClass = 'text-red-600'; playerCardFront?.classList.add('animate-glow-lose'); aiCardFront?.classList.add('animate-glow-win'); if (statusBar) { statusBar.classList.add('status-flash-lose'); setTimeout(() => statusBar.classList.remove('status-flash-lose'), 1200); } playSound(sounds.lose); } // <<< 'lose' sound
+                if (playerWins === true) { resultText = `🎉 Du gewinnst!`; resultClass = 'text-green-600'; playerCardFront?.classList.add('animate-glow-win'); if (statusBar) { statusBar.classList.add('status-flash-win'); setTimeout(() => statusBar.classList.remove('status-flash-win'), 1200); } triggerWinStarAnimation(); }
+                else if (playerWins === false) { resultText = `😞 KI gewinnt!`; resultClass = 'text-red-600'; playerCardFront?.classList.add('animate-glow-lose'); aiCardFront?.classList.add('animate-glow-win'); if (statusBar) { statusBar.classList.add('status-flash-lose'); setTimeout(() => statusBar.classList.remove('status-flash-lose'), 1200); } playSound(sounds.loseRound); }
                 else { resultText = `🤝 Unentschieden!`; resultClass = 'text-yellow-600'; }
                 document.getElementById('resultText').textContent = resultText; document.getElementById('resultText').className = `text-lg sm:text-xl font-bold ${resultClass}`; document.getElementById('resultDetails').textContent = `${attributeInfo[attribute].name.split(' (')[0]}: ${playerValue.toLocaleString('de-DE')} vs ${aiValue.toLocaleString('de-DE')}`; document.getElementById('attributeSelection').classList.add('hidden'); document.getElementById('resultDisplay').classList.remove('hidden'); document.getElementById('nextRoundButton').classList.remove('hidden');
                 updateDisplayAI(); checkGameOverAI();
@@ -671,7 +678,7 @@
             }, 600);
         }
 
-        // --- Modified aiSelectAttribute (added 'lose' sound) ---
+        // --- Modified aiSelectAttribute (simplified win/lose sound) ---
         function aiSelectAttribute() {
             if (aiGame.roundInProgress || aiGame.turn !== 'ai' || !aiGame.currentPlayerCard || !aiGame.currentAiCard) return;
             aiGame.roundInProgress = true;
@@ -689,8 +696,8 @@
                 let resultText, resultClass; const playerCardFront = document.getElementById('playerCard')?.querySelector('.card-front'); const aiCardFront = document.getElementById('aiCard')?.querySelector('.card-front'); const statusBar = document.getElementById('statusBar');
                 const attributeIndex = Object.keys(attributeInfo).indexOf(chosenAttribute);
                  if (attributeIndex !== -1) { const playerRow = playerCardFront?.querySelector(`.space-y-1 > *:nth-child(${attributeIndex + 1})`); const opponentRow = aiCardFront?.querySelector(`.space-y-1 > *:nth-child(${attributeIndex + 1})`); const highlightClass = 'bg-yellow-200'; const playerCurrentBg = playerRow?.classList.toString().match(/bg-(amber|gray|yellow)-[0-9]+/)?.[0]; const opponentCurrentBg = opponentRow?.classList.toString().match(/bg-(amber|gray|yellow)-[0-9]+/)?.[0]; if (playerRow) { if (playerCurrentBg) playerRow.classList.remove(playerCurrentBg); playerRow.classList.add(highlightClass); } if (opponentRow) { if (opponentCurrentBg) opponentRow.classList.remove(opponentCurrentBg); opponentRow.classList.add(highlightClass); } }
-                 if (playerWins === true) { resultText = `🎉 Du gewinnst!`; resultClass = 'text-green-600'; playerCardFront?.classList.add('animate-glow-win'); aiCardFront?.classList.add('animate-glow-lose'); if (statusBar) { statusBar.classList.add('status-flash-win'); setTimeout(() => statusBar.classList.remove('status-flash-win'), 1200); } triggerWinStarAnimation(); playSound(sounds.win); }
-                 else if (playerWins === false) { resultText = `😞 KI gewinnt!`; resultClass = 'text-red-600'; playerCardFront?.classList.add('animate-glow-lose'); aiCardFront?.classList.add('animate-glow-win'); if (statusBar) { statusBar.classList.add('status-flash-lose'); setTimeout(() => statusBar.classList.remove('status-flash-lose'), 1200); } playSound(sounds.lose); } // <<< 'lose' sound
+                 if (playerWins === true) { resultText = `🎉 Du gewinnst!`; resultClass = 'text-green-600'; playerCardFront?.classList.add('animate-glow-win'); aiCardFront?.classList.add('animate-glow-lose'); if (statusBar) { statusBar.classList.add('status-flash-win'); setTimeout(() => statusBar.classList.remove('status-flash-win'), 1200); } triggerWinStarAnimation(); }
+                 else if (playerWins === false) { resultText = `😞 KI gewinnt!`; resultClass = 'text-red-600'; playerCardFront?.classList.add('animate-glow-lose'); aiCardFront?.classList.add('animate-glow-win'); if (statusBar) { statusBar.classList.add('status-flash-lose'); setTimeout(() => statusBar.classList.remove('status-flash-lose'), 1200); } playSound(sounds.loseRound); }
                  else { resultText = `🤝 Unentschieden!`; resultClass = 'text-yellow-600'; }
                 document.getElementById('resultText').textContent = resultText; document.getElementById('resultText').className = `text-lg sm:text-xl font-bold ${resultClass}`; document.getElementById('resultDetails').textContent = `${attributeInfo[chosenAttribute].name.split(' (')[0]}: ${playerValue.toLocaleString('de-DE')} vs ${aiValue.toLocaleString('de-DE')}`; document.getElementById('attributeSelection').classList.add('hidden'); document.getElementById('resultDisplay').classList.remove('hidden'); document.getElementById('nextRoundButton').classList.remove('hidden');
                 updateDisplayAI(); checkGameOverAI();
@@ -724,7 +731,7 @@
              if (aiGame.roundInProgress) { if (aiGame.playerCards.length === 0 || aiGame.aiCards.length === 0) { setTimeout(endGameAI, 300); } }
         }
 
-        // --- Modified triggerWinStarAnimation (added starWin sound) ---
+        // --- Modified triggerWinStarAnimation (simplified sound) ---
         function triggerWinStarAnimation() {
              const animationContainer = document.getElementById('animationContainer');
              const playerScoreBox = document.getElementById('playerScoreBox');
@@ -742,8 +749,7 @@
              const endY = (endRect.top + endRect.height / 2) - (startRect.top);
              star.style.setProperty('--end-y', `${endY}px`);
              animationContainer.appendChild(star);
-             playSound(sounds.chime); // Play original chime
-             playSound(sounds.starWin); // <<< PLAY STARWIN SOUND
+             playSound(sounds.winRound); // <<< PLAYS 'winRound' (chime)
              setTimeout(() => { star.remove(); }, 1200);
         }
 
@@ -759,8 +765,20 @@
         window.showFinalWinScreen = function() { /* ... showFinalWinScreen unchanged ... */
              document.getElementById('reflectionModal').classList.add('hidden'); document.getElementById('reflectionAnswer').value = ''; showGameOverScreen(true);
         };
-         function showGameOverScreen(didPlayerWin) { /* ... showGameOverScreen unchanged ... */
-             document.getElementById('reflectionModal').classList.add('hidden'); document.getElementById('leaderboardModal').classList.add('hidden'); const titleEl = document.getElementById('gameOverTitle'); const textEl = document.getElementById('gameOverText'); const modalEl = document.getElementById('gameOverModal'); if (didPlayerWin === true) { titleEl.textContent = '🎉 Glückwunsch!'; titleEl.className = `text-3xl font-bold mb-3 text-green-600`; const winnerName = (gameMode === 'ai' ? aiGame.playerName : localGameState?.players?.[localPlayerId]?.name) || 'Du'; textEl.textContent = `Du hast gewonnen, ${winnerName}! Du hast alle Karten gesammelt.`; } else if (didPlayerWin === false) { titleEl.textContent = '😞 Spiel verloren'; titleEl.className = `text-3xl font-bold mb-3 text-red-600`; const opponentName = (gameMode === 'ai' ? 'Die KI' : localGameState?.players?.[localGameState.playerIds?.find(id => id !== localPlayerId)]?.name) || 'Dein Gegner'; textEl.textContent = `${opponentName} hat gewonnen. Versuche es nochmal!`; } else { titleEl.textContent = '🤝 Unentschieden!'; titleEl.className = `text-3xl font-bold mb-3 text-yellow-600`; textEl.textContent = `Das Spiel endet unentschieden!`; } modalEl.classList.remove('hidden');
+
+        // --- Modified showGameOverScreen (plays 'winGame' fanfare) ---
+         function showGameOverScreen(didPlayerWin) {
+             document.getElementById('reflectionModal').classList.add('hidden'); document.getElementById('leaderboardModal').classList.add('hidden'); const titleEl = document.getElementById('gameOverTitle'); const textEl = document.getElementById('gameOverText'); const modalEl = document.getElementById('gameOverModal');
+             if (didPlayerWin === true) { 
+                 titleEl.textContent = '🎉 Glückwunsch!'; titleEl.className = `text-3xl font-bold mb-3 text-green-600`; const winnerName = (gameMode === 'ai' ? aiGame.playerName : localGameState?.players?.[localPlayerId]?.name) || 'Du'; textEl.textContent = `Du hast gewonnen, ${winnerName}! Du hast alle Karten gesammelt.`;
+                 playSound(sounds.winGame); // <<< PLAY FANFARE FOR GAME WIN
+             } else if (didPlayerWin === false) { 
+                 titleEl.textContent = '😞 Spiel verloren'; titleEl.className = `text-3xl font-bold mb-3 text-red-600`; const opponentName = (gameMode === 'ai' ? 'Die KI' : localGameState?.players?.[localGameState.playerIds?.find(id => id !== localPlayerId)]?.name) || 'Dein Gegner'; textEl.textContent = `${opponentName} hat gewonnen. Versuche es nochmal!`;
+                 playSound(sounds.loseRound); // Play lose sound for game over too
+             } else { 
+                 titleEl.textContent = '🤝 Unentschieden!'; titleEl.className = `text-3xl font-bold mb-3 text-yellow-600`; textEl.textContent = `Das Spiel endet unentschieden!`;
+             }
+             modalEl.classList.remove('hidden');
          }
         async function saveToLeaderboard(playerName) { /* ... saveToLeaderboard unchanged ... */
             if (!playerName) return; const safePlayerName = playerName.replace(/[.#$[\]]/g, '_'); const leaderboardRef = doc(db, "leaderboard", safePlayerName); try { await setDoc(leaderboardRef, { name: playerName, wins: increment(1), lastWin: serverTimestamp() }, { merge: true }); console.log(`Leaderboard updated for ${playerName}`); } catch (error) { console.error("Error updating leaderboard:", error); }
@@ -820,24 +838,32 @@
              document.getElementById('infoModal').classList.add('hidden');
         };
 
-        // ===== Ton-Schalter Initialisierung und Event Listener =====
+        // ===== Ton-Schalter Initialisierung und Event Listener (MODIFIED) =====
         const soundToggleButton = document.getElementById('soundToggle');
 
-        // Initialen Status aus localStorage laden (oder default: nicht stumm)
+        // Initialen Status aus localStorage laden (oder default: stumm)
         const savedMuteStatus = localStorage.getItem('holzquartett_isMuted');
         isMuted = savedMuteStatus === 'true'; // Setze globale Variable
-        soundToggleButton.checked = !isMuted; // Setze Schalter-Zustand
+        soundToggleButton.checked = !isMuted; // Setze Schalter-Zustand (checked = !isMuted)
 
         // Event Listener für den Schalter
         soundToggleButton.addEventListener('change', (event) => {
             isMuted = !event.target.checked; // Wenn checked, ist NICHT stumm
-            localStorage.setItem('holzquartett_isMuted', isMuted); // Status speichern
+            localStorage.setItem('holzquartett_isMuted', isMuted);
             console.log("Ton ist", isMuted ? "AUS" : "AN");
 
-            // Optional: Test-Sound abspielen, wenn Ton eingeschaltet wird
             if (!isMuted) {
-                // Spiele einen kurzen Sound zur Bestätigung, z.B. chime
-                playSound(sounds.chime);
+                // <<< NEU: "Unlock" Code >>>
+                // Spiele alle Sounds einmal kurz an (stumm), um sie für den Browser zu "entsperren".
+                Object.values(sounds).forEach(sound => {
+                    sound.play().then(() => {
+                        sound.pause();
+                        sound.currentTime = 0;
+                    }).catch(e => {}); // Fehler ignorieren (z.B. wenn Laden noch nicht beendet)
+                });
+                // <<< ENDE Unlock >>>
+                
+                playSound(sounds.winRound); // Spiele Test-Sound (das kurze Klingen)
             }
         });
 
