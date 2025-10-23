@@ -127,7 +127,7 @@
         <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl text-center relative">
             
             <button onclick="window.showGameRules()" class="absolute top-3 right-3 text-2xl text-gray-400 hover:text-gray-600 transition-colors" aria-label="Spielregeln anzeigen">
-                ❓
+                ℹ️
             </button>
             <h2 class="text-2xl font-bold text-amber-800 mb-6">Spielmodus wählen</h2>
             <div class="space-y-4">
@@ -182,8 +182,7 @@
 
     <div id="gameContainer" class="hidden max-w-6xl mx-auto px-4 py-4 relative">
         <div id="animationContainer" class="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden"></div>
-        <div class="max-w-md mx-auto mb-1 space-y-1">
-            <div class="flex justify-center space-x-2">
+        <div class="max-w-md mx-auto mb-1 space-y-1"> <div class="flex justify-center space-x-2">
                 <div id="playerScoreBox" class="w-1/2 bg-white rounded-xl shadow-lg p-2 text-center relative">
                     <p id="playerNameDisplay" class="text-base font-bold text-amber-600 truncate"></p>
                     <p class="text-sm text-gray-500">Karten: <span id="playerCards" class="font-semibold">15</span></p>
@@ -300,25 +299,27 @@
         let unsubscribeGame = null;
         let localGameState = {};
         let hasCopiedShareLink = false;
-        let isMuted = false; // <<< NEU: Globale Variable für Tonstatus
+        let isMuted = false;
 
-        // ===== Sound Effects (Updated win sound URL) =====
+        // ===== Sound Effects (Added 'lose' sound) =====
         const sounds = {
             flip: new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_139083c224.mp3'),
-            win: new Audio('https://github.com/aufdemholzweg/holzquartett/blob/894e048eea71ba49921abfe6827bd8dc723f8c2d/gewonnen.mp3?raw=true'), // <<< MODIFIED URL
+            win: new Audio('https://github.com/aufdemholzweg/holzquartett/blob/894e048eea71ba49921abfe6827bd8dc723f8c2d/gewonnen.mp3?raw=true'),
             chime: new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c744c8.mp3'),
-            starWin: new Audio('https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3') // <<< MODIFIED: Replaced placeholder
+            starWin: new Audio('https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3'),
+            lose: new Audio('https://cdn.pixabay.com/audio/2022/03/10/audio_c8b93f03b5.mp3') // <<< NEU
         };
         sounds.flip.volume = 0.5;
         sounds.win.volume = 0.4;
         sounds.chime.volume = 0.6;
         sounds.starWin.volume = 0.7;
+        sounds.lose.volume = 0.5; // <<< NEU
 
         // ===== MODIFIED playSound function =====
         function playSound(sound) {
-            if (isMuted) return; // <<< NEU: Nichts abspielen, wenn stummgeschaltet
-            sound.currentTime = 0; // Rewind to start
-            sound.play().catch(e => console.log("Sound playback error:", e)); // Play and catch potential errors
+            if (isMuted) return;
+            sound.currentTime = 0;
+            sound.play().catch(e => console.log("Sound playback error:", e));
         }
         let roundSoundPlayed = false;
 
@@ -344,7 +345,7 @@
              "Teak": { info: `Teak (TE) Teak ist extrem witterungsbeständig durch hohen Öl- und Harzgehalt – ideal für Außenmöbel und Schiffsbau. Die Struktur ist fein zerstreutporig, mit dekorativem Erscheinungsbild und gleichmäßiger Porenverteilung. Verwendung: Gartenmöbel, Terrassen, Boote, Fenster, Außenbereich. Funfact: Teakholz war früher für den Bau von Kriegsschiffen sehr gefragt wegen seiner Dauerhaftigkeit und Wasserbeständigkeit.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/teak_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/teak_2.jpg?raw=true" },
              "Bambus": { info: `Bambus (BA) Bambus ist botanisch gesehen kein Holz, sondern ein Gras – dennoch extrem stabil und vielseitig verwendbar. Die Struktur ist röhrenartig und weist keine klassischen Poren wie Harthölzer auf. Verwendung: Fußböden, Möbel, Treppen, nachhaltiger Bau. Funfact: Bambus wächst so schnell, dass einzelne Stangen innerhalb weniger Monate über einen Meter wachsen können.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/bambus_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/bambus_2.jpg?raw=true" },
              "Pappel": { info: `Pappel (PA) Pappelholz ist sehr leicht und weich – weniger tragfähig, aber gut bearbeitbar. Feine Struktur, fast keine großen Poren – Jahresringe nur dezent sichtbar. Verwendung: Leichtbau, Verpackungen, Möbel mit geringer Belastung. Funfact: Pappelholz wird oft für Modellbau oder Flugzeuginnenräume verwendet, wo Leichtigkeit zählt.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/pappel_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/pappel_2.jpg?raw=true" },
-             "Weide": { info: `Weide (WE) Weidenholz ist elastisch und biegsam – traditionell für Flechtarbeiten und Körbe verwendet. Die Struktur ist fein zerstreutporig, Poren kaum markant. Verwendung: Flechtwerk, Gartenbau, leichte Möbel. Funfact: Weidenruten werden seit Jahrhundaderten für Korbgeflechte, Zäune und Rankhilfen genutzt.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/weide_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/weide_2.jpg?raw=true" },
+             "Weide": { info: `Weide (WE) Weidenholz ist elastisch und biegsam – traditionell für Flechtarbeiten und Körbe verwendet. Die Struktur ist fein zerstreutporig, Poren kaum markant. Verwendung: Flechtwerk, Gartenbau, leichte Möbel. Funfact: Weidenruten werden seit Jahrhunderten für Korbgeflechte, Zäune und Rankhilfen genutzt.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/weide_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/weide_2.jpg?raw=true" },
              "Linde": { info: `Linde (LI) Lindenholz ist weich, homogen und gut schnitzbar – ideal für feine Holzarbeiten. Fein zerstreutporig und gleichmäßig, ohne großen Porenkontrast. Verwendung: Intarsien, geschnitzte Dekors, Möbel, Modellbau. Funfact: Lindenholz war traditionell das Holz der Bildhauer und Orgelbauer im Mittelalter.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/linde_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/linde_2.jpg?raw=true" },
              "Ulme": { info: `Ulme (UL) Ulmenholz ist zäh und eher hart – früher oft für Möbel und Reparaturen verwendet. Ringporig mit markanten Poren und gelegentlichem unruhigem Faserverlauf. Verwendung: Möbel, Innenausbau, Reparaturholz. Funfact: Ulmenholz hat früher im Wagen- und Möbelbau Bedeutung gehabt, besonders dort, wo Biegung gefragt war.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ulme_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ulme_2.jpg?raw=true" },
              "Kastanie": { info: `Kastanie (KA) Kastanienholz ist ähnlich der Eiche wetterbeständig, mit warmem Farbton und markanter Struktur. Ringporig mit klar sichtbaren Jahresringen und deutlichem Übergang. Verwendung: Außenbau, Möbel, Balken, Gartenholz. Funfact: Kastanienholz wurde oft in historischen Bauwerken als wetterbeständige Alternative zur Eiche verwendet.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kastanie_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kastanie_2.jpg?raw=true" },
@@ -475,7 +476,9 @@
                 if (opponentId && gameData.players[opponentId]?.status === 'offline') { /* console.log('Opponent appears offline.'); */ }
             }, (error) => { console.error("Error listening to game changes:", error); });
         }
-        function updateMultiplayerUI(gameData) { /* ... updateMultiplayerUI function with highlight and scroll ... */
+        
+        // --- Modified updateMultiplayerUI (added 'lose' sound) ---
+        function updateMultiplayerUI(gameData) {
             if (!gameData || !gameData.players || !gameData.playerIds) { console.error("Incomplete game data received:", gameData); return; }
             const opponentId = gameData.playerIds.find(id => id !== localPlayerId);
             document.getElementById('playerNameDisplay').textContent = gameData.players[localPlayerId]?.name || 'Du';
@@ -490,7 +493,15 @@
             const nextRoundBtn = document.getElementById('nextRoundButton');
             turnIndicator.classList.remove('hidden');
             if (gameData.lastResult) {
-                if (!roundSoundPlayed) { roundSoundPlayed = true; playSound(sounds.flip); if (gameData.lastResult.winnerId === localPlayerId) { playSound(sounds.win); } }
+                if (!roundSoundPlayed) { 
+                    roundSoundPlayed = true; 
+                    playSound(sounds.flip); 
+                    if (gameData.lastResult.winnerId === localPlayerId) {
+                        playSound(sounds.win);
+                    } else if (gameData.lastResult.winnerId !== 'tie') { // <<< NEU
+                         playSound(sounds.lose); // <<< NEU
+                    }
+                }
                 attributeSelection.classList.add('hidden');
                 resultDisplay.classList.remove('hidden');
                 nextRoundBtn.classList.remove('hidden');
@@ -517,15 +528,15 @@
                 const statusBarElement = document.getElementById('statusBar');
                 playerCardElement?.classList.remove('animate-glow-win', 'animate-glow-lose');
                 aiCardElement?.classList.remove('animate-glow-win', 'animate-glow-lose');
-                if (winnerId === localPlayerId) { playerCardElement?.classList.add('animate-glow-win'); if (statusBarElement) { /* status bar flash win */ } triggerWinStarAnimation(); }
-                else if (winnerId !== 'tie') { playerCardElement?.classList.add('animate-glow-lose'); aiCardElement?.classList.add('animate-glow-win'); if (statusBarElement) { /* status bar flash lose */ } }
+                if (winnerId === localPlayerId) { playerCardElement?.classList.add('animate-glow-win'); if (statusBarElement) { statusBarElement.classList.add('status-flash-win'); setTimeout(() => statusBarElement.classList.remove('status-flash-win'), 1200); } triggerWinStarAnimation(); }
+                else if (winnerId !== 'tie') { playerCardElement?.classList.add('animate-glow-lose'); aiCardElement?.classList.add('animate-glow-win'); if (statusBarElement) { statusBarElement.classList.add('status-flash-lose'); setTimeout(() => statusBarElement.classList.remove('status-flash-lose'), 1200); } }
                 window.scrollTo({ top: 0, behavior: 'smooth' }); // <<< SCROLL MULTIPLAYER
             } else {
                  roundSoundPlayed = false;
                 resultDisplay.classList.add('hidden');
                 nextRoundBtn.classList.add('hidden');
-                if (gameData.turn === localPlayerId) { turnIndicator.textContent = "Du bist am Zug!"; turnIndicator.className = 'text-sm font-semibold p-1 text-green-600'; attributeSelection.classList.remove('hidden'); } // MODIFIED p-1
-                else { turnIndicator.textContent = `${gameData.players[gameData.turn]?.name || 'Gegner'} ist am Zug...`; turnIndicator.className = 'text-sm font-semibold p-1 text-gray-500'; attributeSelection.classList.add('hidden'); } // MODIFIED p-1
+                if (gameData.turn === localPlayerId) { turnIndicator.textContent = "Du bist am Zug!"; turnIndicator.className = 'text-sm font-semibold p-1 text-green-600'; attributeSelection.classList.remove('hidden'); }
+                else { turnIndicator.textContent = `${gameData.players[gameData.turn]?.name || 'Gegner'} ist am Zug...`; turnIndicator.className = 'text-sm font-semibold p-1 text-gray-500'; attributeSelection.classList.add('hidden'); }
             }
              if (gameData.status === 'finished') { endGame(); }
         }
@@ -624,7 +635,7 @@
             const playerCardContainer = document.getElementById('playerCard'); const aiCardContainer = document.getElementById('aiCard'); playerCardContainer.innerHTML = ''; aiCardContainer.innerHTML = ''; if (aiGame.currentPlayerCard) { playerCardContainer.appendChild(createCard(aiGame.currentPlayerCard, true, true)); } else { playerCardContainer.innerHTML = `<div class="card-front bg-gray-200 ...">Keine Karte</div>`; } if (aiGame.currentAiCard) { const revealAICard = aiGame.roundInProgress; aiCardContainer.appendChild(createCard(aiGame.currentAiCard, revealAICard, false)); } else { aiCardContainer.innerHTML = `<div class="card-front bg-gray-200 ...">Keine Karte</div>`; }
         }
 
-        // --- Modified selectAttributeAI (checks turn, sets next turn, SCROLL ADDED) ---
+        // --- Modified selectAttributeAI (added 'lose' sound) ---
         function selectAttributeAI(attribute) {
             if (aiGame.roundInProgress || aiGame.turn !== 'player' || !aiGame.currentPlayerCard || !aiGame.currentAiCard || !attributeInfo[attribute]) return;
             aiGame.roundInProgress = true;
@@ -647,15 +658,15 @@
                 const attributeIndex = Object.keys(attributeInfo).indexOf(attribute);
                  if (attributeIndex !== -1) { const playerRow = playerCardFront?.querySelector(`.space-y-1 > *:nth-child(${attributeIndex + 1})`); const opponentRow = aiCardFront?.querySelector(`.space-y-1 > *:nth-child(${attributeIndex + 1})`); const highlightClass = 'bg-yellow-200'; const playerCurrentBg = playerRow?.classList.toString().match(/bg-(amber|gray|yellow)-[0-9]+/)?.[0]; const opponentCurrentBg = opponentRow?.classList.toString().match(/bg-(amber|gray|yellow)-[0-9]+/)?.[0]; if (playerRow) { if (playerCurrentBg) playerRow.classList.remove(playerCurrentBg); playerRow.classList.add(highlightClass); } if (opponentRow) { if (opponentCurrentBg) opponentRow.classList.remove(opponentCurrentBg); opponentRow.classList.add(highlightClass); } }
                 if (playerWins === true) { resultText = `🎉 Du gewinnst!`; resultClass = 'text-green-600'; playerCardFront?.classList.add('animate-glow-win'); if (statusBar) { statusBar.classList.add('status-flash-win'); setTimeout(() => statusBar.classList.remove('status-flash-win'), 1200); } triggerWinStarAnimation(); playSound(sounds.win); }
-                else if (playerWins === false) { resultText = `😞 KI gewinnt!`; resultClass = 'text-red-600'; playerCardFront?.classList.add('animate-glow-lose'); aiCardFront?.classList.add('animate-glow-win'); if (statusBar) { statusBar.classList.add('status-flash-lose'); setTimeout(() => statusBar.classList.remove('status-flash-lose'), 1200); } }
+                else if (playerWins === false) { resultText = `😞 KI gewinnt!`; resultClass = 'text-red-600'; playerCardFront?.classList.add('animate-glow-lose'); aiCardFront?.classList.add('animate-glow-win'); if (statusBar) { statusBar.classList.add('status-flash-lose'); setTimeout(() => statusBar.classList.remove('status-flash-lose'), 1200); } playSound(sounds.lose); } // <<< NEU
                 else { resultText = `🤝 Unentschieden!`; resultClass = 'text-yellow-600'; }
                 document.getElementById('resultText').textContent = resultText; document.getElementById('resultText').className = `text-lg sm:text-xl font-bold ${resultClass}`; document.getElementById('resultDetails').textContent = `${attributeInfo[attribute].name.split(' (')[0]}: ${playerValue.toLocaleString('de-DE')} vs ${aiValue.toLocaleString('de-DE')}`; document.getElementById('attributeSelection').classList.add('hidden'); document.getElementById('resultDisplay').classList.remove('hidden'); document.getElementById('nextRoundButton').classList.remove('hidden');
                 updateDisplayAI(); checkGameOverAI();
-                window.scrollTo({ top: 0, behavior: 'smooth' }); // <<< SCROLL AI PLAYER
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             }, 600);
         }
 
-        // --- NEUE Funktion: aiSelectAttribute (SCROLL ADDED) ---
+        // --- Modified aiSelectAttribute (added 'lose' sound) ---
         function aiSelectAttribute() {
             if (aiGame.roundInProgress || aiGame.turn !== 'ai' || !aiGame.currentPlayerCard || !aiGame.currentAiCard) return;
             aiGame.roundInProgress = true;
@@ -674,11 +685,11 @@
                 const attributeIndex = Object.keys(attributeInfo).indexOf(chosenAttribute);
                  if (attributeIndex !== -1) { const playerRow = playerCardFront?.querySelector(`.space-y-1 > *:nth-child(${attributeIndex + 1})`); const opponentRow = aiCardFront?.querySelector(`.space-y-1 > *:nth-child(${attributeIndex + 1})`); const highlightClass = 'bg-yellow-200'; const playerCurrentBg = playerRow?.classList.toString().match(/bg-(amber|gray|yellow)-[0-9]+/)?.[0]; const opponentCurrentBg = opponentRow?.classList.toString().match(/bg-(amber|gray|yellow)-[0-9]+/)?.[0]; if (playerRow) { if (playerCurrentBg) playerRow.classList.remove(playerCurrentBg); playerRow.classList.add(highlightClass); } if (opponentRow) { if (opponentCurrentBg) opponentRow.classList.remove(opponentCurrentBg); opponentRow.classList.add(highlightClass); } }
                  if (playerWins === true) { resultText = `🎉 Du gewinnst!`; resultClass = 'text-green-600'; playerCardFront?.classList.add('animate-glow-win'); aiCardFront?.classList.add('animate-glow-lose'); if (statusBar) { statusBar.classList.add('status-flash-win'); setTimeout(() => statusBar.classList.remove('status-flash-win'), 1200); } triggerWinStarAnimation(); playSound(sounds.win); }
-                 else if (playerWins === false) { resultText = `😞 KI gewinnt!`; resultClass = 'text-red-600'; playerCardFront?.classList.add('animate-glow-lose'); aiCardFront?.classList.add('animate-glow-win'); if (statusBar) { statusBar.classList.add('status-flash-lose'); setTimeout(() => statusBar.classList.remove('status-flash-lose'), 1200); } }
+                 else if (playerWins === false) { resultText = `😞 KI gewinnt!`; resultClass = 'text-red-600'; playerCardFront?.classList.add('animate-glow-lose'); aiCardFront?.classList.add('animate-glow-win'); if (statusBar) { statusBar.classList.add('status-flash-lose'); setTimeout(() => statusBar.classList.remove('status-flash-lose'), 1200); } playSound(sounds.lose); } // <<< NEU
                  else { resultText = `🤝 Unentschieden!`; resultClass = 'text-yellow-600'; }
                 document.getElementById('resultText').textContent = resultText; document.getElementById('resultText').className = `text-lg sm:text-xl font-bold ${resultClass}`; document.getElementById('resultDetails').textContent = `${attributeInfo[chosenAttribute].name.split(' (')[0]}: ${playerValue.toLocaleString('de-DE')} vs ${aiValue.toLocaleString('de-DE')}`; document.getElementById('attributeSelection').classList.add('hidden'); document.getElementById('resultDisplay').classList.remove('hidden'); document.getElementById('nextRoundButton').classList.remove('hidden');
                 updateDisplayAI(); checkGameOverAI();
-                window.scrollTo({ top: 0, behavior: 'smooth' }); // <<< SCROLL AI TURN
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             }, 1500);
         }
 
@@ -698,9 +709,9 @@
         function updateDisplayAI() {
             const playerCount = aiGame.playerCards.length; const opponentCount = aiGame.aiCards.length; document.getElementById('playerCards').textContent = playerCount; document.getElementById('aiCards').textContent = opponentCount; updateStatusBar(playerCount, opponentCount);
             const turnIndicator = document.getElementById('turnIndicator'); turnIndicator.classList.remove('hidden');
-            if(aiGame.roundInProgress) { if (!document.getElementById('resultDisplay').classList.contains('hidden')) { turnIndicator.textContent = ''; } else if (aiGame.turn === 'ai') { turnIndicator.textContent = `Computer überlegt...`; turnIndicator.className = 'text-sm font-semibold p-1 text-gray-500'; } else { turnIndicator.textContent = ''; } } // MODIFIED p-1
-            else if (aiGame.turn === 'player') { turnIndicator.textContent = "Du bist am Zug!"; turnIndicator.className = 'text-sm font-semibold p-1 text-green-600'; } // MODIFIED p-1
-            else { turnIndicator.textContent = `Computer ist am Zug...`; turnIndicator.className = 'text-sm font-semibold p-1 text-gray-500'; } // MODIFIED p-1
+            if(aiGame.roundInProgress) { if (!document.getElementById('resultDisplay').classList.contains('hidden')) { turnIndicator.textContent = ''; } else if (aiGame.turn === 'ai') { turnIndicator.textContent = `Computer überlegt...`; turnIndicator.className = 'text-sm font-semibold p-1 text-gray-500'; } else { turnIndicator.textContent = ''; } }
+            else if (aiGame.turn === 'player') { turnIndicator.textContent = "Du bist am Zug!"; turnIndicator.className = 'text-sm font-semibold p-1 text-green-600'; }
+            else { turnIndicator.textContent = `Computer ist am Zug...`; turnIndicator.className = 'text-sm font-semibold p-1 text-gray-500'; }
         }
 
 
