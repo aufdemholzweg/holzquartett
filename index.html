@@ -439,28 +439,35 @@
             const baseUrl = window.location.href.split('?')[0];
             shareLinkInput.value = `${baseUrl}?game=${gameId}`;
 
-            // NEU: QR-Code generieren
+            // KORRIGIERTER/NEUER Block: QR-Code generieren
             const qrContainer = document.getElementById('qrCodeContainer');
-            qrContainer.innerHTML = ''; // Vorsichtshalber alten QR-Code löschen
+            qrContainer.innerHTML = ''; // Alten Code löschen
+            const canvas = document.createElement('canvas'); // Canvas-Element erstellen
+            
             try {
-                // Erstellt ein <canvas>-Element mit dem QR-Code
-                QRCode.toCanvas(shareLinkInput.value, { 
-                    width: 180, // Größe in Pixeln
-                    margin: 1,    // Rand um den Code
-                    color: {
-                        dark: '#854d0e', // Farbe (passend zu text-amber-800)
-                        light: '#ffffff' // Hintergrundfarbe
+                // Funktion mit (canvas, text, options, callback) aufrufen
+                QRCode.toCanvas(
+                    canvas, // Das Element, in das gezeichnet wird
+                    shareLinkInput.value, // Der Text (Link)
+                    {
+                        width: 180,
+                        margin: 1,
+                        color: {
+                            dark: '#854d0e',
+                            light: '#ffffff'
+                        }
+                    },
+                    function (err) { // Callback-Funktion
+                        if (err) {
+                            console.error('QR Code generation failed:', err);
+                            return;
+                        }
+                        // Styling und Anhängen des Canvas NACH dem Zeichnen
+                        canvas.style.borderRadius = '0.5rem';
+                        canvas.style.border = '1px solid #f59e0b';
+                        qrContainer.appendChild(canvas);
                     }
-                }, function (err, canvas) {
-                    if (err) {
-                        console.error("QR Code generation failed:", err);
-                        return;
-                    }
-                    // Styling passend zum Rest des Designs
-                    canvas.style.borderRadius = '0.5rem'; // rounded-lg
-                    canvas.style.border = '1px solid #f59e0b'; // border-amber-500
-                    qrContainer.appendChild(canvas);
-                });
+                );
             } catch (err) {
                 console.error("Fehler beim Generieren des QR-Codes:", err);
             }
