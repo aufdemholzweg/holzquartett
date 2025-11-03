@@ -120,12 +120,12 @@
 </head>
 <body class="bg-gradient-to-br from-amber-50 to-orange-100 min-h-screen">
 
-    <div id="splashScreen" class="fixed inset-0 z-[100] flex items-center justify-center transition-opacity duration-700 ease-out bg-white">
+    <div id="splashScreen" class="fixed inset-0 z-[100] flex items-start justify-center transition-opacity duration-700 ease-out bg-white">
         <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/65fd843a4db1ee434faaf81a32f77951a5afb72a/images/background_card.jpg');"></div>
         
         <div class="absolute inset-0 bg-black bg-opacity-30"></div>
 
-        <div class="relative text-center animate-pop-in" style="animation-duration: 1.2s;">
+        <div class="relative text-center animate-pop-in mt-32" style="animation-duration: 1.2s;">
             
             <h1 class="text-4xl sm:text-5xl font-bold text-white" style="text-shadow: 2px 2px 10px rgba(0,0,0,0.6);">
                 🌳 HOLZEN! 🌳
@@ -134,7 +134,7 @@
                 Das Holz-Quartett
             </p>
             
-            </div>
+        </div>
     </div>
     <header class="bg-white shadow-sm border-b-2 border-amber-200">
         <div class="max-w-6xl mx-auto px-4 p-3 relative">
@@ -402,7 +402,7 @@
         // ===== Auth + Deep Link Join =====
         document.addEventListener('DOMContentLoaded', async () => {
             
-            // --- START: NEUER SPLASH-SCREEN TIMER (SCHRITT 3) ---
+            // --- START: SPLASH-SCREEN TIMER ---
             const splashScreen = document.getElementById('splashScreen');
             const setupModal = document.getElementById('setupModal');
             
@@ -421,7 +421,7 @@
                 }, 700); // Diese Zeit muss zur 'duration-700' im splashScreen-HTML passen
 
             }, 3000); // 3 Sekunden (3000ms) Wartezeit
-            // --- END: NEUER SPLASH-SCREEN TIMER ---
+            // --- END: SPLASH-SCREEN TIMER ---
             
 
             // --- Restlicher Code (Firebase Auth etc.) ---
