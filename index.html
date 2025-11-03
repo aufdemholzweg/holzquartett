@@ -120,31 +120,24 @@
 </head>
 <body class="bg-gradient-to-br from-amber-50 to-orange-100 min-h-screen">
 
-    <div id="splashScreen" class="fixed inset-0 z-[100] flex items-start justify-center transition-opacity duration-700 ease-out bg-white">
+    <div id="splashScreen" class="fixed inset-0 z-[100] flex items-center justify-center transition-opacity duration-700 ease-out bg-white">
         <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/65fd843a4db1ee434faaf81a32f77951a5afb72a/images/background_card.jpg');"></div>
         
         <div class="absolute inset-0 bg-black bg-opacity-30"></div>
 
-        <div class="relative text-center animate-pop-in mt-32" style="animation-duration: 1.2s;">
-            
-            <h1 class="text-4xl sm:text-5xl font-bold text-white" style="text-shadow: 2px 2px 10px rgba(0,0,0,0.6);">
+        <div class="relative text-center animate-pop-in" style="animation-duration: 1.2s;">
+            <h1 class="text-6xl sm:text-7xl font-bold text-white" style="text-shadow: 2px 2px 10px rgba(0,0,0,0.6);">
                 🌳 HOLZEN! 🌳
             </h1>
             <p class="text-xl text-amber-100 mt-2" style="text-shadow: 1px 1px 6px rgba(0,0,0,0.5);">
                 Das Holz-Quartett
             </p>
             
+            <div class="w-12 h-12 border-4 border-white border-t-amber-500 rounded-full animate-spin mx-auto mt-10"></div>
         </div>
     </div>
     <header class="bg-white shadow-sm border-b-2 border-amber-200">
-        <div class="max-w-6xl mx-auto px-4 p-3 relative">
-            
-            <button onclick="window.resetGame()" 
-                    class="absolute top-3 left-4 text-3xl text-gray-400 hover:text-amber-600 transition-colors z-20" 
-                    title="Spiel neustarten">
-                ☰
-            </button>
-            
+        <div class="max-w-6xl mx-auto px-4 p-3">
             <h1 class="text-2xl font-bold text-amber-800 text-center">🌳 HOLZEN! 🌳</h1>
             <p class="text-xs text-gray-500 text-center mt-1">von Christopher Lehr, in Verbindung mit meiner Masterarbeit</p>
         </div>
@@ -326,14 +319,14 @@
         let unsubscribeGame = null;
         let localGameState = {};
         let hasCopiedShareLink = false;
-        let isMuted = false; 
+        let isMuted = false; // <<< NEU: Globale Variable für Tonstatus
 
         // ===== Sound Effects (Updated win sound URL) =====
         const sounds = {
             flip: new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_139083c224.mp3'),
-            win: new Audio('https://github.com/aufdemholzweg/holzquartett/blob/894e048eea71ba49921abfe6827bd8dc723f8c2d/gewonnen.mp3?raw=true'), 
+            win: new Audio('https://github.com/aufdemholzweg/holzquartett/blob/894e048eea71ba49921abfe6827bd8dc723f8c2d/gewonnen.mp3?raw=true'), // <<< MODIFIED URL
             chime: new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c744c8.mp3'),
-            starWin: new Audio('https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3') 
+            starWin: new Audio('https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3') // <<< MODIFIED: Replaced placeholder
         };
         sounds.flip.volume = 0.5;
         sounds.win.volume = 0.4;
@@ -342,9 +335,9 @@
 
         // ===== MODIFIED playSound function =====
         function playSound(sound) {
-            if (isMuted) return; 
-            sound.currentTime = 0; 
-            sound.play().catch(e => console.log("Sound playback error:", e)); 
+            if (isMuted) return; // <<< NEU: Nichts abspielen, wenn stummgeschaltet
+            sound.currentTime = 0; // Rewind to start
+            sound.play().catch(e => console.log("Sound playback error:", e)); // Play and catch potential errors
         }
         let roundSoundPlayed = false;
 
@@ -353,7 +346,7 @@
             {name: "Eiche", dk: 2, haerte: 85, quellenSchwindenRadial: 4.0, dichte: 650, gewicht: 12000}, {name: "Buche", dk: 5, haerte: 80, quellenSchwindenRadial: 5.8, dichte: 720, gewicht: 14000}, {name: "Kiefer", dk: 3, haerte: 40, quellenSchwindenRadial: 3.5, dichte: 520, gewicht: 11000}, {name: "Fichte", dk: 4, haerte: 35, quellenSchwindenRadial: 3.6, dichte: 450, gewicht: 11000}, {name: "Tanne", dk: 4, haerte: 38, quellenSchwindenRadial: 3.5, dichte: 460, gewicht: 10000}, {name: "Lärche", dk: 3, haerte: 55, quellenSchwindenRadial: 3.7, dichte: 590, gewicht: 12000}, {name: "Birke", dk: 5, haerte: 60, quellenSchwindenRadial: 5.4, dichte: 650, gewicht: 13000}, {name: "Ahorn", dk: 5, haerte: 75, quellenSchwindenRadial: 4.8, dichte: 630, gewicht: 12500}, {name: "Esche", dk: 5, haerte: 90, quellenSchwindenRadial: 4.9, dichte: 700, gewicht: 13000}, {name: "Kirsche", dk: 3, haerte: 70, quellenSchwindenRadial: 4.0, dichte: 600, gewicht: 11500}, {name: "Nussbaum", dk: 3, haerte: 65, quellenSchwindenRadial: 4.0, dichte: 640, gewicht: 12000}, {name: "Douglasie", dk: 3, haerte: 45, quellenSchwindenRadial: 3.5, dichte: 510, gewicht: 12000}, {name: "Zeder", dk: 2, haerte: 42, quellenSchwindenRadial: 2.8, dichte: 480, gewicht: 9500}, {name: "Mahagoni", dk: 2, haerte: 55, quellenSchwindenRadial: 3.0, dichte: 550, gewicht: 10500}, {name: "Teak", dk: 1, haerte: 60, quellenSchwindenRadial: 2.5, dichte: 650, gewicht: 11000}, {name: "Bambus", dk: 4, haerte: 50, quellenSchwindenRadial: 3.0, dichte: 400, gewicht: 18000}, {name: "Pappel", dk: 5, haerte: 25, quellenSchwindenRadial: 4.5, dichte: 380, gewicht: 9000}, {name: "Weide", dk: 5, haerte: 30, quellenSchwindenRadial: 4.0, dichte: 420, gewicht: 8000}, {name: "Linde", dk: 5, haerte: 35, quellenSchwindenRadial: 3.8, dichte: 530, gewicht: 9000}, {name: "Ulme", dk: 3, haerte: 75, quellenSchwindenRadial: 4.5, dichte: 680, gewicht: 11500}, {name: "Kastanie", dk: 2, haerte: 50, quellenSchwindenRadial: 3.5, dichte: 600, gewicht: 10000}, {name: "Robinie", dk: 1, haerte: 80, quellenSchwindenRadial: 3.0, dichte: 730, gewicht: 15000}, {name: "Hemlock", dk: 4, haerte: 40, quellenSchwindenRadial: 3.6, dichte: 500, gewicht: 10000}, {name: "Zypresse", dk: 2, haerte: 48, quellenSchwindenRadial: 3.0, dichte: 520, gewicht: 9000}, {name: "Redwood", dk: 2, haerte: 35, quellenSchwindenRadial: 2.8, dichte: 400, gewicht: 8500}, {name: "Hickory", dk: 3, haerte: 95, quellenSchwindenRadial: 5.5, dichte: 750, gewicht: 14000}, {name: "Wenge", dk: 2, haerte: 88, quellenSchwindenRadial: 3.8, dichte: 880, gewicht: 16000}, {name: "Zebrano", dk: 3, haerte: 70, quellenSchwindenRadial: 4.0, dichte: 750, gewicht: 13000}, {name: "Palisander", dk: 2, haerte: 82, quellenSchwindenRadial: 3.0, dichte: 850, gewicht: 16000}, {name: "Ebenholz", dk: 1, haerte: 98, quellenSchwindenRadial: 3.2, dichte: 1200, gewicht: 16500}
         ];
         const woodInfo = { /* ... woodInfo data ... */
-             "Eiche": { info: `Eiche (QE) Die Eiche zählt zu den bedeutendsten heimischen Laubhölzern Europas. Ihr Holz ist hart, schwer und sehr dauerhaft, was sie zu einem bevorzugten Werkstoff im Innen‑ und Außenbereich macht. Besonders charakteristisch sind die hohen Gerbstoffanteile, die das Holz widerstandsfähig gegen Pilze und Schädlinge machen – gleichzeitig können sie beim Kontakt mit Eisen zu Verfärbungen führen. Eichenholz ist grobporig und zeigt einen deutlichen Übergang zwischen Früh- und Spätholz, wodurch die Jahresringe klar sichtbar sind. Diese ausgeprägte Maserung sorgt für eine markante, lebendige Optik. Verwendung: Möbel, Fußböden, Treppen, Fassdauben (z.B. für Weinfässer), Schiffbau, Terrassen, Brücken, Fachwerk. Funfact: Bereits in der Antike galt die Eiche als Symbol für Stärke und Beständigkeit – sie ziert bis heute zahlreiche Wappen und Münzen.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/eiche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/eiche_2.jpg?raw=true" },
+             "Eiche": { info: `Eiche (QE) Die Eiche zählt zu den bedeutendsten heimischen Laubhölzern Europas. Ihr Holz ist hart, schwer und sehr dauerhaft, was sie zu einem bevorzugten Werkstoff im Innen‑ und Außenbereich macht. Besonders charakteristisch sind die hohen Gerbstoffanteile, die das Holz widerstandsfähig gegen Pilze und Schädlinge machen – gleichzeitig können sie beim Kontakt mit Eisen zu Verfärbungen führen. Eichenholz ist grobporig und zeigt einen deutlichen Übergang zwischen Früh- und Spätholz, wodurch die Jahresringe klar sichtbar sind. Diese ausgeprägte Maserung sorgt für eine markante, lebendige Optik. Verwendung: Möbel, Fußböden, Treppen, Fassdauben (z. B. für Weinfässer), Schiffbau, Terrassen, Brücken, Fachwerk. Funfact: Bereits in der Antike galt die Eiche als Symbol für Stärke und Beständigkeit – sie ziert bis heute zahlreiche Wappen und Münzen.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/eiche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/eiche_2.jpg?raw=true" },
              "Buche": { info: `Buche (BU) Die Buche ist ein gleichmäßig strukturiertes Hartholz heimischer Wälder. Ihr Holz ist zäh, biegsam und relativ harzarm, wodurch es sich sehr gut für Möbel und Parkett eignet. Buchenholz ist ringporig mit mittelgroßen Poren im Frühholz und dichterem Spätholz, sodass die Übergänge dezent sichtbar sind – die Jahresringe sind gut erkennbar, aber nicht grob. Verwendung: Möbel, Parkett, Furniere, Sperrholz, Innenausbau. Funfact: Buchenholz war lange Zeit typisch fürs Wagenrad – wegen seiner Kombination aus Zähigkeit und Elastitzität.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/buche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/buche_2.jpg?raw=true" },
              "Kiefer": { info: `Kiefer (KI) Kiefer ist ein weit verbreitetes Nadelholz mit markanter Jahresringstruktur. Es ist weich, harzhaltig und relativ leicht zu bearbeiten. Das Holz zeigt keine ausgeprägten großen Poren wie Laubhölzer, sondern eine eher gleichmäßige Zellstruktur – Jahresringe und Harzkanäle sind sichtbar. Verwendung: Bauholz, Dachstühle, Innenausbau, Möbel, Paneele. Funfact: Kiefernharz wurde früher als Klebstoff oder als Bestandteil von Salben und Dichtungsmaterialien verwendet.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kiefer_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kiefer_2.jpg?raw=true" },
              "Fichte": { info: `Fichte (FI) Fichte ist ein klassisches Bauholz mit guter Festigkeit bei geringem Gewicht. Es lässt sich leicht bearbeiten und vielfach einsetzen. Das Holz weist eine feine Zellstruktur auf, ohne große Poren – Jahresringe sind erkennbar, aber nicht grob. Verwendung: Bauholz, Innenverkleidung, Dach, Möbel, Paneele. Funfact: In vielen Gebirgsregionen war Fichtenholz über Jahrhunderte hinweg der Standard für Dachkonstruktionen und Sägewerke.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/fichte_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/fichte_2.jpg?raw=true" },
@@ -396,13 +389,12 @@
         };
 
         // --- Modified aiGame state ---
- 
         let aiGame = { playerName: '', playerCards: [], aiCards: [], currentPlayerCard: null, currentAiCard: null, roundInProgress: false, turn: 'player' };
 
         // ===== Auth + Deep Link Join =====
         document.addEventListener('DOMContentLoaded', async () => {
             
-            // --- START: SPLASH-SCREEN TIMER ---
+            // --- START: NEUER SPLASH-SCREEN TIMER (SCHRITT 3) ---
             const splashScreen = document.getElementById('splashScreen');
             const setupModal = document.getElementById('setupModal');
             
@@ -421,7 +413,7 @@
                 }, 700); // Diese Zeit muss zur 'duration-700' im splashScreen-HTML passen
 
             }, 3000); // 3 Sekunden (3000ms) Wartezeit
-            // --- END: SPLASH-SCREEN TIMER ---
+            // --- END: NEUER SPLASH-SCREEN TIMER ---
             
 
             // --- Restlicher Code (Firebase Auth etc.) ---
