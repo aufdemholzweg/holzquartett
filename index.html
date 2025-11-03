@@ -119,23 +119,6 @@
     </style>
 </head>
 <body class="bg-gradient-to-br from-amber-50 to-orange-100 min-h-screen">
-
-    <div id="splashScreen" class="fixed inset-0 z-[100] flex items-center justify-center transition-opacity duration-700 ease-out bg-white">
-        <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/65fd843a4db1ee434faaf81a32f77951a5afb72a/images/background_card.jpg');"></div>
-        
-        <div class="absolute inset-0 bg-black bg-opacity-30"></div>
-
-        <div class="relative text-center animate-pop-in" style="animation-duration: 1.2s;">
-            <h1 class="text-6xl sm:text-7xl font-bold text-white" style="text-shadow: 2px 2px 10px rgba(0,0,0,0.6);">
-                🌳 HOLZEN! 🌳
-            </h1>
-            <p class="text-xl text-amber-100 mt-2" style="text-shadow: 1px 1px 6px rgba(0,0,0,0.5);">
-                Das Holz-Quartett
-            </p>
-            
-            <div class="w-12 h-12 border-4 border-white border-t-amber-500 rounded-full animate-spin mx-auto mt-10"></div>
-        </div>
-    </div>
     <header class="bg-white shadow-sm border-b-2 border-amber-200">
         <div class="max-w-6xl mx-auto px-4 p-3">
             <h1 class="text-2xl font-bold text-amber-800 text-center">🌳 HOLZEN! 🌳</h1>
@@ -143,7 +126,7 @@
         </div>
     </header>
 
-    <div id="setupModal" class="hidden fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50">
+    <div id="setupModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl text-center">
             <h2 class="text-2xl font-bold text-amber-800 mb-6">Spielmodus wählen</h2>
             <div class="space-y-4">
@@ -240,7 +223,7 @@
             </div>
              <div id="nextRoundButton" class="hidden w-full mt-2">
                  <button onclick="window.nextRound()" class="w-full bg-amber-600 hover:bg-amber-800 text-white font-bold py-3 px-8 rounded-xl transition-colors">
-                     ➡️ Nächster Zug
+                       ➡️ Nächster Zug
                  </button>
              </div>
         </div>
@@ -347,7 +330,7 @@
         ];
         const woodInfo = { /* ... woodInfo data ... */
              "Eiche": { info: `Eiche (QE) Die Eiche zählt zu den bedeutendsten heimischen Laubhölzern Europas. Ihr Holz ist hart, schwer und sehr dauerhaft, was sie zu einem bevorzugten Werkstoff im Innen‑ und Außenbereich macht. Besonders charakteristisch sind die hohen Gerbstoffanteile, die das Holz widerstandsfähig gegen Pilze und Schädlinge machen – gleichzeitig können sie beim Kontakt mit Eisen zu Verfärbungen führen. Eichenholz ist grobporig und zeigt einen deutlichen Übergang zwischen Früh- und Spätholz, wodurch die Jahresringe klar sichtbar sind. Diese ausgeprägte Maserung sorgt für eine markante, lebendige Optik. Verwendung: Möbel, Fußböden, Treppen, Fassdauben (z. B. für Weinfässer), Schiffbau, Terrassen, Brücken, Fachwerk. Funfact: Bereits in der Antike galt die Eiche als Symbol für Stärke und Beständigkeit – sie ziert bis heute zahlreiche Wappen und Münzen.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/eiche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/eiche_2.jpg?raw=true" },
-             "Buche": { info: `Buche (BU) Die Buche ist ein gleichmäßig strukturiertes Hartholz heimischer Wälder. Ihr Holz ist zäh, biegsam und relativ harzarm, wodurch es sich sehr gut für Möbel und Parkett eignet. Buchenholz ist ringporig mit mittelgroßen Poren im Frühholz und dichterem Spätholz, sodass die Übergänge dezent sichtbar sind – die Jahresringe sind gut erkennbar, aber nicht grob. Verwendung: Möbel, Parkett, Furniere, Sperrholz, Innenausbau. Funfact: Buchenholz war lange Zeit typisch fürs Wagenrad – wegen seiner Kombination aus Zähigkeit und Elastizität.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/buche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/buche_2.jpg?raw=true" },
+             "Buche": { info: `Buche (BU) Die Buche ist ein gleichmäßig strukturiertes Hartholz heimischer Wälder. Ihr Holz ist zäh, biegsam und relativ harzarm, wodurch es sich sehr gut für Möbel und Parkett eignet. Buchenholz ist ringporig mit mittelgroßen Poren im Frühholz und dichterem Spätholz, sodass die Übergänge dezent sichtbar sind – die Jahresringe sind gut erkennbar, aber nicht grob. Verwendung: Möbel, Parkett, Furniere, Sperrholz, Innenausbau. Funfact: Buchenholz war lange Zeit typisch fürs Wagenrad – wegen seiner Kombination aus Zähigkeit und Elastitzität.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/buche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/buche_2.jpg?raw=true" },
              "Kiefer": { info: `Kiefer (KI) Kiefer ist ein weit verbreitetes Nadelholz mit markanter Jahresringstruktur. Es ist weich, harzhaltig und relativ leicht zu bearbeiten. Das Holz zeigt keine ausgeprägten großen Poren wie Laubhölzer, sondern eine eher gleichmäßige Zellstruktur – Jahresringe und Harzkanäle sind sichtbar. Verwendung: Bauholz, Dachstühle, Innenausbau, Möbel, Paneele. Funfact: Kiefernharz wurde früher als Klebstoff oder als Bestandteil von Salben und Dichtungsmaterialien verwendet.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kiefer_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kiefer_2.jpg?raw=true" },
              "Fichte": { info: `Fichte (FI) Fichte ist ein klassisches Bauholz mit guter Festigkeit bei geringem Gewicht. Es lässt sich leicht bearbeiten und vielfach einsetzen. Das Holz weist eine feine Zellstruktur auf, ohne große Poren – Jahresringe sind erkennbar, aber nicht grob. Verwendung: Bauholz, Innenverkleidung, Dach, Möbel, Paneele. Funfact: In vielen Gebirgsregionen war Fichtenholz über Jahrhunderte hinweg der Standard für Dachkonstruktionen und Sägewerke.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/fichte_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/fichte_2.jpg?raw=true" },
              "Tanne": { info: `Tanne (TA) Tanne ist ein harzarmes, vergleichsweise feines Nadelholz, das oft als Alternative zur Fichte verwendet wird. Die Struktur ähnelt der Fichte: feine Fasern, dezente Jahresringe, keine ausgeprägten Poren. Verwendung: Innenausbau, Möbel, Paneele, Bauholz. Funfact: Da Tanne weniger Harz enthält, ist sie angenehmer in Räumen einzusetzen, da sie weniger Geruch abgibt.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/tanne_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/tanne_2.jpg?raw=true" },
@@ -406,7 +389,7 @@
                     }
                 }
             });
-         });
+           });
         window.addEventListener('beforeunload', async () => { /* ... beforeunload listener ... */
              if (gameMode === 'multiplayer' && gameId && localPlayerId) {
                 const gameRef = doc(db, "games", gameId);
@@ -455,6 +438,41 @@
             const shareLinkInput = document.getElementById('shareLink');
             const baseUrl = window.location.href.split('?')[0];
             shareLinkInput.value = `${baseUrl}?game=${gameId}`;
+
+            // FIXED: QR-Code generieren – Canvas zuerst, dann Text
+            const qrContainer = document.getElementById('qrCodeContainer');
+            qrContainer.innerHTML = '';
+            try {
+                if (!window.QRCode || !QRCode.toCanvas) {
+                    console.error('QRCode-Bibliothek nicht geladen oder toCanvas nicht verfügbar.');
+                } else {
+                    const canvas = document.createElement('canvas');
+                    QRCode.toCanvas(
+                        canvas,
+                        shareLinkInput.value,
+                        {
+                            width: 180,
+                            margin: 1,
+                            color: {
+                                dark: '#854d0e',
+                                light: '#ffffff'
+                            }
+                        },
+                        function (err) {
+                            if (err) {
+                                console.error("QR Code generation failed:", err);
+                                return;
+                            }
+                            canvas.style.borderRadius = '0.5rem'; // rounded-lg
+                            canvas.style.border = '1px solid #f59e0b'; // border-amber-500
+                            qrContainer.appendChild(canvas);
+                        }
+                    );
+                }
+            } catch (err) {
+                console.error("Fehler beim Generieren des QR-Codes:", err);
+            }
+
             const gameRef = doc(db, "games", gameId);
             const initialGameData = { gameId: gameId, status: 'waiting', playerIds: [localPlayerId], players: { [localPlayerId]: { name: playerName, cards: [], status: 'online' } }, createdAt: serverTimestamp() };
             try { await setDoc(gameRef, initialGameData); listenToGameChanges(); }
@@ -621,7 +639,7 @@
                  const woodData = woodInfo[cardName] || {};
                  const treeImage = woodData.bildBaum || 'https://placehold.co/36x36/d1d5db/374151?text=?';
                  headerRightContent = `<div class="flex-shrink-0 relative w-8 h-8 sm:w-9 sm:w-9"><img src="${treeImage}" alt="${cardName}" id="wood-image-icon-${safeCardNameId}" class="${showInfoButton ? 'hidden' : ''} absolute inset-0 w-full h-full object-cover rounded-full border-2 border-amber-200"><button id="player-info-button-${safeCardNameId}" onclick="window.showWoodInfo('${cardName.replace(/'/g, "\\'")}')" class="${showInfoButton ? '' : 'hidden'} absolute inset-0 bg-purple-600 text-white rounded-full flex items-center justify-center text-lg hover:bg-purple-700 z-10">💡</button></div>`;
-             }
+              }
             let attributeHTML = '<div class="space-y-1 mt-auto">';
             for (const attrKey in attributeInfo) {
                 if (Object.hasOwnProperty.call(attributeInfo, attrKey)) {
@@ -775,7 +793,13 @@
              document.getElementById('leaderboardModal').classList.add('hidden'); if (localGameState?.status === 'finished' || (gameMode === 'ai' && (aiGame.playerCards.length === 0 || aiGame.aiCards.length === 0))) { document.getElementById('gameOverModal').classList.remove('hidden'); } else if (document.getElementById('gameContainer').classList.contains('hidden')) { document.getElementById('setupModal').classList.remove('hidden'); } else { document.getElementById('setupModal').classList.remove('hidden'); }
         };
         window.resetGame = async function() { /* ... resetGame unchanged ... */
-            console.log("Resetting game..."); if (unsubscribeGame) { unsubscribeGame(); unsubscribeGame = null; console.log("Unsubscribed from game changes."); } if (gameMode === 'multiplayer' && gameId && localGameState?.playerIds?.[0] === localPlayerId) { try { console.log(`Attempting to delete game ${gameId}...`); await deleteDoc(doc(db, "games", gameId)); console.log(`Game ${gameId} deleted.`); } catch (error) { console.error(`Error deleting game ${gameId}:`, error); } } else if (gameMode === 'multiplayer') { console.log("Not the host or no game ID, skipping game deletion."); } aiGame = { playerName: '', playerCards: [], aiCards: [], currentPlayerCard: null, currentAiCard: null, roundInProgress: false, turn: 'player' }; gameMode = null; gameId = null; localGameState = {}; hasCopiedShareLink = false; roundSoundPlayed = false; document.getElementById('gameOverModal').classList.add('hidden'); document.getElementById('leaderboardModal').classList.add('hidden'); document.getElementById('reflectionModal').classList.add('hidden'); document.getElementById('gameContainer').classList.add('hidden'); document.getElementById('multiplayerLobbyModal').classList.add('hidden'); document.getElementById('nameModal').classList.add('hidden'); document.getElementById('infoModal').classList.add('hidden'); document.getElementById('playerName').value = ''; document.getElementById('reflectionAnswer').value = ''; document.getElementById('shareLink').value = ''; document.getElementById('lobbyStatus').textContent = ''; document.getElementById('playerCard').innerHTML = ''; document.getElementById('aiCard').innerHTML = ''; updateStatusBar(0, 0); document.getElementById('setupModal').classList.remove('hidden'); window.history.pushState({}, document.title, window.location.pathname); console.log("Game reset complete.");
+            console.log("Resetting game..."); if (unsubscribeGame) { unsubscribeGame(); unsubscribeGame = null; console.log("Unsubscribed from game changes."); } if (gameMode === 'multiplayer' && gameId && localGameState?.playerIds?.[0] === localPlayerId) { try { console.log(`Attempting to delete game ${gameId}...`); await deleteDoc(doc(db, "games", gameId)); console.log(`Game ${gameId} deleted.`); } catch (error) { console.error(`Error deleting game ${gameId}:`, error); } } else if (gameMode === 'multiplayer') { console.log("Not the host or no game ID, skipping game deletion."); } aiGame = { playerName: '', playerCards: [], aiCards: [], currentPlayerCard: null, currentAiCard: null, roundInProgress: false, turn: 'player' }; gameMode = null; gameId = null; localGameState = {}; hasCopiedShareLink = false; roundSoundPlayed = false; document.getElementById('gameOverModal').classList.add('hidden'); document.getElementById('leaderboardModal').classList.add('hidden'); document.getElementById('reflectionModal').classList.add('hidden'); document.getElementById('gameContainer').classList.add('hidden'); document.getElementById('multiplayerLobbyModal').classList.add('hidden'); document.getElementById('nameModal').classList.add('hidden'); document.getElementById('infoModal').classList.add('hidden'); document.getElementById('playerName').value = ''; document.getElementById('reflectionAnswer').value = ''; document.getElementById('shareLink').value = ''; 
+            
+            // NEU: QR-Code beim Reset leeren
+            const qrContainer = document.getElementById('qrCodeContainer');
+            if (qrContainer) qrContainer.innerHTML = '';
+            
+            document.getElementById('lobbyStatus').textContent = ''; document.getElementById('playerCard').innerHTML = ''; document.getElementById('aiCard').innerHTML = ''; updateStatusBar(0, 0); document.getElementById('setupModal').classList.remove('hidden'); window.history.pushState({}, document.title, window.location.pathname); console.log("Game reset complete.");
         };
         window.showWoodInfo = function(woodName) { /* ... showWoodInfo unchanged ... */
             const modal = document.getElementById('infoModal'); const titleEl = document.getElementById('infoModalTitle'); const contentEl = document.getElementById('infoModalContent'); titleEl.textContent = `Wissenswertes über ${woodName}`; const infoDataKey = Object.keys(woodInfo).find(key => key.toLowerCase() === woodName.toLowerCase()); const infoData = infoDataKey ? woodInfo[infoDataKey] : null; if (infoData) { contentEl.innerHTML = `<p class="text-left text-sm sm:text-base">${infoData.info || 'Keine Beschreibung verfügbar.'}</p><div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4"><div><h4 class="font-semibold mb-2 text-center text-sm sm:text-base">Baum</h4><img src="${infoData.bildBaum || ''}" alt="Bild von ${woodName} Baum" class="w-full max-h-48 sm:max-h-60 h-auto rounded-lg object-contain mx-auto border" onerror="this.parentElement.style.display='none';"></div><div><h4 class="font-semibold mb-2 text-center text-sm sm:text-base">Querschnitt</h4><img src="${infoData.bildQuerschnitt || ''}" alt="Bild von ${woodName} Querschnitt" class="w-full max-h-48 sm:max-h-60 h-auto rounded-lg object-contain mx-auto border" onerror="this.parentElement.style.display='none';"></div></div>`; } else { contentEl.innerHTML = "<p>Für diese Holzart sind aktuell keine Detailinformationen verfügbar.</p>"; } modal.classList.remove('hidden');
