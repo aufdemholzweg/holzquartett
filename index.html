@@ -488,39 +488,37 @@
              const baseUrl = window.location.href.split('?')[0];
              shareLinkInput.value = `${baseUrl}?game=${gameId}`;
 
-             // FIXED: QR-Code generieren – Canvas zuerst, dann Text
-             const qrContainer = document.getElementById('qrCodeContainer');
-             qrContainer.innerHTML = '';
-             try {
-                 if (!window.QRCode || !QRCode.toCanvas) {
-                     console.error('QRCode-Bibliothek nicht geladen oder toCanvas nicht verfügbar.');
-                 } else {
-                     const canvas = document.createElement('canvas');
-                     QRCode.toCanvas(
-                         canvas,
-                         shareLinkInput.value,
-                         {
-                             width: 180,
-                             margin: 1,
-                             color: {
-                                 dark: '#854d0e',
-                                 light: '#ffffff'
-                             }
-                         },
-                         function (err) {
-                             if (err) {
-                                 console.error("QR Code generation failed:", err);
-                                 return;
-                             }
-                             canvas.style.borderRadius = '0.5rem'; // rounded-lg
-                             canvas.style.border = '1px solid #f59e0b'; // border-amber-500
-                             qrContainer.appendChild(canvas);
-                         }
-                     );
-                 }
-             } catch (err) {
-                 console.error("Fehler beim Generieren des QR-Codes:", err);
-             }
+            // FIXED: QR-Code generieren – Canvas zuerst, dann Text
+const qrContainer = document.getElementById('qrCodeContainer');
+qrContainer.innerHTML = '';
+try {
+  if (!window.QRCode || !window.QRCode.toCanvas) {
+    console.error('QRCode-Bibliothek nicht geladen oder toCanvas nicht verfügbar.');
+  } else {
+    const canvas = document.createElement('canvas');
+    window.QRCode.toCanvas(
+      canvas,
+      shareLinkInput.value,
+      {
+        width: 180,
+        margin: 1,
+        color: { dark: '#854d0e', light: '#ffffff' }
+      },
+      function (err) {
+        if (err) {
+          console.error('QR Code generation failed:', err);
+          return;
+        }
+        canvas.style.borderRadius = '0.5rem';
+        canvas.style.border = '1px solid #f59e0b';
+        qrContainer.appendChild(canvas);
+      }
+    );
+  }
+} catch (err) {
+  console.error('Fehler beim Generieren des QR-Codes:', err);
+}
+
 
              const gameRef = doc(db, "games", gameId);
              const initialGameData = { gameId: gameId, status: 'waiting', playerIds: [localPlayerId], players: { [localPlayerId]: { name: playerName, cards: [], status: 'online' } }, createdAt: serverTimestamp() };
