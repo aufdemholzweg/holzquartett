@@ -913,7 +913,7 @@
 
         // Initialen Status aus localStorage laden (oder default: nicht stumm)
         const savedMuteStatus = localStorage.getItem('holzquartett_isMuted');
-        isMuted = savedMuteStatus === 'true'; // Setze globale Variable
+        isMuted = savedMMuteStatus === 'true'; // Setze globale Variable
         soundToggleButton.checked = !isMuted; // Setze Schalter-Zustand
 
         // Event Listener für den Schalter
