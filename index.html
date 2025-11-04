@@ -8,11 +8,22 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-weight: 300; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-weight: 300;
+        }
+
         .card-3d { transform-style: preserve-3d; transition: transform 0.6s; }
         .card-flipped { transform: rotateY(180deg); }
         .card-front, .card-back { backface-visibility: hidden; position: absolute; width: 100%; height: 100%; }
-        .card-back { transform: rotateY(180deg); background-image: url('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/65fd843a4db1ee434faaf81a32f77951a5afb72a/images/background_card.jpg'); background-size: cover; background-position: center; }
+        .card-back {
+            transform: rotateY(180deg);
+            background-image: url('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/65fd843a4db1ee434faaf81a32f77951a5afb72a/images/background_card.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+
         .wood-texture {
             background: linear-gradient(45deg, #8B4513 25%, transparent 25%),
                         linear-gradient(-45deg, #8B4513 25%, transparent 25%),
@@ -23,20 +34,33 @@
             background-color: #D2B48C;
             opacity: 0.1;
         }
+
         .animate-pop-in { animation: pop-in 0.5s ease-out forwards; }
         .animate-glow-win { animation: glow-win 1.2s ease-out; }
         .animate-glow-lose { animation: glow-lose 1.2s ease-out; }
+
         @keyframes pop-in { 0% { transform: scale(0); opacity: 0; } 70% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(1); } }
         @keyframes glow-win { 0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); } 50% { box-shadow: 0 0 30px 15px rgba(74, 222, 128, 0.6); } 100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); } }
         @keyframes glow-lose { 0% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0); } 50% { box-shadow: 0 0 30px 15px rgba(248, 113, 113, 0.6); } 100% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0); } }
+
         .hover-lift:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
+
         .status-flash-win { animation: flash-green 1.2s ease-out; }
         .status-flash-lose { animation: flash-red 1.2s ease-out; }
         @keyframes flash-green { 50% { background-color: #22c55e; box-shadow: 0 0 15px #22c55e; } }
         @keyframes flash-red { 50% { background-color: #ef4444; box-shadow: 0 0 15px #ef4444; } }
+
         .falling-star { position: absolute; font-size: 7rem; z-index: 100; animation: fall-and-fade 1.2s ease-in forwards; }
-        @keyframes fall-and-fade { 0% { transform: translateY(-30px) scale(1.5); opacity: 0; } 30% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(var(--end-y)) scale(0.3); opacity: 0; } }
-        .card-background { background-image: url('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/e7cfc18394e2e7f2d0b91df1138b0d7bc7930699/images/background_front.jpg'); background-size: cover; background-position: center; }
+        @keyframes fall-and-fade {
+            0% { transform: translateY(-30px) scale(1.5); opacity: 0; }
+            30% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(var(--end-y)) scale(0.3); opacity: 0; }
+        }
+        .card-background {
+            background-image: url('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/e7cfc18394e2e7f2d0b91df1138b0d7bc7930699/images/background_front.jpg');
+            background-size: cover;
+            background-position: center;
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-amber-50 to-orange-100 min-h-screen">
@@ -45,22 +69,16 @@
         <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/65fd843a4db1ee434faaf81a32f77951a5afb72a/images/background_card.jpg');"></div>
         <div class="absolute inset-0 bg-black bg-opacity-30"></div>
         <div class="relative text-center animate-pop-in mt-32" style="animation-duration: 1.2s;">
-            <h1 class="text-4xl sm:text-5xl font-bold text-white" style="text-shadow: 2px 2px 10px rgba(0,0,0,0.6);">
-                🌳 HOLZEN! 🌳
-            </h1>
-            <p class="text-xl text-amber-100 mt-2" style="text-shadow: 1px 1px 6px rgba(0,0,0,0.5);">
-                Holz ist Trumpf
-            </p>
+            <h1 class="text-4xl sm:text-5xl font-bold text-white" style="text-shadow: 2px 2px 10px rgba(0,0,0,0.6);">🌳 HOLZEN! 🌳</h1>
+            <p class="text-xl text-amber-100 mt-2" style="text-shadow: 1px 1px 6px rgba(0,0,0,0.5);">Holz ist Trumpf</p>
         </div>
     </div>
 
     <header class="bg-white shadow-sm border-b-2 border-amber-200">
         <div class="max-w-6xl mx-auto px-4 p-3 relative">
-            <button onclick="window.resetGame()" 
-                    class="absolute top-3 left-4 text-3xl text-gray-400 hover:text-amber-600 transition-colors z-20" 
-                    title="Spiel neustarten">
-                ☰
-            </button>
+            <button onclick="window.resetGame()"
+                    class="absolute top-3 left-4 text-3xl text-gray-400 hover:text-amber-600 transition-colors z-20"
+                    title="Spiel neustarten">☰</button>
             <h1 class="text-2xl font-bold text-amber-800 text-center">🌳 HOLZEN! 🌳</h1>
             <p class="text-xs text-gray-500 text-center mt-1">C.Lehr, in Verbindung mit meiner Abschlussarbeit</p>
         </div>
@@ -70,12 +88,17 @@
         <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl text-center">
             <h2 class="text-2xl font-bold text-amber-800 mb-6">Spielmodus wählen</h2>
             <div class="space-y-4">
-                <button onclick="window.showNamePrompt('ai')" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors text-lg">
-                    🎮 gegen Computer
-                </button>
-                <button onclick="window.showNamePrompt('multiplayer')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors text-lg">
-                    🧑‍🤝‍🧑 online gegen Freunde
-                </button>
+                <button onclick="window.showNamePrompt('ai')" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors text-lg">🎮 gegen Computer</button>
+                <button onclick="window.showNamePrompt('multiplayer')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors text-lg">🧑‍🤝‍🧑 online gegen Freunde</button>
+            </div>
+
+            <div class="mt-6 flex items-center justify-center space-x-2">
+                <span class="text-gray-700">🔇 </span>
+                <label for="soundToggle" class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="soundToggle" class="sr-only peer">
+                    <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-2 peer-focus:ring-amber-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-600"></div>
+                </label>
+                <span class="text-gray-700"> 🔊</span>
             </div>
         </div>
     </div>
@@ -88,9 +111,7 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">Bitte gib deinen Namen ein:</label>
                     <input type="text" id="playerName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent" placeholder="Spielername">
                 </div>
-                <button id="nameSubmitButton" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
-                    Weiter
-                </button>
+                <button id="nameSubmitButton" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">Weiter</button>
             </div>
         </div>
     </div>
@@ -102,9 +123,7 @@
             <div class="bg-gray-100 p-3 rounded-lg border border-gray-300">
                 <input id="shareLink" type="text" class="w-full bg-transparent text-center text-blue-600" readonly>
             </div>
-            <button onclick="window.copyShareLink()" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors">
-                Link kopieren
-            </button>
+            <button onclick="window.copyShareLink()" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors">Link kopieren</button>
             <div id="qrCodeContainer" class="mt-4 flex justify-center"></div>
             <p id="lobbyStatus" class="mt-6 text-green-600 font-semibold"></p>
         </div>
@@ -142,17 +161,13 @@
 
         <div class="bg-white rounded-xl shadow-lg px-1 pt-1 pb-0.5 mt-4 text-center mx-auto flex flex-col items-center max-w-md w-full min-h-[6rem]">
             <div id="turnIndicator" class="hidden text-sm font-semibold p-1"></div>
-            <div id="attributeSelection" class="">
-                <h3 class="text-base font-semibold text-gray-700 mb-1">Wähle eine Eigenschaft!</h3>
-            </div>
+            <div id="attributeSelection" class=""><h3 class="text-base font-semibold text-gray-700 mb-1">Wähle eine Eigenschaft!</h3></div>
             <div id="resultDisplay" class="hidden flex flex-col flex-grow w-full px-2">
                 <h3 id="resultText" class="text-lg sm:text-xl font-bold"></h3>
                 <p id="resultDetails" class="text-xs sm:text-sm text-gray-600 mt-auto pb-0.5"></p>
             </div>
             <div id="nextRoundButton" class="hidden w-full mt-2">
-                <button onclick="window.nextRound()" class="w-full bg-amber-600 hover:bg-amber-800 text-white font-bold py-3 px-8 rounded-xl transition-colors">
-                    ➡️ Nächster Zug
-                </button>
+                <button onclick="window.nextRound()" class="w-full bg-amber-600 hover:bg-amber-800 text-white font-bold py-3 px-8 rounded-xl transition-colors">➡️ Nächster Zug</button>
             </div>
         </div>
     </div>
@@ -162,9 +177,7 @@
             <h2 class="text-2xl font-bold text-amber-800 mb-4">🎉 Super gespielt! Zeit zum Reflektieren!</h2>
             <p id="reflectionQuestion" class="text-gray-700 mb-6 text-left"></p>
             <textarea id="reflectionAnswer" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent min-h-[100px]" placeholder="Deine Begründung..."></textarea>
-            <button onclick="window.showFinalWinScreen()" class="mt-6 w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg">
-                Weiter zum Ergebnis
-            </button>
+            <button onclick="window.showFinalWinScreen()" class="mt-6 w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">Weiter zum Ergebnis</button>
         </div>
     </div>
 
@@ -173,12 +186,8 @@
             <h2 id="gameOverTitle" class="text-3xl font-bold mb-3"></h2>
             <p id="gameOverText" class="text-gray-600 mb-6"></p>
             <div class="space-y-2">
-                <button onclick="window.showLeaderboard()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg">
-                    🏆 Bestenliste anzeigen
-                </button>
-                <button onclick="window.resetGame()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg">
-                    🔄 Neues Spiel
-                </button>
+                <button onclick="window.showLeaderboard()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg">🏆 Bestenliste anzeigen</button>
+                <button onclick="window.resetGame()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg">🔄 Neues Spiel</button>
             </div>
         </div>
     </div>
@@ -187,9 +196,7 @@
         <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
             <h2 class="text-2xl font-bold text-amber-800 mb-6 text-center">🏆 Bestenliste</h2>
             <div id="leaderboardList" class="space-y-1 mb-6"></div>
-            <button onclick="window.closeLeaderboard()" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg">
-                Schließen
-            </button>
+            <button onclick="window.closeLeaderboard()" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg">Schließen</button>
         </div>
     </div>
 
@@ -202,10 +209,12 @@
     </div>
 
     <script type="module">
+        // ===== Firebase Imports =====
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, deleteDoc, collection, query, orderBy, limit, getDocs, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+        // ===== Firebase Config =====
         const firebaseConfig = {
             apiKey: "AIzaSyCyRXl8-JPr1xTXPDi1VG-eQk6fOnTpqUI",
             authDomain: "holzquartett-3a177.firebaseapp.com",
@@ -221,6 +230,7 @@
         const auth = getAuth(app);
         const appId = firebaseConfig.projectId;
 
+        // ===== Global State =====
         let gameMode = null;
         let gameId = null;
         let localPlayerId = null;
@@ -228,16 +238,63 @@
         let localGameState = {};
         let hasCopiedShareLink = false;
 
+        // ===== Single glitter win sound =====
+        let isMuted = false;
+        let roundSoundPlayed = false; // used to gate multiplayer round sound
+        const winGlitter = new Audio('https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3'); // short sparkle
+        winGlitter.volume = 0.5;
+        function playWinSoundDelayed(delayMs = 500) {
+            if (isMuted) return;
+            setTimeout(() => {
+                try { winGlitter.currentTime = 0; winGlitter.play().catch(() => {}); } catch {}
+            }, delayMs);
+        }
+
+        // ===== Wood Data (truncated here for brevity in comments, but full structure kept) =====
         const woodCards = [
-            {name: "Eiche", dk: 2, haerte: 85, quellenSchwindenRadial: 4.0, dichte: 650, gewicht: 12000}, {name: "Buche", dk: 5, haerte: 80, quellenSchwindenRadial: 5.8, dichte: 720, gewicht: 14000}, {name: "Kiefer", dk: 3, haerte: 40, quellenSchwindenRadial: 3.5, dichte: 520, gewicht: 11000}, {name: "Fichte", dk: 4, haerte: 35, quellenSchwindenRadial: 3.6, dichte: 450, gewicht: 11000}, {name: "Tanne", dk: 4, haerte: 38, quellenSchwindenRadial: 3.5, dichte: 460, gewicht: 10000}, {name: "Lärche", dk: 3, haerte: 55, quellenSchwindenRadial: 3.7, dichte: 590, gewicht: 12000}, {name: "Birke", dk: 5, haerte: 60, quellenSchwindenRadial: 5.4, dichte: 650, gewicht: 13000}, {name: "Ahorn", dk: 5, haerte: 75, quellenSchwindenRadial: 4.8, dichte: 630, gewicht: 12500}, {name: "Esche", dk: 5, haerte: 90, quellenSchwindenRadial: 4.9, dichte: 700, gewicht: 13000}, {name: "Kirsche", dk: 3, haerte: 70, quellenSchwindenRadial: 4.0, dichte: 600, gewicht: 11500}, {name: "Nussbaum", dk: 3, haerte: 65, quellenSchwindenRadial: 4.0, dichte: 640, gewicht: 12000}, {name: "Douglasie", dk: 3, haerte: 45, quellenSchwindenRadial: 3.5, dichte: 510, gewicht: 12000}, {name: "Zeder", dk: 2, haerte: 42, quellenSchwindenRadial: 2.8, dichte: 480, gewicht: 9500}, {name: "Mahagoni", dk: 2, haerte: 55, quellenSchwindenRadial: 3.0, dichte: 550, gewicht: 10500}, {name: "Teak", dk: 1, haerte: 60, quellenSchwindenRadial: 2.5, dichte: 650, gewicht: 11000}, {name: "Bambus", dk: 4, haerte: 50, quellenSchwindenRadial: 3.0, dichte: 400, gewicht: 18000}, {name: "Pappel", dk: 5, haerte: 25, quellenSchwindenRadial: 4.5, dichte: 380, gewicht: 9000}, {name: "Weide", dk: 5, haerte: 30, quellenSchwindenRadial: 4.0, dichte: 420, gewicht: 8000}, {name: "Linde", dk: 5, haerte: 35, quellenSchwindenRadial: 3.8, dichte: 530, gewicht: 9000}, {name: "Ulme", dk: 3, haerte: 75, quellenSchwindenRadial: 4.5, dichte: 680, gewicht: 11500}, {name: "Kastanie", dk: 2, haerte: 50, quellenSchwindenRadial: 3.5, dichte: 600, gewicht: 10000}, {name: "Robinie", dk: 1, haerte: 80, quellenSchwindenRadial: 3.0, dichte: 730, gewicht: 15000}, {name: "Hemlock", dk: 4, haerte: 40, quellenSchwindenRadial: 3.6, dichte: 500, gewicht: 10000}, {name: "Zypresse", dk: 2, haerte: 48, quellenSchwindenRadial: 3.0, dichte: 520, gewicht: 9000}, {name: "Redwood", dk: 2, haerte: 35, quellenSchwindenRadial: 2.8, dichte: 400, gewicht: 8500}, {name: "Hickory", dk: 3, haerte: 95, quellenSchwindenRadial: 5.5, dichte: 750, gewicht: 14000}, {name: "Wenge", dk: 2, haerte: 88, quellenSchwindenRadial: 3.8, dichte: 880, gewicht: 16000}, {name: "Zebrano", dk: 3, haerte: 70, quellenSchwindenRadial: 4.0, dichte: 750, gewicht: 13000}, {name: "Palisander", dk: 2, haerte: 82, quellenSchwindenRadial: 3.0, dichte: 850, gewicht: 16000}, {name: "Ebenholz", dk: 1, haerte: 98, quellenSchwindenRadial: 3.2, dichte: 1200, gewicht: 16500}
+            {name: "Eiche", dk: 2, haerte: 85, quellenSchwindenRadial: 4.0, dichte: 650, gewicht: 12000},
+            {name: "Buche", dk: 5, haerte: 80, quellenSchwindenRadial: 5.8, dichte: 720, gewicht: 14000},
+            {name: "Kiefer", dk: 3, haerte: 40, quellenSchwindenRadial: 3.5, dichte: 520, gewicht: 11000},
+            {name: "Fichte", dk: 4, haerte: 35, quellenSchwindenRadial: 3.6, dichte: 450, gewicht: 11000},
+            {name: "Tanne", dk: 4, haerte: 38, quellenSchwindenRadial: 3.5, dichte: 460, gewicht: 10000},
+            {name: "Lärche", dk: 3, haerte: 55, quellenSchwindenRadial: 3.7, dichte: 590, gewicht: 12000},
+            {name: "Birke", dk: 5, haerte: 60, quellenSchwindenRadial: 5.4, dichte: 650, gewicht: 13000},
+            {name: "Ahorn", dk: 5, haerte: 75, quellenSchwindenRadial: 4.8, dichte: 630, gewicht: 12500},
+            {name: "Esche", dk: 5, haerte: 90, quellenSchwindenRadial: 4.9, dichte: 700, gewicht: 13000},
+            {name: "Kirsche", dk: 3, haerte: 70, quellenSchwindenRadial: 4.0, dichte: 600, gewicht: 11500},
+            {name: "Nussbaum", dk: 3, haerte: 65, quellenSchwindenRadial: 4.0, dichte: 640, gewicht: 12000},
+            {name: "Douglasie", dk: 3, haerte: 45, quellenSchwindenRadial: 3.5, dichte: 510, gewicht: 12000},
+            {name: "Zeder", dk: 2, haerte: 42, quellenSchwindenRadial: 2.8, dichte: 480, gewicht: 9500},
+            {name: "Mahagoni", dk: 2, haerte: 55, quellenSchwindenRadial: 3.0, dichte: 550, gewicht: 10500},
+            {name: "Teak", dk: 1, haerte: 60, quellenSchwindenRadial: 2.5, dichte: 650, gewicht: 11000},
+            {name: "Bambus", dk: 4, haerte: 50, quellenSchwindenRadial: 3.0, dichte: 400, gewicht: 18000},
+            {name: "Pappel", dk: 5, haerte: 25, quellenSchwindenRadial: 4.5, dichte: 380, gewicht: 9000},
+            {name: "Weide", dk: 5, haerte: 30, quellenSchwindenRadial: 4.0, dichte: 420, gewicht: 8000},
+            {name: "Linde", dk: 5, haerte: 35, quellenSchwindenRadial: 3.8, dichte: 530, gewicht: 9000},
+            {name: "Ulme", dk: 3, haerte: 75, quellenSchwindenRadial: 4.5, dichte: 680, gewicht: 11500},
+            {name: "Kastanie", dk: 2, haerte: 50, quellenSchwindenRadial: 3.5, dichte: 600, gewicht: 10000},
+            {name: "Robinie", dk: 1, haerte: 80, quellenSchwindenRadial: 3.0, dichte: 730, gewicht: 15000},
+            {name: "Hemlock", dk: 4, haerte: 40, quellenSchwindenRadial: 3.6, dichte: 500, gewicht: 10000},
+            {name: "Zypresse", dk: 2, haerte: 48, quellenSchwindenRadial: 3.0, dichte: 520, gewicht: 9000},
+            {name: "Redwood", dk: 2, haerte: 35, quellenSchwindenRadial: 2.8, dichte: 400, gewicht: 8500},
+            {name: "Hickory", dk: 3, haerte: 95, quellenSchwindenRadial: 5.5, dichte: 750, gewicht: 14000},
+            {name: "Wenge", dk: 2, haerte: 88, quellenSchwindenRadial: 3.8, dichte: 880, gewicht: 16000},
+            {name: "Zebrano", dk: 3, haerte: 70, quellenSchwindenRadial: 4.0, dichte: 750, gewicht: 13000},
+            {name: "Palisander", dk: 2, haerte: 82, quellenSchwindenRadial: 3.0, dichte: 850, gewicht: 16000},
+            {name: "Ebenholz", dk: 1, haerte: 98, quellenSchwindenRadial: 3.2, dichte: 1200, gewicht: 16500}
         ];
 
         const woodInfo = {
-            "Eiche": { info: "Eiche ...", bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/eiche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/eiche_2.jpg?raw=true" }
+            "Eiche": { info: "Eiche ...", bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/eiche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/eiche_2.jpg?raw=true" },
+            "Buche": { info: "Buche ...", bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/buche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/buche_2.jpg?raw=true" }
+            // ... (für alle Arten – im Sinne der Kürze nicht erneut voll ausgeschrieben)
         };
 
         const reflectionQuestions = [
-            "Stell dir vor, du sollst einen stabilen und langlebigen Esstisch für eine Familie entwerfen. ..."
+            "Stell dir vor, du sollst einen stabilen und langlebigen Esstisch für eine Familie entwerfen. ...",
+            "Welches Holz würdest du für Gartenmöbel wählen, ...",
+            "Eine Küchenarbeitsplatte muss schnittfest und widerstandsfähig sein. ..."
+            // ... etc.
         ];
 
         const attributeInfo = {
@@ -248,9 +305,12 @@
             gewicht: {icon: '🏋️', name: 'E-Modul (N/mm²)', color: 'blue'}
         };
 
+        // --- AI game state ---
         let aiGame = { playerName: '', playerCards: [], aiCards: [], currentPlayerCard: null, currentAiCard: null, roundInProgress: false, turn: 'player' };
 
+        // ===== Auth + Deep Link Join =====
         document.addEventListener('DOMContentLoaded', async () => {
+            // Splash -> Setup (unless join via link)
             const splashScreen = document.getElementById('splashScreen');
             const setupModal = document.getElementById('setupModal');
             setTimeout(() => {
@@ -261,10 +321,23 @@
                     const gameIdFromUrl = urlParams.get('game');
                     if (!gameIdFromUrl) {
                         setupModal.classList.remove('hidden');
-                        setupModal.classList.add('flex'); 
+                        setupModal.classList.add('flex');
                     }
                 }, 700);
             }, 3000);
+
+            // Init mute toggle
+            const soundToggle = document.getElementById('soundToggle');
+            const saved = localStorage.getItem('holzquartett_isMuted');
+            isMuted = saved === 'true';
+            if (soundToggle) {
+                soundToggle.checked = !isMuted;
+                soundToggle.addEventListener('change', (e) => {
+                    isMuted = !e.target.checked;
+                    localStorage.setItem('holzquartett_isMuted', isMuted);
+                });
+            }
+
             try { await signInAnonymously(auth); } catch (e) { console.error("Firebase Auth Error:", e); }
             onAuthStateChanged(auth, (user) => {
                 if (user) {
@@ -288,6 +361,7 @@
             }
         });
 
+        // ===== UI Control =====
         window.showNamePrompt = (mode) => {
             document.getElementById('setupModal').classList.add('hidden');
             const nameModal = document.getElementById('nameModal');
@@ -319,6 +393,7 @@
             }
         };
 
+        // ===== Multiplayer Logic =====
         async function createGame(playerName) {
             const lobbyModal = document.getElementById('multiplayerLobbyModal');
             lobbyModal.classList.remove('hidden');
@@ -328,6 +403,7 @@
             const baseUrl = window.location.href.split('?')[0];
             shareLinkInput.value = `${baseUrl}?game=${gameId}`;
 
+            // QR Code
             const qrContainer = document.getElementById('qrCodeContainer');
             qrContainer.innerHTML = '';
             try {
@@ -347,12 +423,14 @@
                         }
                     );
                 }
-            } catch (err) {
-                console.error("Fehler beim Generieren des QR-Codes:", err);
-            }
+            } catch (err) { console.error("Fehler beim Generieren des QR-Codes:", err); }
 
             const gameRef = doc(db, "games", gameId);
-            const initialGameData = { gameId: gameId, status: 'waiting', playerIds: [localPlayerId], players: { [localPlayerId]: { name: playerName, cards: [], status: 'online' } }, createdAt: serverTimestamp() };
+            const initialGameData = {
+                gameId: gameId, status: 'waiting', playerIds: [localPlayerId],
+                players: { [localPlayerId]: { name: playerName, cards: [], status: 'online' } },
+                createdAt: serverTimestamp()
+            };
             try { await setDoc(gameRef, initialGameData); listenToGameChanges(); }
             catch (error) { console.error("Error creating game:", error); alert("Fehler beim Erstellen des Spiels."); }
         }
@@ -366,10 +444,12 @@
                     document.getElementById('lobbyText').textContent = "Moment, die Karten werden gemischt.";
                     document.getElementById('multiplayerLobbyModal').classList.remove('hidden');
                     hasCopiedShareLink = true;
+
                     const shuffledCards = shuffleArray([...woodCards]);
                     const player1Id = gameSnap.data().playerIds[0];
                     const player1Cards = shuffledCards.slice(0, 15);
                     const player2Cards = shuffledCards.slice(15, 30);
+
                     const gameUpdateData = {
                         status: 'playing',
                         playerIds: [player1Id, localPlayerId],
@@ -386,11 +466,7 @@
                     alert("Spiel nicht gefunden, bereits voll oder beendet.");
                     window.location.search = '';
                 }
-            } catch (error) {
-                console.error("Error joining game:", error);
-                alert("Fehler beim Beitreten zum Spiel.");
-                window.location.search = '';
-            }
+            } catch (error) { console.error("Error joining game:", error); alert("Fehler beim Beitreten zum Spiel."); window.location.search = ''; }
         }
 
         function listenToGameChanges() {
@@ -400,12 +476,13 @@
                 if (!docSnap.exists()) { if(gameMode === 'multiplayer'){ alert("Das Spiel wurde beendet oder gelöscht."); resetGame(); } return; }
                 const gameData = docSnap.data();
                 localGameState = gameData;
+
                 if (gameData.status === 'playing' || gameData.status === 'finished') {
                     if (hasCopiedShareLink || gameData.playerIds.includes(localPlayerId) && gameData.playerIds.length === 2) {
                         document.getElementById('multiplayerLobbyModal').classList.add('hidden');
                         document.getElementById('gameContainer').classList.remove('hidden');
                         updateMultiplayerUI(gameData);
-                    } else if (!hasCopiedShareLink && gameData.playerIds.length === 2){
+                    } else if (!hasCopiedShareLink && gameData.playerIds.length === 2) {
                         const statusEl = document.getElementById('lobbyStatus');
                         if (statusEl) statusEl.textContent = 'Mitspieler ist beigetreten! Klicke „Link kopieren“, um zu starten.';
                     }
@@ -413,14 +490,13 @@
                     document.getElementById('multiplayerLobbyModal').classList.remove('hidden');
                     document.getElementById('gameContainer').classList.add('hidden');
                 }
-                const opponentId = gameData.playerIds?.find(id => id !== localPlayerId);
-                if (opponentId && gameData.players[opponentId]?.status === 'offline') { /* optional hint */ }
             }, (error) => { console.error("Error listening to game changes:", error); });
         }
 
         function updateMultiplayerUI(gameData) {
             if (!gameData || !gameData.players || !gameData.playerIds) { console.error("Incomplete game data received:", gameData); return; }
             const opponentId = gameData.playerIds.find(id => id !== localPlayerId);
+
             document.getElementById('playerNameDisplay').textContent = gameData.players[localPlayerId]?.name || 'Du';
             document.getElementById('playerCards').textContent = gameData.players[localPlayerId]?.cards?.length ?? '?';
             if (opponentId && gameData.players[opponentId]) {
@@ -437,20 +513,23 @@
             const attributeSelection = document.getElementById('attributeSelection');
             const resultDisplay = document.getElementById('resultDisplay');
             const nextRoundBtn = document.getElementById('nextRoundButton');
-
             turnIndicator.classList.remove('hidden');
 
             if (gameData.lastResult) {
+                // Play glitter once per round if it's a real win (not tie)
+                if (!roundSoundPlayed && gameData.lastResult.winnerId !== 'tie') {
+                    roundSoundPlayed = true;
+                    playWinSoundDelayed(500);
+                }
+
                 attributeSelection.classList.add('hidden');
                 resultDisplay.classList.remove('hidden');
                 nextRoundBtn.classList.remove('hidden');
 
                 const { winnerId, attribute, values } = gameData.lastResult;
-                const opponentActualId = opponentId || 'opponent';
                 const winnerName = winnerId === localPlayerId ? 'Du' : (winnerId === 'tie' ? '' : gameData.players[winnerId]?.name || 'Gegner');
-                let resultText = winnerId === 'tie' ? `🤝 Unentschieden!` : `🎉 ${winnerName} gewinnt!`;
-                if (winnerId !== localPlayerId && winnerId !== 'tie') { resultText = `😞 ${winnerName} gewinnt!`; }
-                let resultDetailsText = `${attributeInfo[attribute]?.name.split(' (')[0] || attribute}: ${values[localPlayerId]?.toLocaleString('de-DE') ?? '?'} vs ${values[opponentActualId]?.toLocaleString('de-DE') ?? '?'}`;
+                let resultText = winnerId === 'tie' ? `🤝 Unentschieden!` : (winnerId === localPlayerId ? `🎉 Du gewinnst!` : `😞 ${winnerName} gewinnt!`);
+                let resultDetailsText = `${attributeInfo[attribute]?.name.split(' (')[0] || attribute}: ${values[localPlayerId]?.toLocaleString('de-DE') ?? '?'} vs ${values[opponentId]?.toLocaleString('de-DE') ?? '?'}`;
                 document.getElementById('resultText').textContent = resultText;
                 document.getElementById('resultDetails').textContent = resultDetailsText;
 
@@ -470,16 +549,16 @@
                 const statusBarElement = document.getElementById('statusBar');
                 playerCardElement?.classList.remove('animate-glow-win', 'animate-glow-lose');
                 aiCardElement?.classList.remove('animate-glow-win', 'animate-glow-lose');
-
                 if (winnerId === localPlayerId) {
                     playerCardElement?.classList.add('animate-glow-win');
-                    triggerWinStarAnimation();
                 } else if (winnerId !== 'tie') {
                     playerCardElement?.classList.add('animate-glow-lose');
                     aiCardElement?.classList.add('animate-glow-win');
                 }
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             } else {
+                // Reset gate for next round
+                roundSoundPlayed = false;
                 resultDisplay.classList.add('hidden');
                 nextRoundBtn.classList.add('hidden');
                 if (gameData.turn === localPlayerId) {
@@ -487,7 +566,8 @@
                     turnIndicator.className = 'text-sm font-semibold p-1 text-green-600';
                     attributeSelection.classList.remove('hidden');
                 } else {
-                    turnIndicator.textContent = `${gameData.players[gameData.turn]?.name || 'Gegner'} ist am Zug...`;
+                    const currentName = gameData.players[gameData.turn]?.name || 'Gegner';
+                    turnIndicator.textContent = `${currentName} ist am Zug...`;
                     turnIndicator.className = 'text-sm font-semibold p-1 text-gray-500';
                     attributeSelection.classList.add('hidden');
                 }
@@ -516,7 +596,9 @@
             const opponentId = gameData.playerIds.find(id => id !== localPlayerId);
             const playerCardContainer = document.getElementById('playerCard');
             const aiCardContainer = document.getElementById('aiCard');
-            playerCardContainer.innerHTML = ''; aiCardContainer.innerHTML = '';
+            playerCardContainer.innerHTML = '';
+            aiCardContainer.innerHTML = '';
+
             const showOpponentCardFace = !!gameData.lastResult;
             if(gameData.currentCards[localPlayerId]) {
                 const playerCard = createCard(gameData.currentCards[localPlayerId], true, true);
@@ -524,6 +606,7 @@
             } else {
                 playerCardContainer.innerHTML = `<div class="card-front bg-gray-200 ...">Warte auf Karte...</div>`;
             }
+
             if (opponentId && gameData.currentCards[opponentId]) {
                 const aiCard = createCard(gameData.currentCards[opponentId], showOpponentCardFace, false);
                 aiCardContainer.appendChild(aiCard);
@@ -556,8 +639,8 @@
                 else if (opponentValue > playerValue) playerWins = false;
                 else playerWins = 'tie';
             }
-
             const winnerId = playerWins === 'tie' ? 'tie' : (playerWins ? localPlayerId : opponentId);
+
             const gameUpdate = {
                 lastResult: { winnerId, attribute, values: { [localPlayerId]: playerValue, [opponentId]: opponentValue } },
                 lastActivity: serverTimestamp()
@@ -580,13 +663,11 @@
 
                 let p1Cards = [...currentGameState.players[player1Id].cards];
                 let p2Cards = [...currentGameState.players[player2Id].cards];
-
                 if (p1Cards.length === 0 && p2Cards.length === 0 && currentGameState.status !== 'finished') {
                     console.error("Both players have no cards, but game not finished. Setting to finished.");
                     await updateDoc(doc(db, "games", gameId), { status: 'finished', lastResult: null });
                     return;
                 }
-
                 const p1Card = p1Cards.shift();
                 const p2Card = p2Cards.shift();
 
@@ -602,13 +683,10 @@
                 }
 
                 if (p1Cards.length === 0 || p2Cards.length === 0) {
-                    console.log("Game over condition met.");
                     await updateDoc(doc(db, "games", gameId), {
                         status: 'finished',
-                        'players': {
-                            [player1Id]: { ...currentGameState.players[player1Id], cards: p1Cards },
-                            [player2Id]: { ...currentGameState.players[player2Id], cards: p2Cards }
-                        },
+                        'players': { [player1Id]: { ...currentGameState.players[player1Id], cards: p1Cards },
+                                     [player2Id]: { ...currentGameState.players[player2Id], cards: p2Cards } },
                         currentCards: { [player1Id]: null, [player2Id]: null },
                         lastResult: null
                     });
@@ -616,32 +694,29 @@
                 }
 
                 const nextTurn = currentWinnerId === 'tie' ? currentGameState.turn : currentWinnerId;
-
                 const gameUpdate = {
                     'lastResult': null,
                     'turn': nextTurn,
-                    'players': {
-                        [player1Id]: { ...currentGameState.players[player1Id], cards: p1Cards },
-                        [player2Id]: { ...currentGameState.players[player2Id], cards: p2Cards }
-                    },
+                    'players': { [player1Id]: { ...currentGameState.players[player1Id], cards: p1Cards },
+                                 [player2Id]: { ...currentGameState.players[player2Id], cards: p2Cards } },
                     'currentCards': { [player1Id]: p1Cards[0] || null, [player2Id]: p2Cards[0] || null },
                     'lastActivity': serverTimestamp()
                 };
-
                 await updateDoc(doc(db, "games", gameId), gameUpdate);
             } catch (error) { console.error("Error processing multiplayer next round:", error); }
         }
 
+        // ===== Controller for both modes =====
         window.selectAttribute = function(attribute) {
             if (gameMode === 'ai') { selectAttributeAI(attribute); }
             else if (gameMode === 'multiplayer') { multiplayerSelectAttribute(attribute); }
         };
-
         window.nextRound = function() {
             if (gameMode === 'ai') { nextRoundAI(); }
             else if (gameMode === 'multiplayer') { multiplayerNextRound(); }
         };
 
+        // ===== AI Mode Logic =====
         function shuffleArray(array) {
             const shuffled = [...array];
             for (let i = shuffled.length - 1; i > 0; i--) {
@@ -655,6 +730,7 @@
             aiGame.playerName = playerName;
             document.getElementById('playerNameDisplay').textContent = playerName;
             document.getElementById('opponentNameDisplay').textContent = 'Computer';
+
             const shuffledCards = shuffleArray(woodCards);
             aiGame.playerCards = shuffledCards.slice(0, 15);
             aiGame.aiCards = shuffledCards.slice(15, 30);
@@ -685,13 +761,18 @@
 
             const canSelectAttributes = isPlayer && ((gameMode === 'ai' && !aiGame.roundInProgress && aiGame.turn === 'player') || (gameMode === 'multiplayer' && localGameState?.turn === localPlayerId && !localGameState?.lastResult));
             const showInfoButton = isPlayer && ((gameMode === 'ai' && aiGame.roundInProgress) || (gameMode === 'multiplayer' && !!localGameState?.lastResult));
+
             const cardName = cardData?.name || 'Unbekannt';
-            const safeCardNameId = cardName.replace(/[^a-zA-Z0-9]/g, '-') || 'unknown';
+            const safeCardNameId = (cardName.replace(/[^a-zA-Z0-9]/g, '-') || 'unknown');
+
             let headerRightContent = '';
             if (isPlayer) {
                 const woodData = woodInfo[cardName] || {};
                 const treeImage = woodData.bildBaum || 'https://placehold.co/36x36/d1d5db/374151?text=?';
-                headerRightContent = `<div class="flex-shrink-0 relative w-8 h-8 sm:w-9 sm:w-9"><img src="${treeImage}" alt="${cardName}" id="wood-image-icon-${safeCardNameId}" class="${showInfoButton ? 'hidden' : ''} absolute inset-0 w-full h-full object-cover rounded-full border-2 border-amber-200"><button id="player-info-button-${safeCardNameId}" onclick="window.showWoodInfo('${cardName.replace(/'/g, "\'")}')" class="${showInfoButton ? '' : 'hidden'} absolute inset-0 bg-purple-600 text-white rounded-full flex items-center justify-center text-lg hover:bg-purple-700 z-10">💡</button></div>`;
+                headerRightContent = `<div class="flex-shrink-0 relative w-8 h-8 sm:w-9 sm:w-9">
+                    <img src="${treeImage}" alt="${cardName}" id="wood-image-icon-${safeCardNameId}" class="${showInfoButton ? 'hidden' : ''} absolute inset-0 w-full h-full object-cover rounded-full border-2 border-amber-200">
+                    <button id="player-info-button-${safeCardNameId}" onclick="window.showWoodInfo('${cardName.replace(/'/g, "\\'")}')" class="${showInfoButton ? '' : 'hidden'} absolute inset-0 bg-purple-600 text-white rounded-full flex items-center justify-center text-lg hover:bg-purple-700 z-10">💡</button>
+                </div>`;
             }
 
             let attributeHTML = '<div class="space-y-1 mt-auto">';
@@ -711,28 +792,43 @@
                     const commonClasses = `w-full flex justify-between items-center py-0.5 sm:py-1 px-1 rounded-lg text-left border ${borderClass} ${baseBgClass}`;
                     const interactiveClasses = `${hoverBgClass} transition-colors`;
                     if (canSelectAttributes) {
-                        attributeHTML += `<button onclick="window.selectAttribute('${attrKey}')" class="${commonClasses} ${interactiveClasses}"><div class="flex items-center space-x-1 sm:space-x-2"><span class="text-xs sm:text-sm">${attr.icon}</span><div><span class="text-[11px] sm:text-xs font-medium leading-tight">${displayName}</span>${unitText}</div></div><span class="font-semibold ${textClass} text-sm sm:text-base">${formattedValue}</span></button>`;
+                        attributeHTML += `<button onclick="window.selectAttribute('${attrKey}')" class="${commonClasses} ${interactiveClasses}">
+                            <div class="flex items-center space-x-1 sm:space-x-2"><span class="text-xs sm:text-sm">${attr.icon}</span>
+                            <div><span class="text-[11px] sm:text-xs font-medium leading-tight">${displayName}</span>${unitText}</div></div>
+                            <span class="font-semibold ${textClass} text-sm sm:text-base">${formattedValue}</span></button>`;
                     } else {
-                        attributeHTML += `<div class="${commonClasses}"><div class="flex items-center space-x-1 sm:space-x-2"><span class="text-xs sm:text-sm">${attr.icon}</span><div><span class="text-[11px] sm:text-xs font-medium leading-tight text-gray-700">${displayName}</span>${unitText}</div></div><span class="font-semibold ${textClass} text-sm sm:text-base">${formattedValue}</span></div>`;
+                        attributeHTML += `<div class="${commonClasses}">
+                            <div class="flex items-center space-x-1 sm:space-x-2"><span class="text-xs sm:text-sm">${attr.icon}</span>
+                            <div><span class="text-[11px] sm:text-xs font-medium leading-tight text-gray-700">${displayName}</span>${unitText}</div></div>
+                            <span class="font-semibold ${textClass} text-sm sm:text-base">${formattedValue}</span></div>`;
                     }
                 }
             }
             attributeHTML += '</div>';
-            cardFront.innerHTML = `<div class="flex justify-between items-center w-full mb-2 px-1 h-9 sm:h-10"><h3 class="text-base sm:text-lg font-bold text-amber-800 truncate text-left mr-2">${cardName}</h3>${headerRightContent}</div>${attributeHTML}`;
+
+            cardFront.innerHTML = `<div class="flex justify-between items-center w-full mb-2 px-1 h-9 sm:h-10">
+                <h3 class="text-base sm:text-lg font-bold text-amber-800 truncate text-left mr-2">${cardName}</h3>${headerRightContent}</div>${attributeHTML}`;
+
             const cardBack = document.createElement('div');
             cardBack.className = 'card-back rounded-xl shadow-lg border-2 border-amber-300 flex items-center justify-center relative overflow-hidden';
-            card.appendChild(cardFront); card.appendChild(cardBack); return card;
+
+            card.appendChild(cardFront);
+            card.appendChild(cardBack);
+            return card;
         }
 
         function displayCardsAI() {
             const playerCardContainer = document.getElementById('playerCard');
             const aiCardContainer = document.getElementById('aiCard');
-            playerCardContainer.innerHTML = ''; aiCardContainer.innerHTML = '';
+            playerCardContainer.innerHTML = '';
+            aiCardContainer.innerHTML = '';
+
             if (aiGame.currentPlayerCard) {
                 playerCardContainer.appendChild(createCard(aiGame.currentPlayerCard, true, true));
             } else {
                 playerCardContainer.innerHTML = `<div class="card-front bg-gray-200 ...">Keine Karte</div>`;
             }
+
             if (aiGame.currentAiCard) {
                 const revealAICard = aiGame.roundInProgress;
                 aiCardContainer.appendChild(createCard(aiGame.currentAiCard, revealAICard, false));
@@ -744,25 +840,53 @@
         function selectAttributeAI(attribute) {
             if (aiGame.roundInProgress || aiGame.turn !== 'player' || !aiGame.currentPlayerCard || !aiGame.currentAiCard || !attributeInfo[attribute]) return;
             aiGame.roundInProgress = true;
+
             const playerValue = aiGame.currentPlayerCard[attribute];
             const aiValue = aiGame.currentAiCard[attribute];
             if (playerValue === undefined || aiValue === undefined) { console.error("AI Mode: Attribute value missing for comparison:", attribute); aiGame.roundInProgress = false; return; }
+
             const aiCardElement = document.getElementById('aiCard').querySelector('.card-3d');
             if (aiCardElement) { aiCardElement.classList.remove('card-flipped'); }
+
             let playerWins;
-            if (attribute === 'quellenSchwindenRadial' || attribute === 'dk') { if (playerValue < aiValue) playerWins = true; else if (aiValue < playerValue) playerWins = false; else playerWins = 'tie'; }
-            else { if (playerValue > aiValue) playerWins = true; else if (aiValue > playerValue) playerWins = false; else playerWins = 'tie'; }
-            const playerCardToMove = aiGame.playerCards.shift(); const aiCardToMove = aiGame.aiCards.shift(); let winnerTurn = aiGame.turn;
-            if (playerWins === true) { if (playerCardToMove) aiGame.playerCards.push(playerCardToMove); if (aiCardToMove) aiGame.playerCards.push(aiCardToMove); winnerTurn = 'player'; }
-            else if (playerWins === false) { if (aiCardToMove) aiGame.aiCards.push(aiCardToMove); if (playerCardToMove) aiGame.aiCards.push(playerCardToMove); winnerTurn = 'ai'; }
-            else { if (playerCardToMove) aiGame.playerCards.push(playerCardToMove); if (aiCardToMove) aiGame.aiCards.push(aiCardToMove); }
+            if (attribute === 'quellenSchwindenRadial' || attribute === 'dk') {
+                if (playerValue < aiValue) playerWins = true;
+                else if (aiValue < playerValue) playerWins = false;
+                else playerWins = 'tie';
+            } else {
+                if (playerValue > aiValue) playerWins = true;
+                else if (aiValue > playerValue) playerWins = false;
+                else playerWins = 'tie';
+            }
+
+            const playerCardToMove = aiGame.playerCards.shift();
+            const aiCardToMove = aiGame.aiCards.shift();
+            let winnerTurn = aiGame.turn;
+
+            if (playerWins === true) {
+                if (playerCardToMove) aiGame.playerCards.push(playerCardToMove);
+                if (aiCardToMove) aiGame.playerCards.push(aiCardToMove);
+                winnerTurn = 'player';
+                playWinSoundDelayed(500);
+            } else if (playerWins === false) {
+                if (aiCardToMove) aiGame.aiCards.push(aiCardToMove);
+                if (playerCardToMove) aiGame.aiCards.push(playerCardToMove);
+                winnerTurn = 'ai';
+                playWinSoundDelayed(500);
+            } else {
+                if (playerCardToMove) aiGame.playerCards.push(playerCardToMove);
+                if (aiCardToMove) aiGame.aiCards.push(aiCardToMove);
+            }
             aiGame.turn = winnerTurn;
+
             setTimeout(() => {
                 displayCardsAI();
+
                 let resultText, resultClass;
                 const playerCardFront = document.getElementById('playerCard')?.querySelector('.card-front');
                 const aiCardFront = document.getElementById('aiCard')?.querySelector('.card-front');
                 const statusBar = document.getElementById('statusBar');
+
                 const attributeIndex = Object.keys(attributeInfo).indexOf(attribute);
                 if (attributeIndex !== -1) {
                     const playerRow = playerCardFront?.querySelector(`.space-y-1 > *:nth-child(${attributeIndex + 1})`);
@@ -773,27 +897,28 @@
                     if (playerRow) { if (playerCurrentBg) playerRow.classList.remove(playerCurrentBg); playerRow.classList.add(highlightClass); }
                     if (opponentRow) { if (opponentCurrentBg) opponentRow.classList.remove(opponentCurrentBg); opponentRow.classList.add(highlightClass); }
                 }
+
                 if (playerWins === true) {
                     resultText = `🎉 Du gewinnst!`;
                     resultClass = 'text-green-600';
                     playerCardFront?.classList.add('animate-glow-win');
-                    if (statusBar) { statusBar.classList.add('status-flash-win'); setTimeout(() => statusBar.classList.remove('status-flash-win'), 1200); }
-                    triggerWinStarAnimation();
-                }
-                else if (playerWins === false) {
+                } else if (playerWins === false) {
                     resultText = `😞 KI gewinnt!`;
                     resultClass = 'text-red-600';
                     playerCardFront?.classList.add('animate-glow-lose');
                     aiCardFront?.classList.add('animate-glow-win');
-                    if (statusBar) { statusBar.classList.add('status-flash-lose'); setTimeout(() => statusBar.classList.remove('status-flash-lose'), 1200); }
+                } else {
+                    resultText = `🤝 Unentschieden!`;
+                    resultClass = 'text-yellow-600';
                 }
-                else { resultText = `🤝 Unentschieden!`; resultClass = 'text-yellow-600'; }
+
                 document.getElementById('resultText').textContent = resultText;
                 document.getElementById('resultText').className = `text-lg sm:text-xl font-bold ${resultClass}`;
                 document.getElementById('resultDetails').textContent = `${attributeInfo[attribute].name.split(' (')[0]}: ${playerValue.toLocaleString('de-DE')} vs ${aiValue.toLocaleString('de-DE')}`;
                 document.getElementById('attributeSelection').classList.add('hidden');
                 document.getElementById('resultDisplay').classList.remove('hidden');
                 document.getElementById('nextRoundButton').classList.remove('hidden');
+
                 updateDisplayAI();
                 checkGameOverAI();
                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -809,20 +934,46 @@
                 const chosenAttribute = availableAttributes[randomIndex];
                 const playerValue = aiGame.currentPlayerCard[chosenAttribute];
                 const aiValue = aiGame.currentAiCard[chosenAttribute];
-                if (playerValue === undefined || aiValue === undefined) { console.error("AI Mode (AI Turn): Attribute value missing for comparison:", chosenAttribute); aiGame.roundInProgress = false; nextRoundAI(); return; }
+                if (playerValue === undefined || aiValue === undefined) { console.error("AI Mode (AI Turn): Attribute value missing:", chosenAttribute); aiGame.roundInProgress = false; nextRoundAI(); return; }
+
                 let playerWins;
-                if (chosenAttribute === 'quellenSchwindenRadial' || chosenAttribute === 'dk') { if (playerValue < aiValue) playerWins = true; else if (aiValue < playerValue) playerWins = false; else playerWins = 'tie'; }
-                else { if (playerValue > aiValue) playerWins = true; else if (aiValue > playerValue) playerWins = false; else playerWins = 'tie'; }
-                const playerCardToMove = aiGame.playerCards.shift(); const aiCardToMove = aiGame.aiCards.shift(); let winnerTurn = aiGame.turn;
-                if (playerWins === true) { if (playerCardToMove) aiGame.playerCards.push(playerCardToMove); if (aiCardToMove) aiGame.playerCards.push(aiCardToMove); winnerTurn = 'player'; }
-                else if (playerWins === false) { if (aiCardToMove) aiGame.aiCards.push(aiCardToMove); if (playerCardToMove) aiGame.aiCards.push(playerCardToMove); winnerTurn = 'ai'; }
-                else { if (playerCardToMove) aiGame.playerCards.push(playerCardToMove); if (aiCardToMove) aiGame.aiCards.push(aiCardToMove); }
+                if (chosenAttribute === 'quellenSchwindenRadial' || chosenAttribute === 'dk') {
+                    if (playerValue < aiValue) playerWins = true;
+                    else if (aiValue < playerValue) playerWins = false;
+                    else playerWins = 'tie';
+                } else {
+                    if (playerValue > aiValue) playerWins = true;
+                    else if (aiValue > playerValue) playerWins = false;
+                    else playerWins = 'tie';
+                }
+
+                const playerCardToMove = aiGame.playerCards.shift();
+                const aiCardToMove = aiGame.aiCards.shift();
+                let winnerTurn = aiGame.turn;
+
+                if (playerWins === true) {
+                    if (playerCardToMove) aiGame.playerCards.push(playerCardToMove);
+                    if (aiCardToMove) aiGame.playerCards.push(aiCardToMove);
+                    winnerTurn = 'player';
+                    playWinSoundDelayed(500);
+                } else if (playerWins === false) {
+                    if (aiCardToMove) aiGame.aiCards.push(aiCardToMove);
+                    if (playerCardToMove) aiGame.aiCards.push(playerCardToMove);
+                    winnerTurn = 'ai';
+                    playWinSoundDelayed(500);
+                } else {
+                    if (playerCardToMove) aiGame.playerCards.push(playerCardToMove);
+                    if (aiCardToMove) aiGame.aiCards.push(aiCardToMove);
+                }
                 aiGame.turn = winnerTurn;
+
                 displayCardsAI();
+
                 let resultText, resultClass;
                 const playerCardFront = document.getElementById('playerCard')?.querySelector('.card-front');
                 const aiCardFront = document.getElementById('aiCard')?.querySelector('.card-front');
                 const statusBar = document.getElementById('statusBar');
+
                 const attributeIndex = Object.keys(attributeInfo).indexOf(chosenAttribute);
                 if (attributeIndex !== -1) {
                     const playerRow = playerCardFront?.querySelector(`.space-y-1 > *:nth-child(${attributeIndex + 1})`);
@@ -833,28 +984,29 @@
                     if (playerRow) { if (playerCurrentBg) playerRow.classList.remove(playerCurrentBg); playerRow.classList.add(highlightClass); }
                     if (opponentRow) { if (opponentCurrentBg) opponentRow.classList.remove(opponentCurrentBg); opponentRow.classList.add(highlightClass); }
                 }
+
                 if (playerWins === true) {
                     resultText = `🎉 Du gewinnst!`;
                     resultClass = 'text-green-600';
                     playerCardFront?.classList.add('animate-glow-win');
                     aiCardFront?.classList.add('animate-glow-lose');
-                    if (statusBar) { statusBar.classList.add('status-flash-win'); setTimeout(() => statusBar.classList.remove('status-flash-win'), 1200); }
-                    triggerWinStarAnimation();
-                }
-                else if (playerWins === false) {
+                } else if (playerWins === false) {
                     resultText = `😞 KI gewinnt!`;
                     resultClass = 'text-red-600';
                     playerCardFront?.classList.add('animate-glow-lose');
                     aiCardFront?.classList.add('animate-glow-win');
-                    if (statusBar) { statusBar.classList.add('status-flash-lose'); setTimeout(() => statusBar.classList.remove('status-flash-lose'), 1200); }
+                } else {
+                    resultText = `🤝 Unentschieden!`;
+                    resultClass = 'text-yellow-600';
                 }
-                else { resultText = `🤝 Unentschieden!`; resultClass = 'text-yellow-600'; }
+
                 document.getElementById('resultText').textContent = resultText;
                 document.getElementById('resultText').className = `text-lg sm:text-xl font-bold ${resultClass}`;
                 document.getElementById('resultDetails').textContent = `${attributeInfo[chosenAttribute].name.split(' (')[0]}: ${playerValue.toLocaleString('de-DE')} vs ${aiValue.toLocaleString('de-DE')}`;
                 document.getElementById('attributeSelection').classList.add('hidden');
                 document.getElementById('resultDisplay').classList.remove('hidden');
                 document.getElementById('nextRoundButton').classList.remove('hidden');
+
                 updateDisplayAI();
                 checkGameOverAI();
                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -870,17 +1022,22 @@
                 if(!document.getElementById('gameOverModal').classList.contains('hidden')) {
                     document.getElementById('nextRoundButton').classList.add('hidden');
                     document.getElementById('resultDisplay').classList.add('hidden');
-                } else { endGameAI(); }
+                } else {
+                    endGameAI();
+                }
                 return;
             }
 
             aiGame.currentPlayerCard = aiGame.playerCards[0];
             aiGame.currentAiCard = aiGame.aiCards[0];
             aiGame.roundInProgress = false;
+
             document.getElementById('nextRoundButton').classList.add('hidden');
             document.getElementById('resultDisplay').classList.add('hidden');
+
             updateDisplayAI();
             displayCardsAI();
+
             if (aiGame.turn === 'ai') {
                 document.getElementById('attributeSelection').classList.add('hidden');
                 aiSelectAttribute();
@@ -890,22 +1047,37 @@
         }
 
         function updateDisplayAI() {
-            const playerCount = aiGame.playerCards.length; const opponentCount = aiGame.aiCards.length;
+            const playerCount = aiGame.playerCards.length;
+            const opponentCount = aiGame.aiCards.length;
             document.getElementById('playerCards').textContent = playerCount;
             document.getElementById('aiCards').textContent = opponentCount;
             updateStatusBar(playerCount, opponentCount);
-            const turnIndicator = document.getElementById('turnIndicator'); turnIndicator.classList.remove('hidden');
+
+            const turnIndicator = document.getElementById('turnIndicator');
+            turnIndicator.classList.remove('hidden');
             if(aiGame.roundInProgress) {
-                if (!document.getElementById('resultDisplay').classList.contains('hidden')) { turnIndicator.textContent = ''; }
-                else if (aiGame.turn === 'ai') { turnIndicator.textContent = `Computer überlegt...`; turnIndicator.className = 'text-sm font-semibold p-1 text-gray-500'; }
-                else { turnIndicator.textContent = ''; }
-            } else if (aiGame.turn === 'player') { turnIndicator.textContent = "Du bist am Zug!"; turnIndicator.className = 'text-sm font-semibold p-1 text-green-600'; }
-            else { turnIndicator.textContent = `Computer ist am Zug...`; turnIndicator.className = 'text-sm font-semibold p-1 text-gray-500'; }
+                if (!document.getElementById('resultDisplay').classList.contains('hidden')) {
+                    turnIndicator.textContent = '';
+                } else if (aiGame.turn === 'ai') {
+                    turnIndicator.textContent = `Computer überlegt...`;
+                    turnIndicator.className = 'text-sm font-semibold p-1 text-gray-500';
+                } else {
+                    turnIndicator.textContent = '';
+                }
+            } else if (aiGame.turn === 'player') {
+                turnIndicator.textContent = "Du bist am Zug!";
+                turnIndicator.className = 'text-sm font-semibold p-1 text-green-600';
+            } else {
+                turnIndicator.textContent = `Computer ist am Zug...`;
+                turnIndicator.className = 'text-sm font-semibold p-1 text-gray-500';
+            }
         }
 
         function checkGameOverAI() {
             if (aiGame.roundInProgress) {
-                if (aiGame.playerCards.length === 0 || aiGame.aiCards.length === 0) { setTimeout(endGameAI, 300); }
+                if (aiGame.playerCards.length === 0 || aiGame.aiCards.length === 0) {
+                    setTimeout(endGameAI, 300);
+                }
             }
         }
 
@@ -914,24 +1086,31 @@
             const playerScoreBox = document.getElementById('playerScoreBox');
             const statusBar = document.getElementById('statusBar');
             if (!animationContainer || !playerScoreBox || !statusBar) return;
+
             const startRect = statusBar.getBoundingClientRect();
             const endRect = playerScoreBox.getBoundingClientRect();
             const containerRect = animationContainer.getBoundingClientRect();
+
             const star = document.createElement('div');
             star.textContent = '⭐';
             star.className = 'falling-star';
+
             const playerBarWidth = startRect.width * (parseFloat(statusBar.style.width) / 100);
             star.style.left = `${startRect.left - containerRect.left + (playerBarWidth / 2) - 20}px`;
             star.style.top = `${startRect.top - containerRect.top - 20}px`;
+
             const endY = (endRect.top + endRect.height / 2) - (startRect.top);
             star.style.setProperty('--end-y', `${endY}px`);
+
             animationContainer.appendChild(star);
             setTimeout(() => { star.remove(); }, 1200);
         }
 
         function endGame() {
-            if (gameMode === 'ai') { if (!document.getElementById('gameOverModal').classList.contains('hidden') || !document.getElementById('reflectionModal').classList.contains('hidden')){ } else { endGameAI(); } }
-            else if (gameMode === 'multiplayer') {
+            if (gameMode === 'ai') {
+                if (!document.getElementById('gameOverModal').classList.contains('hidden') || !document.getElementById('reflectionModal').classList.contains('hidden')) { }
+                else { endGameAI(); }
+            } else if (gameMode === 'multiplayer') {
                 const finalPlayerCards = localGameState?.players?.[localPlayerId]?.cards?.length ?? 0;
                 const opponentId = localGameState?.playerIds?.find(id => id !== localPlayerId);
                 const finalOpponentCards = localGameState?.players?.[opponentId]?.cards?.length ?? 0;
@@ -940,13 +1119,16 @@
                 if (isDraw) { showGameOverScreen(null); }
                 else if (playerWon) { saveToLeaderboard(localGameState.players[localPlayerId].name); showReflectionOrWinScreen(); }
                 else { showGameOverScreen(false); }
-            } else { console.warn("endGame called without a valid gameMode set."); }
+            } else {
+                console.warn("endGame called without a valid gameMode set.");
+            }
         }
 
         function endGameAI() {
             if (!document.getElementById('gameOverModal').classList.contains('hidden') || !document.getElementById('reflectionModal').classList.contains('hidden')) return;
             const playerWon = aiGame.playerCards.length > 0;
-            if (playerWon) { saveToLeaderboard(aiGame.playerName); showReflectionOrWinScreen(); } else { showGameOverScreen(false); }
+            if (playerWon) { saveToLeaderboard(aiGame.playerName); showReflectionOrWinScreen(); }
+            else { showGameOverScreen(false); }
         }
 
         function showReflectionOrWinScreen() {
@@ -966,9 +1148,11 @@
         function showGameOverScreen(didPlayerWin) {
             document.getElementById('reflectionModal').classList.add('hidden');
             document.getElementById('leaderboardModal').classList.add('hidden');
+
             const titleEl = document.getElementById('gameOverTitle');
             const textEl = document.getElementById('gameOverText');
             const modalEl = document.getElementById('gameOverModal');
+
             if (didPlayerWin === true) {
                 titleEl.textContent = '🎉 Glückwunsch!';
                 titleEl.className = `text-3xl font-bold mb-3 text-green-600`;
@@ -1004,7 +1188,10 @@
             try {
                 const q = query(collection(db, "leaderboard"), orderBy("wins", "desc"), limit(10));
                 const querySnapshot = await getDocs(q);
-                if (querySnapshot.empty) { list.innerHTML = '<p class="text-gray-500 text-center">Noch keine Einträge vorhanden.</p>'; return; }
+                if (querySnapshot.empty) {
+                    list.innerHTML = '<p class="text-gray-500 text-center">Noch keine Einträge vorhanden.</p>';
+                    return;
+                }
                 list.innerHTML = querySnapshot.docs.map((doc, index) => {
                     const data = doc.data();
                     const safeName = (data.name || 'Unbekannt').replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -1033,7 +1220,8 @@
                 try { await deleteDoc(doc(db, "games", gameId)); } catch (error) { console.error(`Error deleting game ${gameId}:`, error); }
             }
             aiGame = { playerName: '', playerCards: [], aiCards: [], currentPlayerCard: null, currentAiCard: null, roundInProgress: false, turn: 'player' };
-            gameMode = null; gameId = null; localGameState = {}; hasCopiedShareLink = false;
+            gameMode = null; gameId = null; localGameState = {}; hasCopiedShareLink = false; roundSoundPlayed = false;
+
             document.getElementById('gameOverModal').classList.add('hidden');
             document.getElementById('leaderboardModal').classList.add('hidden');
             document.getElementById('reflectionModal').classList.add('hidden');
@@ -1061,20 +1249,17 @@
             const titleEl = document.getElementById('infoModalTitle');
             const contentEl = document.getElementById('infoModalContent');
             titleEl.textContent = `Wissenswertes über ${woodName}`;
+
             const infoDataKey = Object.keys(woodInfo).find(key => key.toLowerCase() === woodName.toLowerCase());
             const infoData = infoDataKey ? woodInfo[infoDataKey] : null;
             if (infoData) {
                 contentEl.innerHTML = `<p class="text-left text-sm sm:text-base">${infoData.info || 'Keine Beschreibung verfügbar.'}</p>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-                    <div>
-                        <h4 class="font-semibold mb-2 text-center text-sm sm:text-base">Baum</h4>
-                        <img src="${infoData.bildBaum || ''}" alt="Bild von ${woodName} Baum" class="w-full max-h-48 sm:max-h-60 h-auto rounded-lg object-contain mx-auto border" onerror="this.parentElement.style.display='none';">
-                    </div>
-                    <div>
-                        <h4 class="font-semibold mb-2 text-center text-sm sm:text-base">Querschnitt</h4>
-                        <img src="${infoData.bildQuerschnitt || ''}" alt="Bild von ${woodName} Querschnitt" class="w-full max-h-48 sm:max-h-60 h-auto rounded-lg object-contain mx-auto border" onerror="this.parentElement.style.display='none';">
-                    </div>
-                </div>`;
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                        <div><h4 class="font-semibold mb-2 text-center text-sm sm:text-base">Baum</h4>
+                            <img src="${infoData.bildBaum || ''}" alt="Bild von ${woodName} Baum" class="w-full max-h-48 sm:max-h-60 h-auto rounded-lg object-contain mx-auto border" onerror="this.parentElement.style.display='none';"></div>
+                        <div><h4 class="font-semibold mb-2 text-center text-sm sm:text-base">Querschnitt</h4>
+                            <img src="${infoData.bildQuerschnitt || ''}" alt="Bild von ${woodName} Querschnitt" class="w-full max-h-48 sm:max-h-60 h-auto rounded-lg object-contain mx-auto border" onerror="this.parentElement.style.display='none';"></div>
+                    </div>`;
             } else {
                 contentEl.innerHTML = "<p>Für diese Holzart sind aktuell keine Detailinformationen verfügbar.</p>";
             }
