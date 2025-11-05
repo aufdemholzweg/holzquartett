@@ -146,130 +146,6 @@
                 </label>
                 <span class="text-gray-700"> 🔊</span>
             </div>
-            </div>
-    </div>
-
-    <div id="nameModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
-            <h2 class="text-2xl font-bold text-amber-800 mb-6 text-center">Dein Name</h2>
-            <div class="space-y-3">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Bitte gib deinen Namen ein:</label>
-                    <input type="text" id="playerName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent" placeholder="Spielername">
-                </div>
-                <button id="nameSubmitButton" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
-                    Weiter
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <div id="multiplayerLobbyModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
-        <div class="bg-white rounded-xl p-8 max-w-lg w-full mx-4 shadow-2xl text-center">
-            <h2 id="lobbyTitle" class="text-2xl font-bold text-amber-800 mb-4">Warte auf Mitspieler...</h2>
-            <p id="lobbyText" class="text-gray-700 mb-6">Teile diesen Link mit deinem Freund, um das Spiel zu starten:</p>
-            <div class="bg-gray-100 p-3 rounded-lg border border-gray-300">
-                <input id="shareLink" type="text" class="w-full bg-transparent text-center text-blue-600" readonly>
-            </div>
-            <button onclick="window.copyShareLink()" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors">
-                Link kopieren
-            </button>
-            
-            <div id="qrCodeContainer" class="mt-4 flex justify-center">
-                </div>
-
-            <p id="lobbyStatus" class="mt-6 text-green-600 font-semibold"></p>
-        </div>
-    </div>
-
-
-    <div id="gameContainer" class="hidden max-w-6xl mx-auto px-4 py-4 relative">
-        <div id="animationContainer" class="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden"></div>
-        <div class="max-w-md mx-auto mb-1 space-y-1"> <div class="flex justify-center space-x-2">
-                <div id="playerScoreBox" class="w-1/2 bg-white rounded-xl shadow-lg p-2 text-center relative">
-                    <p id="playerNameDisplay" class="text-base font-bold text-amber-600 truncate"></p>
-                    <p class="text-sm text-gray-500">Karten: <span id="playerCards" class="font-semibold">15</span></p>
-                </div>
-                <div class="w-1/2 bg-white rounded-xl shadow-lg p-2 text-center">
-                    <p id="opponentNameDisplay" class="text-base font-bold text-red-600">Computer</p>
-                    <p class="text-sm text-gray-500">Karten: <span id="aiCards" class="font-semibold">15</span></p>
-                </div>
-            </div>
-            <div class="w-full bg-gray-200 rounded-full h-4 relative overflow-hidden border border-gray-300">
-                <div id="statusBar" class="h-full rounded-l-full transition-all duration-500" style="width: 50%; background-color: #f59e0b;"></div>
-                <div class="absolute inset-0 flex justify-center items-center">
-                    <div class="w-0.5 h-full bg-white opacity-75"></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="flex justify-center space-x-2 sm:space-x-2 mb-4 max-w-md mx-auto">
-            <div class="text-center w-1/2">
-                <div id="playerCard" class="relative aspect-[20/38] perspective-1000"></div>
-            </div>
-            <div class="text-center w-1/2">
-                <div id="aiCard" class="relative aspect-[20/38] perspective-1000"></div>
-            </div>
-        </div>
-
-        <div class="bg-white rounded-xl shadow-lg px-1 pt-1 pb-0.5 mt-4 text-center mx-auto flex flex-col items-center max-w-md w-full min-h-[6rem]">
-             <div id="turnIndicator" class="hidden text-sm font-semibold p-1"></div>
-            <div id="attributeSelection" class="">
-                 <h3 class="text-base font-semibold text-gray-700 mb-1">Wähle eine Eigenschaft!</h3>
-            </div>
-            <div id="resultDisplay" class="hidden flex flex-col flex-grow w-full px-2">
-                 <h3 id="resultText" class="text-lg sm:text-xl font-bold"></h3>
-                 <p id="resultDetails" class="text-xs sm:text-sm text-gray-600 mt-auto pb-0.5"></p>
-            </div>
-             <div id="nextRoundButton" class="hidden w-full mt-2">
-                 <button onclick="window.nextRound()" class="w-full bg-amber-600 hover:bg-amber-800 text-white font-bold py-3 px-8 rounded-xl transition-colors">
-                       ➡️ Nächster Zug
-                 </button>
-             </div>
-        </div>
-    </div>
-
-    <div id="reflectionModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
-        <div class="bg-white rounded-xl p-8 max-w-lg w-full mx-4 shadow-2xl text-center">
-            <h2 class="text-2xl font-bold text-amber-800 mb-4">🎉 Super gespielt! Zeit zum Reflektieren!</h2>
-            <p id="reflectionQuestion" class="text-gray-700 mb-6 text-left"></p>
-            <textarea id="reflectionAnswer" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent min-h-[100px]" placeholder="Deine Begründung..."></textarea>
-            <button onclick="window.showFinalWinScreen()" class="mt-6 w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
-                Weiter zum Ergebnis
-            </button>
-        </div>
-    </div>
-
-    <div id="gameOverModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl text-center">
-            <h2 id="gameOverTitle" class="text-3xl font-bold mb-3"></h2>
-            <p id="gameOverText" class="text-gray-600 mb-6"></p>
-            <div class="space-y-2">
-                <button onclick="window.showLeaderboard()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg">
-                    🏆 Bestenliste anzeigen
-                </button>
-                <button onclick="window.resetGame()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg">
-                    🔄 Neues Spiel
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <div id="leaderboardModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
-            <h2 class="text-2xl font-bold text-amber-800 mb-6 text-center">🏆 Bestenliste</h2>
-            <div id="leaderboardList" class="space-y-1 mb-6"></div>
-            <button onclick="window.closeLeaderboard()" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg">
-                Schließen
-            </button>
-        </div>
-    </div>
-
-    <div id="infoModal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 px-4">
-        <div class="bg-white rounded-xl p-8 max-w-lg w-full mx-4 shadow-2xl relative">
-            <button onclick="window.closeInfoModal()" class="absolute top-2 right-3 text-2xl text-gray-400 hover:text-gray-600">&times;</button>
-            <h2 id="infoModalTitle" class="text-2xl font-bold text-amber-800 mb-4">Wissenswertes</h2>
-            <div id="infoModalContent" class="text-gray-700 space-y-2 max-h-[60vh] overflow-y-auto"></div>
         </div>
     </div>
 
@@ -281,7 +157,7 @@
 
         // ===== Firebase Config =====
         const firebaseConfig = {
-            apiKey: "AIzaSyCyRXl8-JPr1xTXPDi1VG-eQk6fOnTpqUI", // Consider securing this key
+            apiKey: "AIzaSyCyRXl8-JPr1xTXPDi1VG-eQk6fOnTpqUI",
             authDomain: "holzquartett-3a177.firebaseapp.com",
             projectId: "holzquartett-3a177",
             storageBucket: "holzquartett-3a177.appspot.com",
@@ -302,14 +178,14 @@
         let unsubscribeGame = null;
         let localGameState = {};
         let hasCopiedShareLink = false;
-        let isMuted = false; // <<< NEU: Globale Variable für Tonstatus
+        let isMuted = false; 
 
-        // ===== Sound Effects (Updated win sound URL) =====
+        // ===== Sound Effects =====
         const sounds = {
             flip: new Audio('https://github.com/aufdemholzweg/holzquartett/raw/refs/heads/main/sounds/Spielzug%20gewonnen.wav'),
-            win: new Audio('https://github.com/aufdemholzweg/holzquartett/raw/refs/heads/main/sounds/Spiel%20gewonnen.wav'), // <<< MODIFIED URL
+            win: new Audio('https://github.com/aufdemholzweg/holzquartett/raw/refs/heads/main/sounds/Spiel%20gewonnen.wav'),
             chime: new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c744c8.mp3'),
-            starWin: new Audio('https://github.com/aufdemholzweg/holzquartett/raw/refs/heads/main/sounds/Spielzug%20gewonnen.wav') // <<< MODIFIED: Replaced placeholder
+            starWin: new Audio('https://github.com/aufdemholzweg/holzquartett/raw/refs/heads/main/sounds/Spielzug%20gewonnen.wav') 
         };
         sounds.flip.volume = 0.5;
         sounds.win.volume = 0.4;
@@ -318,11 +194,19 @@
 
         // ===== MODIFIED playSound function =====
         function playSound(sound) {
-            if (isMuted) return; // <<< NEU: Nichts abspielen, wenn stummgeschaltet
-            sound.currentTime = 0; // Rewind to start
-            sound.play().catch(e => console.log("Sound playback error:", e)); // Play and catch potential errors
+            if (isMuted) return; 
+            sound.currentTime = 0;
+            sound.play().catch(e => console.log("Sound playback error:", e));
         }
-        let roundSoundPlayed = false;
+
+        // Add logic for the game to play sound on win only
+        function handleGameResult(winner) {
+            if (winner === 'player') {
+                playSound(sounds.win); 
+            } else if (winner === 'ai') {
+                playSound(sounds.flip); 
+            }
+        }
 
         // ===== Wood Data =====
         const woodCards = [ /* ... woodCards data ... */
