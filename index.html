@@ -241,16 +241,16 @@
 
  // ===== Sound-Bereich =====
 const sounds = {
-  flip: new Audio('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/main/sounds/mixkit-arrow-whoosh-1491.wav'),
-  chime: new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c744c8.mp3'),
-  starWin: new Audio('https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3'),
+  flip: new Audio('https://github.com/aufdemholzweg/holzquartett/raw/refs/heads/main/Sounds/cardflip.mp3'),
+  chime: new Audio('https://github.com/aufdemholzweg/holzquartett/raw/refs/heads/main/Sounds/spielzuggewonnen.wav'),
+  starWin: new Audio('https://github.com/aufdemholzweg/holzquartett/raw/refs/heads/main/Sounds/spielzuggewonnen.wav'),
   lose: new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_1c5c0cce22.mp3')
         };
-        sounds.flip.volume = 0.5;
+        sounds.flip.volume = 4.0;
         // sounds.win.volume = 0.4; // Entfernt
-        sounds.chime.volume = 0.6;
-        sounds.starWin.volume = 0.7; // "Glitzern"
-        sounds.lose.volume = 0.4; // "Verlieren"
+        sounds.chime.volume = 4.0;
+        sounds.starWin.volume = 4.0; // "Glitzern"
+        sounds.lose.volume = 4.0; // "Verlieren"
 
         function playSound(sound) {
             if (isMuted) return; 
