@@ -329,16 +329,18 @@
         let isMuted = false; 
 
         // ===== Sound Effects (Updated win sound URL) =====
-        const sounds = {
-            flip: new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_139083c224.mp3'),
-            win: new Audio('https://github.com/aufdemholzweg/holzquartett/blob/894e048eea71ba49921abfe6827bd8dc723f8c2d/gewonnen.mp3?raw=true'), 
-            chime: new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c744c8.mp3'),
-            starWin: new Audio('https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3') 
-        };
-        sounds.flip.volume = 0.5;
-        sounds.win.volume = 0.4;
-        sounds.chime.volume = 0.6;
-        sounds.starWin.volume = 0.7;
+       const sounds = {
+  flip: new Audio('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/main/Sounds/cardflip.mp3'),
+  win: new Audio('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/main/Sounds/spielzuggewonnen.wav'),
+  finalWin: new Audio('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/main/Sounds/spielgewonnen.mp3'),
+  chime: new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c744c8.mp3'),
+  starWin: new Audio('https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3')
+};
+sounds.flip.volume = 0.5;
+sounds.win.volume = 0.4;
+sounds.finalWin.volume = 0.6;
+sounds.chime.volume = 0.6;
+sounds.starWin.volume = 0.7;
 
         // ===== MODIFIED playSound function =====
         function playSound(sound) {
