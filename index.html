@@ -239,16 +239,17 @@
         let hasCopiedShareLink = false;
         let isMuted = false; 
 
-        // ===== Sound-Bereich =====
-        const sounds = {
-            flip: new Audio('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/main/sounds/mixkit-arrow-whoosh-1491.wav'),
-            chime: new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c744c8.mp3'),
-            // starWin entfällt als Hauptquelle; lokales Glitzern wird genutzt
-            lose: new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_1c5c0cce22.mp3')
-        };
-        sounds.flip.volume = 0.5;
-        sounds.chime.volume = 0.6;
-        sounds.lose.volume = 0.4;
+// ===== Sound-Bereich =====
+const sounds = {
+  flip: new Audio('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/main/sounds/mixkit-arrow-whoosh-1491.wav'),
+  chime: new Audio('https://github.com/aufdemholzweg/holzquartett/raw/refs/heads/main/sounds/Spiel%20gewonnen.wav'),
+  starWin: new Audio('https://github.com/aufdemholzweg/holzquartett/raw/refs/heads/main/sounds/Spielzug%20gewonnen.wav'),
+  lose: new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_1c5c0cce22.mp3')
+};
+sounds.flip.volume = 0.5;
+sounds.chime.volume = 0.6;
+sounds.starWin.volume = 0.8;   // ggf. anpassen
+sounds.lose.volume = 0.4;
 
         // NEU: Lokaler Glitzer-Sound
         const glitzernSound = new Audio('./sounds/glitzern.mp3'); // lege Datei in ./sounds/glitzern.mp3
