@@ -35,16 +35,28 @@
             background-size:cover;background-position:center
         }
 
-        /* Name auf der Rückseite der Gegnerkarte (Top-Drittel), halb so groß wie vorher */
         .opponent-back-name{
             position:absolute;top:12%;left:0;width:100%;text-align:center;
             font-family:Arial,Helvetica,sans-serif;color:#e5e7eb;font-weight:700;letter-spacing:.02em;line-height:1.1;z-index:2;
-            font-size:clamp(0.8rem,3vw,1.375rem); /* halbiert */
+            font-size:clamp(0.8rem,3vw,1.375rem);
             text-shadow:0 1px 2px rgba(0,0,0,.25);pointer-events:none;padding:0 .5rem
         }
+
+        /* Splash styles */
+        #splash { transition: opacity 0.6s ease; }
+        #splash.fade-out { opacity: 0; }
     </style>
 </head>
 <body class="bg-gradient-to-br from-amber-50 to-orange-100 min-h-screen">
+
+<!-- Splash Screen -->
+<div id="splash" class="fixed inset-0 z-[100] flex items-center justify-center bg-gradient-to-br from-amber-50 to-orange-100">
+    <div class="text-center">
+        <div class="text-5xl sm:text-6xl font-bold text-amber-800">🌳 HOLZEN! 🌳</div>
+        <p class="mt-2 text-sm sm:text-base text-amber-700">Ein Lernspiel zur Holztechnik</p>
+    </div>
+</div>
+
 <header class="bg-white shadow-sm border-b-2 border-amber-200">
     <div class="max-w-6xl mx-auto px-4 p-3">
         <h1 class="text-2xl font-bold text-amber-800 text-center">🌳 HOLZEN! 🌳</h1>
@@ -52,8 +64,8 @@
     </div>
 </header>
 
-<!-- Setup -->
-<div id="setupModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+<!-- Setup: jetzt initial hidden, wird nach Splash eingeblendet -->
+<div id="setupModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl text-center">
         <h2 class="text-2xl font-bold text-amber-800 mb-6">Spielmodus wählen</h2>
         <div class="space-y-4">
@@ -76,7 +88,7 @@
                 <span class="text-gray-700">🙈 Gegner-Holz aus</span>
                 <label for="revealBackToggle" class="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" id="revealBackToggle" class="sr-only peer">
-                    <div class="w-14 h-7 bg-gray-200 rounded-full peer peer-focus:ring-2 peer-focus:ring-blue-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-blue-600"></div>
+                    <div class="w-14 h-7 bg-gray-200 rounded-full peer peer-focus:ring-2 peer-focus:ring-blue-300 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-blue-600"></div>
                 </label>
                 <span class="text-gray-700">👀 Gegner-Holz an</span>
             </div>
@@ -208,6 +220,21 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
+/* Splash control */
+function startSplashThenShowStart() {
+  const splash = document.getElementById('splash');
+  setTimeout(() => {
+    splash.classList.add('fade-out');
+    setTimeout(() => {
+      splash.classList.add('hidden');
+      const gid = new URLSearchParams(window.location.search).get('game');
+      if (!gid) {
+        document.getElementById('setupModal').classList.remove('hidden');
+      }
+    }, 600);
+  }, 1500);
+}
+
 /* State */
 let gameMode=null, gameId=null, localPlayerId=null, unsubscribeGame=null, localGameState={}, hasCopiedShareLink=false;
 let isMuted=false;
@@ -262,38 +289,7 @@ const woodCards=[
  {name:"Ebenholz",dk:1,haerte:98,quellenSchwindenRadial:3.2,dichte:1200,gewicht:16500}
 ];
 
-const woodInfo = { /* ... woodInfo data ... */
-             "Eiche": { info: `Eiche (QE) Die Eiche zählt zu den bedeutendsten heimischen Laubhölzern Europas. Ihr Holz ist hart, schwer und sehr dauerhaft, was sie zu einem bevorzugten Werkstoff im Innen‑ und Außenbereich macht. Besonders charakteristisch sind die hohen Gerbstoffanteile, die das Holz widerstandsfähig gegen Pilze und Schädlinge machen – gleichzeitig können sie beim Kontakt mit Eisen zu Verfärbungen führen. Eichenholz ist grobporig und zeigt einen deutlichen Übergang zwischen Früh- und Spätholz, wodurch die Jahresringe klar sichtbar sind. Diese ausgeprägte Maserung sorgt für eine markante, lebendige Optik. Verwendung: Möbel, Fußböden, Treppen, Fassdauben (z. B. für Weinfässer), Schiffbau, Terrassen, Brücken, Fachwerk. Funfact: Bereits in der Antike galt die Eiche als Symbol für Stärke und Beständigkeit – sie ziert bis heute zahlreiche Wappen und Münzen.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/eiche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/eiche_2.jpg?raw=true" },
-             "Buche": { info: `Buche (BU) Die Buche ist ein gleichmäßig strukturiertes Hartholz heimischer Wälder. Ihr Holz ist zäh, biegsam und relativ harzarm, wodurch es sich sehr gut für Möbel und Parkett eignet. Buchenholz ist ringporig mit mittelgroßen Poren im Frühholz und dichterem Spätholz, sodass die Übergänge dezent sichtbar sind – die Jahresringe sind gut erkennbar, aber nicht grob. Verwendung: Möbel, Parkett, Furniere, Sperrholz, Innenausbau. Funfact: Buchenholz war lange Zeit typisch fürs Wagenrad – wegen seiner Kombination aus Zähigkeit und Elastizität.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/buche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/buche_2.jpg?raw=true" },
-             "Kiefer": { info: `Kiefer (KI) Kiefer ist ein weit verbreitetes Nadelholz mit markanter Jahresringstruktur. Es ist weich, harzhaltig und relativ leicht zu bearbeiten. Das Holz zeigt keine ausgeprägten großen Poren wie Laubhölzer, sondern eine eher gleichmäßige Zellstruktur – Jahresringe und Harzkanäle sind sichtbar. Verwendung: Bauholz, Dachstühle, Innenausbau, Möbel, Paneele. Funfact: Kiefernharz wurde früher als Klebstoff oder als Bestandteil von Salben und Dichtungsmaterialien verwendet.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kiefer_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kiefer_2.jpg?raw=true" },
-             "Fichte": { info: `Fichte (FI) Fichte ist ein klassisches Bauholz mit guter Festigkeit bei geringem Gewicht. Es lässt sich leicht bearbeiten und vielfach einsetzen. Das Holz weist eine feine Zellstruktur auf, ohne große Poren – Jahresringe sind erkennbar, aber nicht grob. Verwendung: Bauholz, Innenverkleidung, Dach, Möbel, Paneele. Funfact: In vielen Gebirgsregionen war Fichtenholz über Jahrhunderte hinweg der Standard für Dachkonstruktionen und Sägewerke.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/fichte_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/fichte_2.jpg?raw=true" },
-             "Tanne": { info: `Tanne (TA) Tanne ist ein harzarmes, vergleichsweise feines Nadelholz, das oft als Alternative zur Fichte verwendet wird. Die Struktur ähnelt der Fichte: feine Fasern, dezente Jahresringe, keine ausgeprägten Poren. Verwendung: Innenausbau, Möbel, Paneele, Bauholz. Funfact: Da Tanne weniger Harz enthält, ist sie angenehmer in Räumen einzusetzen, da sie weniger Geruch abgibt.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/tanne_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/tanne_2.jpg?raw=true" },
-             "Lärche": { info: `Lärche (LA) Lärche ist bekannt für ihre natürliche Witterungsbeständigkeit und schöne Farbe. Sie kombiniert Elastizität mit Festigkeit. Das Holz zeigt ausgeprägte Jahresringe und Harzkanäle – die Struktur ist deutlich sichtbar. Verwendung: Fassadenholz, Fenster, Terrassen, Außenbau, Möbel. Funfact: Lärchenholz wird häufig ohne chemische Behandlung im Außenbereich eingesetzt und erhält mit der Zeit eine edle Vergrauung.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/laerche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/laerche_2.jpg?raw=true" },
-             "Birke": { info: `Birke (BI) Birke ist ein helles, dekoratives Holz mit feiner, gleichmäßiger Struktur. Es überzeugt durch gute Biegsamkeit. Das Holz ist zerstreutporig – Poren sind fein verteilt, ohne große Unterschiede zwischen Früh- und Spätholz. Verwendung: Möbel, Furniere, Sperrholz, Innenausbau. Funfact: Birkenrinde wurde früher als wasserabweisendes Material für Behälter und Boote genutzt.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/birke_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/birke_2.jpg?raw=true" },
-             "Ahorn": { info: `Ahorn (AM) Ahorn ist hart, hell und elegant – ideal für feine Möbel, Instrumente und Designanwendungen. Es handelt sich ebenfalls um ein zerstreutporiges Holz mit gleichmäßiger Porenverteilung, ohne starke Übergänge zwischen Früh‑ und Spätholz. Verwendung: Möbel, Parkett, Instrumente, Schneidebretter. Funfact: Aus Ahorn gewinnt man auch Ahornsirup – allerdings aus nordamerikanischen Arten, nicht unbedingt jene zum Möbelbau.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ahorn_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ahorn_2.jpg?raw=true" },
-             "Esche": { info: `Esche (ES) Die Esche ist ein besonders zähes, elastisches Holz mit hoher Festigkeit. Sie zeigt ringporige Struktur mit deutlich sichtbaren Poren im Frühholz und schmaleren Poren im Spätholz. Verwendung: Werkzeugstiele, Sportgeräte, Möbel, Parkett, Innenausbau. Funfact: In der Antike wurden Wagenräder und Speichen häufig aus Esche gefertigt – wegen ihrer elastischen Eigenschaften.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/esche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/esche_2.jpg?raw=true" },
-             "Kirsche": { info: `Kirsche (KR) Kirschbaumholz besitzt warme rote Töne, die mit Licht nachdunkeln, und eine edle Struktur. Ringporig mit deutlichem Übergang zwischen Früh- und Spätholz – Jahresringe sind gut sichtbar. Verwendung: Möbel, Furniere, Innenausbau, Dekor. Funfact: Kirschholz wird oft in Möbeln verwendet, die mit der Zeit “reifer” aussehen – die Farbe verbessert sich mit Alterung.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kirsche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kirsche_2.jpg?raw=true" },
-             "Nussbaum": { info: `Nussbaum (NU) Nussbaumholz ist dunkel, dekorativ und sehr hochwertig. Das Kernholz hat oft starken Farbkontrast zum Splintholz. Es ist zerstreutporig – Poren sind fein über die Fläche verteilt, oft mit dekorativen Maserungen. Verwendung: Möbel, Furniere, Intarsien, edle Ausstattungen. Funfact: Walnuss (Nussbaum) war schon in der Renaissance sehr geschätzt und zierte viele königliche Möbelstücke.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/nussbaum_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/nussbaum_2.jpg?raw=true" },
-             "Douglasie": { info: `Douglasie (DO) Douglasienholz ist robust, witterungsbeständig und häufig im Außenbau eingesetzt. Die Struktur ist klar erkennbar – deutliche Jahresringe mit Transition zwischen Früh‑ und Spätholz. Verwendung: Bauholz, Fassaden, Dach, Möbel im Außenbereich. Funfact: Die Douglasie stammt ursprünglich aus Nordamerika, ist aber auch in Europa weit verbreitet und wird großgezogen.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/douglasie_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/douglasie_2.jpg?raw=true" },
-             "Zeder": { info: `Zeder (ZE) Zedernholz duftet angenehm und besitzt von Natur aus eine Resistenz gegen Insektenbefall und Feuchtigkeit. Die Struktur ist fein mit gleichmäßigen Poren – kein starker Kontrast zwischen Früh- und Spätholz. Verwendung: Möbel, Fassaden, Innenraum, Schränke. Funfact: Zedernholz wird oft in Kleiderschränken eingesetzt, weil es den unverwechselbaren Duft und Insektenabwehr besitzt.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zeder_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zeder_2.jpg?raw=true" },
-             "Mahagoni": { info: `Mahagoni (MA) Mahagoni ist ein tropisches Edelholz mit hoher Dauerhaftigkeit und edler Farbe. Es ist zerstreutporig – Poren gleichmäßig verteilt und oft mit dekorativer Kernholzstruktur. Verwendung: Möbel, Fenster, Luxusausstattung, Bootsbau. Funfact: In manchen Ländern ist Mahagoni wegen seiner Seltenheit streng reguliert und unterliegt Artenschutzbestimmungen.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/mahagoni_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/mahagoni_2.jpg?raw=true" },
-             "Teak": { info: `Teak (TE) Teak ist extrem witterungsbeständig durch hohen Öl- und Harzgehalt – ideal für Außenmöbel und Schiffsbau. Die Struktur ist fein zerstreutporig, mit dekorativem Erscheinungsbild und gleichmäßiger Porenverteilung. Verwendung: Gartenmöbel, Terrassen, Boote, Fenster, Außenbereich. Funfact: Teakholz war früher für den Bau von Kriegsschiffen sehr gefragt wegen seiner Dauerhaftigkeit und Wasserbeständigkeit.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/teak_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/teak_2.jpg?raw=true" },
-             "Bambus": { info: `Bambus (BA) Bambus ist botanisch gesehen kein Holz, sondern ein Gras – dennoch extrem stabil und vielseitig verwendbar. Die Struktur ist röhrenartig und weist keine klassischen Poren wie Harthölzer auf. Verwendung: Fußböden, Möbel, Treppen, nachhaltiger Bau. Funfact: Bambus wächst so schnell, dass einzelne Stangen innerhalb weniger Monate über einen Meter wachsen können.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/bambus_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/bambus_2.jpg?raw=true" },
-             "Pappel": { info: `Pappel (PA) Pappelholz ist sehr leicht und weich – weniger tragfähig, aber gut bearbeitbar. Feine Struktur, fast keine großen Poren – Jahresringe nur dezent sichtbar. Verwendung: Leichtbau, Verpackungen, Möbel mit geringer Belastung. Funfact: Pappelholz wird oft für Modellbau oder Flugzeuginnenräume verwendet, wo Leichtigkeit zählt.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/pappel_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/pappel_2.jpg?raw=true" },
-             "Weide": { info: `Weide (WE) Weidenholz ist elastisch und biegsam – traditionell für Flechtarbeiten und Körbe verwendet. Die Struktur ist fein zerstreutporig, Poren kaum markant. Verwendung: Flechtwerk, Gartenbau, leichte Möbel. Funfact: Weidenruten werden seit Jahrhunderten für Korbgeflechte, Zäune und Rankhilfen genutzt.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/weide_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/weide_2.jpg?raw=true" },
-             "Linde": { info: `Linde (LI) Lindenholz ist weich, homogen und gut schnitzbar – ideal für feine Holzarbeiten. Fein zerstreutporig und gleichmäßig, ohne großen Porenkontrast. Verwendung: Intarsien, geschnitzte Dekors, Möbel, Modellbau. Funfact: Lindenholz war traditionell das Holz der Bildhauer und Orgelbauer im Mittelalter.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/linde_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/linde_2.jpg?raw=true" },
-             "Ulme": { info: `Ulme (UL) Ulmenholz ist zäh und eher hart – früher oft für Möbel und Reparaturen verwendet. Ringporig mit markanten Poren und gelegentlichem unruhigem Faserverlauf. Verwendung: Möbel, Innenausbau, Reparaturholz. Funfact: Ulmenholz hat früher im Wagen- und Möbelbau Bedeutung gehabt, besonders dort, wo Biegung gefragt war.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ulme_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ulme_2.jpg?raw=true" },
-             "Kastanie": { info: `Kastanie (KA) Kastanienholz ist ähnlich der Eiche wetterbeständig, mit warmem Farbton und markanter Struktur. Ringporig mit klar sichtbaren Jahresringen und deutlichem Übergang. Verwendung: Außenbau, Möbel, Balken, Gartenholz. Funfact: Kastanienholz wurde oft in historischen Bauwerken als wetterbeständige Alternative zur Eiche verwendet.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kastanie_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kastanie_2.jpg?raw=true" },
-             "Robinie": { info: `Robinie (RO) Robinienholz ist eines der härtesten europäischen Hölzer und sehr dauerhaft im Freien. Ringporig mit feinen Poren und schmalem Übergang – die Struktur ist weniger kontrastreich. Verwendung: Gartenholz, Terrassen, Balken, Zäune. Funfact: Robinie wird oft als „europäisches Teak“ genannt, weil es ähnliche Eigenschaften wie Tropenholz zeigt.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/robinie_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/robinie_2.jpg?raw=true" },
-             "Hemlock": { info: `Hemlock (HE) Hemlock ist ein nördliches Nadelholz mit feiner Struktur, weich und gleichmäßig. Die Porenstruktur ähnelt einfacher Zellstruktur; Jahresringe dezent sichtbar. Verwendung: Innenausbau, Paneele, Bauholz. Funfact: Hemlock wird oft im Möbel- und Leichtbau verwendet, wenn gutes Verhältnis zwischen Gewicht und Stabilität gefragt ist.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/hemlock_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/hemlock_2.jpg?raw=true" },
-             "Zypresse": { info: `Zypresse (ZY) Zypressenholz duftet gut und ist natürlich resistent gegen Feuchtigkeit und Schädlinge. Die Struktur ist fein und gleichmäßig, mit moderatem Porencharakter. Verwendung: Außen- und Gartenholz, Möbel, Fassaden. Funfact: Zypresse wurde in mediterranen Regionen oft zur Holzverkleidung von Kirchen und Tempeln verwendet.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zypresse_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zypresse_2.jpg?raw=true" },
-             "Redwood": { info: `Redwood (RW) Redwood ist ein leichtes Tropenholz mit guter Dauerhaftigkeit und dekorativer Farbe. Zerstreutporig mit feiner Textur, Poren gleichmäßig verteilt. Verwendung: Außenholz, Zäune, Gartenkonstruktionen. Funfact: Der Küstenmammutbaum (Redwood) zählt zu den höchsten Bäumen der Welt.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/redwood_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/redwood_2.jpg?raw=true" },
-             "Hickory": { info: `Hickory (HI) Hickory ist ein ausgesprochen zähes und hartes Holz – ideal für stark beanspruchte Teile. Ringporig mit ausgeprägten Poren im Frühholz und klaren Jahresringen. Verwendung: Werkzeugstiele, Sportgeräte, Möbel mit hoher Belastung. Funfact: Hickory war traditionell Material für Peitschen, Wurfstöcke und Arbeitsgeräte.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/hickory_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/hickory_2.jpg?raw=true" },
-             "Wenge": { info: `Wenge (WE-NE) Wenge ist ein dunkles Tropenholz mit hoher Härte und dekorativer Maserung. Zerstreutporig mit feinen Poren – oft Streifenzeichnung sichtbar. Verwendung: Luxusmöbel, Parkett, Furniere. Funfact: Wegen seiner tiefen, dunklen Farbe wird Wenge oft in Kontrasten zu hellem Holz kombiniert.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/wenge_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/wenge_2.jpg?raw=true" },
-             "Zebrano": { info: `Zebrano (ZE-RA) Zebrano zeichnet sich durch seine markante Streifenoptik aus – dekorativ und auffällig. Die Porenstruktur ist zerstreutporig, oft mit deutlichem Maserungseffekt. Verwendung: Designmöbel, Furniere, Dekorationen. Funfact: Zebrano wird oft für luxuriöse Intarsien und Furnierarbeiten verwendet.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zebrano_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zebrano_2.jpg?raw=true" },
-             "Palisander": { info: `Palisander (PA) Palisanderholz ist dekorativ, fest und langlebig – mit attraktiven Farbtönen. Zerstreutporig mit feiner Struktur und gleichmäßiger Porenverteilung. Verwendung: Gitarren, Möbel, Furniere. Funfact: Palisanderholz war früher oft exklusiv für edle Musikinstrumente und Intarsien reserviert.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/palisander_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/palisander_2.jpg?raw=true" },
-             "Ebenholz": { info: `Ebenholz (EB) Ebenholz ist eines der härtesten Hölzer – fast tiefschwarz und sehr dicht. Zerstreutporig mit extrem feinen Poren, kaum sichtbar – Porenstruktur sehr fein. Verwendung: Klaviertasten, Intarsien, Luxusdekore. Funfact: Ebenholz wurde im alten Ägypten für Statuetten und Schmuckstücke verwendet – wegen seiner tiefen Farbe und Seltenheit.`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ebenholz_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ebenholz_2.jpg?raw=true" }
-        };
+const woodInfo = { /* deine woodInfo-Daten hier wie gehabt */ };
 
 const reflectionQuestions=[
  "Stell dir vor, du sollst einen stabilen und langlebigen Esstisch ...",
@@ -351,6 +347,9 @@ document.addEventListener('DOMContentLoaded',async()=>{
       if(gid){gameId=gid;gameMode='multiplayer';window.showNamePrompt('join');}
     }
   });
+
+  // Splash starten
+  startSplashThenShowStart();
 
   // Sound toggle
   const soundToggle=document.getElementById('soundToggle');
@@ -410,7 +409,7 @@ window.copyShareLink=async()=>{
   }
 };
 
-/* Multiplayer minimal (wie in deiner Fassung) */
+/* Multiplayer minimal */
 async function createGame(playerName){
   const lobby=document.getElementById('multiplayerLobbyModal');
   lobby.classList.remove('hidden');
@@ -577,7 +576,6 @@ function createCard(cardData,isRevealed=true,isPlayer=true){
   const back=document.createElement('div');
   back.className='card-back rounded-xl shadow-lg border-2 border-amber-300 flex items-center justify-center relative overflow-hidden';
 
-  // Gegner-Holzname auf Rückseite zeigen, falls eingestellt
   if(!isRevealed && !isPlayer && isOpponentNameBackVisible()){
     const label=document.createElement('div');
     label.className='opponent-back-name';
