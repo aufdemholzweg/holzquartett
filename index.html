@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+# Create an updated HTML file that adds a toggle to reveal the opponent's wood name on the back of the hidden card.
+html = r"""<!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
@@ -13,7 +14,6 @@
         .card-flipped { transform: rotateY(180deg); }
         .card-front, .card-back { backface-visibility: hidden; position: absolute; width: 100%; height: 100%; }
         .card-back { transform: rotateY(180deg); background-image: url('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/65fd843a4db1ee434faaf81a32f77951a5afb72a/images/background_card.jpg'); background-size: cover; background-position: center; }
-        .wood-texture { background: linear-gradient(45deg, #8B4513 25%, transparent 25%), linear-gradient(-45deg, #8B4513 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #8B4513 75%), linear-gradient(-45deg, transparent 75%, #8B4513 75%); background-size: 20px 20px; background-position: 0 0, 0 10px, 10px -10px, -10px 0px; background-color: #D2B48C; opacity: 0.1; }
         .animate-pop-in { animation: pop-in 0.5s ease-out forwards; }
         .animate-glow-win { animation: glow-win 1.2s ease-out; }
         .animate-glow-lose { animation: glow-lose 1.2s ease-out; }
@@ -28,6 +28,31 @@
         .falling-star { position: absolute; font-size: 7rem; z-index: 100; animation: fall-and-fade 1.2s ease-in forwards; }
         @keyframes fall-and-fade { 0% { transform: translateY(-30px) scale(1.5); opacity: 0; } 30% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(var(--end-y)) scale(0.3); opacity: 0; } }
         .card-background { background-image: url('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/e7cfc18394e2e7f2d0b91df1138b0d7bc7930699/images/background_front.jpg'); background-size: cover; background-position: center; }
+        /* Overlay-Stil für den Namen auf der Kartenrückseite */
+        .back-name-chip {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            display: flex;
+            justify-content: center;
+            pointer-events: none;
+        }
+        .back-name-chip > span {
+            background: rgba(0,0,0,0.55);
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.9rem;
+            line-height: 1.25rem;
+            padding: 0.25rem 0.6rem;
+            border-radius: 9999px;
+            backdrop-filter: blur(2px);
+            text-align: center;
+            max-width: 90%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-amber-50 to-orange-100 min-h-screen">
@@ -56,13 +81,24 @@
                 <button onclick="window.showNamePrompt('ai')" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors text-lg">🎮 gegen Computer</button>
                 <button onclick="window.showNamePrompt('multiplayer')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors text-lg">🧑‍🤝‍🧑 online gegen Freunde</button>
             </div>
-            <div class="mt-6 flex items-center justify-center space-x-2">
-                <span class="text-gray-700">🔇 </span>
-                <label for="soundToggle" class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" id="soundToggle" class="sr-only peer">
-                    <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-2 peer-focus:ring-amber-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-600"></div>
-                </label>
-                <span class="text-gray-700"> 🔊</span>
+            <div class="mt-6 grid grid-cols-1 gap-3">
+                <div class="flex items-center justify-center space-x-2">
+                    <span class="text-gray-700">🔇 </span>
+                    <label for="soundToggle" class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="soundToggle" class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-2 peer-focus:ring-amber-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-600"></div>
+                    </label>
+                    <span class="text-gray-700"> 🔊</span>
+                </div>
+                <!-- Neuer Schalter: Gegner-Holz anzeigen -->
+                <div class="flex items-center justify-center space-x-3">
+                    <span class="text-sm text-gray-700">Gegner-Holz anzeigen</span>
+                    <label for="revealToggle" class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="revealToggle" class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-2 peer-focus:ring-amber-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-600"></div>
+                    </label>
+                    <span id="revealLabel" class="text-sm text-gray-700">aus</span>
+                </div>
             </div>
         </div>
     </div>
@@ -197,6 +233,9 @@
         let isMuted = false;
         let isDeepLinkJoin = false;
 
+        // Neuer globaler Schalter
+        window.revealOpponentName = false;
+
         const sounds = {
           flip: new Audio('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/main/Sounds/cardflip.mp3'),
           win: new Audio('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/main/Sounds/spielzuggewonnen.wav'),
@@ -298,6 +337,33 @@
                         window.showNamePrompt('join');
                     }
                 }
+            });
+
+            // Sound-Toggle initialisieren
+            const soundToggleButton = document.getElementById('soundToggle');
+            const savedMuteStatus = localStorage.getItem('holzquartett_isMuted');
+            isMuted = savedMuteStatus === 'true';
+            soundToggleButton.checked = !isMuted;
+            soundToggleButton.addEventListener('change', (event) => {
+                isMuted = !event.target.checked;
+                localStorage.setItem('holzquartett_isMuted', isMuted);
+                if (!isMuted) { playSound(sounds.chime); }
+            });
+
+            // Reveal-Toggle initialisieren
+            const revealToggle = document.getElementById('revealToggle');
+            const revealLabel = document.getElementById('revealLabel');
+            const savedReveal = localStorage.getItem('holzquartett_revealOpponentName');
+            window.revealOpponentName = savedReveal === 'true';
+            revealToggle.checked = window.revealOpponentName;
+            revealLabel.textContent = window.revealOpponentName ? 'ein' : 'aus';
+            revealToggle.addEventListener('change', (e) => {
+                window.revealOpponentName = e.target.checked;
+                localStorage.setItem('holzquartett_revealOpponentName', window.revealOpponentName);
+                revealLabel.textContent = window.revealOpponentName ? 'ein' : 'aus';
+                // UI aktualisieren, falls ein Spiel schon läuft
+                if (gameMode === 'ai') { displayCardsAI(); }
+                if (gameMode === 'multiplayer' && localGameState) { updateMultiplayerUI(localGameState); }
             });
         });
 
@@ -540,7 +606,7 @@
             const playerPercentage = total > 0 ? (playerCount / total) * 100 : 50;
             const statusBar = document.getElementById('statusBar');
             if (statusBar) {
-                statusBar.style.width = `${playerPercentage}%`;
+                statusBar.style.width = `${playerPercentage}%";
                 let color = '#f59e0b';
                 if (playerPercentage < 25) color = '#ef4444';
                 else if (playerPercentage < 45) color = '#f97316';
@@ -601,6 +667,14 @@
 
             const cardBack = document.createElement('div');
             cardBack.className = 'card-back rounded-xl shadow-lg border-2 border-amber-300 flex items-center justify-center relative overflow-hidden';
+
+            // Name des Gegners auf der Rückseite zeigen, falls aktiviert
+            if (!isPlayer && !isRevealed && window.revealOpponentName && cardName) {
+                const chip = document.createElement('div');
+                chip.className = 'back-name-chip';
+                chip.innerHTML = `<span title="${cardName}">${cardName}</span>`;
+                cardBack.appendChild(chip);
+            }
 
             card.appendChild(cardFront);
             card.appendChild(cardBack);
@@ -749,7 +823,7 @@
             if (aiGame.currentPlayerCard) { playerCardContainer.appendChild(createCard(aiGame.currentPlayerCard, true, true)); }
             else { playerCardContainer.innerHTML = `<div class="card-front bg-gray-200 ...">Keine Karte</div>`; }
             if (aiGame.currentAiCard) {
-                const revealAICard = aiGame.roundInProgress;
+                const revealAICard = aiGame.roundInProgress; // Front nur bei Ergebnis
                 aiCardContainer.appendChild(createCard(aiGame.currentAiCard, revealAICard, false));
             } else { aiCardContainer.innerHTML = `<div class="card-front bg-gray-200 ...">Keine Karte</div>`; }
         }
@@ -1059,17 +1133,11 @@
         };
 
         window.closeInfoModal = function() { document.getElementById('infoModal').classList.add('hidden'); };
-
-        const soundToggleButton = document.getElementById('soundToggle');
-        const savedMuteStatus = localStorage.getItem('holzquartett_isMuted');
-        let isMutedLocal = savedMuteStatus === 'true';
-        isMuted = isMutedLocal;
-        soundToggleButton.checked = !isMutedLocal;
-        soundToggleButton.addEventListener('change', (event) => {
-            isMuted = !event.target.checked;
-            localStorage.setItem('holzquartett_isMuted', isMuted);
-            if (!isMuted) { playSound(sounds.chime); }
-        });
     </script>
 </body>
 </html>
+"""
+with open("/mnt/data/holzquartett_reveal_mode.html", "w", encoding="utf-8") as f:
+    f.write(html)
+"/mnt/data/holzquartett_reveal_mode.html"
+
