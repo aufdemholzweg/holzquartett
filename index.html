@@ -1,1071 +1,736 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Holz-Quartett</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Holz-Quartett - Masterarbeit</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        wood: {
+                            100: '#f7eadd',
+                            300: '#d4b499',
+                            500: '#8c6b5d',
+                            700: '#5c4033',
+                            900: '#3e2723',
+                        }
+                    },
+                    animation: {
+                        'slide-up': 'slideUp 0.3s ease-out forwards',
+                        'star-fall': 'starFall 1s ease-out forwards',
+                    },
+                    keyframes: {
+                        slideUp: {
+                            '0%': { transform: 'translateY(100%)' },
+                            '100%': { transform: 'translateY(0)' },
+                        },
+                        starFall: {
+                            '0%': { transform: 'translateY(-50px) scale(0)', opacity: 0 },
+                            '50%': { opacity: 1, transform: 'scale(1.2)' },
+                            '100%': { transform: 'translateY(200px) scale(1)', opacity: 0 },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
-        body{font-family:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-weight:300}
-
-        .card-3d{transform-style:preserve-3d;transition:transform .6s}
-        .card-flipped{transform:rotateY(180deg)}
-        .card-front,.card-back{backface-visibility:hidden;position:absolute;width:100%;height:100%}
-        .card-back{transform:rotateY(180deg);background-image:url('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/65fd843a4db1ee434faaf81a32f77951a5afb72a/images/background_card.jpg');background-size:cover;background-position:center}
-
-        .animate-pop-in{animation:pop-in .5s ease-out forwards}
-        .animate-glow-win{animation:glow-win 1.2s ease-out}
-        .animate-glow-lose{animation:glow-lose 1.2s ease-out}
-        @keyframes pop-in{0%{transform:scale(0);opacity:0}70%{transform:scale(1.2);opacity:1}100%{transform:scale(1)}}
-        @keyframes glow-win{0%{box-shadow:0 0 0 0 rgba(74,222,128,0)}50%{box-shadow:0 0 30px 15px rgba(74,222,128,.6)}100%{box-shadow:0 0 0 0 rgba(74,222,128,0)}}
-        @keyframes glow-lose{0%{box-shadow:0 0 0 0 rgba(248,113,113,0)}50%{box-shadow:0 0 30px 15px rgba(248,113,113,.6)}100%{box-shadow:0 0 0 0 rgba(248,113,113,0)}}
-        .hover-lift:hover{transform:translateY(-4px);box-shadow:0 10px 25px rgba(0,0,0,.15)}
-        .status-flash-win{animation:flash-green 1.2s ease-out}
-        .status-flash-lose{animation:flash-red 1.2s ease-out}
-        @keyframes flash-green{50%{background-color:#22c55e;box-shadow:0 0 15px #22c55e}}
-        @keyframes flash-red{50%{background-color:#ef4444;box-shadow:0 0 15px #ef4444}}
-
-        .falling-star{position:absolute;font-size:7rem;z-index:100;animation:fall-and-fade 1.2s ease-in forwards}
-        @keyframes fall-and-fade{0%{transform:translateY(-30px) scale(1.5);opacity:0}30%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(var(--end-y)) scale(.3);opacity:0}}
-
-        .card-background{
-            background-image:url('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/e7cfc18394e2e7f2d0b91df1138b0d7bc7930699/images/background_front.jpg');
-            background-size:cover;background-position:center
+        /* Custom CSS für 3D Flip und Details */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; -webkit-tap-highlight-color: transparent; }
+        .perspective-1000 { perspective: 1000px; }
+        .transform-style-3d { transform-style: preserve-3d; }
+        .backface-hidden { backface-visibility: hidden; }
+        .rotate-y-180 { transform: rotateY(180deg); }
+        
+        /* Karten-Klassen */
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
+            transform-style: preserve-3d;
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .card-flipped .card-inner {
+            transform: rotateY(180deg);
         }
 
-        /* Name auf der Rückseite der Gegnerkarte (Top-Drittel), halb so groß wie vorher */
-        .opponent-back-name{
-            position:absolute;top:12%;left:0;width:100%;text-align:center;
-            font-family:Arial,Helvetica,sans-serif;color:#e5e7eb;font-weight:700;letter-spacing:.02em;line-height:1.1;z-index:2;
-            font-size:clamp(0.8rem,3vw,1.375rem); /* halbiert */
-            text-shadow:0 1px 2px rgba(0,0,0,.25);pointer-events:none;padding:0 .5rem
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 0.75rem;
+            overflow: hidden;
         }
 
-        /* Bottom-sheet dimmer (hell) */
-        .dimmer-light{background:rgba(0,0,0,0.2)}
-    
-        /* Tiny, almost invisible hotspot for Zusatzwissen on the card image */
-        .info-tiny-btn{
-            position:absolute;
-            top:2px;
-            right:2px;
-            width:6px;
-            height:6px;
-            border:none;
-            padding:0;
-            border-radius:9999px;
-            background:rgba(128,0,128,0.08); /* very faint */
-            z-index:10;
-            cursor:pointer;
-            outline:none;
+        .card-back {
+            transform: rotateY(180deg);
+            background-size: cover;
+            background-position: center;
         }
-        .info-tiny-btn:hover{ background:rgba(128,0,128,0.12); }
 
+        /* Scrollbar Hide */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Dimmer */
+        .dimmer { background: rgba(0,0,0,0.2); }
     </style>
 </head>
-<body class="bg-gradient-to-br from-amber-50 to-orange-100 min-h-screen">
-<header class="bg-white shadow-sm border-b-2 border-amber-200">
-    <div class="max-w-6xl mx-auto px-4 p-3">
-        <h1 class="text-2xl font-bold text-amber-800 text-center">🌳 HOLZEN! 🌳</h1>
-        <p class="text-xs text-gray-500 text-center mt-1">von Christopher Lehr, in Verbindung mit meiner Masterarbeit</p>
-    </div>
-</header>
+<body class="bg-wood-100 text-gray-800 h-screen w-screen overflow-hidden flex flex-col">
 
-<!-- Setup -->
-<div id="setupModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl text-center">
-        <h2 class="text-2xl font-bold text-amber-800 mb-6">Spielmodus wählen</h2>
-        <div class="space-y-4">
-            <button onclick="window.showNamePrompt('ai')" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors text-lg">🎮 gegen Computer</button>
-            <button onclick="window.showNamePrompt('multiplayer')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors text-lg">🧑‍🤝‍🧑 online gegen Freunde</button>
-        </div>
-
-        <!-- Toggles -->
-        <div class="mt-6 grid grid-cols-1 gap-4">
-            <div class="flex items-center justify-center space-x-3">
-                <span class="text-gray-700">🔇</span>
-                <label for="soundToggle" class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" id="soundToggle" class="sr-only peer">
-                    <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-2 peer-focus:ring-amber-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-600"></div>
-                </label>
-                <span class="text-gray-700">🔊</span>
-            </div>
-
-            <div class="flex items-center justify-center space-x-3">
-                <span class="text-gray-700">🙈 Gegner-Holz aus</span>
-                <label for="revealBackToggle" class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" id="revealBackToggle" class="sr-only peer">
-                    <div class="w-14 h-7 bg-gray-200 rounded-full peer peer-focus:ring-2 peer-focus:ring-blue-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-blue-600"></div>
-                </label>
-                <span class="text-gray-700">👀 Gegner-Holz an</span>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Name -->
-<div id="nameModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
-        <h2 class="text-2xl font-bold text-amber-800 mb-6 text-center">Dein Name</h2>
-        <div class="space-y-3">
+    <header class="bg-wood-900 text-white p-3 shadow-md z-20 flex-none">
+        <div class="flex justify-between items-center max-w-4xl mx-auto w-full">
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Bitte gib deinen Namen ein:</label>
-                <input type="text" id="playerName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent" placeholder="Spielername">
+                <h1 class="text-xl font-bold tracking-wider">🌳 HOLZEN! 🌳</h1>
+                <p class="text-xs text-wood-300 opacity-80">Masterarbeit Gamifizierung Support</p>
             </div>
-            <button id="nameSubmitButton" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">Weiter</button>
+            <button id="settings-btn" class="text-2xl hover:text-wood-300 transition" aria-label="Einstellungen">⚙️</button>
         </div>
-    </div>
-</div>
+    </header>
 
-<!-- Lobby -->
-<div id="multiplayerLobbyModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
-    <div class="bg-white rounded-xl p-8 max-w-lg w-full mx-4 shadow-2xl text-center">
-        <h2 id="lobbyTitle" class="text-2xl font-bold text-amber-800 mb-4">Warte auf Mitspieler...</h2>
-        <p id="lobbyText" class="text-gray-700 mb-6">Teile diesen Link mit deinem Freund, um das Spiel zu starten:</p>
-        <div class="bg-gray-100 p-3 rounded-lg border border-gray-300">
-            <input id="shareLink" type="text" class="w-full bg-transparent text-center text-blue-600" readonly>
-        </div>
-        <button onclick="window.copyShareLink()" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors">Link kopieren</button>
-        <p id="lobbyStatus" class="mt-6 text-green-600 font-semibold"></p>
-    </div>
-</div>
-
-<!-- Game -->
-<div id="gameContainer" class="hidden max-w-6xl mx-auto px-4 py-4 relative">
-    <div id="animationContainer" class="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden"></div>
-    <div class="max-w-md mx-auto mb-1 space-y-1">
-        <div class="flex justify-center space-x-2">
-            <div id="playerScoreBox" class="w-1/2 bg-white rounded-xl shadow-lg p-2 text-center relative">
-                <p id="playerNameDisplay" class="text-base font-bold text-amber-600 truncate"></p>
-                <p class="text-sm text-gray-500">Karten: <span id="playerCards" class="font-semibold">15</span></p>
+    <main id="game-area" class="flex-grow relative flex flex-col items-center justify-start p-2 sm:p-4 hidden overflow-y-auto no-scrollbar">
+        
+        <div class="w-full max-w-4xl mb-4 flex justify-between items-end relative">
+            <div id="player-stats" class="text-left font-bold text-wood-900 w-1/3">
+                <span id="player-name-display">Spieler</span>
+                <div class="text-xs font-normal">Karten: <span id="player-count">15</span></div>
             </div>
-            <div class="w-1/2 bg-white rounded-xl shadow-lg p-2 text-center">
-                <p id="opponentNameDisplay" class="text-base font-bold text-red-600">Computer</p>
-                <p class="text-sm text-gray-500">Karten: <span id="aiCards" class="font-semibold">15</span></p>
+            
+            <div id="turn-indicator" class="text-center font-bold text-sm bg-white/80 px-3 py-1 rounded-full shadow absolute left-1/2 transform -translate-x-1/2 -bottom-2 z-10">
+                Du bist am Zug!
+            </div>
+
+            <div id="ai-stats" class="text-right font-bold text-wood-900 w-1/3">
+                <span id="ai-name-display">Computer</span>
+                <div class="text-xs font-normal">Karten: <span id="ai-count">15</span></div>
             </div>
         </div>
-        <div class="w-full bg-gray-200 rounded-full h-4 relative overflow-hidden border border-gray-300">
-            <div id="statusBar" class="h-full rounded-l-full transition-all duration-500" style="width:50%;background-color:#f59e0b"></div>
-            <div class="absolute inset-0 flex justify-center items-center"><div class="w-0.5 h-full bg-white opacity-75"></div></div>
+
+        <div class="w-full max-w-4xl h-3 bg-gray-300 rounded-full mb-6 overflow-hidden shadow-inner">
+            <div id="health-bar" class="h-full bg-yellow-500 transition-all duration-500" style="width: 50%"></div>
+        </div>
+
+        <div class="flex justify-center items-start gap-2 sm:gap-6 w-full max-w-4xl h-full" style="min-height: 450px;">
+            
+            <div class="w-[48%] max-w-[280px] aspect-[20/38] perspective-1000 relative z-10 group">
+                <div id="star-container-player" class="absolute top-0 left-1/2 -translate-x-1/2 -mt-10 pointer-events-none z-50"></div>
+                
+                <div id="player-card" class="card-inner">
+                    <div class="card-front bg-white flex flex-col shadow-xl border-2 border-wood-300">
+                        <div class="relative h-[45%] p-2">
+                            <div class="absolute top-2 left-3 z-10 bg-black/60 text-white px-2 py-0.5 rounded text-sm font-bold shadow" id="p-card-name">Eiche</div>
+                            <img id="p-card-img" src="" class="w-full h-full object-cover rounded-xl shadow-sm bg-wood-100" alt="Holzbild">
+                        </div>
+                        <div class="flex-grow p-2 flex flex-col gap-1 overflow-y-auto" id="p-attributes">
+                            </div>
+                    </div>
+                    <div class="card-back bg-wood-700 border-4 border-white"></div>
+                </div>
+            </div>
+
+            <div class="w-[48%] max-w-[280px] aspect-[20/38] perspective-1000 relative z-0">
+                 <div id="star-container-ai" class="absolute top-0 left-1/2 -translate-x-1/2 -mt-10 pointer-events-none z-50"></div>
+
+                <div id="ai-card" class="card-inner card-flipped"> <div class="card-front bg-white flex flex-col shadow-xl border-2 border-wood-300">
+                         <div class="relative h-[45%] p-2">
+                            <div class="absolute top-2 left-3 z-10 bg-black/60 text-white px-2 py-0.5 rounded text-sm font-bold shadow" id="ai-card-name">Buche</div>
+                            <img id="ai-card-img" src="" class="w-full h-full object-cover rounded-xl shadow-sm bg-wood-100" alt="Holzbild">
+                        </div>
+                        <div class="flex-grow p-2 flex flex-col gap-1 overflow-y-auto" id="ai-attributes">
+                            </div>
+                    </div>
+                    <div class="card-back border-4 border-white flex items-start justify-center pt-10" 
+                         style="background-image: url('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/65fd843a4db1ee434faaf81a32f77951a5afb72a/images/background_card.jpg');">
+                        <div id="ai-back-name" class="hidden bg-white/90 text-wood-900 px-3 py-1 rounded font-bold shadow-lg mt-4 transform rotate-1">
+                            ???
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="round-result-text" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-black/80 text-white px-6 py-3 rounded-lg text-xl font-bold shadow-2xl z-40 hidden pointer-events-none text-center whitespace-nowrap">
+            </div>
+
+    </main>
+
+    <div id="bottom-sheet-dimmer" class="fixed inset-0 dimmer z-30 hidden transition-opacity duration-300 opacity-0"></div>
+    <div id="bottom-sheet" class="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-[0_-5px_20px_rgba(0,0,0,0.2)] z-40 transform translate-y-full transition-transform duration-300 ease-out p-6 pb-8 max-w-4xl mx-auto">
+        <h2 id="sheet-title" class="text-2xl font-bold text-center mb-4 text-wood-900">🎉 Du gewinnst!</h2>
+        <div class="flex gap-4">
+            <button id="btn-info" class="flex-1 bg-wood-300 hover:bg-wood-500 text-wood-900 font-bold py-3 px-4 rounded-xl transition shadow">
+                ℹ️ Zusatzwissen
+            </button>
+            <button id="btn-next" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-xl transition shadow">
+                Nächster Zug ➡️
+            </button>
         </div>
     </div>
 
-    <div class="flex justify-center space-x-2 sm:space-x-2 mb-4 max-w-md mx-auto">
-        <div class="text-center w-1/2"><div id="playerCard" class="relative aspect-[20/38] perspective-1000"></div></div>
-        <div class="text-center w-1/2"><div id="aiCard" class="relative aspect-[20/38] perspective-1000"></div></div>
-    </div>
+    <div id="setup-modal" class="fixed inset-0 bg-wood-900/90 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md text-center">
+            <h2 class="text-3xl font-bold text-wood-900 mb-2">🌳 HOLZEN!</h2>
+            <p class="text-gray-600 mb-6">Wähle deinen Spielmodus</p>
+            
+            <div class="space-y-3 mb-6">
+                <button onclick="Game.initSetup('ai')" class="w-full bg-wood-500 hover:bg-wood-700 text-white font-bold py-3 rounded-xl shadow transition flex items-center justify-center gap-2">
+                    🎮 Gegen Computer
+                </button>
+                <button onclick="Game.initSetup('multiplayer')" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 rounded-xl shadow transition flex items-center justify-center gap-2 opacity-70 cursor-not-allowed" title="Benötigt Firebase Config">
+                    🧑‍🤝‍🧑 Online (Demo)
+                </button>
+            </div>
 
-    <div class="bg-white rounded-xl shadow-lg px-1 pt-1 pb-0.5 mt-4 text-center mx-auto flex flex-col items-center max-w-md w-full min-h-[6rem]">
-        <div id="turnIndicator" class="hidden text-sm font-semibold p-1"></div>
-        <div id="attributeSelection"><h3 class="text-base font-semibold text-gray-700 mb-1">Wähle eine Eigenschaft!</h3></div>
-        <div id="resultDisplay" class="hidden flex flex-col flex-grow w-full px-2">
-            <h3 id="resultText" class="text-lg sm:text-xl font-bold"></h3>
-            <p id="resultDetails" class="text-xs sm:text-sm text-gray-600 mt-auto pb-0.5"></p>
-        </div>
-        <!-- Der alte "Nächster Zug"-Button im Hauptbereich entfällt, da jetzt das Bottom-Sheet verwendet wird. -->
-    </div>
-</div>
-
-<!-- Reflection -->
-<div id="reflectionModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
-    <div class="bg-white rounded-xl p-8 max-w-lg w-full mx-4 shadow-2xl text-center">
-        <h2 class="text-2xl font-bold text-amber-800 mb-4">🎉 Super gespielt! Zeit zum Reflektieren!</h2>
-        <p id="reflectionQuestion" class="text-gray-700 mb-6 text-left"></p>
-        <textarea id="reflectionAnswer" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent min-h-[100px]" placeholder="Deine Begründung..."></textarea>
-        <button onclick="window.showFinalWinScreen()" class="mt-6 w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">Weiter zum Ergebnis</button>
-    </div>
-</div>
-
-<!-- Game Over -->
-<div id="gameOverModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl text-center">
-        <h2 id="gameOverTitle" class="text-3xl font-bold mb-3"></h2>
-        <p id="gameOverText" class="text-gray-600 mb-6"></p>
-        <div class="space-y-2">
-            <button onclick="window.showLeaderboard()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg">🏆 Bestenliste anzeigen</button>
-            <button onclick="window.resetGame()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg">🔄 Neues Spiel</button>
+            <div class="border-t border-gray-200 pt-4 text-left space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="font-medium text-gray-700">Sound</span>
+                    <button id="toggle-sound" class="w-12 h-6 bg-green-500 rounded-full relative transition-colors duration-200" onclick="Game.toggleSetting('sound')">
+                        <div class="w-5 h-5 bg-white rounded-full absolute top-0.5 left-6 shadow transition-all duration-200 transform"></div>
+                    </button>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="font-medium text-gray-700">Gegner-Holz zeigen</span>
+                    <button id="toggle-names" class="w-12 h-6 bg-gray-300 rounded-full relative transition-colors duration-200" onclick="Game.toggleSetting('names')">
+                        <div class="w-5 h-5 bg-white rounded-full absolute top-0.5 left-1 shadow transition-all duration-200 transform"></div>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- Leaderboard -->
-<div id="leaderboardModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
-        <h2 class="text-2xl font-bold text-amber-800 mb-6 text-center">🏆 Bestenliste</h2>
-        <div id="leaderboardList" class="space-y-1 mb-6"></div>
-        <button onclick="window.closeLeaderboard()" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg">Schließen</button>
-    </div>
-</div>
-
-<!-- Info Modal (Zusatzwissen) -->
-<div id="infoModal" class="hidden fixed inset-0 dimmer-light flex items-center justify-center z-50 px-4">
-    <div class="bg-white rounded-xl p-6 max-w-lg w-full mx-4 shadow-2xl relative">
-        <button onclick="window.closeInfoModal()" class="absolute top-2 right-3 text-2xl text-gray-400 hover:text-gray-600">&times;</button>
-        <h2 id="infoModalTitle" class="text-2xl font-bold text-amber-800 mb-3">Zusatzwissen</h2>
-        <div id="infoModalContent" class="text-gray-700 space-y-2 max-h-[60vh] overflow-y-auto"></div>
-    </div>
-</div>
-
-<!-- Bottom-Sheet Ergebnis + Aktionen -->
-<div id="bottomSheetBackdrop" class="hidden fixed inset-0 dimmer-light z-40"></div>
-<div id="bottomSheet" class="hidden fixed left-0 right-0 bottom-0 z-50 flex justify-center px-4 pb-4">
-  <div class="bg-white rounded-t-2xl shadow-2xl border border-amber-200 w-full max-w-md p-4">
-    <h3 id="bottomSheetTitle" class="text-xl font-bold mb-2 text-center">Ergebnis</h3>
-    <div class="flex gap-3">
-        <button id="bsInfoBtn" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-3 rounded-lg">Zusatzwissen</button>
-        <button id="bsNextBtn" class="flex-1 bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2 px-3 rounded-lg">Nächster Zug</button>
-    </div>
-  </div>
-</div>
-
-<script type="module">
-/* Firebase */
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, deleteDoc, collection, query, orderBy, limit, getDocs, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCyRXl8-JPr1xTXPDi1VG-eQk6fOnTpqUI",
-  authDomain: "holzquartett-3a177.firebaseapp.com",
-  projectId: "holzquartett-3a177",
-  storageBucket: "holzquartett-3a177.appspot.com",
-  messagingSenderId: "1081595025073",
-  appId: "1:1081595025073:web:bc571fffb6e4f20b27f490",
-  measurementId: "G-HKLWFJE83K"
-};
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
-
-/* State */
-let gameMode=null, gameId=null, localPlayerId=null, unsubscribeGame=null, localGameState={}, hasCopiedShareLink=false;
-let isMuted=false;
-let roundSoundPlayed=false;
-
-/* Audio */
-const sounds={
-  flip:new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_139083c224.mp3'),
-  win:new Audio('https://github.com/aufdemholzweg/holzquartett/blob/894e048eea71ba49921abfe6827bd8dc723f8c2d/gewonnen.mp3?raw=true'),
-  chime:new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c744c8.mp3'),
-  starWin:new Audio('https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3')
-};
-sounds.flip.volume=.5; sounds.win.volume=.4; sounds.chime.volume=.6; sounds.starWin.volume=.7;
-
-function playSound(a){ if(isMuted) return; a.currentTime=0; a.play().catch(()=>{}); }
-
-/* Persistenz: Gegner-Holzname sichtbar? */
-function isOpponentNameBackVisible(){ return localStorage.getItem('holzquartett_showOpponentNameOnBack')==='true'; }
-function setOpponentNameBackVisible(v){ localStorage.setItem('holzquartett_showOpponentNameOnBack', v?'true':'false'); }
-
-/* Daten */
-const woodCards=[
- {name:"Eiche",dk:2,haerte:85,quellenSchwindenRadial:4.0,dichte:650,gewicht:12000},
- {name:"Buche",dk:5,haerte:80,quellenSchwindenRadial:5.8,dichte:720,gewicht:14000},
- {name:"Kiefer",dk:3,haerte:40,quellenSchwindenRadial:3.5,dichte:520,gewicht:11000},
- {name:"Fichte",dk:4,haerte:35,quellenSchwindenRadial:3.6,dichte:450,gewicht:11000},
- {name:"Tanne",dk:4,haerte:38,quellenSchwindenRadial:3.5,dichte:460,gewicht:10000},
- {name:"Lärche",dk:3,haerte:55,quellenSchwindenRadial:3.7,dichte:590,gewicht:12000},
- {name:"Birke",dk:5,haerte:60,quellenSchwindenRadial:5.4,dichte:650,gewicht:13000},
- {name:"Ahorn",dk:5,haerte:75,quellenSchwindenRadial:4.8,dichte:630,gewicht:12500},
- {name:"Esche",dk:5,haerte:90,quellenSchwindenRadial:4.9,dichte:700,gewicht:13000},
- {name:"Kirsche",dk:3,haerte:70,quellenSchwindenRadial:4.0,dichte:600,gewicht:11500},
- {name:"Nussbaum",dk:3,haerte:65,quellenSchwindenRadial:4.0,dichte:640,gewicht:12000},
- {name:"Douglasie",dk:3,haerte:45,quellenSchwindenRadial:3.5,dichte:510,gewicht:12000},
- {name:"Zeder",dk:2,haerte:42,quellenSchwindenRadial:2.8,dichte:480,gewicht:9500},
- {name:"Mahagoni",dk:2,haerte:55,quellenSchwindenRadial:3.0,dichte:550,gewicht:10500},
- {name:"Teak",dk:1,haerte:60,quellenSchwindenRadial:2.5,dichte:650,gewicht:11000},
- {name:"Bambus",dk:4,haerte:50,quellenSchwindenRadial:3.0,dichte:400,gewicht:18000},
- {name:"Pappel",dk:5,haerte:25,quellenSchwindenRadial:4.5,dichte:380,gewicht:9000},
- {name:"Weide",dk:5,haerte:30,quellenSchwindenRadial:4.0,dichte:420,gewicht:8000},
- {name:"Linde",dk:5,haerte:35,quellenSchwindenRadial:3.8,dichte:530,gewicht:9000},
- {name:"Ulme",dk:3,haerte:75,quellenSchwindenRadial:4.5,dichte:680,gewicht:11500},
- {name:"Kastanie",dk:2,haerte:50,quellenSchwindenRadial:3.5,dichte:600,gewicht:10000},
- {name:"Robinie",dk:1,haerte:80,quellenSchwindenRadial:3.0,dichte:730,gewicht:15000},
- {name:"Hemlock",dk:4,haerte:40,quellenSchwindenRadial:3.6,dichte:500,gewicht:10000},
- {name:"Zypresse",dk:2,haerte:48,quellenSchwindenRadial:3.0,dichte:520,gewicht:9000},
- {name:"Redwood",dk:2,haerte:35,quellenSchwindenRadial:2.8,dichte:400,gewicht:8500},
- {name:"Hickory",dk:3,haerte:95,quellenSchwindenRadial:5.5,dichte:750,gewicht:14000},
- {name:"Wenge",dk:2,haerte:88,quellenSchwindenRadial:3.8,dichte:880,gewicht:16000},
- {name:"Zebrano",dk:3,haerte:70,quellenSchwindenRadial:4.0,dichte:750,gewicht:13000},
- {name:"Palisander",dk:2,haerte:82,quellenSchwindenRadial:3.0,dichte:850,gewicht:16000},
- {name:"Ebenholz",dk:1,haerte:98,quellenSchwindenRadial:3.2,dichte:1200,gewicht:16500}
-];
-
-const woodInfo = {
- "Eiche": { info: `Eiche (QE) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/eiche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/eiche_2.jpg?raw=true" },
- "Buche": { info: `Buche (BU) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/buche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/buche_2.jpg?raw=true" },
- "Kiefer": { info: `Kiefer (KI) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kiefer_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kiefer_2.jpg?raw=true" },
- "Fichte": { info: `Fichte (FI) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/fichte_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/fichte_2.jpg?raw=true" },
- "Tanne": { info: `Tanne (TA) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/tanne_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/tanne_2.jpg?raw=true" },
- "Lärche": { info: `Lärche (LA) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/laerche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/laerche_2.jpg?raw=true" },
- "Birke": { info: `Birke (BI) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/birke_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/birke_2.jpg?raw=true" },
- "Ahorn": { info: `Ahorn (AM) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ahorn_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ahorn_2.jpg?raw=true" },
- "Esche": { info: `Esche (ES) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/esche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/esche_2.jpg?raw=true" },
- "Kirsche": { info: `Kirsche (KR) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kirsche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kirsche_2.jpg?raw=true" },
- "Nussbaum": { info: `Nussbaum (NU) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/nussbaum_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/nussbaum_2.jpg?raw=true" },
- "Douglasie": { info: `Douglasie (DO) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/douglasie_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/douglasie_2.jpg?raw=true" },
- "Zeder": { info: `Zeder (ZE) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zeder_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zeder_2.jpg?raw=true" },
- "Mahagoni": { info: `Mahagoni (MA) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/mahagoni_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/mahagoni_2.jpg?raw=true" },
- "Teak": { info: `Teak (TE) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/teak_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/teak_2.jpg?raw=true" },
- "Bambus": { info: `Bambus (BA) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/bambus_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/bambus_2.jpg?raw=true" },
- "Pappel": { info: `Pappel (PA) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/pappel_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/pappel_2.jpg?raw=true" },
- "Weide": { info: `Weide (WE) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/weide_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/weide_2.jpg?raw=true" },
- "Linde": { info: `Linde (LI) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/linde_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/linde_2.jpg?raw=true" },
- "Ulme": { info: `Ulme (UL) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ulme_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ulme_2.jpg?raw=true" },
- "Kastanie": { info: `Kastanie (KA) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kastanie_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/kastanie_2.jpg?raw=true" },
- "Robinie": { info: `Robinie (RO) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/robinie_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/robinie_2.jpg?raw=true" },
- "Hemlock": { info: `Hemlock (HE) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/hemlock_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/hemlock_2.jpg?raw=true" },
- "Zypresse": { info: `Zypresse (ZY) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zypresse_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zypresse_2.jpg?raw=true" },
- "Redwood": { info: `Redwood (RW) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/redwood_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/redwood_2.jpg?raw=true" },
- "Hickory": { info: `Hickory (HI) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/hickory_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/hickory_2.jpg?raw=true" },
- "Wenge": { info: `Wenge (WE-NE) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/wenge_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/wenge_2.jpg?raw=true" },
- "Zebrano": { info: `Zebrano (ZE-RA) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zebrano_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zebrano_2.jpg?raw=true" },
- "Palisander": { info: `Palisander (PA) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/palisander_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/palisander_2.jpg?raw=true" },
- "Ebenholz": { info: `Ebenholz (EB) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ebenholz_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ebenholz_2.jpg?raw=true" }
-};
-
-const reflectionQuestions=[
- "Stell dir vor, du sollst einen stabilen und langlebigen Esstisch ...",
- "Welches Holz würdest du für Gartenmöbel wählen ...",
- "Eine Küchenarbeitsplatte muss schnittfest ...",
- "Für einen stark beanspruchten Dielenboden ...",
- "Du sollst den Korpus einer Akustikgitarre bauen ...",
- "Fenster sind wechselnder Luftfeuchte ausgesetzt ...",
- "Für ein Modellflugzeug oder ein leichtes Regal ...",
- "Robinie vs. Lärche im Außenbereich ...",
- "Gebogener Handlauf, welches Holz ...",
- "Vergleiche Rohdichte und E-Modul Fichte/Eiche ...",
- "Hohe Quell-/Schwindmaße, Risiken ...",
- "Hammerstiel: Eigenschaften ...",
- "Eiche + Eisen → Verfärbungen, warum ...",
- "Weiche Hölzer und Oberflächen ...",
- "Furniere: dekorative Hölzer ...",
- "Drei heimische Hölzer mit Eigenschaften ...",
- "Holz als CO₂-Speicher ...",
- "FSC/PEFC Bedeutung ...",
- "Teak DK 1 – Einsatz ...",
- "Bambus ist ein Gras – Konsequenzen ...",
- "Upcycling alter Eichenbalken ...",
- "Starker Hell-Dunkel-Kontrast: Kombis ...",
- "Eiche/Esche: ringporig – Optik ...",
- "Kinderspielzeug: Kriterien ...",
- "Kirsche/Lärche: Nachdunkeln ...",
- "Minimalistisches Möbel: Ahorn/Birke ...",
- "Rustikale Almhütte: welche Hölzer ...",
- "Schülerprojekt: Werkstückidee ...",
- "Terrasse: Robinie vs. Lärche ...",
- "Welche Eigenschaft ist spielentscheidend ...",
- "Neue Kategorie vorschlagen und begründen ..."
-];
-
-const attributeInfo={
-  dk:{icon:'🛡️',name:'Dauerhaftigkeit (DK)',color:'blue'},
-  haerte:{icon:'💎',name:'Druckfestigkeit (N/mm²)',color:'blue'},
-  quellenSchwindenRadial:{icon:'↔️',name:'Quellen/Schwinden (%)',color:'blue'},
-  dichte:{icon:'⚖️',name:'Rohdichte (kg/m³)',color:'blue'},
-  gewicht:{icon:'🏋️',name:'E-Modul (N/mm²)',color:'blue'}
-};
-
-/* AI-Modus */
-let aiGame={playerName:'',playerCards:[],aiCards:[],currentPlayerCard:null,currentAiCard:null,roundInProgress:false,turn:'player'};
-
-/* Bottom-Sheet helpers */
-const bottomSheet = document.getElementById('bottomSheet');
-const bottomSheetBackdrop = document.getElementById('bottomSheetBackdrop');
-const bsTitle = document.getElementById('bottomSheetTitle');
-const bsInfoBtn = document.getElementById('bsInfoBtn');
-const bsNextBtn = document.getElementById('bsNextBtn');
-
-function openBottomSheet(title){
-  bsTitle.textContent = title || 'Ergebnis';
-  bottomSheetBackdrop.classList.remove('hidden');
-  bottomSheet.classList.remove('hidden');
-}
-function closeBottomSheet(){
-  bottomSheetBackdrop.classList.add('hidden');
-  bottomSheet.classList.add('hidden');
-}
-
-/* Init */
-document.addEventListener('DOMContentLoaded',async()=>{
-  try{await signInAnonymously(auth);}catch(e){console.error(e)}
-  onAuthStateChanged(auth,(user)=>{
-    if(user){
-      localPlayerId=user.uid;
-      const p=new URLSearchParams(window.location.search);
-      const gid=p.get('game');
-      if(gid){gameId=gid;gameMode='multiplayer';window.showNamePrompt('join');}
-    }
-  });
-
-  // Sound toggle
-  const soundToggle=document.getElementById('soundToggle');
-  const savedMute=localStorage.getItem('holzquartett_isMuted');
-  isMuted=savedMute==='true';
-  soundToggle.checked=!isMuted;
-  soundToggle.addEventListener('change',(e)=>{
-    isMuted=!e.target.checked;
-    localStorage.setItem('holzquartett_isMuted',isMuted);
-    if(!isMuted) playSound(sounds.chime);
-  });
-
-  // Opponent back name toggle
-  const revealToggle=document.getElementById('revealBackToggle');
-  revealToggle.checked=isOpponentNameBackVisible();
-  revealToggle.addEventListener('change',e=>{
-    setOpponentNameBackVisible(e.target.checked);
-    if(gameMode==='ai') displayCardsAI();
-    if(gameMode==='multiplayer'&&localGameState) displayMultiplayerCards(localGameState);
-  });
-
-  // Bottom-sheet button handlers
-  bsInfoBtn.addEventListener('click',()=>{
-    closeBottomSheet();
-    // open info modal for the winning card (if available)
-    const currentCardName = lastRoundWinningWoodName || aiGame.currentPlayerCard?.name || 'Holzart';
-    window.showWoodInfo(currentCardName);
-  });
-  bsNextBtn.addEventListener('click',()=>{
-    closeBottomSheet();
-    window.nextRound();
-  });
-});
-
-/* Unload */
-window.addEventListener('beforeunload',async()=>{
-  if(gameMode==='multiplayer'&&gameId&&localPlayerId){
-    try{await updateDoc(doc(db,"games",gameId),{[`players.${localPlayerId}.status`]:"offline"});}catch{}
-  }
-});
-
-/* UI Controller */
-window.showNamePrompt=(mode)=>{
-  document.getElementById('setupModal').classList.add('hidden');
-  const nameModal=document.getElementById('nameModal');
-  nameModal.classList.remove('hidden');
-  const btn=document.getElementById('nameSubmitButton');
-  const clone=btn.cloneNode(true);
-  btn.parentNode.replaceChild(clone,btn);
-  clone.addEventListener('click',()=>{
-    const playerName=document.getElementById('playerName').value.trim();
-    if(!playerName){alert('Bitte gib deinen Namen ein!');return;}
-    nameModal.classList.add('hidden');
-    if(mode==='ai'){gameMode='ai';startGameAI(playerName);}
-    else if(mode==='multiplayer'){gameMode='multiplayer';createGame(playerName);}
-    else if(mode==='join'){joinGame(gameId,playerName);}
-  });
-};
-
-window.copyShareLink=async()=>{
-  const el=document.getElementById('shareLink');
-  try{await navigator.clipboard.writeText(el.value);}catch{el.select();document.execCommand('copy');}
-  hasCopiedShareLink=true;
-  const s=document.getElementById('lobbyStatus'); if(s) s.textContent='Link kopiert. Warte auf Mitspieler...';
-  if(localGameState&&(localGameState.status==='playing'||localGameState.status==='finished')){
-    document.getElementById('multiplayerLobbyModal').classList.add('hidden');
-    document.getElementById('gameContainer').classList.remove('hidden');
-    updateMultiplayerUI(localGameState);
-  }
-};
-
-/* Multiplayer minimal (wie in deiner Fassung) */
-async function createGame(playerName){
-  const lobby=document.getElementById('multiplayerLobbyModal');
-  lobby.classList.remove('hidden');
-  hasCopiedShareLink=false;
-  gameId=Math.random().toString(36).substring(2,8).toUpperCase();
-  const base=window.location.href.split('?')[0];
-  document.getElementById('shareLink').value=`${base}?game=${gameId}`;
-  const ref=doc(db,"games",gameId);
-  const data={gameId,status:'waiting',playerIds:[localPlayerId],players:{[localPlayerId]:{name:playerName,cards:[],status:'online'}},createdAt:serverTimestamp()};
-  try{await setDoc(ref,data);listenToGameChanges();}catch(e){alert("Fehler beim Erstellen des Spiels.");}
-}
-
-async function joinGame(id,playerName){
-  const ref=doc(db,"games",id);
-  try{
-    const snap=await getDoc(ref);
-    if(snap.exists()&&snap.data().status==='waiting'&&snap.data().playerIds.length===1){
-      document.getElementById('lobbyTitle').textContent="Spiel wird beigetreten...";
-      document.getElementById('lobbyText').textContent="Moment, die Karten werden gemischt.";
-      document.getElementById('multiplayerLobbyModal').classList.remove('hidden');
-      hasCopiedShareLink=true;
-      const shuffled=shuffleArray([...woodCards]);
-      const p1=snap.data().playerIds[0];
-      const p1Cards=shuffled.slice(0,15);
-      const p2Cards=shuffled.slice(15,30);
-      await updateDoc(ref,{
-        status:'playing',
-        playerIds:[p1,localPlayerId],
-        [`players.${localPlayerId}`]:{name:playerName,cards:p2Cards,status:'online'},
-        [`players.${p1}.cards`]:p1Cards,
-        turn:p1,
-        currentCards:{[p1]:p1Cards[0],[localPlayerId]:p2Cards[0]},
-        lastResult:null,
-        lastActivity:serverTimestamp()
-      });
-      listenToGameChanges();
-    }else{
-      alert("Spiel nicht gefunden, bereits voll oder beendet."); window.location.search='';
-    }
-  }catch(e){alert("Fehler beim Beitreten zum Spiel."); window.location.search='';}
-}
-
-function listenToGameChanges(){
-  if(!gameId) return;
-  const ref=doc(db,"games",gameId);
-  unsubscribeGame=onSnapshot(ref,(ds)=>{
-    if(!ds.exists()){ if(gameMode==='multiplayer'){alert("Das Spiel wurde beendet oder gelöscht."); resetGame();} return; }
-    const gameData=ds.data(); localGameState=gameData;
-    if(gameData.status==='playing'||gameData.status==='finished'){
-      if(hasCopiedShareLink || (gameData.playerIds.includes(localPlayerId)&&gameData.playerIds.length===2)){
-        document.getElementById('multiplayerLobbyModal').classList.add('hidden');
-        document.getElementById('gameContainer').classList.remove('hidden');
-        updateMultiplayerUI(gameData);
-      }else if(!hasCopiedShareLink && gameData.playerIds.length===2){
-        const s=document.getElementById('lobbyStatus'); if(s) s.textContent='Mitspieler ist beigetreten! Klicke „Link kopieren“, um zu starten.';
-      }
-    }else if(gameData.status==='waiting'){
-      document.getElementById('multiplayerLobbyModal').classList.remove('hidden');
-      document.getElementById('gameContainer').classList.add('hidden');
-    }
-  },(e)=>console.error(e));
-}
-
-function updateMultiplayerUI(gameData){
-  if(!gameData||!gameData.players||!gameData.playerIds) return;
-  const oppId=gameData.playerIds.find(id=>id!==localPlayerId);
-  document.getElementById('playerNameDisplay').textContent=gameData.players[localPlayerId]?.name||'Du';
-  document.getElementById('playerCards').textContent=gameData.players[localPlayerId]?.cards?.length??'?';
-  if(oppId && gameData.players[oppId]){
-    document.getElementById('opponentNameDisplay').textContent=gameData.players[oppId].name;
-    document.getElementById('aiCards').textContent=gameData.players[oppId].cards?.length??'?';
-  }else{
-    document.getElementById('opponentNameDisplay').textContent="Wartet...";
-    document.getElementById('aiCards').textContent='-';
-  }
-  updateStatusBar(gameData.players[localPlayerId]?.cards?.length??0, gameData.players[oppId]?.cards?.length??0);
-  displayMultiplayerCards(gameData);
-
-  const turnIndicator=document.getElementById('turnIndicator');
-  const attributeSelection=document.getElementById('attributeSelection');
-  const resultDisplay=document.getElementById('resultDisplay');
-  turnIndicator.classList.remove('hidden');
-
-  if(gameData.lastResult){
-    if(!roundSoundPlayed){ roundSoundPlayed=true; playSound(sounds.flip); if(gameData.lastResult.winnerId===localPlayerId) playSound(sounds.win); }
-    attributeSelection.classList.add('hidden'); resultDisplay.classList.remove('hidden');
-    const {winnerId,attribute,values}=gameData.lastResult;
-    const oppActualId=oppId||'opponent';
-    const winnerName=winnerId===localPlayerId?'Du':(winnerId==='tie'?'':(gameData.players[winnerId]?.name||'Gegner'));
-    document.getElementById('resultText').textContent = winnerId==='tie' ? '🤝 Unentschieden!' : (winnerId===localPlayerId?`🎉 ${winnerName} gewinnt!`:`😞 ${winnerName} gewinnt!`);
-    document.getElementById('resultDetails').textContent = `${attributeInfo[attribute]?.name.split(' (')[0]||attribute}: ${values[localPlayerId]?.toLocaleString('de-DE')??'?'} vs ${values[oppActualId]?.toLocaleString('de-DE')??'?'}`;  /* highlight injected */  window.scrollTo({top:0,behavior:'smooth'});
-  }else{
-    roundSoundPlayed=false; resultDisplay.classList.add('hidden');
-    if(gameData.turn===localPlayerId){ turnIndicator.textContent="Du bist am Zug!"; turnIndicator.className='text-sm font-semibold p-1 text-green-600'; attributeSelection.classList.remove('hidden'); }
-    else{ turnIndicator.textContent=`${gameData.players[gameData.turn]?.name||'Gegner'} ist am Zug...`; turnIndicator.className='text-sm font-semibold p-1 text-gray-500'; attributeSelection.classList.add('hidden'); }
-  }
-
-  if(gameData.status==='finished'){ endGame(); }
-}
-
-function updateStatusBar(p, o){
-  const total=p+o; const perc= total>0 ? (p/total)*100 : 50;
-  const el=document.getElementById('statusBar');
-  el.style.width=`${perc}%`;
-  let c='#f59e0b';
-  if(perc<25)c='#ef4444'; else if(perc<45)c='#f97316'; else if(perc>75)c='#22c55e'; else if(perc>55)c='#84cc16';
-  el.style.backgroundColor=c;
-}
-
-/* Karten */
-function createCard(cardData,isRevealed=true,isPlayer=true){
-  const card=document.createElement('div');
-  card.className=`card-3d w-full h-full relative ${isPlayer?'cursor-pointer hover-lift':''} transition-all duration-300`;
-  if(!isRevealed) card.classList.add('card-flipped');
-
-  const borderColor=isPlayer?'border-amber-400':'border-gray-300';
-  const shadow=isPlayer?'shadow-lg':'shadow-md';
-
-  const front=document.createElement('div');
-  front.className=`card-front card-background rounded-xl ${shadow} border-2 ${borderColor} p-2 sm:p-3 flex flex-col overflow-hidden`;
-
-  const canSelect=isPlayer && ((gameMode==='ai' && !aiGame.roundInProgress && aiGame.turn==='player') || (gameMode==='multiplayer' && localGameState?.turn===localPlayerId && !localGameState?.lastResult));
-  const showInfoBtn=isPlayer && ((gameMode==='ai' && aiGame.roundInProgress) || (gameMode==='multiplayer' && !!localGameState?.lastResult));
-
-  const cardName=cardData?.name||'Unbekannt';
-  const safeId=(cardName||'').replace(/[^a-zA-Z0-9]/g,'-')||'unknown';
-
-  const wi=woodInfo[cardName]||{};
-  const treeImg=wi.bildBaum||'https://placehold.co/160x120/d1d5db/374151?text=?';
-
-  // Bild jetzt doppelt so groß, rechteckig mit abgerundeten Ecken
-  const headerRight = `
-    <div class="flex-shrink-0 relative w-24 h-16 sm:w-28 sm:h-20">
-      <img src="${treeImg}" alt="${cardName}" id="wood-image-icon-${safeId}" class="absolute inset-0 w-full h-full object-cover rounded-xl border-2 border-amber-200">
-      <button id="player-info-button-${safeId}" onclick="window.showWoodInfo('${cardName.replace(/'/g,"\'")}')" class="${showInfoBtn ? 'info-tiny-btn' : 'hidden'}" aria-label="Zusatzwissen"></button>
-    </div>`;
-
-  let attrs='<div class="space-y-1 mt-auto">';
-  for(const key in attributeInfo){
-    const a=attributeInfo[key];
-    const v=cardData?.[key]??'?';
-    const fv=typeof v==='number'?v.toLocaleString('de-DE'):v;
-    const unit=a.name.match(/\(([^)]+)\)/);
-    const unitText=unit?`<span class="block text-[10px] sm:text-xs text-gray-500 leading-tight">(${unit[1]})</span>`:'';
-    const label=(key==='quellenSchwindenRadial')?'Quellen/Schw.':a.name.replace(/\s*\(([^)]+)\)/,'');
-    const baseBg=canSelect?'bg-amber-100':'bg-amber-50';
-    const hov=canSelect?'hover:bg-amber-200':'';
-    const border=canSelect?'border-amber-600':'border-amber-300';
-    const txt=canSelect?'text-amber-700':'text-amber-800';
-    const common=`w-full flex justify-between items-center py-0.5 sm:py-1 px-1 rounded-lg text-left border ${border} ${baseBg}`;
-    if(canSelect){
-      attrs+=`<button data-attr="${key}" onclick="window.selectAttribute(\'${key}\')" class="${common} ${hov} transition-colors"><div class="flex items-center space-x-1 sm:space-x-2"><span class="text-xs sm:text-sm">${a.icon}</span><div><span class="text-[11px] sm:text-xs font-medium leading-tight">${label}</span>${unitText}</div></div><span class="font-semibold ${txt} text-sm sm:text-base">${fv}</span></button>`;
-    }else{
-      attrs+=`<div data-attr="${key}" class="${common}"><div class="flex items-center space-x-1 sm:space-x-2"><span class="text-xs sm:text-sm">${a.icon}</span><div><span class="text-[11px] sm:text-xs font-medium leading-tight text-gray-700">${label}</span>${unitText}</div></div><span class="font-semibold ${txt} text-sm sm:text-base">${fv}</span></div>`;
-    }
-  }
-  attrs+='</div>';
-
-  // Header mit dynamischer Mindesthöhe, damit das größere Bild Platz hat
-  front.innerHTML=`
-    <div class="flex justify-between items-center w-full mb-2 px-1 min-h-[72px] sm:min-h-[84px]">
-      <h3 class="text-base sm:text-lg font-bold text-amber-800 truncate text-left mr-2">${cardName}</h3>
-      ${headerRight}
-    </div>
-    ${attrs}`;
-
-  const back=document.createElement('div');
-  back.className='card-back rounded-xl shadow-lg border-2 border-amber-300 flex items-center justify-center relative overflow-hidden';
-
-  // Gegner-Holzname auf Rückseite zeigen, falls eingestellt
-  if(!isRevealed && !isPlayer && isOpponentNameBackVisible()){
-    const label=document.createElement('div');
-    label.className='opponent-back-name';
-    label.textContent=cardName;
-    back.appendChild(label);
-  }
-
-  card.appendChild(front); card.appendChild(back);
-  return card;
-}
-
-/* === Attribute highlight helpers === */
-function clearAttributeHighlights(){
-  document.querySelectorAll('#playerCard [data-attr], #aiCard [data-attr]').forEach(el=>{
-    el.classList.remove('bg-gray-300');
-  });
-}
-function highlightChosenAttribute(attr){
-  ['#playerCard','#aiCard'].forEach(rootSel=>{
-    const root=document.querySelector(rootSel);
-    if(!root) return;
-    const el=root.querySelector(`[data-attr="${attr}"]`);
-    if(el) el.classList.add('bg-gray-300');
-  });
-}
-/* === end highlight helpers === */
-
-
-
-function displayMultiplayerCards(gameData){
-  if(!gameData.currentCards||!gameData.playerIds) return;
-  const opp=gameData.playerIds.find(id=>id!==localPlayerId);
-  const pc=document.getElementById('playerCard');
-  const ac=document.getElementById('aiCard');
-  pc.innerHTML=''; ac.innerHTML='';
-  const showOpp=!!gameData.lastResult;
-
-  if(gameData.currentCards[localPlayerId]) pc.appendChild(createCard(gameData.currentCards[localPlayerId],true,true));
-  else pc.innerHTML=`<div class="card-front bg-gray-200 ...">Warte auf Karte...</div>`;
-
-  if(opp && gameData.currentCards[opp]){
-    ac.appendChild(createCard(gameData.currentCards[opp],showOpp,false));
-  }else if(gameData.playerIds.length<2){
-    ac.innerHTML=`<div class="card-front bg-gray-200 ...">Wartet auf Spieler 2...</div>`;
-  }else{
-    const dummy={name:"Gegner",dk:'?',haerte:'?',quellenSchwindenRadial:'?',dichte:'?',gewicht:'?'};
-    ac.appendChild(createCard(dummy,false,false));
-  }
-}
-
-/* Multiplayer Aktionen */
-async function multiplayerSelectAttribute(attribute){
-  if(!localGameState || localGameState.turn!==localPlayerId || localGameState.lastResult || !attributeInfo[attribute]) return;
-  const pc=localGameState.currentCards?.[localPlayerId];
-  const opp=localGameState.playerIds?.find(id=>id!==localPlayerId);
-  if(!opp || !localGameState.currentCards?.[opp]) return;
-  const oc=localGameState.currentCards[opp];
-  const pv=pc?.[attribute], ov=oc?.[attribute];
-  if(pv===undefined||ov===undefined) return;
-
-  let pWins;
-  if(attribute==='quellenSchwindenRadial' || attribute==='dk'){ pWins = pv<ov ? true : (ov<pv ? false : 'tie'); }
-  else{ pWins = pv>ov ? true : (ov>pv ? false : 'tie'); }
-  const winner = pWins==='tie' ? 'tie' : (pWins ? localPlayerId : opp);
-  try{
-    await updateDoc(doc(db,"games",gameId),{lastResult:{winnerId:winner,attribute,values:{[localPlayerId]:pv,[opp]:ov}},lastActivity:serverTimestamp()});
-  }catch(e){console.error(e)}
-}
-
-async function multiplayerNextRound(){
-  clearAttributeHighlights(); const pf=document.getElementById('playerCard')?.querySelector('.card-front'); if(pf) pf.classList.remove('animate-glow-win','animate-glow-lose');
-  const af=document.getElementById('aiCard')?.querySelector('.card-front'); if(af) af.classList.remove('animate-glow-win','animate-glow-lose');
-  document.querySelectorAll('#playerCard .space-y-1 > *, #aiCard .space-y-1 > *').forEach(e=>e.classList.remove('bg-yellow-200','bg-gray-300'));
-  if(!localGameState || !localGameState.lastResult || !gameId) return;
-
-  const gs=localGameState;
-  const [p1,p2]=gs.playerIds;
-  let p1Cards=[...gs.players[p1].cards], p2Cards=[...gs.players[p2].cards];
-  if(p1Cards.length===0&&p2Cards.length===0 && gs.status!=='finished'){
-    await updateDoc(doc(db,"games",gameId),{status:'finished',lastResult:null}); return;
-  }
-  const c1=p1Cards.shift(), c2=p2Cards.shift();
-  if(gs.lastResult.winnerId===p1){ if(c1) p1Cards.push(c1); if(c2) p1Cards.push(c2); }
-  else if(gs.lastResult.winnerId===p2){ if(c1) p2Cards.push(c1); if(c2) p2Cards.push(c2); }
-  else { if(c1) p1Cards.push(c1); if(c2) p2Cards.push(c2); }
-
-  if(p1Cards.length===0 || p2Cards.length===0){
-    await updateDoc(doc(db,"games",gameId),{status:'finished',players:{[p1]:{...gs.players[p1],cards:p1Cards},[p2]:{...gs.players[p2],cards:p2Cards}},currentCards:{[p1]:null,[p2]:null},lastResult:null});
-    return;
-  }
-  const nextTurn = gs.lastResult.winnerId==='tie' ? gs.turn : gs.lastResult.winnerId;
-  await updateDoc(doc(db,"games",gameId),{
-    lastResult:null,turn:nextTurn,
-    players:{[p1]:{...gs.players[p1],cards:p1Cards},[p2]:{...gs.players[p2],cards:p2Cards}},
-    currentCards:{[p1]:p1Cards[0]||null,[p2]:p2Cards[0]||null},
-    lastActivity:serverTimestamp()
-  });
-}
-
-/* Controller */
-window.selectAttribute=function(attr){ if(gameMode==='ai') selectAttributeAI(attr); else if(gameMode==='multiplayer') multiplayerSelectAttribute(attr); };
-window.nextRound=function(){ if(gameMode==='ai') nextRoundAI(); else if(gameMode==='multiplayer') multiplayerNextRound(); };
-
-/* Helpers */
-function shuffleArray(a){const s=[...a]; for(let i=s.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [s[i],s[j]]=[s[j],s[i]];} return s;}
-
-/* AI Flow */
-let lastRoundWinningWoodName = null;
-
-function startGameAI(name){
-  aiGame.playerName=name;
-  document.getElementById('playerNameDisplay').textContent=name;
-  document.getElementById('opponentNameDisplay').textContent='Computer';
-  const sh=shuffleArray(woodCards);
-  aiGame.playerCards=sh.slice(0,15);
-  aiGame.aiCards=sh.slice(15,30);
-  aiGame.currentPlayerCard=aiGame.playerCards[0];
-  aiGame.currentAiCard=aiGame.aiCards[0];
-  aiGame.roundInProgress=false;
-  aiGame.turn='player';
-  document.getElementById('attributeSelection').classList.remove('hidden');
-  document.getElementById('resultDisplay').classList.add('hidden');
-  document.getElementById('turnIndicator').classList.remove('hidden');
-  document.getElementById('gameContainer').classList.remove('hidden');
-  window.scrollTo(0,0);
-  updateDisplayAI(); displayCardsAI();
-}
-
-function displayCardsAI(){
-  const pc=document.getElementById('playerCard');
-  const ac=document.getElementById('aiCard');
-  pc.innerHTML=''; ac.innerHTML='';
-  if(aiGame.currentPlayerCard) pc.appendChild(createCard(aiGame.currentPlayerCard,true,true)); else pc.innerHTML=`<div class="card-front bg-gray-200 ...">Keine Karte</div>`;
-  if(aiGame.currentAiCard){
-    const reveal=aiGame.roundInProgress;
-    ac.appendChild(createCard(aiGame.currentAiCard,reveal,false));
-  }else ac.innerHTML=`<div class="card-front bg-gray-200 ...">Keine Karte</div>`;
-}
-
-function selectAttributeAI(attribute){
-  if(aiGame.roundInProgress || aiGame.turn!=='player' || !aiGame.currentPlayerCard || !aiGame.currentAiCard || !attributeInfo[attribute]) return;
-  aiGame.roundInProgress=true;
-  const pv=aiGame.currentPlayerCard[attribute];
-  const av=aiGame.currentAiCard[attribute];
-  if(pv===undefined||av===undefined){ aiGame.roundInProgress=false; return; }
-
-  // KI-Karte aufdecken (Flip-Animation)
-  const aiCardEl=document.getElementById('aiCard').querySelector('.card-3d');
-  if(aiCardEl){ aiCardEl.classList.remove('card-flipped'); playSound(sounds.flip); }
-
-  let pWins;
-  if(attribute==='quellenSchwindenRadial' || attribute==='dk'){ pWins = pv<av ? true : (av<pv ? false : 'tie'); }
-  else{ pWins = pv>av ? true : (av>pv ? false : 'tie'); }
-
-  const pMove=aiGame.playerCards.shift(), aMove=aiGame.aiCards.shift();
-  let nextTurn=aiGame.turn;
-  let resultTitle = '🤝 Unentschieden!';
-  if(pWins===true){ if(pMove) aiGame.playerCards.push(pMove); if(aMove) aiGame.playerCards.push(aMove); nextTurn='player'; resultTitle='🎉 Du gewinnst!'; lastRoundWinningWoodName = aiGame.currentPlayerCard.name; }
-  else if(pWins===false){ if(aMove) aiGame.aiCards.push(aMove); if(pMove) aiGame.aiCards.push(pMove); nextTurn='ai'; resultTitle='😞 KI gewinnt!'; lastRoundWinningWoodName = aiGame.currentAiCard.name; }
-  else { if(pMove) aiGame.playerCards.push(pMove); if(aMove) aiGame.aiCards.push(aMove); lastRoundWinningWoodName = (Math.random() < 0.5 ? aiGame.currentPlayerCard.name : aiGame.currentAiCard.name); }
-
-  aiGame.turn=nextTurn;
-
-  setTimeout(()=>{
-    displayCardsAI();
-    const res=document.getElementById('resultText');
-    const resCls= pWins===true ? 'text-green-600' : (pWins===false ? 'text-red-600' : 'text-yellow-600');
-    res.textContent= resultTitle;
-    res.className=`text-lg sm:text-xl font-bold ${resCls}`;
-    document.getElementById('resultDetails').textContent=`${attributeInfo[attribute].name.split(' (')[0]}: ${pv.toLocaleString('de-DE')} vs ${av.toLocaleString('de-DE')}`;
-     document.getElementById('attributeSelection').classList.add('hidden');
-    document.getElementById('resultDisplay').classList.remove('hidden');
-
-    // 2s Pause, dann Bottom-Sheet
-    setTimeout(()=>{
-      openBottomSheet(resultTitle.replace(/^[^A-Za-zÄÖÜäöüß]+/,'').trim());
-    },2000);
-
-    if(pWins===true){ playSound(sounds.win); triggerWinStarAnimation(); }
-    updateDisplayAI(); checkGameOverAI();
-    window.scrollTo({top:0,behavior:'smooth'});
-  },600);
-}
-
-function aiSelectAttribute(){
-  if(aiGame.roundInProgress || aiGame.turn!=='ai' || !aiGame.currentPlayerCard || !aiGame.currentAiCard) return;
-  aiGame.roundInProgress=true;
-
-  // Vor KI-Zug ggf. Overlays schließen
-  closeBottomSheet();
-  document.getElementById('infoModal').classList.add('hidden');
-
-  setTimeout(()=>{
-    const keys=Object.keys(attributeInfo);
-    const key=keys[Math.floor(Math.random()*keys.length)];
-    const pv=aiGame.currentPlayerCard[key], av=aiGame.currentAiCard[key];
-    if(pv===undefined||av===undefined){ aiGame.roundInProgress=false; nextRoundAI(); return; }
-
-    // KI deckt Karte auf
-    const aiCardEl=document.getElementById('aiCard').querySelector('.card-3d');
-    if(aiCardEl){ aiCardEl.classList.remove('card-flipped'); playSound(sounds.flip); }
-
-    let pWins;
-    if(key==='quellenSchwindenRadial' || key==='dk'){ pWins = pv<av ? true : (av<pv ? false : 'tie'); }
-    else{ pWins = pv>av ? true : (av>pv ? false : 'tie'); }
-
-    const pMove=aiGame.playerCards.shift(), aMove=aiGame.aiCards.shift();
-    let nextTurn=aiGame.turn;
-    let resultTitle='🤝 Unentschieden!';
-    if(pWins===true){ if(pMove) aiGame.playerCards.push(pMove); if(aMove) aiGame.playerCards.push(aMove); nextTurn='player'; resultTitle='🎉 Du gewinnst!'; lastRoundWinningWoodName = aiGame.currentPlayerCard.name; }
-    else if(pWins===false){ if(aMove) aiGame.aiCards.push(aMove); if(pMove) aiGame.aiCards.push(pMove); nextTurn='ai'; resultTitle='😞 KI gewinnt!'; lastRoundWinningWoodName = aiGame.currentAiCard.name; }
-    else { if(pMove) aiGame.playerCards.push(pMove); if(aMove) aiGame.aiCards.push(aMove); lastRoundWinningWoodName = (Math.random() < 0.5 ? aiGame.currentPlayerCard.name : aiGame.currentAiCard.name); }
-
-    displayCardsAI();
-    const res=document.getElementById('resultText');
-    const resCls= pWins===true ? 'text-green-600' : (pWins===false ? 'text-red-600' : 'text-yellow-600');
-    res.textContent= resultTitle;
-    res.className=`text-lg sm:text-xl font-bold ${resCls}`;
-    document.getElementById('resultDetails').textContent=`${attributeInfo[key].name.split(' (')[0]}: ${pv.toLocaleString('de-DE')} vs ${av.toLocaleString('de-DE')}`; highlightChosenAttribute(key); document.getElementById('attributeSelection').classList.add('hidden');
-    document.getElementById('resultDisplay').classList.remove('hidden');
-
-    // 2s Pause, dann Bottom-Sheet
-    setTimeout(()=>{
-      openBottomSheet(resultTitle.replace(/^[^A-Za-zÄÖÜäöüß]+/,'').trim());
-    },2000);
-
-    if(pWins===true){ playSound(sounds.win); triggerWinStarAnimation(); }
-    aiGame.turn=nextTurn;
-    updateDisplayAI(); checkGameOverAI();
-    window.scrollTo({top:0,behavior:'smooth'});
-  },1000); // KI "denkt" 1s
-}
-
-function nextRoundAI(){
-  clearAttributeHighlights(); const pf=document.getElementById('playerCard')?.querySelector('.card-front'); if(pf) pf.classList.remove('animate-glow-win','animate-glow-lose');
-  const af=document.getElementById('aiCard')?.querySelector('.card-front'); if(af) af.classList.remove('animate-glow-win','animate-glow-lose');
-  document.querySelectorAll('#playerCard .space-y-1 > *, #aiCard .space-y-1 > *').forEach(e=>e.classList.remove('bg-yellow-200','bg-gray-300'));
-
-  if(aiGame.playerCards.length===0||aiGame.aiCards.length===0){ if(!document.getElementById('gameOverModal').classList.contains('hidden')){ } else { endGameAI(); } return; }
-
-  aiGame.currentPlayerCard=aiGame.playerCards[0];
-  aiGame.currentAiCard=aiGame.aiCards[0];
-  aiGame.roundInProgress=false;
-  document.getElementById('resultDisplay').classList.add('hidden');
-  updateDisplayAI(); displayCardsAI();
-
-  if(aiGame.turn==='ai'){ document.getElementById('attributeSelection').classList.add('hidden'); aiSelectAttribute(); }
-  else{ document.getElementById('attributeSelection').classList.remove('hidden'); }
-}
-
-function updateDisplayAI(){
-  const pc=aiGame.playerCards.length, oc=aiGame.aiCards.length;
-  document.getElementById('playerCards').textContent=pc;
-  document.getElementById('aiCards').textContent=oc;
-  updateStatusBar(pc,oc);
-  const ti=document.getElementById('turnIndicator'); ti.classList.remove('hidden');
-  if(aiGame.roundInProgress){
-    if(!document.getElementById('resultDisplay').classList.contains('hidden')) ti.textContent='';
-    else if(aiGame.turn==='ai'){ ti.textContent='Computer überlegt...'; ti.className='text-sm font-semibold p-1 text-gray-500'; }
-    else ti.textContent='';
-  }else if(aiGame.turn==='player'){ ti.textContent='Du bist am Zug!'; ti.className='text-sm font-semibold p-1 text-green-600'; }
-  else { ti.textContent='Computer ist am Zug...'; ti.className='text-sm font-semibold p-1 text-gray-500'; }
-}
-
-function checkGameOverAI(){ if(aiGame.roundInProgress){ if(aiGame.playerCards.length===0||aiGame.aiCards.length===0) setTimeout(endGameAI,300); } }
-
-function triggerWinStarAnimation(){
-  const cont=document.getElementById('animationContainer');
-  const box=document.getElementById('playerScoreBox');
-  const bar=document.getElementById('statusBar');
-  if(!cont||!box||!bar) return;
-  const sr=bar.getBoundingClientRect(), er=box.getBoundingClientRect(), cr=cont.getBoundingClientRect();
-  const star=document.createElement('div'); star.textContent='⭐'; star.className='falling-star';
-  const w=sr.width*(parseFloat(bar.style.width)/100);
-  star.style.left=`${sr.left-cr.left+(w/2)-20}px`; star.style.top=`${sr.top-cr.top-20}px`;
-  const endY=(er.top+er.height/2)-sr.top; star.style.setProperty('--end-y',`${endY}px`);
-  cont.appendChild(star);
-  playSound(sounds.chime); playSound(sounds.starWin);
-  setTimeout(()=>star.remove(),1200);
-}
-
-/* Enden, Leaderboard, Reset, Info */
-function endGame(){
-  if(gameMode==='ai'){ if(!document.getElementById('gameOverModal').classList.contains('hidden')||!document.getElementById('reflectionModal').classList.contains('hidden')){} else endGameAI(); }
-  else if(gameMode==='multiplayer'){
-    const pc=localGameState?.players?.[localPlayerId]?.cards?.length??0;
-    const opp=localGameState?.playerIds?.find(id=>id!==localPlayerId);
-    const oc=localGameState?.players?.[opp]?.cards?.length??0;
-    const win=pc>oc, draw=(pc===0&&oc===0);
-    if(draw) showGameOverScreen(null);
-    else if(win){ saveToLeaderboard(localGameState.players[localPlayerId].name); showReflectionOrWinScreen(); }
-    else showGameOverScreen(false);
-  }
-}
-
-function endGameAI(){
-  if(!document.getElementById('gameOverModal').classList.contains('hidden')||!document.getElementById('reflectionModal').classList.contains('hidden')) return;
-  const win=aiGame.playerCards.length>0;
-  if(win){ saveToLeaderboard(aiGame.playerName); showReflectionOrWinScreen(); }
-  else showGameOverScreen(false);
-}
-
-function showReflectionOrWinScreen(){
-  let i=parseInt(localStorage.getItem('reflectionQuestionIndex')||'0');
-  document.getElementById('reflectionQuestion').textContent=reflectionQuestions[i%reflectionQuestions.length];
-  document.getElementById('reflectionModal').classList.remove('hidden');
-  i=i+1; localStorage.setItem('reflectionQuestionIndex',i.toString());
-}
-
-window.showFinalWinScreen=function(){
-  document.getElementById('reflectionModal').classList.add('hidden');
-  document.getElementById('reflectionAnswer').value='';
-  showGameOverScreen(true);
-};
-
-function showGameOverScreen(win){
-  document.getElementById('reflectionModal').classList.add('hidden');
-  document.getElementById('leaderboardModal').classList.add('hidden');
-  const t=document.getElementById('gameOverTitle');
-  const tx=document.getElementById('gameOverText');
-  const m=document.getElementById('gameOverModal');
-  if(win===true){
-    t.textContent='🎉 Glückwunsch!'; t.className='text-3xl font-bold mb-3 text-green-600';
-    const name=(gameMode==='ai'?aiGame.playerName:localGameState?.players?.[localPlayerId]?.name)||'Du';
-    tx.textContent=`Du hast gewonnen, ${name}! Du hast alle Karten gesammelt.`;
-  }else if(win===false){
-    t.textContent='😞 Spiel verloren'; t.className='text-3xl font-bold mb-3 text-red-600';
-    const opp=(gameMode==='ai'?'Die KI':localGameState?.players?.[localGameState.playerIds?.find(id=>id!==localPlayerId)]?.name)||'Dein Gegner';
-    tx.textContent=`${opp} hat gewonnen. Versuche es nochmal!`;
-  }else{
-    t.textContent='🤝 Unentschieden!'; t.className='text-3xl font-bold mb-3 text-yellow-600';
-    tx.textContent='Das Spiel endet unentschieden!';
-  }
-  m.classList.remove('hidden');
-}
-
-async function saveToLeaderboard(name){
-  if(!name) return;
-  const safe=name.replace(/[.#$[\]]/g,'_');
-  const ref=doc(db,"leaderboard",safe);
-  try{ await setDoc(ref,{name,wins:increment(1),lastWin:serverTimestamp()},{merge:true}); }catch(e){console.error(e)}
-}
-
-window.showLeaderboard=async function(){
-  const list=document.getElementById('leaderboardList');
-  list.innerHTML='<p class="text-gray-500 text-center">Lade Bestenliste...</p>';
-  document.getElementById('gameOverModal').classList.add('hidden');
-  document.getElementById('leaderboardModal').classList.remove('hidden');
-  try{
-    const q=query(collection(db,"leaderboard"),orderBy("wins","desc"),limit(10));
-    const snap=await getDocs(q);
-    if(snap.empty){ list.innerHTML='<p class="text-gray-500 text-center">Noch keine Einträge vorhanden.</p>'; return; }
-    list.innerHTML=snap.docs.map((d,i)=>{
-      const data=d.data(); const safe=(data.name||'Unbekannt').replace(/</g,"&lt;").replace(/>/g,"&gt;");
-      return `<div class="flex justify-between items-center p-3 ${i%2===0?'bg-gray-50':'bg-white'} rounded-lg"><span class="font-semibold">${i+1}. ${safe}</span><span class="text-sm text-gray-600">${data.wins||0} Siege</span></div>`;
-    }).join('');
-  }catch(e){ list.innerHTML='<p class="text-red-500 text-center">Fehler beim Laden der Bestenliste.</p>'; }
-};
-
-window.closeLeaderboard=function(){
-  document.getElementById('leaderboardModal').classList.add('hidden');
-  if(localGameState?.status==='finished' || (gameMode==='ai' && (aiGame.playerCards.length===0||aiGame.aiCards.length===0))){
-    document.getElementById('gameOverModal').classList.remove('hidden');
-  }else{
-    document.getElementById('setupModal').classList.remove('hidden');
-  }
-};
-
-window.resetGame=async function(){
-  if(unsubscribeGame){ unsubscribeGame(); unsubscribeGame=null; }
-  if(gameMode==='multiplayer'&&gameId&&localGameState?.playerIds?.[0]===localPlayerId){
-    try{ await deleteDoc(doc(db,"games",gameId)); }catch{}
-  }
-  aiGame={playerName:'',playerCards:[],aiCards:[],currentPlayerCard:null,currentAiCard:null,roundInProgress:false,turn:'player'};
-  gameMode=null; gameId=null; localGameState={}; hasCopiedShareLink=false; roundSoundPlayed=false;
-  document.getElementById('gameOverModal').classList.add('hidden');
-  document.getElementById('leaderboardModal').classList.add('hidden');
-  document.getElementById('reflectionModal').classList.add('hidden');
-  document.getElementById('gameContainer').classList.add('hidden');
-  document.getElementById('multiplayerLobbyModal').classList.add('hidden');
-  document.getElementById('nameModal').classList.add('hidden');
-  document.getElementById('infoModal').classList.add('hidden');
-  document.getElementById('playerName').value='';
-  document.getElementById('reflectionAnswer').value='';
-  const lobbyStatus=document.getElementById('lobbyStatus'); if(lobbyStatus) lobbyStatus.textContent='';
-  document.getElementById('playerCard').innerHTML=''; document.getElementById('aiCard').innerHTML='';
-  updateStatusBar(0,0);
-  document.getElementById('setupModal').classList.remove('hidden');
-  window.history.pushState({},document.title,window.location.pathname);
-};
-
-/* Info */
-window.showWoodInfo=function(woodName){
-  const modal=document.getElementById('infoModal');
-  const title=document.getElementById('infoModalTitle');
-  const content=document.getElementById('infoModalContent');
-  title.textContent=`Zusatzwissen – ${woodName}`;
-  const key=Object.keys(woodInfo).find(k=>k.toLowerCase()===woodName.toLowerCase());
-  const info=key?woodInfo[key]:null;
-  if(info){
-    content.innerHTML=`
-      <p class="text-left text-sm sm:text-base">${info.info||'Keine Beschreibung verfügbar.'}</p>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-        <div>
-          <h4 class="font-semibold mb-2 text-center text-sm sm:text-base">Baum</h4>
-          <img src="${info.bildBaum||''}" alt="Bild von ${woodName} Baum" class="w-full max-h-48 sm:max-h-60 h-auto rounded-lg object-contain mx-auto border" onerror="this.parentElement.style.display='none';">
+    <div id="name-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-sm">
+            <h3 class="text-xl font-bold mb-4">Wie heißt du?</h3>
+            <input type="text" id="player-name-input" class="w-full border-2 border-wood-300 rounded-lg p-2 mb-4 focus:outline-none focus:border-wood-500" placeholder="Dein Name" maxlength="12">
+            <button onclick="Game.startGame()" class="w-full bg-green-600 text-white font-bold py-2 rounded-lg">Los geht's!</button>
         </div>
-        <div>
-          <h4 class="font-semibold mb-2 text-center text-sm sm:text-base">Querschnitt</h4>
-          <img src="${info.bildQuerschnitt||''}" alt="Bild von ${woodName} Querschnitt" class="w-full max-h-48 sm:max-h-60 h-auto rounded-lg object-contain mx-auto border" onerror="this.parentElement.style.display='none';">
+    </div>
+
+    <div id="info-modal" class="fixed inset-0 bg-black/80 z-[60] hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden relative">
+            <button onclick="Game.closeInfo()" class="absolute top-2 right-2 text-gray-500 hover:text-black text-3xl font-bold leading-none">&times;</button>
+            <div class="p-6">
+                <h3 id="info-title" class="text-2xl font-bold text-wood-900 mb-3">Zusatzwissen</h3>
+                <p id="info-text" class="text-gray-700 mb-4 leading-relaxed">...</p>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <p class="text-xs text-center font-bold mb-1 text-gray-500">Baum</p>
+                        <img id="info-img-1" src="" class="w-full h-32 object-cover rounded-lg border border-gray-200 bg-gray-100">
+                    </div>
+                    <div>
+                        <p class="text-xs text-center font-bold mb-1 text-gray-500">Querschnitt</p>
+                        <img id="info-img-2" src="" class="w-full h-32 object-cover rounded-lg border border-gray-200 bg-gray-100">
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>`;
-  }else{
-    content.innerHTML="<p>Für diese Holzart sind aktuell keine Detailinformationen verfügbar.</p>";
-  }
-  modal.classList.remove('hidden');
-};
-window.closeInfoModal=function(){
-  const info = document.getElementById('infoModal');
-  if (info) info.classList.add('hidden');
-  // Re-open the previously shown bottom sheet with its current title
-  const bsTitleEl = document.getElementById('bottomSheetTitle');
-  const title = bsTitleEl && bsTitleEl.textContent ? bsTitleEl.textContent : 'Nächster Zug';
-  openBottomSheet(title);
-};
-</script>
+    </div>
+
+    <div id="game-over-modal" class="fixed inset-0 bg-wood-900/95 z-[70] hidden flex items-center justify-center p-4 text-center">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl">
+            <h2 id="go-title" class="text-4xl font-bold mb-2">Spielende</h2>
+            <p id="go-msg" class="text-gray-600 mb-6 text-lg"></p>
+            <div class="space-y-3">
+                <button onclick="alert('Bestenliste: Noch nicht implementiert (Firebase).')" class="w-full border-2 border-wood-500 text-wood-700 font-bold py-2 rounded-lg hover:bg-wood-100">🏆 Bestenliste</button>
+                <button onclick="location.reload()" class="w-full bg-wood-500 text-white font-bold py-3 rounded-lg hover:bg-wood-700">🔄 Neues Spiel</button>
+            </div>
+        </div>
+    </div>
+
+    <audio id="sfx-flip" src="https://cdn.pixabay.com/audio/2022/03/15/audio_139083c224.mp3" preload="auto"></audio>
+    <audio id="sfx-win" src="https://github.com/aufdemholzweg/holzquartett/blob/894e048eea71ba49921abfe6827bd8dc723f8c2d/gewonnen.mp3?raw=true" preload="auto"></audio>
+    <audio id="sfx-star" src="https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3" preload="auto"></audio>
+    <script type="module">
+        /**
+         * DATEN
+         */
+        const WOOD_CARDS = [
+            {"name":"Eiche","dk":2,"haerte":85,"quellenSchwindenRadial":4.0,"dichte":650,"gewicht":12000},
+            {"name":"Buche","dk":5,"haerte":80,"quellenSchwindenRadial":5.8,"dichte":720,"gewicht":14000},
+            {"name":"Kiefer","dk":3,"haerte":40,"quellenSchwindenRadial":3.5,"dichte":520,"gewicht":11000},
+            {"name":"Fichte","dk":4,"haerte":35,"quellenSchwindenRadial":3.6,"dichte":450,"gewicht":11000},
+            {"name":"Tanne","dk":4,"haerte":38,"quellenSchwindenRadial":3.5,"dichte":460,"gewicht":10000},
+            {"name":"Lärche","dk":3,"haerte":55,"quellenSchwindenRadial":3.7,"dichte":590,"gewicht":12000},
+            {"name":"Birke","dk":5,"haerte":60,"quellenSchwindenRadial":5.4,"dichte":650,"gewicht":13000},
+            {"name":"Ahorn","dk":5,"haerte":75,"quellenSchwindenRadial":4.8,"dichte":630,"gewicht":12500},
+            {"name":"Esche","dk":5,"haerte":90,"quellenSchwindenRadial":4.9,"dichte":700,"gewicht":13000},
+            {"name":"Kirsche","dk":3,"haerte":70,"quellenSchwindenRadial":4.0,"dichte":600,"gewicht":11500},
+            {"name":"Nussbaum","dk":3,"haerte":65,"quellenSchwindenRadial":4.0,"dichte":640,"gewicht":12000},
+            {"name":"Douglasie","dk":3,"haerte":45,"quellenSchwindenRadial":3.5,"dichte":510,"gewicht":12000},
+            {"name":"Zeder","dk":2,"haerte":42,"quellenSchwindenRadial":2.8,"dichte":480,"gewicht":9500},
+            {"name":"Mahagoni","dk":2,"haerte":55,"quellenSchwindenRadial":3.0,"dichte":550,"gewicht":10500},
+            {"name":"Teak","dk":1,"haerte":60,"quellenSchwindenRadial":2.5,"dichte":650,"gewicht":11000},
+            {"name":"Bambus","dk":4,"haerte":50,"quellenSchwindenRadial":3.0,"dichte":400,"gewicht":18000},
+            {"name":"Pappel","dk":5,"haerte":25,"quellenSchwindenRadial":4.5,"dichte":380,"gewicht":9000},
+            {"name":"Weide","dk":5,"haerte":30,"quellenSchwindenRadial":4.0,"dichte":420,"gewicht":8000},
+            {"name":"Linde","dk":5,"haerte":35,"quellenSchwindenRadial":3.8,"dichte":530,"gewicht":9000},
+            {"name":"Ulme","dk":3,"haerte":75,"quellenSchwindenRadial":4.5,"dichte":680,"gewicht":11500},
+            {"name":"Kastanie","dk":2,"haerte":50,"quellenSchwindenRadial":3.5,"dichte":600,"gewicht":10000},
+            {"name":"Robinie","dk":1,"haerte":80,"quellenSchwindenRadial":3.0,"dichte":730,"gewicht":15000},
+            {"name":"Hemlock","dk":4,"haerte":40,"quellenSchwindenRadial":3.6,"dichte":500,"gewicht":10000},
+            {"name":"Zypresse","dk":2,"haerte":48,"quellenSchwindenRadial":3.0,"dichte":520,"gewicht":9000},
+            {"name":"Redwood","dk":2,"haerte":35,"quellenSchwindenRadial":2.8,"dichte":400,"gewicht":8500},
+            {"name":"Hickory","dk":3,"haerte":95,"quellenSchwindenRadial":5.5,"dichte":750,"gewicht":14000},
+            {"name":"Wenge","dk":2,"haerte":88,"quellenSchwindenRadial":3.8,"dichte":880,"gewicht":16000},
+            {"name":"Zebrano","dk":3,"haerte":70,"quellenSchwindenRadial":4.0,"dichte":750,"gewicht":13000},
+            {"name":"Palisander","dk":2,"haerte":82,"quellenSchwindenRadial":3.0,"dichte":850,"gewicht":16000},
+            {"name":"Ebenholz","dk":1,"haerte":98,"quellenSchwindenRadial":3.2,"dichte":1200,"gewicht":16500}
+        ];
+
+        const ATTRIBUTES = [
+            { id: 'dk', label: 'Dauerh.Kl.', unit: '', lowerIsBetter: true },
+            { id: 'haerte', label: 'Härte', unit: 'N/mm²', lowerIsBetter: false },
+            { id: 'quellenSchwindenRadial', label: 'Quellen/Schw.', unit: '% rad', lowerIsBetter: true },
+            { id: 'dichte', label: 'Dichte', unit: 'kg/m³', lowerIsBetter: false },
+            { id: 'gewicht', label: 'E-Modul', unit: 'N/mm²', lowerIsBetter: false }
+        ];
+
+        // Generiere Bild-URLs und Info-Texte basierend auf der Logik
+        const WOOD_INFO = {};
+        WOOD_CARDS.forEach(card => {
+            const slug = card.name.toLowerCase().replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss'); // Einfache Slug-Logik, aber wir nutzen die Namen aus dem Datensatz, die sind sauber genug für die GitHub Struktur? 
+            // Achtung: GitHub URLs waren case sensitive. Die Liste enthält Umlaute.
+            // Der Prompt sagt: <slug>_1.jpg. Wir mappen Namen zu slug.
+            // Mapping für die gegebenen Namen zu einfachen Slugs (Umlaute raus für die Dateinamen, falls im Repo so benannt).
+            // Angenommen, das Repo nutzt 'eiche', 'buche', 'fichte' etc.
+            // Für 'Lärche' -> 'laerche'? Im Prompt steht Beispiel: ".../eiche_1.jpg".
+            // Wir nutzen eine robuste Mapping-Funktion für deutsche Umlaute, da Dateinamen oft ASCII sind.
+            let safeSlug = card.name.toLowerCase()
+                .replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss');
+            
+            // Ausnahmebehandlung falls nötig, aber wir gehen davon aus, dass das Repo konsistent ist.
+            
+            WOOD_INFO[card.name] = {
+                info: `Die ${card.name} ist ein vielseitiges Holz mit einer Rohdichte von ${card.dichte} kg/m³. Ihre Dauerhaftigkeit liegt in Klasse ${card.dk}.`,
+                bildBaum: `https://github.com/aufdemholzweg/holzquartett/blob/main/images/${safeSlug}_1.jpg?raw=true`,
+                bildQuerschnitt: `https://github.com/aufdemholzweg/holzquartett/blob/main/images/${safeSlug}_2.jpg?raw=true`
+            };
+        });
+
+        // Firebase Setup (Dummy/Vorbereitung)
+        // TODO: Füge hier deine Config ein für Multiplayer
+        const firebaseConfig = null; 
+        
+        /**
+         * GAME ENGINE & STATE
+         */
+        const Game = {
+            state: {
+                mode: 'ai', // 'ai' or 'multiplayer'
+                playerName: 'Spieler',
+                playerCards: [],
+                aiCards: [],
+                turn: 'player', // 'player' or 'ai'
+                roundInProgress: false,
+                lastWinner: null,
+                lastWinningCard: null,
+                settings: {
+                    sound: true,
+                    showEnemyName: false
+                }
+            },
+
+            // Hilfsfunktionen
+            $: (sel) => document.querySelector(sel),
+            $$: (sel) => document.querySelectorAll(sel),
+
+            initSetup(mode) {
+                if (mode === 'multiplayer' && !firebaseConfig) {
+                    alert('Multiplayer ist in diesem Build nicht konfiguriert (Firebase Config fehlt).');
+                    return;
+                }
+                this.state.mode = mode;
+                this.$('#setup-modal').classList.add('hidden');
+                this.$('#name-modal').classList.remove('hidden');
+                this.$('#player-name-input').focus();
+                this.loadSettings();
+            },
+
+            loadSettings() {
+                const s = localStorage.getItem('holzquartett_settings');
+                if (s) {
+                    this.state.settings = JSON.parse(s);
+                    this.updateSettingsUI();
+                }
+            },
+
+            saveSettings() {
+                localStorage.setItem('holzquartett_settings', JSON.stringify(this.state.settings));
+            },
+
+            toggleSetting(key) {
+                if (key === 'sound') {
+                    this.state.settings.sound = !this.state.settings.sound;
+                } else if (key === 'names') {
+                    this.state.settings.showEnemyName = !this.state.settings.showEnemyName;
+                }
+                this.saveSettings();
+                this.updateSettingsUI();
+            },
+
+            updateSettingsUI() {
+                const sndBtn = this.$('#toggle-sound div');
+                const sndBg = this.$('#toggle-sound');
+                const nameBtn = this.$('#toggle-names div');
+                const nameBg = this.$('#toggle-names');
+
+                if (this.state.settings.sound) {
+                    sndBg.classList.replace('bg-gray-300', 'bg-green-500');
+                    sndBtn.classList.replace('left-1', 'left-6');
+                } else {
+                    sndBg.classList.replace('bg-green-500', 'bg-gray-300');
+                    sndBtn.classList.replace('left-6', 'left-1');
+                }
+
+                if (this.state.settings.showEnemyName) {
+                    nameBg.classList.replace('bg-gray-300', 'bg-green-500');
+                    nameBtn.classList.replace('left-1', 'left-6');
+                } else {
+                    nameBg.classList.replace('bg-green-500', 'bg-gray-300');
+                    nameBtn.classList.replace('left-6', 'left-1');
+                }
+
+                // Live Update
+                if (this.state.settings.showEnemyName) {
+                    this.$('#ai-back-name').classList.remove('hidden');
+                } else {
+                    this.$('#ai-back-name').classList.add('hidden');
+                }
+            },
+
+            startGame() {
+                const nameInput = this.$('#player-name-input').value.trim();
+                this.state.playerName = nameInput || 'Spieler';
+                this.$('#player-name-display').innerText = this.state.playerName;
+                this.$('#name-modal').classList.add('hidden');
+                this.$('#game-area').classList.remove('hidden');
+
+                // Unlock Audio Context logic hack
+                const a = new Audio();
+                a.play().catch(()=>{}); 
+
+                this.dealCards();
+                this.renderGame();
+                this.checkTurn();
+            },
+
+            dealCards() {
+                // Shuffle
+                let deck = [...WOOD_CARDS].sort(() => Math.random() - 0.5);
+                // Split 15/15
+                this.state.playerCards = deck.slice(0, 15);
+                this.state.aiCards = deck.slice(15, 30);
+                this.state.turn = 'player'; // Spieler beginnt immer
+            },
+
+            checkTurn() {
+                const pCard = this.state.playerCards[0];
+                const aiCard = this.state.aiCards[0];
+                
+                // Namen auf Backside updaten
+                this.$('#ai-back-name').innerText = aiCard.name;
+
+                if (this.state.turn === 'player') {
+                    this.$('#turn-indicator').innerText = "Du bist am Zug!";
+                    this.enablePlayerControls(true);
+                } else {
+                    this.$('#turn-indicator').innerText = "Computer überlegt...";
+                    this.enablePlayerControls(false);
+                    setTimeout(() => this.aiTurn(), 1000);
+                }
+            },
+
+            enablePlayerControls(enable) {
+                const btns = this.$$('.attr-btn');
+                btns.forEach(btn => {
+                    if (enable) {
+                        btn.disabled = false;
+                        btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                        btn.classList.add('hover:bg-wood-100');
+                    } else {
+                        btn.disabled = true;
+                        btn.classList.add('opacity-50', 'cursor-not-allowed');
+                        btn.classList.remove('hover:bg-wood-100');
+                    }
+                });
+            },
+
+            playRound(attrId) {
+                if (this.state.roundInProgress) return;
+                this.state.roundInProgress = true;
+                
+                // 1. KI Karte aufdecken
+                this.$('#ai-card').classList.remove('card-flipped'); // Flip Front
+                this.playSound('flip');
+
+                const pCard = this.state.playerCards[0];
+                const aiCard = this.state.aiCards[0];
+
+                const pVal = pCard[attrId];
+                const aiVal = aiCard[attrId];
+
+                // 2. Vergleich
+                const attrDef = ATTRIBUTES.find(a => a.id === attrId);
+                let playerWins = false;
+                let tie = false;
+
+                if (pVal === aiVal) {
+                    tie = true;
+                } else if (attrDef.lowerIsBetter) {
+                    playerWins = pVal < aiVal;
+                } else {
+                    playerWins = pVal > aiVal;
+                }
+
+                // 3. Highlight Attribute
+                this.highlightAttribute(attrId);
+
+                // 4. Resultat Text
+                const resDiv = this.$('#round-result-text');
+                resDiv.innerText = `${pVal} vs ${aiVal}`;
+                resDiv.classList.remove('hidden');
+                
+                // 5. Speichern für Result logic
+                this.currentRoundResult = { playerWins, tie, pCard, aiCard };
+
+                // 6. Delay für Bottom Sheet (2s)
+                setTimeout(() => {
+                    this.showBottomSheet(playerWins, tie, pCard.name, aiCard.name);
+                }, 2000);
+            },
+
+            aiTurn() {
+                // Zufälliges Attribut wählen
+                const attr = ATTRIBUTES[Math.floor(Math.random() * ATTRIBUTES.length)];
+                this.playRound(attr.id);
+            },
+
+            highlightAttribute(attrId) {
+                const pBtn = document.getElementById(`btn-p-${attrId}`);
+                const aiRow = document.getElementById(`row-ai-${attrId}`);
+                if (pBtn) pBtn.classList.add('bg-gray-300', 'border-gray-500');
+                if (aiRow) aiRow.classList.add('bg-gray-300');
+            },
+
+            showBottomSheet(playerWins, tie, pName, aiName) {
+                const sheet = this.$('#bottom-sheet');
+                const title = this.$('#sheet-title');
+                const dimmer = this.$('#bottom-sheet-dimmer');
+                
+                dimmer.classList.remove('hidden');
+                requestAnimationFrame(() => dimmer.classList.remove('opacity-0')); // Fade in
+
+                sheet.classList.remove('translate-y-full');
+
+                if (tie) {
+                    title.innerText = `🤝 Unentschieden!`;
+                    this.state.lastWinner = null;
+                    this.state.lastWinningCard = Math.random() > 0.5 ? this.state.playerCards[0] : this.state.aiCards[0]; // Zufall für Info
+                } else if (playerWins) {
+                    title.innerText = `🎉 Du gewinnst! (${pName})`;
+                    this.playSound('win');
+                    this.showStarAnimation('player');
+                    this.state.lastWinner = 'player';
+                    this.state.lastWinningCard = this.state.playerCards[0];
+                } else {
+                    title.innerText = `😞 ${this.state.settings.showEnemyName ? aiName : 'Gegner'} gewinnt!`;
+                    this.state.lastWinner = 'ai';
+                    this.state.lastWinningCard = this.state.aiCards[0];
+                }
+
+                // Events binden
+                this.$('#btn-info').onclick = () => this.openInfo();
+                this.$('#btn-next').onclick = () => this.nextTurn();
+            },
+
+            showStarAnimation(winner) {
+                const container = winner === 'player' ? this.$('#star-container-player') : this.$('#star-container-ai');
+                const star = document.createElement('div');
+                star.innerText = '⭐';
+                star.className = 'text-4xl absolute animate-star-fall';
+                container.appendChild(star);
+                // Sound dazu
+                if(this.state.settings.sound) {
+                    const s = this.$('#sfx-star');
+                    s.currentTime=0; s.play().catch(()=>{});
+                }
+                setTimeout(() => star.remove(), 1200);
+            },
+
+            openInfo() {
+                // Sheet schließen
+                this.$('#bottom-sheet').classList.add('translate-y-full');
+                this.$('#bottom-sheet-dimmer').classList.add('opacity-0');
+                setTimeout(() => this.$('#bottom-sheet-dimmer').classList.add('hidden'), 300);
+
+                const card = this.state.lastWinningCard;
+                const info = WOOD_INFO[card.name];
+
+                this.$('#info-title').innerText = `Zusatzwissen: ${card.name}`;
+                this.$('#info-text').innerText = info.info;
+                this.$('#info-img-1').src = info.bildBaum;
+                this.$('#info-img-2').src = info.bildQuerschnitt;
+
+                this.$('#info-modal').classList.remove('hidden');
+            },
+
+            closeInfo() {
+                this.$('#info-modal').classList.add('hidden');
+                // Sheet wieder öffnen für "Nächster Zug"
+                const dimmer = this.$('#bottom-sheet-dimmer');
+                dimmer.classList.remove('hidden');
+                setTimeout(() => dimmer.classList.remove('opacity-0'), 10);
+                this.$('#bottom-sheet').classList.remove('translate-y-full');
+            },
+
+            nextTurn() {
+                // UI Reset
+                this.$('#bottom-sheet').classList.add('translate-y-full');
+                this.$('#bottom-sheet-dimmer').classList.add('opacity-0');
+                setTimeout(() => this.$('#bottom-sheet-dimmer').classList.add('hidden'), 300);
+                
+                this.$('#round-result-text').classList.add('hidden');
+                this.$$('#round-result-text').innerText = "";
+
+                // Karten verschieben
+                const { playerWins, tie, pCard, aiCard } = this.currentRoundResult;
+                
+                // Entferne oberste Karten
+                this.state.playerCards.shift();
+                this.state.aiCards.shift();
+
+                if (tie) {
+                    // Beide behalten ihre Karte -> hinten anstellen
+                    this.state.playerCards.push(pCard);
+                    this.state.aiCards.push(aiCard);
+                    // Zug bleibt beim gleichen Spieler
+                } else if (playerWins) {
+                    this.state.playerCards.push(pCard);
+                    this.state.playerCards.push(aiCard);
+                    this.state.turn = 'player';
+                } else {
+                    this.state.aiCards.push(aiCard);
+                    this.state.aiCards.push(pCard);
+                    this.state.turn = 'ai';
+                }
+
+                this.state.roundInProgress = false;
+
+                // KI Karte wieder verdecken (sofort, ohne Transition Glitch)
+                this.$('#ai-card').classList.add('card-flipped');
+
+                // Game Over Check
+                if (this.state.playerCards.length === 0 || this.state.aiCards.length === 0) {
+                    this.gameOver();
+                } else {
+                    // Render neue Karten
+                    setTimeout(() => {
+                        this.renderGame();
+                        this.checkTurn();
+                    }, 500); // Kurz warten für card flip back
+                }
+            },
+
+            gameOver() {
+                const playerWon = this.state.playerCards.length > 0;
+                this.$('#game-over-modal').classList.remove('hidden');
+                if (playerWon) {
+                    this.$('#go-title').innerText = "Glückwunsch!";
+                    this.$('#go-msg').innerText = "Du hast alle Karten gewonnen!";
+                    this.playSound('win');
+                } else {
+                    this.$('#go-title').innerText = "Spiel verloren";
+                    this.$('#go-msg').innerText = "Der Computer hat alle Karten gewonnen.";
+                }
+            },
+
+            playSound(type) {
+                if (!this.state.settings.sound) return;
+                const el = this.$(`#sfx-${type}`);
+                if (el) {
+                    el.currentTime = 0;
+                    el.play().catch(e => console.log("Audio play blocked", e));
+                }
+            },
+
+            renderGame() {
+                const pCount = this.state.playerCards.length;
+                const aiCount = this.state.aiCards.length;
+                const total = pCount + aiCount;
+
+                this.$('#player-count').innerText = pCount;
+                this.$('#ai-count').innerText = aiCount;
+
+                // Health Bar
+                const pct = (pCount / total) * 100;
+                const bar = this.$('#health-bar');
+                bar.style.width = `${pct}%`;
+                if (pct < 25) bar.className = 'h-full bg-red-500 transition-all duration-500';
+                else if (pct < 45) bar.className = 'h-full bg-orange-400 transition-all duration-500';
+                else if (pct > 75) bar.className = 'h-full bg-green-600 transition-all duration-500';
+                else bar.className = 'h-full bg-yellow-400 transition-all duration-500';
+
+                // Karten rendern
+                this.renderCardContent('player', this.state.playerCards[0]);
+                this.renderCardContent('ai', this.state.aiCards[0]);
+            },
+
+            renderCardContent(side, cardData) {
+                if (!cardData) return; // Game Over Fall
+
+                const prefix = side === 'player' ? 'p' : 'ai';
+                
+                // Front Image & URL (Verwende Background Front aus Prompt als Fallback oder Style)
+                const img = this.$(`#${prefix}-card-img`);
+                // Mapping Slug logic nochmal für Image URL
+                let safeSlug = cardData.name.toLowerCase()
+                .replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss');
+                
+                // HINTERGRUND Front
+                const frontContainer = img.parentElement.parentElement;
+                frontContainer.style.backgroundImage = `url('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/e7cfc18394e2e7f2d0b91df1138b0d7bc7930699/images/background_front.jpg')`;
+                frontContainer.style.backgroundSize = 'cover';
+
+                img.src = `https://github.com/aufdemholzweg/holzquartett/blob/main/images/${safeSlug}_1.jpg?raw=true`;
+                this.$(`#${prefix}-card-name`).innerText = cardData.name;
+
+                // Attribute List
+                const list = this.$(`#${prefix}-attributes`);
+                list.innerHTML = '';
+
+                ATTRIBUTES.forEach(attr => {
+                    const val = cardData[attr.id];
+                    
+                    if (side === 'player') {
+                        const btn = document.createElement('button');
+                        btn.id = `btn-p-${attr.id}`;
+                        btn.className = `attr-btn w-full text-left px-2 py-1.5 text-xs sm:text-sm border border-wood-300 rounded hover:bg-wood-100 transition-colors flex justify-between items-center`;
+                        btn.innerHTML = `<span>${attr.label}</span> <span class="font-bold">${val} <span class="text-[9px] font-normal text-gray-500">${attr.unit}</span></span>`;
+                        btn.onclick = () => this.playRound(attr.id);
+                        list.appendChild(btn);
+                    } else {
+                        const div = document.createElement('div');
+                        div.id = `row-ai-${attr.id}`;
+                        div.className = `w-full text-left px-2 py-1.5 text-xs sm:text-sm border border-transparent border-b-gray-100 rounded flex justify-between items-center text-gray-700`;
+                        div.innerHTML = `<span>${attr.label}</span> <span class="font-bold">${val} <span class="text-[9px] font-normal text-gray-500">${attr.unit}</span></span>`;
+                        list.appendChild(div);
+                    }
+                });
+            }
+        };
+
+        // Global verfügbar machen für HTML Event Handler
+        window.Game = Game;
+
+    </script>
 </body>
 </html>
