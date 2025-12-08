@@ -7,7 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
         body{font-family:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-weight:300}
 
         .card-3d{transform-style:preserve-3d;transition:transform .6s}
@@ -21,6 +20,7 @@
         @keyframes pop-in{0%{transform:scale(0);opacity:0}70%{transform:scale(1.2);opacity:1}100%{transform:scale(1)}}
         @keyframes glow-win{0%{box-shadow:0 0 0 0 rgba(74,222,128,0)}50%{box-shadow:0 0 30px 15px rgba(74,222,128,.6)}100%{box-shadow:0 0 0 0 rgba(74,222,128,0)}}
         @keyframes glow-lose{0%{box-shadow:0 0 0 0 rgba(248,113,113,0)}50%{box-shadow:0 0 30px 15px rgba(248,113,113,.6)}100%{box-shadow:0 0 0 0 rgba(248,113,113,0)}}
+
         .hover-lift:hover{transform:translateY(-4px);box-shadow:0 10px 25px rgba(0,0,0,.15)}
         .status-flash-win{animation:flash-green 1.2s ease-out}
         .status-flash-lose{animation:flash-red 1.2s ease-out}
@@ -35,11 +35,11 @@
             background-size:cover;background-position:center
         }
 
-        /* Name auf der Rückseite der Gegnerkarte (Top-Drittel), halb so groß wie vorher */
+        /* Name auf der Rückseite der Gegnerkarte */
         .opponent-back-name{
             position:absolute;top:12%;left:0;width:100%;text-align:center;
             font-family:Arial,Helvetica,sans-serif;color:#e5e7eb;font-weight:700;letter-spacing:.02em;line-height:1.1;z-index:2;
-            font-size:clamp(0.8rem,3vw,1.375rem); /* halbiert */
+            font-size:clamp(0.8rem,3vw,1.375rem);
             text-shadow:0 1px 2px rgba(0,0,0,.25);pointer-events:none;padding:0 .5rem
         }
 
@@ -49,19 +49,25 @@
         /* Tiny, almost invisible hotspot for Zusatzwissen on the card image */
         .info-tiny-btn{
             position:absolute;
-            top:2px;
-            right:2px;
-            width:6px;
-            height:6px;
+            top:6px;
+            right:6px;
+            width:24px;
+            height:24px;
             border:none;
             padding:0;
             border-radius:9999px;
-            background:rgba(128,0,128,0.08); /* very faint */
-            z-index:10;
+            background:rgba(255,255,255,0.3); /* slightly visible now */
+            z-index:20;
             cursor:pointer;
-            outline:none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: rgba(0,0,0,0.6);
+            font-size: 14px;
         }
-        .info-tiny-btn:hover{ background:rgba(128,0,128,0.12); }
+        .info-tiny-btn:hover{ background:rgba(255,255,255,0.8); color: black; }
+        .info-tiny-btn::after { content: "?"; }
 
     </style>
 </head>
@@ -73,7 +79,6 @@
     </div>
 </header>
 
-<!-- Setup -->
 <div id="setupModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl text-center">
         <h2 class="text-2xl font-bold text-amber-800 mb-6">Spielmodus wählen</h2>
@@ -82,7 +87,6 @@
             <button onclick="window.showNamePrompt('multiplayer')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors text-lg">🧑‍🤝‍🧑 online gegen Freunde</button>
         </div>
 
-        <!-- Toggles -->
         <div class="mt-6 grid grid-cols-1 gap-4">
             <div class="flex items-center justify-center space-x-3">
                 <span class="text-gray-700">🔇</span>
@@ -105,7 +109,6 @@
     </div>
 </div>
 
-<!-- Name -->
 <div id="nameModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
         <h2 class="text-2xl font-bold text-amber-800 mb-6 text-center">Dein Name</h2>
@@ -119,7 +122,6 @@
     </div>
 </div>
 
-<!-- Lobby -->
 <div id="multiplayerLobbyModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
     <div class="bg-white rounded-xl p-8 max-w-lg w-full mx-4 shadow-2xl text-center">
         <h2 id="lobbyTitle" class="text-2xl font-bold text-amber-800 mb-4">Warte auf Mitspieler...</h2>
@@ -132,7 +134,6 @@
     </div>
 </div>
 
-<!-- Game -->
 <div id="gameContainer" class="hidden max-w-6xl mx-auto px-4 py-4 relative">
     <div id="animationContainer" class="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden"></div>
     <div class="max-w-md mx-auto mb-1 space-y-1">
@@ -164,11 +165,9 @@
             <h3 id="resultText" class="text-lg sm:text-xl font-bold"></h3>
             <p id="resultDetails" class="text-xs sm:text-sm text-gray-600 mt-auto pb-0.5"></p>
         </div>
-        <!-- Der alte "Nächster Zug"-Button im Hauptbereich entfällt, da jetzt das Bottom-Sheet verwendet wird. -->
     </div>
 </div>
 
-<!-- Reflection -->
 <div id="reflectionModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
     <div class="bg-white rounded-xl p-8 max-w-lg w-full mx-4 shadow-2xl text-center">
         <h2 class="text-2xl font-bold text-amber-800 mb-4">🎉 Super gespielt! Zeit zum Reflektieren!</h2>
@@ -178,7 +177,6 @@
     </div>
 </div>
 
-<!-- Game Over -->
 <div id="gameOverModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl text-center">
         <h2 id="gameOverTitle" class="text-3xl font-bold mb-3"></h2>
@@ -190,7 +188,6 @@
     </div>
 </div>
 
-<!-- Leaderboard -->
 <div id="leaderboardModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
         <h2 class="text-2xl font-bold text-amber-800 mb-6 text-center">🏆 Bestenliste</h2>
@@ -199,7 +196,6 @@
     </div>
 </div>
 
-<!-- Info Modal (Zusatzwissen) -->
 <div id="infoModal" class="hidden fixed inset-0 dimmer-light flex items-center justify-center z-50 px-4">
     <div class="bg-white rounded-xl p-6 max-w-lg w-full mx-4 shadow-2xl relative">
         <button onclick="window.closeInfoModal()" class="absolute top-2 right-3 text-2xl text-gray-400 hover:text-gray-600">&times;</button>
@@ -208,7 +204,6 @@
     </div>
 </div>
 
-<!-- Bottom-Sheet Ergebnis + Aktionen -->
 <div id="bottomSheetBackdrop" class="hidden fixed inset-0 dimmer-light z-40"></div>
 <div id="bottomSheet" class="hidden fixed left-0 right-0 bottom-0 z-50 flex justify-center px-4 pb-4">
   <div class="bg-white rounded-t-2xl shadow-2xl border border-amber-200 w-full max-w-md p-4">
@@ -225,7 +220,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, deleteDoc, collection, query, orderBy, limit, getDocs, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
 const firebaseConfig = {
   apiKey: "AIzaSyCyRXl8-JPr1xTXPDi1VG-eQk6fOnTpqUI",
   authDomain: "holzquartett-3a177.firebaseapp.com",
@@ -238,12 +232,10 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
-
 /* State */
 let gameMode=null, gameId=null, localPlayerId=null, unsubscribeGame=null, localGameState={}, hasCopiedShareLink=false;
 let isMuted=false;
 let roundSoundPlayed=false;
-
 /* Audio */
 const sounds={
   flip:new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_139083c224.mp3'),
@@ -252,7 +244,6 @@ const sounds={
   starWin:new Audio('https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3')
 };
 sounds.flip.volume=.5; sounds.win.volume=.4; sounds.chime.volume=.6; sounds.starWin.volume=.7;
-
 function playSound(a){ if(isMuted) return; a.currentTime=0; a.play().catch(()=>{}); }
 
 /* Persistenz: Gegner-Holzname sichtbar? */
@@ -292,7 +283,6 @@ const woodCards=[
  {name:"Palisander",dk:2,haerte:82,quellenSchwindenRadial:3.0,dichte:850,gewicht:16000},
  {name:"Ebenholz",dk:1,haerte:98,quellenSchwindenRadial:3.2,dichte:1200,gewicht:16500}
 ];
-
 const woodInfo = {
  "Eiche": { info: `Eiche (QE) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/eiche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/eiche_2.jpg?raw=true" },
  "Buche": { info: `Buche (BU) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/buche_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/buche_2.jpg?raw=true" },
@@ -324,8 +314,7 @@ const woodInfo = {
  "Zebrano": { info: `Zebrano (ZE-RA) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zebrano_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/zebrano_2.jpg?raw=true" },
  "Palisander": { info: `Palisander (PA) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/palisander_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/palisander_2.jpg?raw=true" },
  "Ebenholz": { info: `Ebenholz (EB) ...`, bildBaum: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ebenholz_1.jpg?raw=true", bildQuerschnitt: "https://github.com/aufdemholzweg/holzquartett/blob/main/images/ebenholz_2.jpg?raw=true" }
-};
-
+];
 const reflectionQuestions=[
  "Stell dir vor, du sollst einen stabilen und langlebigen Esstisch ...",
  "Welches Holz würdest du für Gartenmöbel wählen ...",
@@ -359,7 +348,6 @@ const reflectionQuestions=[
  "Welche Eigenschaft ist spielentscheidend ...",
  "Neue Kategorie vorschlagen und begründen ..."
 ];
-
 const attributeInfo={
   dk:{icon:'🛡️',name:'Dauerhaftigkeit (DK)',color:'blue'},
   haerte:{icon:'💎',name:'Druckfestigkeit (N/mm²)',color:'blue'},
@@ -367,7 +355,6 @@ const attributeInfo={
   dichte:{icon:'⚖️',name:'Rohdichte (kg/m³)',color:'blue'},
   gewicht:{icon:'🏋️',name:'E-Modul (N/mm²)',color:'blue'}
 };
-
 /* AI-Modus */
 let aiGame={playerName:'',playerCards:[],aiCards:[],currentPlayerCard:null,currentAiCard:null,roundInProgress:false,turn:'player'};
 
@@ -432,7 +419,6 @@ document.addEventListener('DOMContentLoaded',async()=>{
     window.nextRound();
   });
 });
-
 /* Unload */
 window.addEventListener('beforeunload',async()=>{
   if(gameMode==='multiplayer'&&gameId&&localPlayerId){
@@ -548,7 +534,6 @@ function updateMultiplayerUI(gameData){
   }
   updateStatusBar(gameData.players[localPlayerId]?.cards?.length??0, gameData.players[oppId]?.cards?.length??0);
   displayMultiplayerCards(gameData);
-
   const turnIndicator=document.getElementById('turnIndicator');
   const attributeSelection=document.getElementById('attributeSelection');
   const resultDisplay=document.getElementById('resultDisplay');
@@ -561,7 +546,8 @@ function updateMultiplayerUI(gameData){
     const oppActualId=oppId||'opponent';
     const winnerName=winnerId===localPlayerId?'Du':(winnerId==='tie'?'':(gameData.players[winnerId]?.name||'Gegner'));
     document.getElementById('resultText').textContent = winnerId==='tie' ? '🤝 Unentschieden!' : (winnerId===localPlayerId?`🎉 ${winnerName} gewinnt!`:`😞 ${winnerName} gewinnt!`);
-    document.getElementById('resultDetails').textContent = `${attributeInfo[attribute]?.name.split(' (')[0]||attribute}: ${values[localPlayerId]?.toLocaleString('de-DE')??'?'} vs ${values[oppActualId]?.toLocaleString('de-DE')??'?'}`;  /* highlight injected */  window.scrollTo({top:0,behavior:'smooth'});
+    document.getElementById('resultDetails').textContent = `${attributeInfo[attribute]?.name.split(' (')[0]||attribute}: ${values[localPlayerId]?.toLocaleString('de-DE')??'?'} vs ${values[oppActualId]?.toLocaleString('de-DE')??'?'}`;
+    window.scrollTo({top:0,behavior:'smooth'});
   }else{
     roundSoundPlayed=false; resultDisplay.classList.add('hidden');
     if(gameData.turn===localPlayerId){ turnIndicator.textContent="Du bist am Zug!"; turnIndicator.className='text-sm font-semibold p-1 text-green-600'; attributeSelection.classList.remove('hidden'); }
@@ -601,12 +587,18 @@ function createCard(cardData,isRevealed=true,isPlayer=true){
   const wi=woodInfo[cardName]||{};
   const treeImg=wi.bildBaum||'https://placehold.co/160x120/d1d5db/374151?text=?';
 
-  // Bild jetzt doppelt so groß, rechteckig mit abgerundeten Ecken
-  const headerRight = `
-    <div class="flex-shrink-0 relative w-24 h-16 sm:w-28 sm:h-20">
-      <img src="${treeImg}" alt="${cardName}" id="wood-image-icon-${safeId}" class="absolute inset-0 w-full h-full object-cover rounded-xl border-2 border-amber-200">
-      <button id="player-info-button-${safeId}" onclick="window.showWoodInfo('${cardName.replace(/'/g,"\'")}')" class="${showInfoBtn ? 'info-tiny-btn' : 'hidden'}" aria-label="Zusatzwissen"></button>
-    </div>`;
+  // --- NEUES LAYOUT: BILD BREIT, NAME ALS OVERLAY ---
+  const imageContainer = `
+    <div class="relative w-full h-40 sm:h-48 mb-3 group flex-shrink-0">
+        <div class="absolute top-2 left-2 z-10 bg-gray-900/60 text-white px-2 py-0.5 rounded text-sm sm:text-base font-bold shadow backdrop-blur-sm pointer-events-none">
+            ${cardName}
+        </div>
+        
+        <img src="${treeImg}" alt="${cardName}" id="wood-image-icon-${safeId}" class="w-full h-full object-cover rounded-xl shadow-sm bg-amber-50 border border-amber-200">
+        
+        <button id="player-info-button-${safeId}" onclick="window.showWoodInfo('${cardName.replace(/'/g,"\'")}')" class="${showInfoBtn ? 'info-tiny-btn' : 'hidden'}" aria-label="Zusatzwissen"></button>
+    </div>
+  `;
 
   let attrs='<div class="space-y-1 mt-auto">';
   for(const key in attributeInfo){
@@ -621,6 +613,7 @@ function createCard(cardData,isRevealed=true,isPlayer=true){
     const border=canSelect?'border-amber-600':'border-amber-300';
     const txt=canSelect?'text-amber-700':'text-amber-800';
     const common=`w-full flex justify-between items-center py-0.5 sm:py-1 px-1 rounded-lg text-left border ${border} ${baseBg}`;
+
     if(canSelect){
       attrs+=`<button data-attr="${key}" onclick="window.selectAttribute(\'${key}\')" class="${common} ${hov} transition-colors"><div class="flex items-center space-x-1 sm:space-x-2"><span class="text-xs sm:text-sm">${a.icon}</span><div><span class="text-[11px] sm:text-xs font-medium leading-tight">${label}</span>${unitText}</div></div><span class="font-semibold ${txt} text-sm sm:text-base">${fv}</span></button>`;
     }else{
@@ -629,17 +622,10 @@ function createCard(cardData,isRevealed=true,isPlayer=true){
   }
   attrs+='</div>';
 
-  // Header mit dynamischer Mindesthöhe, damit das größere Bild Platz hat
-  front.innerHTML=`
-    <div class="flex justify-between items-center w-full mb-2 px-1 min-h-[72px] sm:min-h-[84px]">
-      <h3 class="text-base sm:text-lg font-bold text-amber-800 truncate text-left mr-2">${cardName}</h3>
-      ${headerRight}
-    </div>
-    ${attrs}`;
+  front.innerHTML = imageContainer + attrs;
 
   const back=document.createElement('div');
   back.className='card-back rounded-xl shadow-lg border-2 border-amber-300 flex items-center justify-center relative overflow-hidden';
-
   // Gegner-Holzname auf Rückseite zeigen, falls eingestellt
   if(!isRevealed && !isPlayer && isOpponentNameBackVisible()){
     const label=document.createElement('div');
@@ -711,11 +697,11 @@ async function multiplayerSelectAttribute(attribute){
 }
 
 async function multiplayerNextRound(){
-  clearAttributeHighlights(); const pf=document.getElementById('playerCard')?.querySelector('.card-front'); if(pf) pf.classList.remove('animate-glow-win','animate-glow-lose');
+  clearAttributeHighlights(); const pf=document.getElementById('playerCard')?.querySelector('.card-front');
+  if(pf) pf.classList.remove('animate-glow-win','animate-glow-lose');
   const af=document.getElementById('aiCard')?.querySelector('.card-front'); if(af) af.classList.remove('animate-glow-win','animate-glow-lose');
   document.querySelectorAll('#playerCard .space-y-1 > *, #aiCard .space-y-1 > *').forEach(e=>e.classList.remove('bg-yellow-200','bg-gray-300'));
   if(!localGameState || !localGameState.lastResult || !gameId) return;
-
   const gs=localGameState;
   const [p1,p2]=gs.playerIds;
   let p1Cards=[...gs.players[p1].cards], p2Cards=[...gs.players[p2].cards];
@@ -743,13 +729,11 @@ async function multiplayerNextRound(){
 /* Controller */
 window.selectAttribute=function(attr){ if(gameMode==='ai') selectAttributeAI(attr); else if(gameMode==='multiplayer') multiplayerSelectAttribute(attr); };
 window.nextRound=function(){ if(gameMode==='ai') nextRoundAI(); else if(gameMode==='multiplayer') multiplayerNextRound(); };
-
 /* Helpers */
 function shuffleArray(a){const s=[...a]; for(let i=s.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [s[i],s[j]]=[s[j],s[i]];} return s;}
 
 /* AI Flow */
 let lastRoundWinningWoodName = null;
-
 function startGameAI(name){
   aiGame.playerName=name;
   document.getElementById('playerNameDisplay').textContent=name;
@@ -766,7 +750,8 @@ function startGameAI(name){
   document.getElementById('turnIndicator').classList.remove('hidden');
   document.getElementById('gameContainer').classList.remove('hidden');
   window.scrollTo(0,0);
-  updateDisplayAI(); displayCardsAI();
+  updateDisplayAI();
+  displayCardsAI();
 }
 
 function displayCardsAI(){
@@ -803,7 +788,6 @@ function selectAttributeAI(attribute){
   else { if(pMove) aiGame.playerCards.push(pMove); if(aMove) aiGame.aiCards.push(aMove); lastRoundWinningWoodName = (Math.random() < 0.5 ? aiGame.currentPlayerCard.name : aiGame.currentAiCard.name); }
 
   aiGame.turn=nextTurn;
-
   setTimeout(()=>{
     displayCardsAI();
     const res=document.getElementById('resultText');
@@ -832,7 +816,6 @@ function aiSelectAttribute(){
   // Vor KI-Zug ggf. Overlays schließen
   closeBottomSheet();
   document.getElementById('infoModal').classList.add('hidden');
-
   setTimeout(()=>{
     const keys=Object.keys(attributeInfo);
     const key=keys[Math.floor(Math.random()*keys.length)];
@@ -955,7 +938,6 @@ window.showFinalWinScreen=function(){
   document.getElementById('reflectionAnswer').value='';
   showGameOverScreen(true);
 };
-
 function showGameOverScreen(win){
   document.getElementById('reflectionModal').classList.add('hidden');
   document.getElementById('leaderboardModal').classList.add('hidden');
@@ -963,7 +945,8 @@ function showGameOverScreen(win){
   const tx=document.getElementById('gameOverText');
   const m=document.getElementById('gameOverModal');
   if(win===true){
-    t.textContent='🎉 Glückwunsch!'; t.className='text-3xl font-bold mb-3 text-green-600';
+    t.textContent='🎉 Glückwunsch!';
+    t.className='text-3xl font-bold mb-3 text-green-600';
     const name=(gameMode==='ai'?aiGame.playerName:localGameState?.players?.[localPlayerId]?.name)||'Du';
     tx.textContent=`Du hast gewonnen, ${name}! Du hast alle Karten gesammelt.`;
   }else if(win===false){
@@ -1031,7 +1014,6 @@ window.resetGame=async function(){
   document.getElementById('setupModal').classList.remove('hidden');
   window.history.pushState({},document.title,window.location.pathname);
 };
-
 /* Info */
 window.showWoodInfo=function(woodName){
   const modal=document.getElementById('infoModal');
