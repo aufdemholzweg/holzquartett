@@ -55,6 +55,7 @@
     </div>
 </header>
 
+<!-- Setup -->
 <div id="setupModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl text-center">
         <h2 class="text-2xl font-bold text-amber-800 mb-6">Spielmodus wählen</h2>
@@ -63,6 +64,7 @@
             <button onclick="window.showNamePrompt('multiplayer')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors text-lg">🧑‍🤝‍🧑 online gegen Freunde</button>
         </div>
 
+        <!-- Toggles -->
         <div class="mt-6 grid grid-cols-1 gap-4">
             <div class="flex items-center justify-center space-x-3">
                 <span class="text-gray-700">🔇</span>
@@ -85,6 +87,7 @@
     </div>
 </div>
 
+<!-- Name -->
 <div id="nameModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
         <h2 class="text-2xl font-bold text-amber-800 mb-6 text-center">Dein Name</h2>
@@ -98,6 +101,7 @@
     </div>
 </div>
 
+<!-- Lobby -->
 <div id="multiplayerLobbyModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
     <div class="bg-white rounded-xl p-8 max-w-lg w-full mx-4 shadow-2xl text-center">
         <h2 id="lobbyTitle" class="text-2xl font-bold text-amber-800 mb-4">Warte auf Mitspieler...</h2>
@@ -110,6 +114,7 @@
     </div>
 </div>
 
+<!-- Game -->
 <div id="gameContainer" class="hidden max-w-6xl mx-auto px-4 py-4 relative">
     <div id="animationContainer" class="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden"></div>
     <div class="max-w-md mx-auto mb-1 space-y-1">
@@ -141,9 +146,11 @@
             <h3 id="resultText" class="text-lg sm:text-xl font-bold"></h3>
             <p id="resultDetails" class="text-xs sm:text-sm text-gray-600 mt-auto pb-0.5"></p>
         </div>
-        </div>
+        <!-- Der alte "Nächster Zug"-Button im Hauptbereich entfällt, da jetzt das Bottom-Sheet verwendet wird. -->
+    </div>
 </div>
 
+<!-- Reflection -->
 <div id="reflectionModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
     <div class="bg-white rounded-xl p-8 max-w-lg w-full mx-4 shadow-2xl text-center">
         <h2 class="text-2xl font-bold text-amber-800 mb-4">🎉 Super gespielt! Zeit zum Reflektieren!</h2>
@@ -153,6 +160,7 @@
     </div>
 </div>
 
+<!-- Game Over -->
 <div id="gameOverModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl text-center">
         <h2 id="gameOverTitle" class="text-3xl font-bold mb-3"></h2>
@@ -164,6 +172,7 @@
     </div>
 </div>
 
+<!-- Leaderboard -->
 <div id="leaderboardModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
         <h2 class="text-2xl font-bold text-amber-800 mb-6 text-center">🏆 Bestenliste</h2>
@@ -172,6 +181,7 @@
     </div>
 </div>
 
+<!-- Info Modal (Zusatzwissen) -->
 <div id="infoModal" class="hidden fixed inset-0 dimmer-light flex items-center justify-center z-50 px-4">
     <div class="bg-white rounded-xl p-6 max-w-lg w-full mx-4 shadow-2xl relative">
         <button onclick="window.closeInfoModal()" class="absolute top-2 right-3 text-2xl text-gray-400 hover:text-gray-600">&times;</button>
@@ -180,6 +190,7 @@
     </div>
 </div>
 
+<!-- Bottom-Sheet Ergebnis + Aktionen -->
 <div id="bottomSheetBackdrop" class="hidden fixed inset-0 dimmer-light z-40"></div>
 <div id="bottomSheet" class="hidden fixed left-0 right-0 bottom-0 z-50 flex justify-center px-4 pb-4">
   <div class="bg-white rounded-t-2xl shadow-2xl border border-amber-200 w-full max-w-md p-4">
@@ -326,17 +337,17 @@ const reflectionQuestions=[
  "Minimalistisches Möbel: Ahorn/Birke ...",
  "Rustikale Almhütte: welche Hölzer ...",
  "Schülerprojekt: Werkstückidee ...",
- "Terrasse: Robinie vs. Lärche...",
+ "Terrasse: Robinie vs. Lärche ...",
  "Welche Eigenschaft ist spielentscheidend ...",
  "Neue Kategorie vorschlagen und begründen ..."
 ];
 
 const attributeInfo={
- dk:{icon:'🛡️',name:'Dauerhaftigkeit (DK)',color:'blue'},
- haerte:{icon:'💎',name:'Druckfestigkeit (N/mm²)',color:'blue'},
- quellenSchwindenRadial:{icon:'↔️',name:'Quellen/Schwinden (%)',color:'blue'},
- dichte:{icon:'⚖️',name:'Rohdichte (kg/m³)',color:'blue'},
- gewicht:{icon:'🏋️',name:'E-Modul (N/mm²)',color:'blue'}
+  dk:{icon:'🛡️',name:'Dauerhaftigkeit (DK)',color:'blue'},
+  haerte:{icon:'💎',name:'Druckfestigkeit (N/mm²)',color:'blue'},
+  quellenSchwindenRadial:{icon:'↔️',name:'Quellen/Schwinden (%)',color:'blue'},
+  dichte:{icon:'⚖️',name:'Rohdichte (kg/m³)',color:'blue'},
+  gewicht:{icon:'🏋️',name:'E-Modul (N/mm²)',color:'blue'}
 };
 
 /* AI-Modus */
@@ -354,7 +365,6 @@ function openBottomSheet(title){
   bottomSheetBackdrop.classList.remove('hidden');
   bottomSheet.classList.remove('hidden');
 }
-
 function closeBottomSheet(){
   bottomSheetBackdrop.classList.add('hidden');
   bottomSheet.classList.add('hidden');
@@ -383,197 +393,187 @@ document.addEventListener('DOMContentLoaded',async()=>{
     if(!isMuted) playSound(sounds.chime);
   });
 
-  // Opponent Name on Back toggle
-  const revealBackToggle=document.getElementById('revealBackToggle');
-  revealBackToggle.checked=isOpponentNameBackVisible();
-  revealBackToggle.addEventListener('change',(e)=>{
+  // Opponent back name toggle
+  const revealToggle=document.getElementById('revealBackToggle');
+  revealToggle.checked=isOpponentNameBackVisible();
+  revealToggle.addEventListener('change',e=>{
     setOpponentNameBackVisible(e.target.checked);
-    // Nur im AI-Modus Karten neu rendern
-    if(gameMode==='ai'){
-      displayCardsAI();
-    }
+    if(gameMode==='ai') displayCardsAI();
+    if(gameMode==='multiplayer'&&localGameState) displayMultiplayerCards(localGameState);
   });
 
-  document.getElementById('nameSubmitButton').addEventListener('click',window.submitName);
-
-  bsNextBtn.addEventListener('click',window.nextRound);
-  bsInfoBtn.addEventListener('click',window.showLastWoodInfo);
-
-  if(!gameId) document.getElementById('setupModal').classList.remove('hidden');
+  // Bottom-sheet button handlers
+  bsInfoBtn.addEventListener('click',()=>{
+    closeBottomSheet();
+    // open info modal for the winning card (if available)
+    const currentCardName = lastRoundWinningWoodName || aiGame.currentPlayerCard?.name || 'Holzart';
+    window.showWoodInfo(currentCardName);
+  });
+  bsNextBtn.addEventListener('click',()=>{
+    closeBottomSheet();
+    window.nextRound();
+  });
 });
 
-/* UI Logic */
-window.showNamePrompt=function(mode){
-  gameMode=mode;
+/* Unload */
+window.addEventListener('beforeunload',async()=>{
+  if(gameMode==='multiplayer'&&gameId&&localPlayerId){
+    try{await updateDoc(doc(db,"games",gameId),{[`players.${localPlayerId}.status`]:"offline"});}catch{}
+  }
+});
+
+/* UI Controller */
+window.showNamePrompt=(mode)=>{
   document.getElementById('setupModal').classList.add('hidden');
-  document.getElementById('nameModal').classList.remove('hidden');
-  document.getElementById('playerName').focus();
+  const nameModal=document.getElementById('nameModal');
+  nameModal.classList.remove('hidden');
+  const btn=document.getElementById('nameSubmitButton');
+  const clone=btn.cloneNode(true);
+  btn.parentNode.replaceChild(clone,btn);
+  clone.addEventListener('click',()=>{
+    const playerName=document.getElementById('playerName').value.trim();
+    if(!playerName){alert('Bitte gib deinen Namen ein!');return;}
+    nameModal.classList.add('hidden');
+    if(mode==='ai'){gameMode='ai';startGameAI(playerName);}
+    else if(mode==='multiplayer'){gameMode='multiplayer';createGame(playerName);}
+    else if(mode==='join'){joinGame(gameId,playerName);}
+  });
 };
 
-window.submitName=function(){
-  const nameInput=document.getElementById('playerName');
-  const playerName=nameInput.value.trim();
-  if(!playerName) return alert('Bitte gib deinen Namen ein.');
-  document.getElementById('nameModal').classList.add('hidden');
-  localStorage.setItem('holzquartett_playerName',playerName);
-  
-  if(gameMode==='ai'){
-    startGameAI(playerName);
-  }else if(gameMode==='multiplayer'){
-    const p=new URLSearchParams(window.location.search);
-    const gid=p.get('game');
-    if(gid){
-      joinGame(gid,playerName);
+window.copyShareLink=async()=>{
+  const el=document.getElementById('shareLink');
+  try{await navigator.clipboard.writeText(el.value);}catch{el.select();document.execCommand('copy');}
+  hasCopiedShareLink=true;
+  const s=document.getElementById('lobbyStatus'); if(s) s.textContent='Link kopiert. Warte auf Mitspieler...';
+  if(localGameState&&(localGameState.status==='playing'||localGameState.status==='finished')){
+    document.getElementById('multiplayerLobbyModal').classList.add('hidden');
+    document.getElementById('gameContainer').classList.remove('hidden');
+    updateMultiplayerUI(localGameState);
+  }
+};
+
+/* Multiplayer minimal (wie in deiner Fassung) */
+async function createGame(playerName){
+  const lobby=document.getElementById('multiplayerLobbyModal');
+  lobby.classList.remove('hidden');
+  hasCopiedShareLink=false;
+  gameId=Math.random().toString(36).substring(2,8).toUpperCase();
+  const base=window.location.href.split('?')[0];
+  document.getElementById('shareLink').value=`${base}?game=${gameId}`;
+  const ref=doc(db,"games",gameId);
+  const data={gameId,status:'waiting',playerIds:[localPlayerId],players:{[localPlayerId]:{name:playerName,cards:[],status:'online'}},createdAt:serverTimestamp()};
+  try{await setDoc(ref,data);listenToGameChanges();}catch(e){alert("Fehler beim Erstellen des Spiels.");}
+}
+
+async function joinGame(id,playerName){
+  const ref=doc(db,"games",id);
+  try{
+    const snap=await getDoc(ref);
+    if(snap.exists()&&snap.data().status==='waiting'&&snap.data().playerIds.length===1){
+      document.getElementById('lobbyTitle').textContent="Spiel wird beigetreten...";
+      document.getElementById('lobbyText').textContent="Moment, die Karten werden gemischt.";
+      document.getElementById('multiplayerLobbyModal').classList.remove('hidden');
+      hasCopiedShareLink=true;
+      const shuffled=shuffleArray([...woodCards]);
+      const p1=snap.data().playerIds[0];
+      const p1Cards=shuffled.slice(0,15);
+      const p2Cards=shuffled.slice(15,30);
+      await updateDoc(ref,{
+        status:'playing',
+        playerIds:[p1,localPlayerId],
+        [`players.${localPlayerId}`]:{name:playerName,cards:p2Cards,status:'online'},
+        [`players.${p1}.cards`]:p1Cards,
+        turn:p1,
+        currentCards:{[p1]:p1Cards[0],[localPlayerId]:p2Cards[0]},
+        lastResult:null,
+        lastActivity:serverTimestamp()
+      });
+      listenToGameChanges();
     }else{
-      createGame(playerName);
+      alert("Spiel nicht gefunden, bereits voll oder beendet."); window.location.search='';
     }
-  }
-};
-
-window.showWoodInfo=function(woodName){
-  const modal=document.getElementById('infoModal');
-  const title=document.getElementById('infoModalTitle');
-  const content=document.getElementById('infoModalContent');
-  title.textContent=`Zusatzwissen – ${woodName}`;
-  const key=Object.keys(woodInfo).find(k=>k.toLowerCase()===woodName.toLowerCase());
-  const info=key?woodInfo[key]:null;
-  if(info){
-    content.innerHTML=`
-      <p class="text-left text-sm sm:text-base">${info.info||'Keine Beschreibung verfügbar.'}</p>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-        <div>
-          <h4 class="font-semibold mb-2 text-center text-sm sm:text-base">Baum</h4>
-          <img src="${info.bildBaum||''}" alt="Bild von ${woodName} Baum" class="w-full max-h-48 sm:max-h-60 h-auto rounded-lg object-contain mx-auto border" onerror="this.parentElement.style.display='none';">
-        </div>
-        <div>
-          <h4 class="font-semibold mb-2 text-center text-sm sm:text-base">Querschnitt</h4>
-          <img src="${info.bildQuerschnitt||''}" alt="Bild von ${woodName} Querschnitt" class="w-full max-h-48 sm:max-h-60 h-auto rounded-lg object-contain mx-auto border" onerror="this.parentElement.style.display='none';">
-        </div>
-      </div>`;
-    modal.classList.remove('hidden');
-  }
-};
-
-window.showLastWoodInfo=function(){
-  closeBottomSheet();
-  const woodName=gameMode==='ai' ? lastRoundWinningWoodName : localGameState?.lastResult?.woodName;
-  if(woodName) window.showWoodInfo(woodName);
+  }catch(e){alert("Fehler beim Beitreten zum Spiel."); window.location.search='';}
 }
 
-window.closeInfoModal=function(){
-  document.getElementById('infoModal').classList.add('hidden');
-  // Wenn im AI-Modus, Bottom-Sheet wieder öffnen, da Info-Button von dort aufgerufen wurde
-  if(gameMode==='ai' && aiGame.roundInProgress && !document.getElementById('gameOverModal').classList.contains('hidden')){
-    openBottomSheet(document.getElementById('resultText').textContent);
+function listenToGameChanges(){
+  if(!gameId) return;
+  const ref=doc(db,"games",gameId);
+  unsubscribeGame=onSnapshot(ref,(ds)=>{
+    if(!ds.exists()){ if(gameMode==='multiplayer'){alert("Das Spiel wurde beendet oder gelöscht."); resetGame();} return; }
+    const gameData=ds.data(); localGameState=gameData;
+    if(gameData.status==='playing'||gameData.status==='finished'){
+      if(hasCopiedShareLink || (gameData.playerIds.includes(localPlayerId)&&gameData.playerIds.length===2)){
+        document.getElementById('multiplayerLobbyModal').classList.add('hidden');
+        document.getElementById('gameContainer').classList.remove('hidden');
+        updateMultiplayerUI(gameData);
+      }else if(!hasCopiedShareLink && gameData.playerIds.length===2){
+        const s=document.getElementById('lobbyStatus'); if(s) s.textContent='Mitspieler ist beigetreten! Klicke „Link kopieren“, um zu starten.';
+      }
+    }else if(gameData.status==='waiting'){
+      document.getElementById('multiplayerLobbyModal').classList.remove('hidden');
+      document.getElementById('gameContainer').classList.add('hidden');
+    }
+  },(e)=>console.error(e));
+}
+
+function updateMultiplayerUI(gameData){
+  if(!gameData||!gameData.players||!gameData.playerIds) return;
+  const oppId=gameData.playerIds.find(id=>id!==localPlayerId);
+  document.getElementById('playerNameDisplay').textContent=gameData.players[localPlayerId]?.name||'Du';
+  document.getElementById('playerCards').textContent=gameData.players[localPlayerId]?.cards?.length??'?';
+  if(oppId && gameData.players[oppId]){
+    document.getElementById('opponentNameDisplay').textContent=gameData.players[oppId].name;
+    document.getElementById('aiCards').textContent=gameData.players[oppId].cards?.length??'?';
+  }else{
+    document.getElementById('opponentNameDisplay').textContent="Wartet...";
+    document.getElementById('aiCards').textContent='-';
   }
-};
+  updateStatusBar(gameData.players[localPlayerId]?.cards?.length??0, gameData.players[oppId]?.cards?.length??0);
+  displayMultiplayerCards(gameData);
 
-window.resetGame=function(){
-  if(unsubscribeGame) unsubscribeGame();
-  localGameState={};
-  gameId=null;
-  gameMode=null;
-  document.getElementById('gameContainer').classList.add('hidden');
-  document.getElementById('gameOverModal').classList.add('hidden');
-  document.getElementById('setupModal').classList.remove('hidden');
-  document.getElementById('resultDisplay').classList.add('hidden');
-  document.getElementById('attributeSelection').classList.add('hidden');
-  document.getElementById('turnIndicator').classList.add('hidden');
-  document.getElementById('playerCard').innerHTML='';
-  document.getElementById('aiCard').innerHTML='';
-  window.location.search=''; // Multiplayermodus-Parameter entfernen
-};
+  const turnIndicator=document.getElementById('turnIndicator');
+  const attributeSelection=document.getElementById('attributeSelection');
+  const resultDisplay=document.getElementById('resultDisplay');
+  turnIndicator.classList.remove('hidden');
 
-function updateStatusBar(playerCount, opponentCount){
-  const total=playerCount+opponentCount;
-  if(total===0) return;
-  const playerPercent=(playerCount/total)*100;
-  const statusBar=document.getElementById('statusBar');
-  statusBar.style.width=`${playerPercent}%`;
-  statusBar.style.backgroundColor=playerPercent>50?'#10b981':(playerPercent<50?'#ef4444':'#f59e0b');
-}
-
-function triggerWinStarAnimation(){
-  const container=document.getElementById('animationContainer');
-  const star=document.createElement('div');
-  star.className='falling-star text-green-500';
-  star.textContent='⭐';
-  // Zufällige Positionierung über der Spielerkarte
-  const playerCardRect=document.getElementById('playerCard').getBoundingClientRect();
-  const startX=playerCardRect.left+playerCardRect.width/2;
-  const startY=playerCardRect.top-50; // Etwas über dem Bildschirm
-  const endY=playerCardRect.bottom-playerCardRect.height/3;
-
-  star.style.left=`${startX}px`;
-  star.style.top=`${startY}px`;
-  star.style.setProperty('--end-y',`${endY-startY}px`);
-
-  container.appendChild(star);
-  playSound(sounds.starWin);
-  star.addEventListener('animationend',()=>star.remove());
-}
-
-function triggerLoseStarAnimation(){
-  const container=document.getElementById('animationContainer');
-  const star=document.createElement('div');
-  star.className='falling-star text-red-500';
-  star.textContent='❌';
-  // Zufällige Positionierung über der KI-Karte
-  const aiCardRect=document.getElementById('aiCard').getBoundingClientRect();
-  const startX=aiCardRect.left+aiCardRect.width/2;
-  const startY=aiCardRect.top-50; // Etwas über dem Bildschirm
-  const endY=aiCardRect.bottom-aiCardRect.height/3;
-
-  star.style.left=`${startX}px`;
-  star.style.top=`${startY}px`;
-  star.style.setProperty('--end-y',`${endY-startY}px`);
-
-  container.appendChild(star);
-  playSound(sounds.starWin);
-  star.addEventListener('animationend',()=>star.remove());
-}
-
-window.showFinalWinScreen=async function(){
-  // Reflection speichern (simuliert)
-  const playerName=localStorage.getItem('holzquartett_playerName')||'Unbekannt';
-  const reflectionAnswer=document.getElementById('reflectionAnswer').value.trim();
-  console.log(`Reflexionsantwort von ${playerName}: ${reflectionAnswer}`);
-  
-  // Bestenliste aktualisieren
-  if(gameMode==='ai'){
-    const userRef=doc(db,"leaderboard",auth.currentUser.uid);
-    try{await updateDoc(userRef,{name:playerName,wins:increment(1),lastWin:serverTimestamp()},{merge:true});}catch(e){console.error("Fehler beim Speichern des Sieges:",e);}
+  if(gameData.lastResult){
+    if(!roundSoundPlayed){ roundSoundPlayed=true; playSound(sounds.flip); if(gameData.lastResult.winnerId===localPlayerId) playSound(sounds.win); }
+    attributeSelection.classList.add('hidden'); resultDisplay.classList.remove('hidden');
+    const {winnerId,attribute,values}=gameData.lastResult;
+    const oppActualId=oppId||'opponent';
+    const winnerName=winnerId===localPlayerId?'Du':(winnerId==='tie'?'':(gameData.players[winnerId]?.name||'Gegner'));
+    document.getElementById('resultText').textContent = winnerId==='tie' ? '🤝 Unentschieden!' : (winnerId===localPlayerId?`🎉 ${winnerName} gewinnt!`:`😞 ${winnerName} gewinnt!`);
+    document.getElementById('resultDetails').textContent = `${attributeInfo[attribute]?.name.split(' (')[0]||attribute}: ${values[localPlayerId]?.toLocaleString('de-DE')??'?'} vs ${values[oppActualId]?.toLocaleString('de-DE')??'?'}`;
+    window.scrollTo({top:0,behavior:'smooth'});
+  }else{
+    roundSoundPlayed=false; resultDisplay.classList.add('hidden');
+    if(gameData.turn===localPlayerId){ turnIndicator.textContent="Du bist am Zug!"; turnIndicator.className='text-sm font-semibold p-1 text-green-600'; attributeSelection.classList.remove('hidden'); }
+    else{ turnIndicator.textContent=`${gameData.players[gameData.turn]?.name||'Gegner'} ist am Zug...`; turnIndicator.className='text-sm font-semibold p-1 text-gray-500'; attributeSelection.classList.add('hidden'); }
   }
 
-  document.getElementById('reflectionModal').classList.add('hidden');
-  const modal=document.getElementById('gameOverModal');
-  const title=document.getElementById('gameOverTitle');
-  const text=document.getElementById('gameOverText');
-  
-  if(gameMode==='ai'){
-    title.textContent='SPIEL VORBEI!';
-    title.className='text-3xl font-bold mb-3 text-green-600';
-    text.textContent=`Du hast das Spiel gegen den Computer gewonnen. Dein Wissen über Holz ist beeindruckend, ${playerName}!`;
-  } else if(gameMode==='multiplayer'){
-     const oppId=localGameState.playerIds.find(id=>id!==localPlayerId);
-     const oppName=localGameState.players[oppId]?.name||'Gegner';
-     title.textContent='SPIEL VORBEI!';
-     title.className='text-3xl font-bold mb-3 text-green-600';
-     text.textContent=`Du hast ${oppName} besiegt! Gut gespielt!`;
-  }
-  
-  modal.classList.remove('hidden');
+  if(gameData.status==='finished'){ endGame(); }
 }
 
+function updateStatusBar(p, o){
+  const total=p+o; const perc= total>0 ? (p/total)*100 : 50;
+  const el=document.getElementById('statusBar');
+  el.style.width=`${perc}%`;
+  let c='#f59e0b';
+  if(perc<25)c='#ef4444'; else if(perc<45)c='#f97316'; else if(perc>75)c='#22c55e'; else if(perc>55)c='#84cc16';
+  el.style.backgroundColor=c;
+}
 
-function createCard(cardData, isRevealed, isPlayer, playedAttribute=null, result=null){
+/* Karten */
+function createCard(cardData,isRevealed=true,isPlayer=true){
   const card=document.createElement('div');
-  card.className=`card-3d w-full h-full ${isRevealed?'':'card-flipped'}`;
-  card.id=`card-${(cardData?.name||'').replace(/[^a-zA-Z0-9]/g,'-').toLowerCase()}`;
+  card.className=`card-3d w-full h-full relative ${isPlayer?'cursor-pointer hover-lift':''} transition-all duration-300`;
+  if(!isRevealed) card.classList.add('card-flipped');
+
+  const borderColor=isPlayer?'border-amber-400':'border-gray-300';
+  const shadow=isPlayer?'shadow-lg':'shadow-md';
 
   const front=document.createElement('div');
-  const winClass=result==='win'?'animate-glow-win':(result==='lose'?'animate-glow-lose':'');
-  front.className=`card-front card-background rounded-xl shadow-lg border-2 border-amber-300 p-2 sm:p-3 flex flex-col h-full ${winClass}`;
+  front.className=`card-front card-background rounded-xl ${shadow} border-2 ${borderColor} p-2 sm:p-3 flex flex-col overflow-hidden`;
 
   const canSelect=isPlayer && ((gameMode==='ai' && !aiGame.roundInProgress && aiGame.turn==='player') || (gameMode==='multiplayer' && localGameState?.turn===localPlayerId && !localGameState?.lastResult));
   const showInfoBtn=isPlayer && ((gameMode==='ai' && aiGame.roundInProgress) || (gameMode==='multiplayer' && !!localGameState?.lastResult));
@@ -584,13 +584,12 @@ function createCard(cardData, isRevealed, isPlayer, playedAttribute=null, result
   const wi=woodInfo[cardName]||{};
   const treeImg=wi.bildBaum||'https://placehold.co/160x120/d1d5db/374151?text=?';
 
-  // FIX START: Bild bleibt sichtbar, Info-Button wird als Overlay angezeigt.
+  // Bild jetzt doppelt so groß, rechteckig mit abgerundeten Ecken
   const headerRight = `
     <div class="flex-shrink-0 relative w-24 h-16 sm:w-28 sm:h-20">
       <img src="${treeImg}" alt="${cardName}" id="wood-image-icon-${safeId}" class="absolute inset-0 w-full h-full object-cover rounded-xl border-2 border-amber-200">
-      <button id="player-info-button-${safeId}" onclick="window.showWoodInfo('${cardName.replace(/'/g,"\\'")}')" class="${showInfoBtn?'':'hidden'} absolute top-0 right-0 w-6 h-6 sm:w-8 sm:h-8 bg-purple-600 text-white rounded-bl-lg rounded-tr-lg flex items-center justify-center text-xs sm:text-sm font-bold hover:bg-purple-700 z-20 shadow-md p-0 leading-none">💡</button>
+      
     </div>`;
-  // FIX END
 
   let attrs='<div class="space-y-1 mt-auto">';
   for(const key in attributeInfo){
@@ -600,26 +599,11 @@ function createCard(cardData, isRevealed, isPlayer, playedAttribute=null, result
     const unit=a.name.match(/\(([^)]+)\)/);
     const unitText=unit?`<span class="block text-[10px] sm:text-xs text-gray-500 leading-tight">(${unit[1]})</span>`:'';
     const label=(key==='quellenSchwindenRadial')?'Quellen/Schw.':a.name.replace(/\s*\(([^)]+)\)/,'');
-
-    const isSelected=key===playedAttribute;
-    const isWin=isSelected && result==='win';
-    const isLose=isSelected && result==='lose';
-    const isTie=isSelected && result==='tie';
-
-    let baseBg = canSelect ? 'bg-amber-100' : 'bg-amber-50';
-    let hov = canSelect ? 'hover:bg-amber-200' : '';
-    let border = canSelect ? 'border-amber-600' : 'border-amber-300';
-    let txt = canSelect ? 'text-amber-700' : 'text-amber-800';
-    
-    if(isSelected){
-        baseBg = isWin ? 'bg-green-200' : (isLose ? 'bg-red-200' : 'bg-yellow-200');
-        border = isWin ? 'border-green-600' : (isLose ? 'border-red-600' : 'border-yellow-600');
-        txt = isWin ? 'text-green-800' : (isLose ? 'text-red-800' : 'text-yellow-800');
-        hov = '';
-    }
-
+    const baseBg=canSelect?'bg-amber-100':'bg-amber-50';
+    const hov=canSelect?'hover:bg-amber-200':'';
+    const border=canSelect?'border-amber-600':'border-amber-300';
+    const txt=canSelect?'text-amber-700':'text-amber-800';
     const common=`w-full flex justify-between items-center py-0.5 sm:py-1 px-1 rounded-lg text-left border ${border} ${baseBg}`;
-
     if(canSelect){
       attrs+=`<button onclick="window.selectAttribute('${key}')" class="${common} ${hov} transition-colors"><div class="flex items-center space-x-1 sm:space-x-2"><span class="text-xs sm:text-sm">${a.icon}</span><div><span class="text-[11px] sm:text-xs font-medium leading-tight">${label}</span>${unitText}</div></div><span class="font-semibold ${txt} text-sm sm:text-base">${fv}</span></button>`;
     }else{
@@ -647,121 +631,83 @@ function createCard(cardData, isRevealed, isPlayer, playedAttribute=null, result
     back.appendChild(label);
   }
 
-  card.appendChild(front);
-  card.appendChild(back);
+  card.appendChild(front); card.appendChild(back);
   return card;
 }
 
 function displayMultiplayerCards(gameData){
   if(!gameData.currentCards||!gameData.playerIds) return;
   const opp=gameData.playerIds.find(id=>id!==localPlayerId);
-  const myCardData=gameData.currentCards[localPlayerId];
-  const oppCardData=gameData.currentCards[opp];
-  
   const pc=document.getElementById('playerCard');
   const ac=document.getElementById('aiCard');
-  pc.innerHTML='';
-  ac.innerHTML='';
+  pc.innerHTML=''; ac.innerHTML='';
+  const showOpp=!!gameData.lastResult;
 
-  let playedAttr=null, result=null, oppResult=null;
-  if(gameData.lastResult){
-    playedAttr=gameData.lastResult.attribute;
-    result=gameData.lastResult.winnerId===localPlayerId?'win':(gameData.lastResult.winnerId===opp?'lose':'tie');
-    oppResult=gameData.lastResult.winnerId===opp?'win':(gameData.lastResult.winnerId===localPlayerId?'lose':'tie');
+  if(gameData.currentCards[localPlayerId]) pc.appendChild(createCard(gameData.currentCards[localPlayerId],true,true));
+  else pc.innerHTML=`<div class="card-front bg-gray-200 ...">Warte auf Karte...</div>`;
+
+  if(opp && gameData.currentCards[opp]){
+    ac.appendChild(createCard(gameData.currentCards[opp],showOpp,false));
+  }else if(gameData.playerIds.length<2){
+    ac.innerHTML=`<div class="card-front bg-gray-200 ...">Wartet auf Spieler 2...</div>`;
+  }else{
+    const dummy={name:"Gegner",dk:'?',haerte:'?',quellenSchwindenRadial:'?',dichte:'?',gewicht:'?'};
+    ac.appendChild(createCard(dummy,false,false));
   }
-
-  if(myCardData) pc.appendChild(createCard(myCardData,true,true,playedAttr,result));
-  else pc.innerHTML=`<div class="card-front bg-gray-200 ...">Keine Karte</div>`;
-
-  if(oppCardData){
-    const isRevealed=!!gameData.lastResult;
-    ac.appendChild(createCard(oppCardData,isRevealed,false,playedAttr,oppResult));
-    // Wenn aufgedeckt, Flip-Animation triggern
-    if(isRevealed && !gameData._cardFlipped){
-        const aiCardEl=document.getElementById('aiCard').querySelector('.card-3d');
-        if(aiCardEl){
-             aiCardEl.classList.remove('card-flipped');
-             playSound(sounds.flip);
-             gameData._cardFlipped=true;
-        }
-    }
-  }else ac.innerHTML=`<div class="card-front bg-gray-200 ...">Keine Karte</div>`;
 }
 
+/* Multiplayer Aktionen */
 async function multiplayerSelectAttribute(attribute){
-  if(localGameState?.turn!==localPlayerId || localGameState.lastResult || !attributeInfo[attribute]) return;
+  if(!localGameState || localGameState.turn!==localPlayerId || localGameState.lastResult || !attributeInfo[attribute]) return;
+  const pc=localGameState.currentCards?.[localPlayerId];
+  const opp=localGameState.playerIds?.find(id=>id!==localPlayerId);
+  if(!opp || !localGameState.currentCards?.[opp]) return;
+  const oc=localGameState.currentCards[opp];
+  const pv=pc?.[attribute], ov=oc?.[attribute];
+  if(pv===undefined||ov===undefined) return;
 
-  const ref=doc(db,"games",gameId);
+  let pWins;
+  if(attribute==='quellenSchwindenRadial' || attribute==='dk'){ pWins = pv<ov ? true : (ov<pv ? false : 'tie'); }
+  else{ pWins = pv>ov ? true : (ov>pv ? false : 'tie'); }
+  const winner = pWins==='tie' ? 'tie' : (pWins ? localPlayerId : opp);
   try{
-    await updateDoc(ref,{
-      currentAttribute:attribute,
-      lastActivity:serverTimestamp()
-    });
-    // Warten auf den Gegner und das Ergebnis
-    document.getElementById('attributeSelection').classList.add('hidden');
-    document.getElementById('turnIndicator').textContent='Warte auf Zug des Gegners...';
-
-  }catch(e){console.error("Fehler beim Attribut wählen:",e); alert("Ein Fehler ist aufgetreten.");}
+    await updateDoc(doc(db,"games",gameId),{lastResult:{winnerId:winner,attribute,values:{[localPlayerId]:pv,[opp]:ov}},lastActivity:serverTimestamp()});
+  }catch(e){console.error(e)}
 }
 
 async function multiplayerNextRound(){
-  if(localGameState.status==='finished'){ endGameMultiplayer(); return; }
-  
-  closeBottomSheet();
-  if(!localGameState.lastResult) return;
-  
-  const gs=localGameState;
-  const p1=gs.playerIds[0], p2=gs.playerIds[1];
-  let p1Cards=[...(gs.players[p1].cards||[])];
-  let p2Cards=[...(gs.players[p2].cards||[])];
-  
-  const c1=p1Cards.shift(), c2=p2Cards.shift();
+  const pf=document.getElementById('playerCard')?.querySelector('.card-front'); if(pf) pf.classList.remove('animate-glow-win','animate-glow-lose');
+  const af=document.getElementById('aiCard')?.querySelector('.card-front'); if(af) af.classList.remove('animate-glow-win','animate-glow-lose');
+  document.querySelectorAll('#playerCard .space-y-1 > *, #aiCard .space-y-1 > *').forEach(e=>e.classList.remove('bg-yellow-200','bg-gray-300'));
+  if(!localGameState || !localGameState.lastResult || !gameId) return;
 
-  if(gs.lastResult.winnerId!=='tie'){
-    const winnerCards=gs.lastResult.winnerId===p1?p1Cards:p2Cards;
-    const loserCards=gs.lastResult.winnerId===p1?p2Cards:p1Cards;
-    
-    // Gewinner nimmt Karten an sich
-    winnerCards.push(gs.currentCards[gs.lastResult.winnerId]);
-    winnerCards.push(gs.currentCards[gs.lastResult.winnerId===p1?p2:p1]);
-    
-    if(gs.lastResult.winnerId===p1){
-      p1Cards=winnerCards; p2Cards=loserCards;
-    }else{
-      p1Cards=loserCards; p2Cards=winnerCards;
-    }
-  } else {
-    // Unentschieden: Karten bleiben unter den Decks
-    if(c1) p1Cards.push(c1);
-    if(c2) p2Cards.push(c2);
+  const gs=localGameState;
+  const [p1,p2]=gs.playerIds;
+  let p1Cards=[...gs.players[p1].cards], p2Cards=[...gs.players[p2].cards];
+  if(p1Cards.length===0&&p2Cards.length===0 && gs.status!=='finished'){
+    await updateDoc(doc(db,"games",gameId),{status:'finished',lastResult:null}); return;
   }
+  const c1=p1Cards.shift(), c2=p2Cards.shift();
+  if(gs.lastResult.winnerId===p1){ if(c1) p1Cards.push(c1); if(c2) p1Cards.push(c2); }
+  else if(gs.lastResult.winnerId===p2){ if(c1) p2Cards.push(c1); if(c2) p2Cards.push(c2); }
+  else { if(c1) p1Cards.push(c1); if(c2) p2Cards.push(c2); }
 
   if(p1Cards.length===0 || p2Cards.length===0){
     await updateDoc(doc(db,"games",gameId),{status:'finished',players:{[p1]:{...gs.players[p1],cards:p1Cards},[p2]:{...gs.players[p2],cards:p2Cards}},currentCards:{[p1]:null,[p2]:null},lastResult:null});
     return;
   }
-
   const nextTurn = gs.lastResult.winnerId==='tie' ? gs.turn : gs.lastResult.winnerId;
   await updateDoc(doc(db,"games",gameId),{
-    lastResult:null,
-    turn:nextTurn,
+    lastResult:null,turn:nextTurn,
     players:{[p1]:{...gs.players[p1],cards:p1Cards},[p2]:{...gs.players[p2],cards:p2Cards}},
     currentCards:{[p1]:p1Cards[0]||null,[p2]:p2Cards[0]||null},
-    lastActivity:serverTimestamp(),
-    _cardFlipped: false // Reset
+    lastActivity:serverTimestamp()
   });
 }
 
 /* Controller */
-window.selectAttribute=function(attr){
-  if(gameMode==='ai') selectAttributeAI(attr);
-  else if(gameMode==='multiplayer') multiplayerSelectAttribute(attr);
-};
-
-window.nextRound=function(){
-  if(gameMode==='ai') nextRoundAI();
-  else if(gameMode==='multiplayer') multiplayerNextRound();
-};
+window.selectAttribute=function(attr){ if(gameMode==='ai') selectAttributeAI(attr); else if(gameMode==='multiplayer') multiplayerSelectAttribute(attr); };
+window.nextRound=function(){ if(gameMode==='ai') nextRoundAI(); else if(gameMode==='multiplayer') multiplayerNextRound(); };
 
 /* Helpers */
 function shuffleArray(a){const s=[...a]; for(let i=s.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [s[i],s[j]]=[s[j],s[i]];} return s;}
@@ -780,201 +726,135 @@ function startGameAI(name){
   aiGame.currentAiCard=aiGame.aiCards[0];
   aiGame.roundInProgress=false;
   aiGame.turn='player';
-  
   document.getElementById('attributeSelection').classList.remove('hidden');
   document.getElementById('resultDisplay').classList.add('hidden');
   document.getElementById('turnIndicator').classList.remove('hidden');
   document.getElementById('gameContainer').classList.remove('hidden');
   window.scrollTo(0,0);
-  
-  updateDisplayAI();
-  displayCardsAI();
+  updateDisplayAI(); displayCardsAI();
 }
 
 function displayCardsAI(){
   const pc=document.getElementById('playerCard');
   const ac=document.getElementById('aiCard');
-  pc.innerHTML='';
-  ac.innerHTML='';
-
-  // Player card is always revealed (isRevealed=true) and isPlayer=true
-  if(aiGame.currentPlayerCard) pc.appendChild(createCard(aiGame.currentPlayerCard,true,true,aiGame.playedAttribute,aiGame.result));
-  else pc.innerHTML=`<div class="card-front bg-gray-200 ...">Keine Karte</div>`;
-
+  pc.innerHTML=''; ac.innerHTML='';
+  if(aiGame.currentPlayerCard) pc.appendChild(createCard(aiGame.currentPlayerCard,true,true)); else pc.innerHTML=`<div class="card-front bg-gray-200 ...">Keine Karte</div>`;
   if(aiGame.currentAiCard){
-    const reveal=aiGame.roundInProgress; // Only reveal opponent card when round is in progress
-    ac.appendChild(createCard(aiGame.currentAiCard,reveal,false,aiGame.playedAttribute,aiGame.aiResult));
-    // Flip animation on reveal
-    if(reveal){
-      const aiCardEl=document.getElementById('aiCard').querySelector('.card-3d');
-      if(aiCardEl){
-        aiCardEl.classList.remove('card-flipped');
-        playSound(sounds.flip);
-      }
-    }
+    const reveal=aiGame.roundInProgress;
+    ac.appendChild(createCard(aiGame.currentAiCard,reveal,false));
   }else ac.innerHTML=`<div class="card-front bg-gray-200 ...">Keine Karte</div>`;
 }
 
 function selectAttributeAI(attribute){
   if(aiGame.roundInProgress || aiGame.turn!=='player' || !aiGame.currentPlayerCard || !aiGame.currentAiCard || !attributeInfo[attribute]) return;
-
   aiGame.roundInProgress=true;
-  aiGame.playedAttribute=attribute;
-  
   const pv=aiGame.currentPlayerCard[attribute];
   const av=aiGame.currentAiCard[attribute];
-  if(pv===undefined||av===undefined){
-    aiGame.roundInProgress=false;
-    return;
-  }
-  
-  // KI-Karte aufdecken (Flip-Animation) - Wird jetzt in displayCardsAI() gemacht
-  displayCardsAI();
+  if(pv===undefined||av===undefined){ aiGame.roundInProgress=false; return; }
+
+  // KI-Karte aufdecken (Flip-Animation)
+  const aiCardEl=document.getElementById('aiCard').querySelector('.card-3d');
+  if(aiCardEl){ aiCardEl.classList.remove('card-flipped'); playSound(sounds.flip); }
 
   let pWins;
-  if(attribute==='quellenSchwindenRadial' || attribute==='dk'){
-    pWins = pv<av ? true : (av<pv ? false : 'tie'); // Bei DK/Schwinden gewinnt der niedrigere Wert
-  } else{
-    pWins = pv>av ? true : (av>pv ? false : 'tie'); // Sonst gewinnt der höhere Wert
-  }
+  if(attribute==='quellenSchwindenRadial' || attribute==='dk'){ pWins = pv<av ? true : (av<pv ? false : 'tie'); }
+  else{ pWins = pv>av ? true : (av>pv ? false : 'tie'); }
 
-  aiGame.result = pWins===true ? 'win' : (pWins===false ? 'lose' : 'tie');
-  aiGame.aiResult = pWins===true ? 'lose' : (pWins===false ? 'win' : 'tie');
+  const pMove=aiGame.playerCards.shift(), aMove=aiGame.aiCards.shift();
+  let nextTurn=aiGame.turn;
+  let resultTitle = '🤝 Unentschieden!';
+  if(pWins===true){ if(pMove) aiGame.playerCards.push(pMove); if(aMove) aiGame.playerCards.push(aMove); nextTurn='player'; resultTitle='🎉 Du gewinnst!'; lastRoundWinningWoodName = aiGame.currentPlayerCard.name; }
+  else if(pWins===false){ if(aMove) aiGame.aiCards.push(aMove); if(pMove) aiGame.aiCards.push(pMove); nextTurn='ai'; resultTitle='😞 KI gewinnt!'; lastRoundWinningWoodName = aiGame.currentAiCard.name; }
+  else { if(pMove) aiGame.playerCards.push(pMove); if(aMove) aiGame.aiCards.push(aMove); lastRoundWinningWoodName = (Math.random() < 0.5 ? aiGame.currentPlayerCard.name : aiGame.currentAiCard.name); }
 
+  aiGame.turn=nextTurn;
 
   setTimeout(()=>{
-    const pMove=aiGame.playerCards.shift(), aMove=aiGame.aiCards.shift();
-    let nextTurn=aiGame.turn;
-    let resultTitle = '🤝 Unentschieden!';
-
-    if(pWins===true){
-      if(pMove) aiGame.playerCards.push(pMove);
-      if(aMove) aiGame.playerCards.push(aMove);
-      nextTurn='player';
-      resultTitle='🎉 Du gewinnst!';
-      lastRoundWinningWoodName = aiGame.currentPlayerCard.name;
-    } 
-    else if(pWins===false){
-      if(aMove) aiGame.aiCards.push(aMove);
-      if(pMove) aiGame.aiCards.push(pMove);
-      nextTurn='ai';
-      resultTitle='😞 KI gewinnt!';
-      lastRoundWinningWoodName = aiGame.currentAiCard.name;
-    } 
-    else { // Tie
-      if(pMove) aiGame.playerCards.push(pMove);
-      if(aMove) aiGame.aiCards.push(aMove);
-      lastRoundWinningWoodName = (Math.random() < 0.5 ? aiGame.currentPlayerCard.name : aiGame.currentAiCard.name);
-    }
-    
-    // Karten mit Ergebnissen neu rendern, um die Hervorhebung zu zeigen
     displayCardsAI();
-
     const res=document.getElementById('resultText');
     const resCls= pWins===true ? 'text-green-600' : (pWins===false ? 'text-red-600' : 'text-yellow-600');
     res.textContent= resultTitle;
     res.className=`text-lg sm:text-xl font-bold ${resCls}`;
-    
     document.getElementById('resultDetails').textContent=`${attributeInfo[attribute].name.split(' (')[0]}: ${pv.toLocaleString('de-DE')} vs ${av.toLocaleString('de-DE')}`;
     document.getElementById('attributeSelection').classList.add('hidden');
     document.getElementById('resultDisplay').classList.remove('hidden');
-    
+
     // 2s Pause, dann Bottom-Sheet
     setTimeout(()=>{
       openBottomSheet(resultTitle.replace(/^[^A-Za-zÄÖÜäöüß]+/,'').trim());
     },2000);
 
-    if(pWins===true){
-      playSound(sounds.win);
-      triggerWinStarAnimation();
-    } else if(pWins===false){
-      triggerLoseStarAnimation();
-    }
-
-    aiGame.turn=nextTurn;
-    updateDisplayAI();
-    checkGameOverAI();
+    if(pWins===true){ playSound(sounds.win); triggerWinStarAnimation(); }
+    updateDisplayAI(); checkGameOverAI();
     window.scrollTo({top:0,behavior:'smooth'});
-  },1000); // KI "denkt" 1s
+  },600);
 }
 
 function aiSelectAttribute(){
   if(aiGame.roundInProgress || aiGame.turn!=='ai' || !aiGame.currentPlayerCard || !aiGame.currentAiCard) return;
-
   aiGame.roundInProgress=true;
-  
-  // Einfache KI-Strategie: Wähle das Attribut, bei dem die eigene Karte den größten Vorteil hat (oder den größten Nachteil beim Gegner)
-  let bestAttr=null;
-  let maxAdvantage=-Infinity; // Größter Vorteil (höherer Wert) oder größter Nachteil (niedrigerer Wert bei Schwinden/DK)
 
-  for(const key in attributeInfo){
-    const pv=aiGame.currentPlayerCard[key];
-    const av=aiGame.currentAiCard[key];
-    if(pv===undefined || av===undefined) continue;
+  // Vor KI-Zug ggf. Overlays schließen
+  closeBottomSheet();
+  document.getElementById('infoModal').classList.add('hidden');
 
-    let advantage;
-    if(key==='quellenSchwindenRadial' || key==='dk'){
-      // Gewinner ist der niedrigere Wert. Vorteil = Gegnerwert - eigener Wert. Hohe positive Zahl = gut.
-      advantage=av-pv; 
-    }else{
-      // Gewinner ist der höhere Wert. Vorteil = eigener Wert - Gegnerwert. Hohe positive Zahl = gut.
-      advantage=pv-av;
-    }
+  setTimeout(()=>{
+    const keys=Object.keys(attributeInfo);
+    const key=keys[Math.floor(Math.random()*keys.length)];
+    const pv=aiGame.currentPlayerCard[key], av=aiGame.currentAiCard[key];
+    if(pv===undefined||av===undefined){ aiGame.roundInProgress=false; nextRoundAI(); return; }
 
-    if(advantage>maxAdvantage){
-      maxAdvantage=advantage;
-      bestAttr=key;
-    }
-  }
+    // KI deckt Karte auf
+    const aiCardEl=document.getElementById('aiCard').querySelector('.card-3d');
+    if(aiCardEl){ aiCardEl.classList.remove('card-flipped'); playSound(sounds.flip); }
 
-  // Wenn kein klarer Vorteil (maxAdvantage <= 0), wähle zufällig
-  if(maxAdvantage<=0 || !bestAttr){
-    const availableKeys=Object.keys(attributeInfo);
-    bestAttr=availableKeys[Math.floor(Math.random()*availableKeys.length)];
-  }
+    let pWins;
+    if(key==='quellenSchwindenRadial' || key==='dk'){ pWins = pv<av ? true : (av<pv ? false : 'tie'); }
+    else{ pWins = pv>av ? true : (av>pv ? false : 'tie'); }
 
-  aiGame.playedAttribute=bestAttr;
-  document.getElementById('turnIndicator').textContent=`Computer wählt: ${attributeInfo[bestAttr].name.split(' (')[0]}`;
+    const pMove=aiGame.playerCards.shift(), aMove=aiGame.aiCards.shift();
+    let nextTurn=aiGame.turn;
+    let resultTitle='🤝 Unentschieden!';
+    if(pWins===true){ if(pMove) aiGame.playerCards.push(pMove); if(aMove) aiGame.playerCards.push(aMove); nextTurn='player'; resultTitle='🎉 Du gewinnst!'; lastRoundWinningWoodName = aiGame.currentPlayerCard.name; }
+    else if(pWins===false){ if(aMove) aiGame.aiCards.push(aMove); if(pMove) aiGame.aiCards.push(pMove); nextTurn='ai'; resultTitle='😞 KI gewinnt!'; lastRoundWinningWoodName = aiGame.currentAiCard.name; }
+    else { if(pMove) aiGame.playerCards.push(pMove); if(aMove) aiGame.aiCards.push(aMove); lastRoundWinningWoodName = (Math.random() < 0.5 ? aiGame.currentPlayerCard.name : aiGame.currentAiCard.name); }
 
+    displayCardsAI();
+    const res=document.getElementById('resultText');
+    const resCls= pWins===true ? 'text-green-600' : (pWins===false ? 'text-red-600' : 'text-yellow-600');
+    res.textContent= resultTitle;
+    res.className=`text-lg sm:text-xl font-bold ${resCls}`;
+    document.getElementById('resultDetails').textContent=`${attributeInfo[key].name.split(' (')[0]}: ${pv.toLocaleString('de-DE')} vs ${av.toLocaleString('de-DE')}`;
+    document.getElementById('attributeSelection').classList.add('hidden');
+    document.getElementById('resultDisplay').classList.remove('hidden');
 
-  // Simulation des Zuges nach 1,5 Sekunden
-  setTimeout(()=>selectAttributeAI(bestAttr),1500);
+    // 2s Pause, dann Bottom-Sheet
+    setTimeout(()=>{
+      openBottomSheet(resultTitle.replace(/^[^A-Za-zÄÖÜäöüß]+/,'').trim());
+    },2000);
+
+    if(pWins===true){ playSound(sounds.win); triggerWinStarAnimation(); }
+    aiGame.turn=nextTurn;
+    updateDisplayAI(); checkGameOverAI();
+    window.scrollTo({top:0,behavior:'smooth'});
+  },1000); // KI "denkt" 1s
 }
 
-
 function nextRoundAI(){
-  // Animationen zurücksetzen
-  aiGame.playedAttribute=null;
-  aiGame.result=null;
-  aiGame.aiResult=null;
+  const pf=document.getElementById('playerCard')?.querySelector('.card-front'); if(pf) pf.classList.remove('animate-glow-win','animate-glow-lose');
+  const af=document.getElementById('aiCard')?.querySelector('.card-front'); if(af) af.classList.remove('animate-glow-win','animate-glow-lose');
+  document.querySelectorAll('#playerCard .space-y-1 > *, #aiCard .space-y-1 > *').forEach(e=>e.classList.remove('bg-yellow-200','bg-gray-300'));
 
-  document.querySelectorAll('#playerCard .card-front, #aiCard .card-front').forEach(e=>e.classList.remove('animate-glow-win','animate-glow-lose'));
-
-  if(aiGame.playerCards.length===0||aiGame.aiCards.length===0){
-    if(!document.getElementById('gameOverModal').classList.contains('hidden')){
-      // Ist bereits am Ende, passiert nichts
-    } else {
-      endGameAI();
-    }
-    return;
-  }
-
-  closeBottomSheet();
+  if(aiGame.playerCards.length===0||aiGame.aiCards.length===0){ if(!document.getElementById('gameOverModal').classList.contains('hidden')){ } else { endGameAI(); } return; }
 
   aiGame.currentPlayerCard=aiGame.playerCards[0];
   aiGame.currentAiCard=aiGame.aiCards[0];
   aiGame.roundInProgress=false;
   document.getElementById('resultDisplay').classList.add('hidden');
+  updateDisplayAI(); displayCardsAI();
 
-  updateDisplayAI();
-  displayCardsAI();
-
-  if(aiGame.turn==='ai'){
-    document.getElementById('attributeSelection').classList.add('hidden');
-    aiSelectAttribute();
-  } else{
-    document.getElementById('attributeSelection').classList.remove('hidden');
-  }
+  if(aiGame.turn==='ai'){ document.getElementById('attributeSelection').classList.add('hidden'); aiSelectAttribute(); }
+  else{ document.getElementById('attributeSelection').classList.remove('hidden'); }
 }
 
 function updateDisplayAI(){
@@ -982,290 +862,169 @@ function updateDisplayAI(){
   document.getElementById('playerCards').textContent=pc;
   document.getElementById('aiCards').textContent=oc;
   updateStatusBar(pc,oc);
-
-  const ti=document.getElementById('turnIndicator');
-  ti.classList.remove('hidden');
-
+  const ti=document.getElementById('turnIndicator'); ti.classList.remove('hidden');
   if(aiGame.roundInProgress){
     if(!document.getElementById('resultDisplay').classList.contains('hidden')) ti.textContent='';
-    else if(aiGame.turn==='ai'){
-      ti.textContent='Computer überlegt...';
-      ti.className='text-sm font-semibold p-1 text-gray-500';
-    } else ti.textContent='';
-  }else if(aiGame.turn==='player'){
-    ti.textContent='Dein Zug!';
-    ti.className='text-sm font-semibold p-1 text-amber-600 status-flash-win';
-  } else{
-    ti.textContent='Computer ist am Zug!';
-    ti.className='text-sm font-semibold p-1 text-red-600 status-flash-lose';
+    else if(aiGame.turn==='ai'){ ti.textContent='Computer überlegt...'; ti.className='text-sm font-semibold p-1 text-gray-500'; }
+    else ti.textContent='';
+  }else if(aiGame.turn==='player'){ ti.textContent='Du bist am Zug!'; ti.className='text-sm font-semibold p-1 text-green-600'; }
+  else { ti.textContent='Computer ist am Zug...'; ti.className='text-sm font-semibold p-1 text-gray-500'; }
+}
+
+function checkGameOverAI(){ if(aiGame.roundInProgress){ if(aiGame.playerCards.length===0||aiGame.aiCards.length===0) setTimeout(endGameAI,300); } }
+
+function triggerWinStarAnimation(){
+  const cont=document.getElementById('animationContainer');
+  const box=document.getElementById('playerScoreBox');
+  const bar=document.getElementById('statusBar');
+  if(!cont||!box||!bar) return;
+  const sr=bar.getBoundingClientRect(), er=box.getBoundingClientRect(), cr=cont.getBoundingClientRect();
+  const star=document.createElement('div'); star.textContent='⭐'; star.className='falling-star';
+  const w=sr.width*(parseFloat(bar.style.width)/100);
+  star.style.left=`${sr.left-cr.left+(w/2)-20}px`; star.style.top=`${sr.top-cr.top-20}px`;
+  const endY=(er.top+er.height/2)-sr.top; star.style.setProperty('--end-y',`${endY}px`);
+  cont.appendChild(star);
+  playSound(sounds.chime); playSound(sounds.starWin);
+  setTimeout(()=>star.remove(),1200);
+}
+
+/* Enden, Leaderboard, Reset, Info */
+function endGame(){
+  if(gameMode==='ai'){ if(!document.getElementById('gameOverModal').classList.contains('hidden')||!document.getElementById('reflectionModal').classList.contains('hidden')){} else endGameAI(); }
+  else if(gameMode==='multiplayer'){
+    const pc=localGameState?.players?.[localPlayerId]?.cards?.length??0;
+    const opp=localGameState?.playerIds?.find(id=>id!==localPlayerId);
+    const oc=localGameState?.players?.[opp]?.cards?.length??0;
+    const win=pc>oc, draw=(pc===0&&oc===0);
+    if(draw) showGameOverScreen(null);
+    else if(win){ saveToLeaderboard(localGameState.players[localPlayerId].name); showReflectionOrWinScreen(); }
+    else showGameOverScreen(false);
   }
 }
 
-function checkGameOverAI(){
-  if(aiGame.playerCards.length===0){
-    endGameAI('lose');
-  } else if(aiGame.aiCards.length===0){
-    // Gewonnen, zeige Reflexions-Modal
-    const modal=document.getElementById('reflectionModal');
-    document.getElementById('reflectionQuestion').textContent=
-      reflectionQuestions[Math.floor(Math.random()*reflectionQuestions.length)];
-    modal.classList.remove('hidden');
-    document.getElementById('reflectionAnswer').focus();
-    closeBottomSheet();
-  }
+function endGameAI(){
+  if(!document.getElementById('gameOverModal').classList.contains('hidden')||!document.getElementById('reflectionModal').classList.contains('hidden')) return;
+  const win=aiGame.playerCards.length>0;
+  if(win){ saveToLeaderboard(aiGame.playerName); showReflectionOrWinScreen(); }
+  else showGameOverScreen(false);
 }
 
-function endGameAI(result='win'){
-  const modal=document.getElementById('gameOverModal');
-  const title=document.getElementById('gameOverTitle');
-  const text=document.getElementById('gameOverText');
-  
-  if(result==='lose'){
-    title.textContent='LEIDER VERLOREN';
-    title.className='text-3xl font-bold mb-3 text-red-600';
-    text.textContent=`Der Computer hat dich besiegt. Die holztechnische Ausbildung hat noch Luft nach oben.`;
-  } else {
-    // Wenn 'win' direkt aufgerufen, ohne Reflexion
-    title.textContent='SPIEL VORBEI!';
-    title.className='text-3xl font-bold mb-3 text-green-600';
-    text.textContent=`Du hast das Spiel gegen den Computer gewonnen. Dein Wissen über Holz ist beeindruckend!`;
-  }
-  
-  modal.classList.remove('hidden');
-  closeBottomSheet();
+function showReflectionOrWinScreen(){
+  let i=parseInt(localStorage.getItem('reflectionQuestionIndex')||'0');
+  document.getElementById('reflectionQuestion').textContent=reflectionQuestions[i%reflectionQuestions.length];
+  document.getElementById('reflectionModal').classList.remove('hidden');
+  i=i+1; localStorage.setItem('reflectionQuestionIndex',i.toString());
 }
 
-/* Multiplayer */
-window.copyShareLink=async()=>{
-  const el=document.getElementById('shareLink');
-  try{await navigator.clipboard.writeText(el.value);}catch{el.select();document.execCommand('copy');}
-  hasCopiedShareLink=true;
-  const s=document.getElementById('lobbyStatus');
-  if(s) s.textContent='Link kopiert. Warte auf Mitspieler...';
-  
-  if(localGameState&&(localGameState.status==='playing'||localGameState.status==='finished')){
-    document.getElementById('multiplayerLobbyModal').classList.add('hidden');
-    document.getElementById('gameContainer').classList.remove('hidden');
-    updateMultiplayerUI(localGameState);
-  }
+window.showFinalWinScreen=function(){
+  document.getElementById('reflectionModal').classList.add('hidden');
+  document.getElementById('reflectionAnswer').value='';
+  showGameOverScreen(true);
 };
 
-/* Multiplayer minimal (wie in deiner Fassung) */
-async function createGame(playerName){
-  const lobby=document.getElementById('multiplayerLobbyModal');
-  lobby.classList.remove('hidden');
-  hasCopiedShareLink=false;
-  gameId=Math.random().toString(36).substring(2,8).toUpperCase();
-  const base=window.location.href.split('?')[0];
-  document.getElementById('shareLink').value=`${base}?game=${gameId}`;
-  
-  const ref=doc(db,"games",gameId);
-  const data={
-    gameId,
-    status:'waiting',
-    playerIds:[localPlayerId],
-    players:{[localPlayerId]:{name:playerName,cards:[],status:'online'}},
-    createdAt:serverTimestamp()
-  };
-  try{
-    await setDoc(ref,data);
-    listenToGameChanges();
-  }catch(e){alert("Fehler beim Erstellen des Spiels.");}
-}
-
-async function joinGame(id,playerName){
-  const ref=doc(db,"games",id);
-  try{
-    const snap=await getDoc(ref);
-    if(snap.exists()&&snap.data().status==='waiting'&&snap.data().playerIds.length===1){
-      document.getElementById('lobbyTitle').textContent="Spiel wird beigetreten...";
-      document.getElementById('lobbyText').textContent="Moment, die Karten werden gemischt.";
-      document.getElementById('multiplayerLobbyModal').classList.remove('hidden');
-      hasCopiedShareLink=true;
-
-      const shuffled=shuffleArray([...woodCards]);
-      const p1=snap.data().playerIds[0];
-      const p1Cards=shuffled.slice(0,15);
-      const p2Cards=shuffled.slice(15,30);
-
-      await updateDoc(ref,{
-        status:'playing',
-        playerIds:[p1,localPlayerId],
-        [`players.${localPlayerId}`]:{name:playerName,cards:p2Cards,status:'online'},
-        [`players.${p1}.cards`]:p1Cards,
-        turn:p1,
-        currentCards:{[p1]:p1Cards[0],[localPlayerId]:p2Cards[0]},
-        lastResult:null,
-        lastActivity:serverTimestamp()
-      });
-
-      listenToGameChanges();
-    }else{
-      alert("Spiel nicht gefunden, bereits voll oder beendet.");
-      window.location.search='';
-    }
-  }catch(e){alert("Fehler beim Beitreten zum Spiel."); window.location.search='';}
-}
-
-function listenToGameChanges(){
-  if(!gameId) return;
-  const ref=doc(db,"games",gameId);
-  unsubscribeGame=onSnapshot(ref,(ds)=>{
-    if(!ds.exists()){
-      if(gameMode==='multiplayer'){alert("Das Spiel wurde beendet oder gelöscht."); resetGame();}
-      return;
-    }
-    const gameData=ds.data();
-    localGameState=gameData;
-
-    if(gameData.status==='playing'||gameData.status==='finished'){
-      if(hasCopiedShareLink || (gameData.playerIds.includes(localPlayerId)&&gameData.playerIds.length===2)){
-        document.getElementById('multiplayerLobbyModal').classList.add('hidden');
-        document.getElementById('gameContainer').classList.remove('hidden');
-        updateMultiplayerUI(gameData);
-      }else if(!hasCopiedShareLink && gameData.playerIds.length===2){
-        const s=document.getElementById('lobbyStatus');
-        if(s) s.textContent='Mitspieler ist beigetreten! Klicke „Link kopieren“, um zu starten.';
-      }
-    }else if(gameData.status==='waiting'){
-      document.getElementById('multiplayerLobbyModal').classList.remove('hidden');
-      document.getElementById('gameContainer').classList.add('hidden');
-    }
-
-  },(e)=>console.error(e));
-}
-
-function updateMultiplayerUI(gameData){
-  if(!gameData||!gameData.players||!gameData.playerIds) return;
-
-  const oppId=gameData.playerIds.find(id=>id!==localPlayerId);
-
-  document.getElementById('playerNameDisplay').textContent=gameData.players[localPlayerId]?.name||'Du';
-  document.getElementById('playerCards').textContent=gameData.players[localPlayerId]?.cards?.length??'?';
-  
-  if(oppId && gameData.players[oppId]){
-    document.getElementById('opponentNameDisplay').textContent=gameData.players[oppId].name;
-    document.getElementById('aiCards').textContent=gameData.players[oppId].cards?.length??'?';
+function showGameOverScreen(win){
+  document.getElementById('reflectionModal').classList.add('hidden');
+  document.getElementById('leaderboardModal').classList.add('hidden');
+  const t=document.getElementById('gameOverTitle');
+  const tx=document.getElementById('gameOverText');
+  const m=document.getElementById('gameOverModal');
+  if(win===true){
+    t.textContent='🎉 Glückwunsch!'; t.className='text-3xl font-bold mb-3 text-green-600';
+    const name=(gameMode==='ai'?aiGame.playerName:localGameState?.players?.[localPlayerId]?.name)||'Du';
+    tx.textContent=`Du hast gewonnen, ${name}! Du hast alle Karten gesammelt.`;
+  }else if(win===false){
+    t.textContent='😞 Spiel verloren'; t.className='text-3xl font-bold mb-3 text-red-600';
+    const opp=(gameMode==='ai'?'Die KI':localGameState?.players?.[localGameState.playerIds?.find(id=>id!==localPlayerId)]?.name)||'Dein Gegner';
+    tx.textContent=`${opp} hat gewonnen. Versuche es nochmal!`;
   }else{
-    document.getElementById('opponentNameDisplay').textContent="Wartet...";
-    document.getElementById('aiCards').textContent='?';
+    t.textContent='🤝 Unentschieden!'; t.className='text-3xl font-bold mb-3 text-yellow-600';
+    tx.textContent='Das Spiel endet unentschieden!';
   }
-
-  updateStatusBar(gameData.players[localPlayerId]?.cards?.length??0, gameData.players[oppId]?.cards?.length??0);
-  displayMultiplayerCards(gameData);
-
-  const ti=document.getElementById('turnIndicator');
-  ti.classList.remove('hidden');
-  document.getElementById('resultDisplay').classList.add('hidden');
-  document.getElementById('attributeSelection').classList.add('hidden');
-  closeBottomSheet();
-
-  if(gameData.status==='finished'){
-    endGameMultiplayer();
-    return;
-  }
-
-  if(gameData.lastResult){
-    // Ergebnis anzeigen
-    const result=gameData.lastResult.winnerId===localPlayerId?'win':(gameData.lastResult.winnerId===oppId?'lose':'tie');
-    const resText=result==='win'?'🎉 Du gewinnst!':(result==='lose'?'😞 Du verlierst!':'🤝 Unentschieden!');
-    const resCls= result==='win' ? 'text-green-600' : (result==='lose' ? 'text-red-600' : 'text-yellow-600');
-    
-    document.getElementById('resultText').textContent=resText;
-    document.getElementById('resultText').className=`text-lg sm:text-xl font-bold ${resCls}`;
-    
-    const attrName=attributeInfo[gameData.lastResult.attribute]?.name.split(' (')[0]||'Eigenschaft';
-    document.getElementById('resultDetails').textContent=`${attrName}: ${gameData.lastResult.playerValue} vs ${gameData.lastResult.opponentValue}`;
-
-    document.getElementById('resultDisplay').classList.remove('hidden');
-    ti.textContent='';
-    openBottomSheet(resText.replace(/^[^A-Za-zÄÖÜäöüß]+/,'').trim());
-
-    if(result==='win'){
-      playSound(sounds.win);
-      triggerWinStarAnimation();
-    } else if(result==='lose'){
-      triggerLoseStarAnimation();
-    }
-
-  }else if(gameData.turn===localPlayerId){
-    // Eigener Zug
-    ti.textContent='Dein Zug!';
-    ti.className='text-sm font-semibold p-1 text-amber-600 status-flash-win';
-    document.getElementById('attributeSelection').classList.remove('hidden');
-  }else if(gameData.turn===oppId){
-    // Gegner ist am Zug
-    ti.textContent=`Warte auf ${gameData.players[oppId].name}...`;
-    ti.className='text-sm font-semibold p-1 text-gray-500';
-  }
+  m.classList.remove('hidden');
 }
 
-function endGameMultiplayer(){
-  const modal=document.getElementById('reflectionModal');
-  const title=document.getElementById('gameOverTitle');
-  const text=document.getElementById('gameOverText');
-  const oppId=localGameState.playerIds.find(id=>id!==localPlayerId);
-  
-  if(localGameState.players[localPlayerId]?.cards?.length>0){
-    // Gewonnen, zeige Reflexions-Modal
-    const modal=document.getElementById('reflectionModal');
-    document.getElementById('reflectionQuestion').textContent=
-      reflectionQuestions[Math.floor(Math.random()*reflectionQuestions.length)];
-    modal.classList.remove('hidden');
-    document.getElementById('reflectionAnswer').focus();
-    
-    // update best list
-    const playerName=localStorage.getItem('holzquartett_playerName')||'Unbekannt';
-    const userRef=doc(db,"leaderboard",auth.currentUser.uid);
-    try{updateDoc(userRef,{name:playerName,wins:increment(1),lastWin:serverTimestamp()},{merge:true});}catch(e){console.error("Fehler beim Speichern des Sieges:",e);}
-    
-  } else {
-    // Verloren
-    document.getElementById('gameContainer').classList.add('hidden');
-    title.textContent='LEIDER VERLOREN';
-    title.className='text-3xl font-bold mb-3 text-red-600';
-    text.textContent=`${localGameState.players[oppId].name} hat dich besiegt. Die holztechnische Ausbildung hat noch Luft nach oben.`;
-    document.getElementById('gameOverModal').classList.remove('hidden');
-  }
+async function saveToLeaderboard(name){
+  if(!name) return;
+  const safe=name.replace(/[.#$[\]]/g,'_');
+  const ref=doc(db,"leaderboard",safe);
+  try{ await setDoc(ref,{name,wins:increment(1),lastWin:serverTimestamp()},{merge:true}); }catch(e){console.error(e)}
 }
 
-
-/* Leaderboard */
 window.showLeaderboard=async function(){
   const list=document.getElementById('leaderboardList');
-  list.innerHTML='<p class="text-center text-gray-500">Lade Bestenliste...</p>';
+  list.innerHTML='<p class="text-gray-500 text-center">Lade Bestenliste...</p>';
   document.getElementById('gameOverModal').classList.add('hidden');
   document.getElementById('leaderboardModal').classList.remove('hidden');
-
   try{
     const q=query(collection(db,"leaderboard"),orderBy("wins","desc"),limit(10));
     const snap=await getDocs(q);
-
-    if(snap.empty){
-      list.innerHTML='<p class="text-gray-500 text-center">Noch keine Einträge vorhanden.</p>';
-      return;
-    }
-
+    if(snap.empty){ list.innerHTML='<p class="text-gray-500 text-center">Noch keine Einträge vorhanden.</p>'; return; }
     list.innerHTML=snap.docs.map((d,i)=>{
-      const data=d.data();
-      const safe=(data.name||'Unbekannt').replace(/</g,"&lt;").replace(/>/g,"&gt;");
+      const data=d.data(); const safe=(data.name||'Unbekannt').replace(/</g,"&lt;").replace(/>/g,"&gt;");
       return `<div class="flex justify-between items-center p-3 ${i%2===0?'bg-gray-50':'bg-white'} rounded-lg"><span class="font-semibold">${i+1}. ${safe}</span><span class="text-sm text-gray-600">${data.wins||0} Siege</span></div>`;
     }).join('');
-
-  }catch(e){
-    list.innerHTML='<p class="text-red-500 text-center">Fehler beim Laden der Bestenliste.</p>';
-  }
+  }catch(e){ list.innerHTML='<p class="text-red-500 text-center">Fehler beim Laden der Bestenliste.</p>'; }
 };
 
 window.closeLeaderboard=function(){
   document.getElementById('leaderboardModal').classList.add('hidden');
-  if(localGameState?.status==='finished' || (gameMode==='ai' && (aiGame.playerCards.length===0 || aiGame.aiCards.length===0))){
+  if(localGameState?.status==='finished' || (gameMode==='ai' && (aiGame.playerCards.length===0||aiGame.aiCards.length===0))){
     document.getElementById('gameOverModal').classList.remove('hidden');
-  } else {
+  }else{
     document.getElementById('setupModal').classList.remove('hidden');
   }
 };
-</script>
 
+window.resetGame=async function(){
+  if(unsubscribeGame){ unsubscribeGame(); unsubscribeGame=null; }
+  if(gameMode==='multiplayer'&&gameId&&localGameState?.playerIds?.[0]===localPlayerId){
+    try{ await deleteDoc(doc(db,"games",gameId)); }catch{}
+  }
+  aiGame={playerName:'',playerCards:[],aiCards:[],currentPlayerCard:null,currentAiCard:null,roundInProgress:false,turn:'player'};
+  gameMode=null; gameId=null; localGameState={}; hasCopiedShareLink=false; roundSoundPlayed=false;
+  document.getElementById('gameOverModal').classList.add('hidden');
+  document.getElementById('leaderboardModal').classList.add('hidden');
+  document.getElementById('reflectionModal').classList.add('hidden');
+  document.getElementById('gameContainer').classList.add('hidden');
+  document.getElementById('multiplayerLobbyModal').classList.add('hidden');
+  document.getElementById('nameModal').classList.add('hidden');
+  document.getElementById('infoModal').classList.add('hidden');
+  document.getElementById('playerName').value='';
+  document.getElementById('reflectionAnswer').value='';
+  const lobbyStatus=document.getElementById('lobbyStatus'); if(lobbyStatus) lobbyStatus.textContent='';
+  document.getElementById('playerCard').innerHTML=''; document.getElementById('aiCard').innerHTML='';
+  updateStatusBar(0,0);
+  document.getElementById('setupModal').classList.remove('hidden');
+  window.history.pushState({},document.title,window.location.pathname);
+};
+
+/* Info */
+window.showWoodInfo=function(woodName){
+  const modal=document.getElementById('infoModal');
+  const title=document.getElementById('infoModalTitle');
+  const content=document.getElementById('infoModalContent');
+  title.textContent=`Zusatzwissen – ${woodName}`;
+  const key=Object.keys(woodInfo).find(k=>k.toLowerCase()===woodName.toLowerCase());
+  const info=key?woodInfo[key]:null;
+  if(info){
+    content.innerHTML=`
+      <p class="text-left text-sm sm:text-base">${info.info||'Keine Beschreibung verfügbar.'}</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+        <div>
+          <h4 class="font-semibold mb-2 text-center text-sm sm:text-base">Baum</h4>
+          <img src="${info.bildBaum||''}" alt="Bild von ${woodName} Baum" class="w-full max-h-48 sm:max-h-60 h-auto rounded-lg object-contain mx-auto border" onerror="this.parentElement.style.display='none';">
+        </div>
+        <div>
+          <h4 class="font-semibold mb-2 text-center text-sm sm:text-base">Querschnitt</h4>
+          <img src="${info.bildQuerschnitt||''}" alt="Bild von ${woodName} Querschnitt" class="w-full max-h-48 sm:max-h-60 h-auto rounded-lg object-contain mx-auto border" onerror="this.parentElement.style.display='none';">
+        </div>
+      </div>`;
+  }else{
+    content.innerHTML="<p>Für diese Holzart sind aktuell keine Detailinformationen verfügbar.</p>";
+  }
+  modal.classList.remove('hidden');
+};
+window.closeInfoModal=function(){ document.getElementById('infoModal').classList.add('hidden'); };
+</script>
 </body>
 </html>
