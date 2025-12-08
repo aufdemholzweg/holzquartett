@@ -561,7 +561,7 @@ function updateMultiplayerUI(gameData){
     const oppActualId=oppId||'opponent';
     const winnerName=winnerId===localPlayerId?'Du':(winnerId==='tie'?'':(gameData.players[winnerId]?.name||'Gegner'));
     document.getElementById('resultText').textContent = winnerId==='tie' ? '🤝 Unentschieden!' : (winnerId===localPlayerId?`🎉 ${winnerName} gewinnt!`:`😞 ${winnerName} gewinnt!`);
-    document.getElementById('resultDetails').textContent = `${attributeInfo[attribute]?.name.split(' (')[0]||attribute}: ${values[localPlayerId]?.toLocaleString('de-DE')??'?'} vs ${values[oppActualId]?.toLocaleString('de-DE')??'?'}`; highlightChosenAttribute(attribute); /* highlight injected */ highlightChosenAttribute(attribute); window.scrollTo({top:0,behavior:'smooth'});
+    document.getElementById('resultDetails').textContent = `${attributeInfo[attribute]?.name.split(' (')[0]||attribute}: ${values[localPlayerId]?.toLocaleString('de-DE')??'?'} vs ${values[oppActualId]?.toLocaleString('de-DE')??'?'}`;  /* highlight injected */  window.scrollTo({top:0,behavior:'smooth'});
   }else{
     roundSoundPlayed=false; resultDisplay.classList.add('hidden');
     if(gameData.turn===localPlayerId){ turnIndicator.textContent="Du bist am Zug!"; turnIndicator.className='text-sm font-semibold p-1 text-green-600'; attributeSelection.classList.remove('hidden'); }
@@ -811,7 +811,7 @@ function selectAttributeAI(attribute){
     res.textContent= resultTitle;
     res.className=`text-lg sm:text-xl font-bold ${resCls}`;
     document.getElementById('resultDetails').textContent=`${attributeInfo[attribute].name.split(' (')[0]}: ${pv.toLocaleString('de-DE')} vs ${av.toLocaleString('de-DE')}`;
-    highlightChosenAttribute(attribute); document.getElementById('attributeSelection').classList.add('hidden');
+     document.getElementById('attributeSelection').classList.add('hidden');
     document.getElementById('resultDisplay').classList.remove('hidden');
 
     // 2s Pause, dann Bottom-Sheet
@@ -859,7 +859,7 @@ function aiSelectAttribute(){
     const resCls= pWins===true ? 'text-green-600' : (pWins===false ? 'text-red-600' : 'text-yellow-600');
     res.textContent= resultTitle;
     res.className=`text-lg sm:text-xl font-bold ${resCls}`;
-    document.getElementById('resultDetails').textContent=`${attributeInfo[key].name.split(' (')[0]}: ${pv.toLocaleString('de-DE')} vs ${av.toLocaleString('de-DE')}`; highlightChosenAttribute(key); highlightChosenAttribute(attribute); document.getElementById('attributeSelection').classList.add('hidden');
+    document.getElementById('resultDetails').textContent=`${attributeInfo[key].name.split(' (')[0]}: ${pv.toLocaleString('de-DE')} vs ${av.toLocaleString('de-DE')}`; highlightChosenAttribute(key); document.getElementById('attributeSelection').classList.add('hidden');
     document.getElementById('resultDisplay').classList.remove('hidden');
 
     // 2s Pause, dann Bottom-Sheet
