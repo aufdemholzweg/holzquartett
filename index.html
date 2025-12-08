@@ -45,6 +45,24 @@
 
         /* Bottom-sheet dimmer (hell) */
         .dimmer-light{background:rgba(0,0,0,0.2)}
+    
+        /* Tiny, almost invisible hotspot for Zusatzwissen on the card image */
+        .info-tiny-btn{
+            position:absolute;
+            top:2px;
+            right:2px;
+            width:6px;
+            height:6px;
+            border:none;
+            padding:0;
+            border-radius:9999px;
+            background:rgba(128,0,128,0.08); /* very faint */
+            z-index:10;
+            cursor:pointer;
+            outline:none;
+        }
+        .info-tiny-btn:hover{ background:rgba(128,0,128,0.12); }
+
     </style>
 </head>
 <body class="bg-gradient-to-br from-amber-50 to-orange-100 min-h-screen">
@@ -543,8 +561,7 @@ function updateMultiplayerUI(gameData){
     const oppActualId=oppId||'opponent';
     const winnerName=winnerId===localPlayerId?'Du':(winnerId==='tie'?'':(gameData.players[winnerId]?.name||'Gegner'));
     document.getElementById('resultText').textContent = winnerId==='tie' ? '🤝 Unentschieden!' : (winnerId===localPlayerId?`🎉 ${winnerName} gewinnt!`:`😞 ${winnerName} gewinnt!`);
-    document.getElementById('resultDetails').textContent = `${attributeInfo[attribute]?.name.split(' (')[0]||attribute}: ${values[localPlayerId]?.toLocaleString('de-DE')??'?'} vs ${values[oppActualId]?.toLocaleString('de-DE')??'?'}`;
-    window.scrollTo({top:0,behavior:'smooth'});
+    document.getElementById('resultDetails').textContent = `${attributeInfo[attribute]?.name.split(' (')[0]||attribute}: ${values[localPlayerId]?.toLocaleString('de-DE')??'?'} vs ${values[oppActualId]?.toLocaleString('de-DE')??'?'}`; highlightChosenAttribute(attribute); /* highlight injected */ highlightChosenAttribute(attribute); window.scrollTo({top:0,behavior:'smooth'});
   }else{
     roundSoundPlayed=false; resultDisplay.classList.add('hidden');
     if(gameData.turn===localPlayerId){ turnIndicator.textContent="Du bist am Zug!"; turnIndicator.className='text-sm font-semibold p-1 text-green-600'; attributeSelection.classList.remove('hidden'); }
@@ -588,7 +605,7 @@ function createCard(cardData,isRevealed=true,isPlayer=true){
   const headerRight = `
     <div class="flex-shrink-0 relative w-24 h-16 sm:w-28 sm:h-20">
       <img src="${treeImg}" alt="${cardName}" id="wood-image-icon-${safeId}" class="absolute inset-0 w-full h-full object-cover rounded-xl border-2 border-amber-200">
-      
+      <button id="player-info-button-${safeId}" onclick="window.showWoodInfo('${cardName.replace(/'/g,"\'")}')" class="${showInfoBtn ? 'info-tiny-btn' : 'hidden'}" aria-label="Zusatzwissen"></button>
     </div>`;
 
   let attrs='<div class="space-y-1 mt-auto">';
@@ -605,9 +622,9 @@ function createCard(cardData,isRevealed=true,isPlayer=true){
     const txt=canSelect?'text-amber-700':'text-amber-800';
     const common=`w-full flex justify-between items-center py-0.5 sm:py-1 px-1 rounded-lg text-left border ${border} ${baseBg}`;
     if(canSelect){
-      attrs+=`<button onclick="window.selectAttribute('${key}')" class="${common} ${hov} transition-colors"><div class="flex items-center space-x-1 sm:space-x-2"><span class="text-xs sm:text-sm">${a.icon}</span><div><span class="text-[11px] sm:text-xs font-medium leading-tight">${label}</span>${unitText}</div></div><span class="font-semibold ${txt} text-sm sm:text-base">${fv}</span></button>`;
+      attrs+=`<button data-attr="${key}" onclick="window.selectAttribute(\'${key}\')" class="${common} ${hov} transition-colors"><div class="flex items-center space-x-1 sm:space-x-2"><span class="text-xs sm:text-sm">${a.icon}</span><div><span class="text-[11px] sm:text-xs font-medium leading-tight">${label}</span>${unitText}</div></div><span class="font-semibold ${txt} text-sm sm:text-base">${fv}</span></button>`;
     }else{
-      attrs+=`<div class="${common}"><div class="flex items-center space-x-1 sm:space-x-2"><span class="text-xs sm:text-sm">${a.icon}</span><div><span class="text-[11px] sm:text-xs font-medium leading-tight text-gray-700">${label}</span>${unitText}</div></div><span class="font-semibold ${txt} text-sm sm:text-base">${fv}</span></div>`;
+      attrs+=`<div data-attr="${key}" class="${common}"><div class="flex items-center space-x-1 sm:space-x-2"><span class="text-xs sm:text-sm">${a.icon}</span><div><span class="text-[11px] sm:text-xs font-medium leading-tight text-gray-700">${label}</span>${unitText}</div></div><span class="font-semibold ${txt} text-sm sm:text-base">${fv}</span></div>`;
     }
   }
   attrs+='</div>';
@@ -634,6 +651,24 @@ function createCard(cardData,isRevealed=true,isPlayer=true){
   card.appendChild(front); card.appendChild(back);
   return card;
 }
+
+/* === Attribute highlight helpers === */
+function clearAttributeHighlights(){
+  document.querySelectorAll('#playerCard [data-attr], #aiCard [data-attr]').forEach(el=>{
+    el.classList.remove('bg-gray-300');
+  });
+}
+function highlightChosenAttribute(attr){
+  ['#playerCard','#aiCard'].forEach(rootSel=>{
+    const root=document.querySelector(rootSel);
+    if(!root) return;
+    const el=root.querySelector(`[data-attr="${attr}"]`);
+    if(el) el.classList.add('bg-gray-300');
+  });
+}
+/* === end highlight helpers === */
+
+
 
 function displayMultiplayerCards(gameData){
   if(!gameData.currentCards||!gameData.playerIds) return;
@@ -676,7 +711,7 @@ async function multiplayerSelectAttribute(attribute){
 }
 
 async function multiplayerNextRound(){
-  const pf=document.getElementById('playerCard')?.querySelector('.card-front'); if(pf) pf.classList.remove('animate-glow-win','animate-glow-lose');
+  clearAttributeHighlights(); const pf=document.getElementById('playerCard')?.querySelector('.card-front'); if(pf) pf.classList.remove('animate-glow-win','animate-glow-lose');
   const af=document.getElementById('aiCard')?.querySelector('.card-front'); if(af) af.classList.remove('animate-glow-win','animate-glow-lose');
   document.querySelectorAll('#playerCard .space-y-1 > *, #aiCard .space-y-1 > *').forEach(e=>e.classList.remove('bg-yellow-200','bg-gray-300'));
   if(!localGameState || !localGameState.lastResult || !gameId) return;
@@ -776,7 +811,7 @@ function selectAttributeAI(attribute){
     res.textContent= resultTitle;
     res.className=`text-lg sm:text-xl font-bold ${resCls}`;
     document.getElementById('resultDetails').textContent=`${attributeInfo[attribute].name.split(' (')[0]}: ${pv.toLocaleString('de-DE')} vs ${av.toLocaleString('de-DE')}`;
-    document.getElementById('attributeSelection').classList.add('hidden');
+    highlightChosenAttribute(attribute); document.getElementById('attributeSelection').classList.add('hidden');
     document.getElementById('resultDisplay').classList.remove('hidden');
 
     // 2s Pause, dann Bottom-Sheet
@@ -824,8 +859,7 @@ function aiSelectAttribute(){
     const resCls= pWins===true ? 'text-green-600' : (pWins===false ? 'text-red-600' : 'text-yellow-600');
     res.textContent= resultTitle;
     res.className=`text-lg sm:text-xl font-bold ${resCls}`;
-    document.getElementById('resultDetails').textContent=`${attributeInfo[key].name.split(' (')[0]}: ${pv.toLocaleString('de-DE')} vs ${av.toLocaleString('de-DE')}`;
-    document.getElementById('attributeSelection').classList.add('hidden');
+    document.getElementById('resultDetails').textContent=`${attributeInfo[key].name.split(' (')[0]}: ${pv.toLocaleString('de-DE')} vs ${av.toLocaleString('de-DE')}`; highlightChosenAttribute(key); highlightChosenAttribute(attribute); document.getElementById('attributeSelection').classList.add('hidden');
     document.getElementById('resultDisplay').classList.remove('hidden');
 
     // 2s Pause, dann Bottom-Sheet
@@ -841,7 +875,7 @@ function aiSelectAttribute(){
 }
 
 function nextRoundAI(){
-  const pf=document.getElementById('playerCard')?.querySelector('.card-front'); if(pf) pf.classList.remove('animate-glow-win','animate-glow-lose');
+  clearAttributeHighlights(); const pf=document.getElementById('playerCard')?.querySelector('.card-front'); if(pf) pf.classList.remove('animate-glow-win','animate-glow-lose');
   const af=document.getElementById('aiCard')?.querySelector('.card-front'); if(af) af.classList.remove('animate-glow-win','animate-glow-lose');
   document.querySelectorAll('#playerCard .space-y-1 > *, #aiCard .space-y-1 > *').forEach(e=>e.classList.remove('bg-yellow-200','bg-gray-300'));
 
@@ -1024,7 +1058,14 @@ window.showWoodInfo=function(woodName){
   }
   modal.classList.remove('hidden');
 };
-window.closeInfoModal=function(){ document.getElementById('infoModal').classList.add('hidden'); };
+window.closeInfoModal=function(){
+  const info = document.getElementById('infoModal');
+  if (info) info.classList.add('hidden');
+  // Re-open the previously shown bottom sheet with its current title
+  const bsTitleEl = document.getElementById('bottomSheetTitle');
+  const title = bsTitleEl && bsTitleEl.textContent ? bsTitleEl.textContent : 'Nächster Zug';
+  openBottomSheet(title);
+};
 </script>
 </body>
 </html>
