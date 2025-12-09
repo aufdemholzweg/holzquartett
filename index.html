@@ -715,7 +715,7 @@ function createCard(cardData,isRevealed=true,isPlayer=true){
   const treeImg=wi.bildBaum||'https://placehold.co/160x120/d1d5db/374151?text=?';
 
   // Attribute-Liste aufbauen
-let attrsHtml = '<div class="space-y-1 mt-2 text-sm sm:text-sm">';
+let attrsHtml = '<div class="space-y-1 mt-2 text-xs sm:text-sm">';
   for (const key in attributeInfo){
     const a = attributeInfo[key];
     if(!a) continue;
@@ -773,7 +773,7 @@ let attrsHtml = '<div class="space-y-1 mt-2 text-sm sm:text-sm">';
   // Bild + Name oben links, volle Kartenbreite
   front.innerHTML = `
     <div class="w-full mb-2">
-      <div class="relative w-full h-[4.4rem] sm:h-[5.5rem]">
+      <div class="relative w-full h-16 sm:h-20">
         <img src="${treeImg}" alt="${cardName}" id="wood-image-icon-${safeId}"
              class="absolute inset-0 w-full h-full object-cover rounded-xl border-2 border-amber-200">
         <div class="name-badge">${cardName}</div>
