@@ -1024,7 +1024,7 @@ function selectAttributeAI(attribute){
 
     setTimeout(()=>{
       openBottomSheet(resultTitle.replace(/^[^A-Za-zÄÖÜäöüß]+/,'').trim());
-    },2000);
+    },900);
 
     if(pWins===true){ playSound(sounds.win); triggerWinStarAnimation(); }
     updateDisplayAI(); checkGameOverAI();
@@ -1108,7 +1108,7 @@ function aiSelectAttribute(){
 
       setTimeout(() => {
         openBottomSheet(resultTitle.replace(/^[^A-Za-zÄÖÜäöüß]+/,'').trim());
-      }, 2000);
+      }, 900);
 
       if (pWins === true) {
         playSound(sounds.win);
