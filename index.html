@@ -1,974 +1,897 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HOLZEN! - Das Holz-Quartett</title>
-    
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Holz-Quartett</title>
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, deleteDoc, collection, query, orderBy, limit, getDocs, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-        const firebaseConfig = {
-          apiKey: "AIzaSyCyRXl8-JPr1xTXPDi1VG-eQk6fOnTpqUI",
-          authDomain: "holzquartett-3a177.firebaseapp.com",
-          projectId: "holzquartett-3a177",
-          storageBucket: "holzquartett-3a177.appspot.com",
-          messagingSenderId: "1081595025073",
-          appId: "1:1081595025073:web:bc571fffb6e4f20b27f490",
-          measurementId: "G-HKLWFJE83K"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-
-        // Make Firebase accessible globally for the main game script
-        window.firebaseApp = app;
-        window.db = db;
-        window.auth = auth;
-        
-        // Expose functions needed for game logic
-        window.firebaseModules = {
-            signInAnonymously,
-            doc, 
-            setDoc, 
-            getDoc, 
-            onSnapshot, 
-            updateDoc, 
-            increment, 
-            serverTimestamp,
-            collection,
-            query, 
-            orderBy, 
-            limit, 
-            getDocs
-        };
-        
-        console.log("Firebase initialized successfully.");
-    </script>
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* --- Basis Einstellungen --- */
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f3f4f6;
-            overflow: hidden;
             touch-action: manipulation;
+            overflow-x: hidden;
         }
 
-        /* --- 3D Karten Flip Klassen --- */
+        /* 3D Karten Effekte */
         .perspective-1000 { perspective: 1000px; }
-        
-        .card-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            text-align: center;
-            transition: transform 0.6s;
+        .card-3d {
             transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
-        .card-flipped .card-inner { transform: rotateY(180deg); }
-
+        .card-flipped { transform: rotateY(180deg); }
         .card-front, .card-back {
+            backface-visibility: hidden;
             position: absolute;
             width: 100%;
             height: 100%;
-            -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
+            top: 0; left: 0;
             border-radius: 0.75rem;
             overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
-
         .card-back {
             transform: rotateY(180deg);
             background-image: url('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/65fd843a4db1ee434faaf81a32f77951a5afb72a/images/background_card.jpg');
             background-size: cover;
             background-position: center;
         }
-
         .card-front-bg {
             background-image: url('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/e7cfc18394e2e7f2d0b91df1138b0d7bc7930699/images/background_front.jpg');
             background-size: cover;
             background-position: center;
         }
 
-        /* --- Animationen --- */
-        @keyframes fallStar {
-            0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; }
-            50% { opacity: 1; }
-            100% { transform: translate(0, 40vh) scale(0.5) rotate(180deg); opacity: 0; }
+        /* Animationen */
+        .hover-lift:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
+        
+        @keyframes glow-win {
+            0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+            50% { box-shadow: 0 0 20px 10px rgba(34, 197, 94, 0.5); }
+            100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
         }
-        .animate-star {
+        @keyframes glow-lose {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+            50% { box-shadow: 0 0 20px 10px rgba(239, 68, 68, 0.5); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        .animate-glow-win { animation: glow-win 1s ease-out; }
+        .animate-glow-lose { animation: glow-lose 1s ease-out; }
+
+        .falling-star {
             position: absolute;
-            top: 10%;
-            left: 50%;
-            font-size: 2rem;
-            animation: fallStar 1s ease-out forwards;
+            font-size: 4rem;
+            z-index: 100;
+            animation: fall-and-fade 1.2s ease-in forwards;
             pointer-events: none;
-            z-index: 50;
+        }
+        @keyframes fall-and-fade {
+            0% { transform: translateY(-30px) scale(1.5) rotate(0deg); opacity: 0; }
+            30% { transform: translateY(0) scale(1) rotate(45deg); opacity: 1; }
+            100% { transform: translateY(300px) scale(0.5) rotate(180deg); opacity: 0; }
         }
 
-        .slide-in-bottom { animation: slideIn 0.3s ease-out forwards; }
-        @keyframes slideIn {
-            from { transform: translateY(100%); }
-            to { transform: translateY(0); }
+        /* Name auf Rückseite Gegner */
+        .opponent-back-name {
+            position: absolute;
+            top: 15%;
+            width: 100%;
+            text-align: center;
+            color: rgba(255,255,255,0.9);
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            pointer-events: none;
         }
 
+        /* Scrollbar ausblenden */
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .dimmer { background: rgba(0,0,0,0.4); backdrop-filter: blur(2px); }
     </style>
 </head>
-<body class="h-screen w-screen flex flex-col relative text-gray-800">
+<body class="bg-gray-100 min-h-screen flex flex-col relative text-gray-800">
 
-    <header class="bg-amber-500 text-white p-2 shadow-md z-20 flex justify-between items-center shrink-0">
+<header class="bg-amber-500 text-white shadow-md z-20 flex-shrink-0">
+    <div class="max-w-4xl mx-auto px-4 py-2 flex justify-between items-center">
         <div>
             <h1 class="text-xl font-bold tracking-wider uppercase">HOLZEN!</h1>
-            <p class="text-xs opacity-90">Masterarbeit Projekt</p>
+            <p class="text-[10px] opacity-90 uppercase tracking-wide">Masterarbeit Projekt</p>
         </div>
-        <div id="game-status-display" class="text-sm font-semibold hidden"></div>
-    </header>
+        <div class="text-xs font-semibold bg-white/20 px-2 py-1 rounded hidden" id="modeIndicator"></div>
+    </div>
+</header>
 
-    <main id="game-area" class="flex-grow relative flex flex-col justify-start items-center p-2 hidden overflow-hidden">
+<div id="gameContainer" class="hidden flex-grow flex flex-col items-center w-full max-w-4xl mx-auto relative p-2 overflow-hidden">
+    <div id="animationContainer" class="absolute inset-0 pointer-events-none z-50 overflow-hidden"></div>
+
+    <div class="w-full mb-2 flex justify-between items-end gap-3 px-1">
+        <div class="bg-white p-2 rounded-lg shadow-md border-b-4 border-amber-500 text-center w-24 relative z-10">
+            <div id="playerNameDisplay" class="text-[10px] text-gray-500 font-bold uppercase tracking-wider truncate">DU</div>
+            <div id="playerCards" class="text-2xl font-bold text-gray-800 leading-none my-1">15</div>
+            <div class="text-[9px] text-gray-400 font-medium uppercase">Karten</div>
+        </div>
+
+        <div class="flex-grow flex flex-col justify-end pb-3">
+            <div class="flex justify-between text-[10px] font-bold text-gray-500 mb-1 px-1">
+                <span>Du</span><span>Gegner</span>
+            </div>
+            <div class="h-3 w-full bg-gray-300 rounded-full overflow-hidden border border-gray-400/30 shadow-inner relative">
+                <div id="statusBar" class="h-full bg-amber-500 transition-all duration-500 ease-out" style="width: 50%;"></div>
+            </div>
+        </div>
+
+        <div class="bg-white p-2 rounded-lg shadow-md border-b-4 border-gray-400 text-center w-24 relative z-10">
+            <div id="opponentNameDisplay" class="text-[10px] text-gray-500 font-bold uppercase tracking-wider truncate">GEGNER</div>
+            <div id="aiCards" class="text-2xl font-bold text-gray-800 leading-none my-1">15</div>
+            <div class="text-[9px] text-gray-400 font-medium uppercase">Karten</div>
+        </div>
+    </div>
+
+    <div class="flex justify-center items-start gap-3 w-full flex-grow relative pb-20"> <div class="w-[48%] max-w-[240px] aspect-[20/38] perspective-1000 relative z-10" id="playerCardContainer">
+            <div id="playerCard" class="w-full h-full relative"></div>
+        </div>
+        <div class="w-[48%] max-w-[240px] aspect-[20/38] perspective-1000 relative z-10" id="aiCardContainer">
+            <div id="aiCard" class="w-full h-full relative"></div>
+        </div>
+    </div>
+</div>
+
+<div id="bottomSheetBackdrop" class="hidden fixed inset-0 bg-black/20 z-30 transition-opacity"></div>
+<div id="bottomSheet" class="hidden fixed left-0 right-0 bottom-0 z-40 flex justify-center px-2 pb-4 transition-transform transform translate-y-full duration-300">
+    <div class="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-200 w-full max-w-md p-4 flex flex-col items-center">
+        <div id="turnIndicator" class="text-sm font-semibold text-gray-500 mb-1"></div>
+        <h3 id="resultText" class="text-xl font-black uppercase tracking-wide mb-1 text-gray-800"></h3>
+        <p id="resultDetails" class="text-xs text-gray-600 mb-4 font-mono"></p>
+
+        <div class="flex gap-3 w-full">
+            <button id="bsInfoBtn" class="flex-1 bg-purple-600 hover:bg-purple-700 active:scale-95 text-white font-bold py-3 px-4 rounded-xl shadow border-b-4 border-purple-800 transition">
+                🎓 Zusatzwissen
+            </button>
+            <button id="bsNextBtn" class="flex-1 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-bold py-3 px-4 rounded-xl shadow border-b-4 border-amber-700 transition">
+                Weiter &rarr;
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="setupModal" class="fixed inset-0 dimmer flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden max-w-sm w-full">
+        <div class="bg-amber-500 p-4 text-white text-center font-bold text-lg">Spielmodus wählen</div>
+        <div class="p-6 space-y-4">
+            <button onclick="window.showNamePrompt('ai')" class="w-full bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold py-4 rounded-xl border border-amber-200 transition flex items-center justify-center gap-3">
+                <span>🎮</span> Gegen Computer
+            </button>
+            <button onclick="window.showNamePrompt('multiplayer')" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-900 font-bold py-4 rounded-xl border border-blue-200 transition flex items-center justify-center gap-3">
+                <span>🌍</span> Online gegen Freunde
+            </button>
+
+            <div class="pt-4 grid grid-cols-1 gap-3">
+                <label class="flex items-center justify-between p-2 hover:bg-gray-50 rounded cursor-pointer">
+                    <span class="text-sm font-medium text-gray-700">🔊 Ton</span>
+                    <input type="checkbox" id="soundToggle" class="w-5 h-5 accent-amber-500">
+                </label>
+                <label class="flex items-center justify-between p-2 hover:bg-gray-50 rounded cursor-pointer">
+                    <span class="text-sm font-medium text-gray-700">👀 Gegner-Holzname</span>
+                    <input type="checkbox" id="revealBackToggle" class="w-5 h-5 accent-amber-500">
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="nameModal" class="hidden fixed inset-0 dimmer flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-xs w-full text-center">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">Dein Name</h2>
+        <input type="text" id="playerName" class="w-full p-3 border-2 border-gray-200 rounded-lg mb-4 text-center font-bold focus:border-amber-500 focus:outline-none" placeholder="Name eingeben">
+        <button id="nameSubmitButton" class="w-full bg-amber-500 text-white font-bold py-3 rounded-lg shadow hover:bg-amber-600 transition">Starten</button>
+    </div>
+</div>
+
+<div id="multiplayerLobbyModal" class="hidden fixed inset-0 dimmer flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full text-center">
+        <h2 id="lobbyTitle" class="text-xl font-bold text-amber-800 mb-2">Lobby</h2>
+        <p id="lobbyText" class="text-sm text-gray-600 mb-4">Warte auf Mitspieler...</p>
+        <div class="bg-gray-100 p-2 rounded mb-4 flex items-center gap-2">
+            <input id="shareLink" type="text" class="bg-transparent text-xs w-full text-gray-600" readonly>
+            <button onclick="window.copyShareLink()" class="bg-white px-2 py-1 rounded text-xs font-bold border shadow-sm hover:bg-gray-50">Kopieren</button>
+        </div>
+        <p id="lobbyStatus" class="text-sm text-green-600 font-bold animate-pulse"></p>
+    </div>
+</div>
+
+<div id="infoModal" class="hidden fixed inset-0 dimmer flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden max-w-md w-full max-h-[90vh] flex flex-col">
+        <div class="bg-purple-700 p-4 flex justify-between items-center text-white shrink-0">
+            <h3 id="infoModalTitle" class="font-bold text-lg flex items-center gap-2">🎓 Zusatzwissen</h3>
+            <button onclick="window.closeInfoModal()" class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
+        </div>
         
-        <div class="w-full max-w-lg mb-2 flex justify-between items-end px-2">
-            <div class="bg-white/90 p-2 rounded shadow text-center w-24 relative" id="score-box-player">
-                <div class="text-xs text-gray-500 font-bold truncate" id="name-player">Spieler</div>
-                <div class="text-2xl font-bold text-amber-600" id="count-player">15</div>
-                <div class="text-[10px] text-gray-400">Karten</div>
+        <div id="infoModalContent" class="p-5 overflow-y-auto hide-scrollbar space-y-4">
             </div>
-
-            <div class="flex-grow mx-4 mb-2 flex flex-col justify-end">
-                <div class="flex justify-between text-xs font-bold text-white drop-shadow-md mb-1">
-                    <span>Du</span>
-                    <span>Gegner</span>
-                </div>
-                <div class="h-4 w-full bg-gray-300 rounded-full overflow-hidden border border-gray-400 relative">
-                    <div id="progress-bar" class="h-full bg-amber-500 transition-all duration-500" style="width: 50%;"></div>
-                </div>
-            </div>
-
-            <div class="bg-white/90 p-2 rounded shadow text-center w-24">
-                <div class="text-xs text-gray-500 font-bold truncate" id="name-opponent">Gegner</div>
-                <div class="text-2xl font-bold text-amber-600" id="count-opponent">15</div>
-                <div class="text-[10px] text-gray-400">Karten</div>
-            </div>
-        </div>
-
-        <div class="flex justify-center items-start gap-2 w-full max-w-2xl h-full pb-4">
-            
-            <div class="perspective-1000 w-[45%] max-w-[200px] aspect-[20/38] relative" id="container-player">
-                <div class="card-inner" id="card-player">
-                    <div class="card-front card-front-bg flex flex-col p-2 border-2 border-amber-200">
-                        </div>
-                    <div class="card-back border-2 border-white"></div>
-                </div>
-            </div>
-
-            <div class="perspective-1000 w-[45%] max-w-[200px] aspect-[20/38] relative" id="container-opponent">
-                <div class="card-inner card-flipped" id="card-opponent">
-                    <div class="card-front card-front-bg flex flex-col p-2 border-2 border-amber-200">
-                        </div>
-                    <div class="card-back border-2 border-white flex justify-center items-start pt-8">
-                        <span id="back-preview-text" class="bg-white/80 px-2 py-1 rounded text-xs font-bold text-gray-600 hidden"></span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="ai-think-overlay" class="absolute inset-0 z-40 flex items-center justify-center bg-black/20 hidden">
-            <div class="bg-white p-4 rounded-lg shadow-xl flex items-center space-x-3">
-                <div class="w-6 h-6 border-4 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
-                <span class="font-bold text-gray-700">Gegner überlegt...</span>
-            </div>
-        </div>
-
-    </main>
-
-    <div id="post-turn-panel" class="absolute bottom-0 left-0 w-full h-[20vh] bg-white/95 backdrop-blur shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] border-t border-gray-200 z-30 flex flex-col items-center justify-center space-y-3 hidden">
-        <h2 id="round-result-text" class="text-xl font-bold uppercase tracking-wide text-gray-800">Ergebnis</h2>
-        <div class="flex space-x-4">
-            <button id="btn-knowledge" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded shadow transition active:scale-95">
-                Zusatzwissen
-            </button>
-            <button id="btn-next-turn" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-6 rounded shadow transition active:scale-95">
-                Nächster Zug
-            </button>
-        </div>
-    </div>
-
-    <div id="modal-setup" class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-md rounded-xl shadow-2xl overflow-hidden">
-            <div class="bg-amber-500 p-4 text-white text-center font-bold text-lg">Spielkonfiguration</div>
-            <div class="p-6 space-y-6">
-                <div class="space-y-4">
-                    <label class="flex items-center justify-between cursor-pointer">
-                        <span class="text-gray-700 font-medium">Ton an</span>
-                        <input type="checkbox" id="toggle-sound" class="w-5 h-5 accent-amber-500">
-                    </label>
-                    <label class="flex items-center justify-between cursor-pointer">
-                        <span class="text-gray-700 font-medium">Gegner-Holzname auf Rückseite</span>
-                        <input type="checkbox" id="toggle-back-preview" class="w-5 h-5 accent-amber-500">
-                    </label>
-                </div>
-                <hr class="border-gray-200">
-                <button id="btn-mode-ai" class="w-full bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold py-3 rounded border border-amber-300 transition flex items-center justify-center gap-2">
-                    <span>🤖</span> Gegen Computer
-                </button>
-                <button id="btn-mode-multi" class="w-full bg-blue-100 hover:bg-blue-200 text-blue-900 font-bold py-3 rounded border border-blue-300 transition flex items-center justify-center gap-2">
-                    <span>🌍</span> Online gegen Freunde
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <div id="modal-name" class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 hidden">
-        <div class="bg-white w-full max-w-sm rounded-xl shadow-2xl p-6 text-center">
-            <h3 class="text-lg font-bold mb-4">Wie heißt du?</h3>
-            <input type="text" id="input-player-name" placeholder="Dein Name" class="w-full border border-gray-300 rounded p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-amber-500" maxlength="12">
-            <button id="btn-start-game" class="w-full bg-amber-500 text-white font-bold py-2 rounded hover:bg-amber-600 transition">
-                Los geht's!
-            </button>
-        </div>
-    </div>
-
-    <div id="modal-lobby" class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 hidden">
-        <div class="bg-white w-full max-w-sm rounded-xl shadow-2xl p-6 text-center space-y-4">
-            <h3 class="text-lg font-bold">Lobby</h3>
-            <div id="lobby-status" class="text-sm text-gray-600">Verbinde...</div>
-            <div id="lobby-link-container" class="hidden">
-                <p class="text-xs mb-2">Schicke diesen Link deinem Freund:</p>
-                <div class="flex gap-2">
-                    <input type="text" id="game-link-input" readonly class="w-full bg-gray-100 border p-1 text-xs rounded">
-                    <button id="btn-copy-link" class="bg-gray-200 px-2 rounded text-xs hover:bg-gray-300">Kopieren</button>
-                </div>
-            </div>
-            <div class="animate-pulse text-amber-600 font-bold hidden" id="lobby-waiting">Warte auf Gegner...</div>
-        </div>
-    </div>
-
-    <div id="modal-info" class="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4 hidden">
-        <div class="bg-white w-full max-w-md rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-            <div class="bg-purple-700 p-3 flex justify-between items-center text-white">
-                <h3 class="font-bold truncate" id="info-title">Wissenswertes</h3>
-                <button id="btn-close-info" class="text-white hover:text-gray-200 text-2xl font-bold leading-none">&times;</button>
-            </div>
-            <div class="p-4 overflow-y-auto hide-scrollbar space-y-4 text-sm text-gray-700">
-                <p id="info-text" class="italic text-gray-500">Hier könnte ein spezifischer Text stehen.</p>
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <span class="text-xs font-bold block mb-1">Baum</span>
-                        <img id="info-img-tree" src="" alt="Baum" class="w-full h-32 object-cover rounded border">
-                    </div>
-                    <div>
-                        <span class="text-xs font-bold block mb-1">Querschnitt</span>
-                        <img id="info-img-cross" src="" alt="Querschnitt" class="w-full h-32 object-cover rounded border">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="modal-gameover" class="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4 hidden">
-        <div class="bg-white w-full max-w-sm rounded-xl shadow-2xl p-6 text-center space-y-4">
-            <h2 id="gameover-title" class="text-3xl font-bold text-amber-600">SPIELENDE</h2>
-            <p id="gameover-msg" class="text-gray-600">Ergebnis</p>
-            <div class="flex flex-col gap-2 pt-2">
-                <button id="btn-leaderboard" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2 rounded border border-gray-300">
-                    🏆 Bestenliste
-                </button>
-                <button onclick="location.reload()" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 rounded">
-                    Neues Spiel
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <div id="modal-leaderboard" class="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4 hidden">
-        <div class="bg-white w-full max-w-sm rounded-xl shadow-2xl p-6 flex flex-col max-h-[80vh]">
-            <h3 class="text-xl font-bold text-center mb-4">Top 10 Gewinner</h3>
-            <div class="overflow-y-auto flex-grow border-t border-b border-gray-100 py-2">
-                <table class="w-full text-sm text-left">
-                    <thead class="text-gray-500 border-b">
-                        <tr><th class="py-1">Name</th><th class="py-1 text-right">Siege</th></tr>
-                    </thead>
-                    <tbody id="leaderboard-list">
-                        </tbody>
-                </table>
-            </div>
-            <button id="btn-close-leaderboard" class="mt-4 w-full bg-gray-200 hover:bg-gray-300 font-bold py-2 rounded">Schließen</button>
-        </div>
-    </div>
-
-    <audio id="sound-flip" src="https://cdn.pixabay.com/audio/2022/03/15/audio_139083c224.mp3" preload="auto"></audio>
-    <audio id="sound-win" src="https://github.com/aufdemholzweg/holzquartett/blob/894e048eea71ba49921abfe6827bd8dc723f8c2d/gewonnen.mp3?raw=true" preload="auto"></audio>
-    <audio id="sound-chime" src="https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c744c8.mp3" preload="auto"></audio>
-    <audio id="sound-star" src="https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3" preload="auto"></audio>
-
-    <script>
-        /**
-         * CONFIGURATION & DATA
-         */
         
-        const attributeInfo = {
-            dk: { icon: "🛡️", name: "Dauerhaftigkeit (DK)", label: "Dauerhaftigkeit", unit: "(1-5)" },
-            haerte: { icon: "💎", name: "Druckfestigkeit (N/mm²)", label: "Druckfestigkeit", unit: "N/mm²" },
-            quellenSchwindenRadial: { icon: "↔️", name: "Quellen/Schwinden (%)", label: "Quellen", unit: "%" },
-            dichte: { icon: "⚖️", name: "Rohdichte (kg/m³)", label: "Rohdichte", unit: "kg/m³" },
-            gewicht: { icon: "🏋️", name: "E-Modul (N/mm²)", label: "E-Modul", unit: "N/mm²" }
-        };
+        <div class="p-3 bg-gray-50 border-t shrink-0 text-center">
+            <button onclick="window.closeInfoModal()" class="text-purple-600 font-bold text-sm hover:underline">Schließen</button>
+        </div>
+    </div>
+</div>
 
-        const woodCards = [
-            {name:"Eiche",dk:2,haerte:85,quellenSchwindenRadial:4.0,dichte:650,gewicht:12000},
-            {name:"Buche",dk:5,haerte:80,quellenSchwindenRadial:5.8,dichte:720,gewicht:14000},
-            {name:"Kiefer",dk:3,haerte:40,quellenSchwindenRadial:3.5,dichte:520,gewicht:11000},
-            {name:"Fichte",dk:4,haerte:35,quellenSchwindenRadial:3.6,dichte:450,gewicht:11000},
-            {name:"Tanne",dk:4,haerte:38,quellenSchwindenRadial:3.5,dichte:460,gewicht:10000},
-            {name:"Lärche",dk:3,haerte:55,quellenSchwindenRadial:3.7,dichte:590,gewicht:12000},
-            {name:"Birke",dk:5,haerte:60,quellenSchwindenRadial:5.4,dichte:650,gewicht:13000},
-            {name:"Ahorn",dk:5,haerte:75,quellenSchwindenRadial:4.8,dichte:630,gewicht:12500},
-            {name:"Esche",dk:5,haerte:90,quellenSchwindenRadial:4.9,dichte:700,gewicht:13000},
-            {name:"Kirsche",dk:3,haerte:70,quellenSchwindenRadial:4.0,dichte:600,gewicht:11500},
-            {name:"Nussbaum",dk:3,haerte:65,quellenSchwindenRadial:4.0,dichte:640,gewicht:12000},
-            {name:"Douglasie",dk:3,haerte:45,quellenSchwindenRadial:3.5,dichte:510,gewicht:12000},
-            {name:"Zeder",dk:2,haerte:42,quellenSchwindenRadial:2.8,dichte:480,gewicht:9500},
-            {name:"Mahagoni",dk:2,haerte:55,quellenSchwindenRadial:3.0,dichte:550,gewicht:10500},
-            {name:"Teak",dk:1,haerte:60,quellenSchwindenRadial:2.5,dichte:650,gewicht:11000},
-            {name:"Bambus",dk:4,haerte:50,quellenSchwindenRadial:3.0,dichte:400,gewicht:18000},
-            {name:"Pappel",dk:5,haerte:25,quellenSchwindenRadial:4.5,dichte:380,gewicht:9000},
-            {name:"Weide",dk:5,haerte:30,quellenSchwindenRadial:4.0,dichte:420,gewicht:8000},
-            {name:"Linde",dk:5,haerte:35,quellenSchwindenRadial:3.8,dichte:530,gewicht:9000},
-            {name:"Ulme",dk:3,haerte:75,quellenSchwindenRadial:4.5,dichte:680,gewicht:11500},
-            {name:"Kastanie",dk:2,haerte:50,quellenSchwindenRadial:3.5,dichte:600,gewicht:10000},
-            {name:"Robinie",dk:1,haerte:80,quellenSchwindenRadial:3.0,dichte:730,gewicht:15000},
-            {name:"Hemlock",dk:4,haerte:40,quellenSchwindenRadial:3.6,dichte:500,gewicht:10000},
-            {name:"Zypresse",dk:2,haerte:48,quellenSchwindenRadial:3.0,dichte:520,gewicht:9000},
-            {name:"Redwood",dk:2,haerte:35,quellenSchwindenRadial:2.8,dichte:400,gewicht:8500},
-            {name:"Hickory",dk:3,haerte:95,quellenSchwindenRadial:5.5,dichte:750,gewicht:14000},
-            {name:"Wenge",dk:2,haerte:88,quellenSchwindenRadial:3.8,dichte:880,gewicht:16000},
-            {name:"Zebrano",dk:3,haerte:70,quellenSchwindenRadial:4.0,dichte:750,gewicht:13000},
-            {name:"Palisander",dk:2,haerte:82,quellenSchwindenRadial:3.0,dichte:850,gewicht:16000},
-            {name:"Ebenholz",dk:1,haerte:98,quellenSchwindenRadial:3.2,dichte:1200,gewicht:16500}
-        ];
+<div id="gameOverModal" class="hidden fixed inset-0 dimmer flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full text-center">
+        <h2 id="gameOverTitle" class="text-3xl font-black mb-2 text-gray-800">SPIELENDE</h2>
+        <p id="gameOverText" class="text-gray-600 mb-6"></p>
+        <div class="space-y-3">
+            <button onclick="window.showLeaderboard()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 rounded-lg border border-gray-300">🏆 Bestenliste</button>
+            <button onclick="window.resetGame()" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 rounded-lg shadow">🔄 Neues Spiel</button>
+        </div>
+    </div>
+</div>
 
-        const getSlug = (name) => {
-            const map = {
-                'Eiche':'eiche', 'Buche':'buche', 'Kiefer':'kiefer', 'Fichte':'fichte', 'Tanne':'tanne',
-                'Lärche':'laerche', 'Birke':'birke', 'Ahorn':'ahorn', 'Esche':'esche', 'Kirsche':'kirsche',
-                'Nussbaum':'nussbaum', 'Douglasie':'douglasie', 'Zeder':'zeder', 'Mahagoni':'mahagoni',
-                'Teak':'teak', 'Bambus':'bambus', 'Pappel':'pappel', 'Weide':'weide', 'Linde':'linde',
-                'Ulme':'ulme', 'Kastanie':'kastanie', 'Robinie':'robinie', 'Hemlock':'hemlock',
-                'Zypresse':'zypresse', 'Redwood':'redwood', 'Hickory':'hickory', 'Wenge':'wenge',
-                'Zebrano':'zebrano', 'Palisander':'palisander', 'Ebenholz':'ebenholz'
-            };
-            return map[name] || name.toLowerCase();
-        };
+<div id="reflectionModal" class="hidden fixed inset-0 dimmer flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full">
+        <h2 class="text-xl font-bold text-amber-800 mb-4">🎉 Super gespielt!</h2>
+        <p id="reflectionQuestion" class="text-gray-700 mb-4 font-medium"></p>
+        <textarea id="reflectionAnswer" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 min-h-[100px] mb-4 text-sm" placeholder="Deine Gedanken dazu..."></textarea>
+        <button onclick="window.showFinalWinScreen()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-lg">Weiter</button>
+    </div>
+</div>
 
-        const getWoodImage = (name, type) => {
-            const slug = getSlug(name);
-            const num = type === 'tree' ? '1' : '2';
-            return `https://github.com/aufdemholzweg/holzquartett/blob/main/images/${slug}_${num}.jpg?raw=true`;
-        };
+<div id="leaderboardModal" class="hidden fixed inset-0 dimmer flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full flex flex-col max-h-[80vh]">
+        <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">🏆 Bestenliste</h2>
+        <div id="leaderboardList" class="overflow-y-auto flex-grow space-y-2 mb-4"></div>
+        <button onclick="window.closeLeaderboard()" class="w-full bg-gray-200 hover:bg-gray-300 font-bold py-2 rounded-lg text-gray-700">Schließen</button>
+    </div>
+</div>
 
-        // --- GAME STATE ---
-        const CONSTANTS = {
-            AI_THINK_MS: 1000,
-            ROUND_DELAY_MS: 2000,
-            FLIP_DURATION: 600
-        };
+<script type="module">
+/* Firebase Imports */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, deleteDoc, collection, query, orderBy, limit, getDocs, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        let state = {
-            mode: 'ai',
-            playerName: 'Spieler',
-            opponentName: 'Computer',
-            playerDeck: [],
-            opponentDeck: [],
-            currentRound: {
-                playerCard: null,
-                opponentCard: null,
-                activePlayer: 'player',
-                winner: null,
-                attribute: null,
-                isProcessed: false
-            },
-            settings: {
-                sound: false,
-                showOpponentBack: false
-            },
-            multiplayer: {
-                gameId: null,
-                playerId: null,
-                role: null,
-                unsub: null
-            }
-        };
+const firebaseConfig = {
+  apiKey: "AIzaSyCyRXl8-JPr1xTXPDi1VG-eQk6fOnTpqUI",
+  authDomain: "holzquartett-3a177.firebaseapp.com",
+  projectId: "holzquartett-3a177",
+  storageBucket: "holzquartett-3a177.appspot.com",
+  messagingSenderId: "1081595025073",
+  appId: "1:1081595025073:web:bc571fffb6e4f20b27f490",
+  measurementId: "G-HKLWFJE83K"
+};
 
-        // --- FIREBASE HELPER ---
-        async function connectMultiplayer() {
-            // Check if Firebase was initialized in module script
-            if (!window.db || !window.auth) {
-                console.error("Firebase nicht initialisiert. Config prüfen.");
-                return false;
-            }
-            try {
-                // Anonymous Sign In
-                await window.firebaseModules.signInAnonymously(window.auth);
-                state.multiplayer.playerId = window.auth.currentUser.uid;
-                console.log("Angemeldet als:", state.multiplayer.playerId);
-                return true;
-            } catch (e) {
-                console.error("Fehler bei Anmeldung:", e);
-                return false;
-            }
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+/* --- STATE & AUDIO --- */
+let gameMode=null, gameId=null, localPlayerId=null, unsubscribeGame=null, localGameState={}, hasCopiedShareLink=false;
+let isMuted=false;
+let roundSoundPlayed=false;
+const sounds={
+  flip:new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_139083c224.mp3'),
+  win:new Audio('https://github.com/aufdemholzweg/holzquartett/blob/894e048eea71ba49921abfe6827bd8dc723f8c2d/gewonnen.mp3?raw=true'),
+  chime:new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c744c8.mp3'),
+  starWin:new Audio('https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3')
+};
+function playSound(a){ if(!isMuted && a){ a.currentTime=0; a.play().catch(()=>{}); } }
+
+function isOpponentNameBackVisible(){ return localStorage.getItem('holzquartett_showOpponentNameOnBack')==='true'; }
+function setOpponentNameBackVisible(v){ localStorage.setItem('holzquartett_showOpponentNameOnBack', v?'true':'false'); }
+
+/* --- DATA --- */
+const woodCards=[
+ {name:"Eiche",dk:2,haerte:85,quellenSchwindenRadial:4.0,dichte:650,gewicht:12000},
+ {name:"Buche",dk:5,haerte:80,quellenSchwindenRadial:5.8,dichte:720,gewicht:14000},
+ {name:"Kiefer",dk:3,haerte:40,quellenSchwindenRadial:3.5,dichte:520,gewicht:11000},
+ {name:"Fichte",dk:4,haerte:35,quellenSchwindenRadial:3.6,dichte:450,gewicht:11000},
+ {name:"Tanne",dk:4,haerte:38,quellenSchwindenRadial:3.5,dichte:460,gewicht:10000},
+ {name:"Lärche",dk:3,haerte:55,quellenSchwindenRadial:3.7,dichte:590,gewicht:12000},
+ {name:"Birke",dk:5,haerte:60,quellenSchwindenRadial:5.4,dichte:650,gewicht:13000},
+ {name:"Ahorn",dk:5,haerte:75,quellenSchwindenRadial:4.8,dichte:630,gewicht:12500},
+ {name:"Esche",dk:5,haerte:90,quellenSchwindenRadial:4.9,dichte:700,gewicht:13000},
+ {name:"Kirsche",dk:3,haerte:70,quellenSchwindenRadial:4.0,dichte:600,gewicht:11500},
+ {name:"Nussbaum",dk:3,haerte:65,quellenSchwindenRadial:4.0,dichte:640,gewicht:12000},
+ {name:"Douglasie",dk:3,haerte:45,quellenSchwindenRadial:3.5,dichte:510,gewicht:12000},
+ {name:"Zeder",dk:2,haerte:42,quellenSchwindenRadial:2.8,dichte:480,gewicht:9500},
+ {name:"Mahagoni",dk:2,haerte:55,quellenSchwindenRadial:3.0,dichte:550,gewicht:10500},
+ {name:"Teak",dk:1,haerte:60,quellenSchwindenRadial:2.5,dichte:650,gewicht:11000},
+ {name:"Bambus",dk:4,haerte:50,quellenSchwindenRadial:3.0,dichte:400,gewicht:18000},
+ {name:"Pappel",dk:5,haerte:25,quellenSchwindenRadial:4.5,dichte:380,gewicht:9000},
+ {name:"Weide",dk:5,haerte:30,quellenSchwindenRadial:4.0,dichte:420,gewicht:8000},
+ {name:"Linde",dk:5,haerte:35,quellenSchwindenRadial:3.8,dichte:530,gewicht:9000},
+ {name:"Ulme",dk:3,haerte:75,quellenSchwindenRadial:4.5,dichte:680,gewicht:11500},
+ {name:"Kastanie",dk:2,haerte:50,quellenSchwindenRadial:3.5,dichte:600,gewicht:10000},
+ {name:"Robinie",dk:1,haerte:80,quellenSchwindenRadial:3.0,dichte:730,gewicht:15000},
+ {name:"Hemlock",dk:4,haerte:40,quellenSchwindenRadial:3.6,dichte:500,gewicht:10000},
+ {name:"Zypresse",dk:2,haerte:48,quellenSchwindenRadial:3.0,dichte:520,gewicht:9000},
+ {name:"Redwood",dk:2,haerte:35,quellenSchwindenRadial:2.8,dichte:400,gewicht:8500},
+ {name:"Hickory",dk:3,haerte:95,quellenSchwindenRadial:5.5,dichte:750,gewicht:14000},
+ {name:"Wenge",dk:2,haerte:88,quellenSchwindenRadial:3.8,dichte:880,gewicht:16000},
+ {name:"Zebrano",dk:3,haerte:70,quellenSchwindenRadial:4.0,dichte:750,gewicht:13000},
+ {name:"Palisander",dk:2,haerte:82,quellenSchwindenRadial:3.0,dichte:850,gewicht:16000},
+ {name:"Ebenholz",dk:1,haerte:98,quellenSchwindenRadial:3.2,dichte:1200,gewicht:16500}
+];
+
+// Helper um Bilder zu generieren
+const getSlug = (name) => {
+    const map = {
+        'Eiche':'eiche', 'Buche':'buche', 'Kiefer':'kiefer', 'Fichte':'fichte', 'Tanne':'tanne',
+        'Lärche':'laerche', 'Birke':'birke', 'Ahorn':'ahorn', 'Esche':'esche', 'Kirsche':'kirsche',
+        'Nussbaum':'nussbaum', 'Douglasie':'douglasie', 'Zeder':'zeder', 'Mahagoni':'mahagoni',
+        'Teak':'teak', 'Bambus':'bambus', 'Pappel':'pappel', 'Weide':'weide', 'Linde':'linde',
+        'Ulme':'ulme', 'Kastanie':'kastanie', 'Robinie':'robinie', 'Hemlock':'hemlock',
+        'Zypresse':'zypresse', 'Redwood':'redwood', 'Hickory':'hickory', 'Wenge':'wenge',
+        'Zebrano':'zebrano', 'Palisander':'palisander', 'Ebenholz':'ebenholz'
+    };
+    return map[name] || name.toLowerCase();
+};
+const getWoodImage = (name, type) => {
+    const slug = getSlug(name);
+    const num = type === 'tree' ? '1' : '2';
+    return `https://github.com/aufdemholzweg/holzquartett/blob/main/images/${slug}_${num}.jpg?raw=true`;
+};
+
+// Generiere woodInfo automatisch aus den Slugs, aber behalte Text-Fähigkeit
+const woodInfo = {};
+woodCards.forEach(c => {
+    woodInfo[c.name] = {
+        // Hier könntest du spezifische Texte pflegen. Default:
+        info: `Die ${c.name} ist eine Holzart mit einer Rohdichte von ca. ${c.dichte} kg/m³.`,
+        bildBaum: getWoodImage(c.name, 'tree'),
+        bildQuerschnitt: getWoodImage(c.name, 'cross')
+    };
+});
+
+const reflectionQuestions=[
+ "Welches Holz würdest du für Gartenmöbel wählen und warum?",
+ "Eine Küchenarbeitsplatte muss schnittfest sein. Welches Holz eignet sich?",
+ "Für einen stark beanspruchten Dielenboden: Hartes oder weiches Holz?",
+ "Warum verfärbt sich Eiche in Verbindung mit Eisen?",
+ "Welches der gespielten Hölzer hat die höchste Dauerhaftigkeit?",
+ "Nenne einen Vorteil von Bambus gegenüber heimischen Hölzern."
+];
+
+const attributeInfo={
+  dk:{icon:'🛡️',name:'Dauerhaftigkeit',unit:'(1-5)'},
+  haerte:{icon:'💎',name:'Druckfestigkeit',unit:'N/mm²'},
+  quellenSchwindenRadial:{icon:'↔️',name:'Schwinden',unit:'%'},
+  dichte:{icon:'⚖️',name:'Rohdichte',unit:'kg/m³'},
+  gewicht:{icon:'🏋️',name:'E-Modul',unit:'N/mm²'}
+};
+
+/* AI State */
+let aiGame={playerName:'',playerCards:[],aiCards:[],currentPlayerCard:null,currentAiCard:null,roundInProgress:false,turn:'player'};
+let lastRoundWinningWoodName = null;
+
+/* UI Helpers */
+const bottomSheet = document.getElementById('bottomSheet');
+const bottomSheetBackdrop = document.getElementById('bottomSheetBackdrop');
+const bsInfoBtn = document.getElementById('bsInfoBtn');
+const bsNextBtn = document.getElementById('bsNextBtn');
+
+function openBottomSheet(title){
+    if(title) document.getElementById('resultText').innerText = title;
+    bottomSheetBackdrop.classList.remove('hidden');
+    bottomSheet.classList.remove('hidden');
+    setTimeout(() => {
+        bottomSheetBackdrop.classList.remove('opacity-0');
+        bottomSheet.classList.remove('translate-y-full');
+    }, 10);
+}
+function closeBottomSheet(){
+    bottomSheet.classList.add('translate-y-full');
+    bottomSheetBackdrop.classList.add('opacity-0');
+    setTimeout(() => {
+        bottomSheet.classList.add('hidden');
+        bottomSheetBackdrop.classList.add('hidden');
+    }, 300);
+}
+
+/* --- INITIALIZATION --- */
+document.addEventListener('DOMContentLoaded', async()=>{
+  try{await signInAnonymously(auth);}catch(e){console.error(e)}
+  onAuthStateChanged(auth,(user)=>{
+    if(user){
+      localPlayerId=user.uid;
+      const p=new URLSearchParams(window.location.search);
+      const gid=p.get('game');
+      if(gid){gameId=gid;gameMode='multiplayer';window.showNamePrompt('join');}
+    }
+  });
+
+  const soundToggle=document.getElementById('soundToggle');
+  const savedMute=localStorage.getItem('holzquartett_isMuted');
+  isMuted=savedMute==='true';
+  soundToggle.checked=!isMuted;
+  soundToggle.addEventListener('change',(e)=>{
+    isMuted=!e.target.checked;
+    localStorage.setItem('holzquartett_isMuted',isMuted);
+    if(!isMuted) playSound(sounds.chime);
+  });
+
+  const revealToggle=document.getElementById('revealBackToggle');
+  revealToggle.checked=isOpponentNameBackVisible();
+  revealToggle.addEventListener('change',e=>{
+    setOpponentNameBackVisible(e.target.checked);
+    if(gameMode==='ai') displayCardsAI();
+    if(gameMode==='multiplayer'&&localGameState) displayMultiplayerCards(localGameState);
+  });
+
+  bsInfoBtn.addEventListener('click',()=>{
+    closeBottomSheet();
+    const name = lastRoundWinningWoodName || (aiGame.currentPlayerCard ? aiGame.currentPlayerCard.name : 'Holz');
+    window.showWoodInfo(name);
+  });
+  bsNextBtn.addEventListener('click',()=>{
+    closeBottomSheet();
+    window.nextRound();
+  });
+});
+
+/* --- STARTUP & NAVIGATION --- */
+window.showNamePrompt=(mode)=>{
+  document.getElementById('setupModal').classList.add('hidden');
+  document.getElementById('nameModal').classList.remove('hidden');
+  const btn=document.getElementById('nameSubmitButton');
+  const clone=btn.cloneNode(true);
+  btn.parentNode.replaceChild(clone,btn);
+  clone.addEventListener('click',()=>{
+    const playerName=document.getElementById('playerName').value.trim();
+    if(!playerName){alert('Bitte gib deinen Namen ein!');return;}
+    document.getElementById('nameModal').classList.add('hidden');
+    if(mode==='ai'){gameMode='ai';startGameAI(playerName);}
+    else if(mode==='multiplayer'){gameMode='multiplayer';createGame(playerName);}
+    else if(mode==='join'){joinGame(gameId,playerName);}
+  });
+};
+
+window.copyShareLink=async()=>{
+  const el=document.getElementById('shareLink');
+  try{await navigator.clipboard.writeText(el.value);}catch{el.select();document.execCommand('copy');}
+  hasCopiedShareLink=true;
+  const s=document.getElementById('lobbyStatus'); if(s) s.textContent='Link kopiert! Warte...';
+};
+
+/* --- MULTIPLAYER LOGIC --- */
+async function createGame(playerName){
+  const lobby=document.getElementById('multiplayerLobbyModal');
+  lobby.classList.remove('hidden');
+  hasCopiedShareLink=false;
+  gameId=Math.random().toString(36).substring(2,8).toUpperCase();
+  const base=window.location.href.split('?')[0];
+  document.getElementById('shareLink').value=`${base}?game=${gameId}`;
+  
+  const ref=doc(db,"games",gameId);
+  await setDoc(ref,{
+    gameId, status:'waiting', playerIds:[localPlayerId],
+    players:{[localPlayerId]:{name:playerName,cards:[],status:'online'}},
+    createdAt:serverTimestamp()
+  });
+  listenToGameChanges();
+}
+
+async function joinGame(id,playerName){
+  const ref=doc(db,"games",id);
+  const snap=await getDoc(ref);
+  if(snap.exists()&&snap.data().status==='waiting'){
+      document.getElementById('lobbyTitle').textContent="Verbinde...";
+      document.getElementById('multiplayerLobbyModal').classList.remove('hidden');
+      hasCopiedShareLink=true;
+      const shuffled=shuffleArray([...woodCards]);
+      const p1=snap.data().playerIds[0];
+      await updateDoc(ref,{
+        status:'playing',
+        playerIds:[p1,localPlayerId],
+        [`players.${localPlayerId}`]:{name:playerName,cards:shuffled.slice(15,30),status:'online'},
+        [`players.${p1}.cards`]:shuffled.slice(0,15),
+        turn:p1,
+        currentCards:{[p1]:shuffled[0],[localPlayerId]:shuffled[15]},
+        lastResult:null
+      });
+      listenToGameChanges();
+  } else {
+      alert("Spiel nicht verfügbar."); window.location.search='';
+  }
+}
+
+function listenToGameChanges(){
+  if(!gameId) return;
+  unsubscribeGame=onSnapshot(doc(db,"games",gameId),(ds)=>{
+    if(!ds.exists()) { resetGame(); return; }
+    const gd=ds.data(); localGameState=gd;
+    
+    if(gd.status==='playing'||gd.status==='finished'){
+        document.getElementById('multiplayerLobbyModal').classList.add('hidden');
+        document.getElementById('gameContainer').classList.remove('hidden');
+        updateMultiplayerUI(gd);
+    }
+  });
+}
+
+function updateMultiplayerUI(gd){
+    const oppId=gd.playerIds.find(id=>id!==localPlayerId);
+    document.getElementById('playerNameDisplay').innerText = gd.players[localPlayerId]?.name || 'DU';
+    document.getElementById('opponentNameDisplay').innerText = (oppId ? gd.players[oppId]?.name : 'GEGNER').toUpperCase();
+    
+    const pCount = gd.players[localPlayerId]?.cards?.length||0;
+    const oCount = oppId ? (gd.players[oppId]?.cards?.length||0) : 0;
+    
+    document.getElementById('playerCards').innerText = pCount;
+    document.getElementById('aiCards').innerText = oCount;
+    updateStatusBar(pCount, oCount);
+    displayMultiplayerCards(gd);
+
+    if(gd.lastResult){
+        if(!roundSoundPlayed){
+            roundSoundPlayed=true;
+            playSound(sounds.flip);
+            if(gd.lastResult.winnerId===localPlayerId) playSound(sounds.win);
         }
+        // Zeige Bottom Sheet
+        const winnerName = gd.lastResult.winnerId===localPlayerId ? 'Du gewinnst!' : (gd.lastResult.winnerId==='tie'?'Unentschieden':'Gegner gewinnt!');
+        document.getElementById('resultText').className = gd.lastResult.winnerId===localPlayerId ? 'text-xl font-black uppercase text-green-600' : 'text-xl font-black uppercase text-red-600';
+        document.getElementById('resultDetails').innerText = `${attributeInfo[gd.lastResult.attribute].name}: ${gd.lastResult.values[localPlayerId]} vs ${gd.lastResult.values[oppId]}`;
+        if(document.getElementById('bottomSheet').classList.contains('hidden')) openBottomSheet(winnerName);
+    } else {
+        roundSoundPlayed=false;
+        closeBottomSheet();
+    }
+    
+    // Turn Indicator
+    const ti = document.getElementById('turnIndicator');
+    if(gd.turn===localPlayerId) ti.innerText = "Du bist am Zug!";
+    else ti.innerText = "Gegner wählt...";
 
-        // --- AUDIO ENGINE ---
-        const playSound = (id) => {
-            if (!state.settings.sound) return;
-            const el = document.getElementById(`sound-${id}`);
-            if (el) {
-                el.currentTime = 0;
-                el.play().catch(e => console.log("Audio play blocked", e));
-            }
-        };
+    if(gd.status==='finished') endGame();
+}
 
-        // --- DOM ELEMENTS ---
-        const ui = {
-            screens: {
-                setup: document.getElementById('modal-setup'),
-                name: document.getElementById('modal-name'),
-                lobby: document.getElementById('modal-lobby'),
-                game: document.getElementById('game-area'),
-                info: document.getElementById('modal-info'),
-                gameover: document.getElementById('modal-gameover'),
-                leaderboard: document.getElementById('modal-leaderboard'),
-                panel: document.getElementById('post-turn-panel'),
-                aiOverlay: document.getElementById('ai-think-overlay')
-            },
-            cards: {
-                player: document.getElementById('card-player'),
-                opponent: document.getElementById('card-opponent'),
-                playerContainer: document.getElementById('container-player'),
-                opponentContainer: document.getElementById('container-opponent')
-            },
-            text: {
-                playerName: document.getElementById('name-player'),
-                oppName: document.getElementById('name-opponent'),
-                playerCount: document.getElementById('count-player'),
-                oppCount: document.getElementById('count-opponent'),
-                backPreview: document.getElementById('back-preview-text'),
-                result: document.getElementById('round-result-text'),
-                progressBar: document.getElementById('progress-bar')
-            }
-        };
+/* --- CARD RENDERING --- */
+function createCard(data, isRevealed=true, isPlayer=true){
+    const card = document.createElement('div');
+    card.className = `card-3d w-full h-full relative ${isPlayer?'cursor-pointer hover-lift':''}`;
+    if(!isRevealed) card.classList.add('card-flipped');
 
-        // --- HELPER FUNCTIONS ---
-        const shuffle = (array) => {
-            let currentIndex = array.length, randomIndex;
-            while (currentIndex != 0) {
-                randomIndex = Math.floor(Math.random() * currentIndex);
-                currentIndex--;
-                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
-            }
-            return array;
-        };
+    const canSelect = isPlayer && (
+        (gameMode==='ai' && aiGame.turn==='player' && !aiGame.roundInProgress) ||
+        (gameMode==='multiplayer' && localGameState.turn===localPlayerId && !localGameState.lastResult)
+    );
 
-        const handleImgError = (img) => {
-            img.style.display = 'none'; 
-        };
-
-        const updateProgressBar = () => {
-            const pSize = state.playerDeck.length;
-            const oSize = state.opponentDeck.length;
-            const sum = pSize + oSize || 1; 
-            const pct = (pSize / sum) * 100;
-
-            ui.text.progressBar.style.width = `${pct}%`;
-
-            let color = 'bg-amber-500';
-            if (pct < 25) color = 'bg-red-500';
-            else if (pct < 45) color = 'bg-orange-500';
-            else if (pct > 75) color = 'bg-green-600';
-            else if (pct > 55) color = 'bg-green-400';
-
-            ui.text.progressBar.className = `h-full transition-all duration-500 ${color}`;
-        };
-
-        // --- CORE GAME LOGIC ---
-
-        const initGame = () => {
-            const storedSound = localStorage.getItem('holz_sound');
-            if (storedSound !== null) {
-                state.settings.sound = storedSound === 'true';
-                document.getElementById('toggle-sound').checked = state.settings.sound;
-            }
-            const storedBack = localStorage.getItem('holz_back');
-            if (storedBack !== null) {
-                state.settings.showOpponentBack = storedBack === 'true';
-                document.getElementById('toggle-back-preview').checked = state.settings.showOpponentBack;
-            }
-        };
-
-        const setupDecks = () => {
-            const fullDeck = shuffle([...woodCards]);
-            state.playerDeck = fullDeck.slice(0, 15);
-            state.opponentDeck = fullDeck.slice(15, 30);
-        };
-
-        const startNewRound = () => {
-            if (state.playerDeck.length === 0 || state.opponentDeck.length === 0) {
-                handleGameOver();
-                return;
-            }
-
-            state.currentRound.playerCard = state.playerDeck[0];
-            state.currentRound.opponentCard = state.opponentDeck[0];
-            state.currentRound.winner = null;
-            state.currentRound.attribute = null;
-            state.currentRound.isProcessed = false;
-
-            ui.screens.panel.classList.add('hidden');
-            ui.screens.panel.classList.remove('slide-in-bottom');
-            
-            renderCardContent(ui.cards.player.querySelector('.card-front'), state.currentRound.playerCard, true);
-            renderCardContent(ui.cards.opponent.querySelector('.card-front'), state.currentRound.opponentCard, false);
-
-            if (state.settings.showOpponentBack) {
-                ui.text.backPreview.textContent = state.currentRound.opponentCard.name;
-                ui.text.backPreview.classList.remove('hidden');
-            } else {
-                ui.text.backPreview.classList.add('hidden');
-            }
-
-            ui.cards.opponent.classList.add('card-flipped');
-            ui.text.playerCount.innerText = state.playerDeck.length;
-            ui.text.oppCount.innerText = state.opponentDeck.length;
-            updateProgressBar();
-
-            if (state.currentRound.activePlayer === 'opponent') {
-                if(state.mode === 'ai') {
-                    handleAiTurn();
-                } else {
-                    ui.screens.aiOverlay.querySelector('span').innerText = "Gegner wählt...";
-                    ui.screens.aiOverlay.classList.remove('hidden');
-                }
-            }
-        };
-
-        const renderCardContent = (container, cardData, isPlayer) => {
-            const isMyTurn = state.currentRound.activePlayer === 'player' && !state.currentRound.isProcessed;
-            const enableInteraction = isPlayer && isMyTurn;
-            const imgPath = getWoodImage(cardData.name, 'tree');
-            
-            let html = `
-                <div class="flex justify-between items-start mb-2">
-                    <h2 class="text-lg font-bold text-gray-800 leading-tight">${cardData.name}</h2>
-                </div>
-                <div class="w-full aspect-[4/3] mb-2 rounded overflow-hidden bg-gray-200">
-                    <img src="${imgPath}" alt="${cardData.name}" class="w-full h-full object-cover" onerror="this.style.display='none'">
-                </div>
-                <div class="flex-grow flex flex-col justify-start space-y-1 overflow-y-auto hide-scrollbar">
-            `;
-
-            for (const [key, info] of Object.entries(attributeInfo)) {
-                let val = cardData[key];
-                const isSelected = state.currentRound.attribute === key;
-                const bgClass = isSelected ? 'bg-gray-300' : (enableInteraction ? 'hover:bg-amber-100 cursor-pointer' : '');
-                
-                if (enableInteraction) {
-                    html += `
-                        <button onclick="playTurn('${key}')" class="w-full flex justify-between items-center p-1 rounded border border-transparent ${bgClass} transition text-left text-xs">
-                            <span class="flex items-center gap-1 text-gray-700">${info.icon} <span>${info.label}</span></span>
-                            <span class="font-bold text-gray-900">${val}</span>
-                        </button>
-                    `;
-                } else {
-                    html += `
-                        <div class="w-full flex justify-between items-center p-1 rounded ${bgClass} text-xs">
-                            <span class="flex items-center gap-1 text-gray-600">${info.icon} <span>${info.label}</span></span>
-                            <span class="font-bold text-gray-900">${val}</span>
-                        </div>
-                    `;
-                }
-            }
-            html += `</div>`;
-            container.innerHTML = html;
-        };
-
-        window.playTurn = (attribute) => {
-            if (state.currentRound.isProcessed) return;
-            if (state.mode === 'multi' && state.currentRound.activePlayer !== 'player') return;
-
-            state.currentRound.attribute = attribute;
-            state.currentRound.isProcessed = true;
-
-            if (state.mode === 'multi') {
-                // Simulierter Sync für diesen Prototyp
-                resolveRoundLogic();
-            } else {
-                resolveRoundLogic();
-            }
-        };
-
-        const resolveRoundLogic = () => {
-            const attr = state.currentRound.attribute;
-            const pVal = state.currentRound.playerCard[attr];
-            const oVal = state.currentRound.opponentCard[attr];
-            
-            let pWins = false;
-            let tie = false;
-
-            if (attr === 'dk' || attr === 'quellenSchwindenRadial') {
-                if (pVal < oVal) pWins = true;
-                else if (pVal === oVal) tie = true;
-            } else {
-                if (pVal > oVal) pWins = true;
-                else if (pVal === oVal) tie = true;
-            }
-
-            if (tie) state.currentRound.winner = 'tie';
-            else state.currentRound.winner = pWins ? 'player' : 'opponent';
-
-            revealOpponentCard();
-        };
-
-        const revealOpponentCard = () => {
-            playSound('flip');
-            ui.cards.opponent.classList.remove('card-flipped');
-
-            renderCardContent(ui.cards.player.querySelector('.card-front'), state.currentRound.playerCard, true);
-            renderCardContent(ui.cards.opponent.querySelector('.card-front'), state.currentRound.opponentCard, false);
-
-            setTimeout(() => {
-                showRoundResult();
-            }, CONSTANTS.ROUND_DELAY_MS);
-        };
-
-        const showRoundResult = () => {
-            const winner = state.currentRound.winner;
-            let text = "Unentschieden";
-            let colorClass = "text-gray-600";
-
-            if (winner === 'player') {
-                text = "Du gewinnst!";
-                colorClass = "text-green-600";
-                playSound('win');
-                playSound('chime');
-                showStarAnimation();
-            } else if (winner === 'opponent') {
-                text = "Du verlierst";
-                colorClass = "text-red-600";
-            }
-
-            ui.text.result.innerText = text;
-            ui.text.result.className = `text-xl font-bold uppercase tracking-wide ${colorClass}`;
-            ui.screens.panel.classList.remove('hidden');
-            ui.screens.panel.classList.add('slide-in-bottom');
-            moveCards(winner);
-        };
-
-        const showStarAnimation = () => {
-            const star = document.createElement('div');
-            star.innerHTML = "⭐";
-            star.className = "animate-star";
-            star.style.left = "50%";
-            star.style.top = "10%";
-            document.body.appendChild(star);
-            setTimeout(() => star.remove(), 1000);
-        };
-
-        const moveCards = (winner) => {
-            const pCard = state.playerDeck.shift();
-            const oCard = state.opponentDeck.shift();
-
-            if (winner === 'player') {
-                state.playerDeck.push(pCard, oCard);
-                state.currentRound.activePlayer = 'player';
-            } else if (winner === 'opponent') {
-                state.opponentDeck.push(oCard, pCard);
-                state.currentRound.activePlayer = 'opponent';
-            } else {
-                state.playerDeck.push(pCard);
-                state.opponentDeck.push(oCard);
-            }
-            
-            ui.text.playerCount.innerText = state.playerDeck.length;
-            ui.text.oppCount.innerText = state.opponentDeck.length;
-            updateProgressBar();
-        };
-
-        const handleAiTurn = () => {
-            ui.screens.aiOverlay.querySelector('span').innerText = "Gegner überlegt...";
-            ui.screens.aiOverlay.classList.remove('hidden');
-
-            setTimeout(() => {
-                ui.screens.aiOverlay.classList.add('hidden');
-                const keys = Object.keys(attributeInfo);
-                const randomKey = keys[Math.floor(Math.random() * keys.length)];
-                state.currentRound.attribute = randomKey;
-                state.currentRound.isProcessed = true;
-                resolveRoundLogic();
-            }, CONSTANTS.AI_THINK_MS);
-        };
-
-        // --- INTERACTION HANDLERS ---
-        document.getElementById('btn-mode-ai').addEventListener('click', () => {
-            state.mode = 'ai';
-            state.opponentName = 'Computer';
-            ui.screens.setup.classList.add('hidden');
-            ui.screens.name.classList.remove('hidden');
-        });
-
-        document.getElementById('btn-mode-multi').addEventListener('click', async () => {
-            const success = await connectMultiplayer();
-            if (!success) {
-                alert("Verbindung fehlgeschlagen. Überprüfe die Konsole.");
-                return;
-            }
-            state.mode = 'multi';
-            ui.screens.setup.classList.add('hidden');
-            ui.screens.name.classList.remove('hidden');
-        });
-
-        document.getElementById('toggle-sound').addEventListener('change', (e) => {
-            state.settings.sound = e.target.checked;
-            localStorage.setItem('holz_sound', e.target.checked);
-        });
-
-        document.getElementById('toggle-back-preview').addEventListener('change', (e) => {
-            state.settings.showOpponentBack = e.target.checked;
-            localStorage.setItem('holz_back', e.target.checked);
-        });
-
-        document.getElementById('btn-start-game').addEventListener('click', () => {
-            const name = document.getElementById('input-player-name').value.trim() || "Spieler";
-            state.playerName = name;
-            ui.text.playerName.innerText = name;
-            ui.text.oppName.innerText = state.opponentName;
-            
-            ui.screens.name.classList.add('hidden');
-            
-            if (state.mode === 'ai') {
-                ui.screens.game.classList.remove('hidden');
-                setupDecks();
-                startNewRound();
-            } else {
-                startMultiplayerLobby();
-            }
-        });
-
-        document.getElementById('btn-next-turn').addEventListener('click', () => {
-             startNewRound();
-        });
-
-        document.getElementById('btn-knowledge').addEventListener('click', () => {
-            ui.screens.panel.classList.add('hidden');
-            ui.screens.info.classList.remove('hidden');
-
-            const winnerCard = state.currentRound.winner === 'opponent' ? state.currentRound.opponentCard : state.currentRound.playerCard;
-            
-            document.getElementById('info-title').innerText = `Wissenswertes über ${winnerCard.name}`;
-            document.getElementById('info-text').innerText = `Die ${winnerCard.name} hat eine Dichte von ${winnerCard.dichte} kg/m³.`;
-            
-            const imgTree = document.getElementById('info-img-tree');
-            const imgCross = document.getElementById('info-img-cross');
-            imgTree.src = getWoodImage(winnerCard.name, 'tree');
-            imgCross.src = getWoodImage(winnerCard.name, 'cross');
-            imgTree.style.display = 'block';
-            imgCross.style.display = 'block';
-            imgTree.onerror = () => handleImgError(imgTree);
-            imgCross.onerror = () => handleImgError(imgCross);
-        });
-
-        document.getElementById('btn-close-info').addEventListener('click', () => {
-            ui.screens.info.classList.add('hidden');
-            ui.screens.panel.classList.remove('hidden');
-        });
-
-        const handleGameOver = () => {
-            ui.screens.game.classList.add('hidden');
-            ui.screens.panel.classList.add('hidden');
-            ui.screens.gameover.classList.remove('hidden');
-
-            let title = "UNENTSCHIEDEN";
-            let msg = "Keine Karten mehr.";
-            if (state.playerDeck.length > 0) {
-                title = "GEWONNEN!";
-                msg = `Glückwunsch ${state.playerName}!`;
-                playSound('win');
-                if (state.mode === 'multi') updateLeaderboard(state.playerName);
-            } else {
-                title = "VERLOREN";
-                msg = "Gegner war besser.";
-            }
-
-            document.getElementById('gameover-title').innerText = title;
-            document.getElementById('gameover-msg').innerText = msg;
-        };
-
-        document.getElementById('btn-leaderboard').addEventListener('click', async () => {
-            ui.screens.gameover.classList.add('hidden');
-            ui.screens.leaderboard.classList.remove('hidden');
-            
-            const list = document.getElementById('leaderboard-list');
-            list.innerHTML = '<tr><td colspan="2" class="text-center py-4">Lade Bestenliste...</td></tr>';
-
-            // Echte Daten laden (Demo Logic)
-            try {
-                const fm = window.firebaseModules;
-                if (!fm || !window.db) throw new Error("Kein DB Zugriff");
-                
-                // Firestore Query Example (müsste Collection "leaderboard" existieren)
-                // const q = fm.query(fm.collection(window.db, "leaderboard"), fm.orderBy("wins", "desc"), fm.limit(10));
-                // const querySnapshot = await fm.getDocs(q);
-                // ... verarbeiten ...
-
-                // Fallback Mock für Demo:
-                const mock = [
-                    {name: "Meister Eder", wins: 12},
-                    {name: state.playerName, wins: 1}
-                ];
-                let html = '';
-                mock.forEach(p => html += `<tr><td class="py-1 font-medium">${p.name}</td><td class="py-1 text-right">${p.wins}</td></tr>`);
-                list.innerHTML = html;
-
-            } catch(e) {
-                 list.innerHTML = '<tr><td colspan="2" class="text-center py-4 text-gray-400">Keine Daten verfügbar</td></tr>';
-            }
-        });
-
-        document.getElementById('btn-close-leaderboard').addEventListener('click', () => {
-            ui.screens.leaderboard.classList.add('hidden');
-            ui.screens.gameover.classList.remove('hidden');
-        });
-
-        // --- MULTIPLAYER LOGIC ---
+    const front = document.createElement('div');
+    front.className = `card-front card-front-bg rounded-xl shadow-lg border-2 ${isPlayer?'border-amber-400':'border-gray-300'} p-2 flex flex-col`;
+    
+    // Header (Name oben links)
+    const header = `
+        <div class="flex justify-between items-start mb-2 px-1 pt-1">
+            <h2 class="text-lg font-bold text-gray-800 leading-tight">${data.name}</h2>
+        </div>`;
+    
+    // Bild
+    const imgUrl = getWoodImage(data.name, 'tree');
+    const image = `
+        <div class="w-full aspect-[4/3] mb-3 rounded-lg overflow-hidden bg-gray-100 shadow-inner relative">
+            <img src="${imgUrl}" class="w-full h-full object-cover" onerror="this.style.opacity='0.2'">
+        </div>`;
+    
+    // Attribute
+    let attrs = '<div class="flex-grow flex flex-col justify-start space-y-1 overflow-y-auto hide-scrollbar px-1">';
+    for(const k in attributeInfo){
+        const val = data[k];
+        const info = attributeInfo[k];
+        const rowClass = `w-full flex justify-between items-center p-1.5 rounded-md border border-transparent transition text-xs ${canSelect?'hover:bg-amber-100 cursor-pointer active:bg-amber-200':''}`;
         
-        const startMultiplayerLobby = async () => {
-            ui.screens.lobby.classList.remove('hidden');
-            const urlParams = new URLSearchParams(window.location.search);
-            const joinId = urlParams.get('game');
+        // Highlight logic
+        let bg = 'bg-white/60';
+        if(gameMode==='ai' && aiGame.roundInProgress && document.getElementById('resultDetails').innerText.includes(info.name)) bg='bg-gray-300 font-bold';
+        
+        if(canSelect){
+            attrs += `<button onclick="window.selectAttribute('${k}')" class="${rowClass} ${bg}">
+                        <span class="flex items-center gap-1.5 text-gray-700 font-medium"><span>${info.icon}</span> ${info.name}</span>
+                        <span class="font-bold text-gray-900">${val}</span>
+                      </button>`;
+        } else {
+             attrs += `<div class="${rowClass} ${bg}">
+                        <span class="flex items-center gap-1.5 text-gray-600 font-medium"><span>${info.icon}</span> ${info.name}</span>
+                        <span class="font-bold text-gray-900">${val}</span>
+                      </div>`;
+        }
+    }
+    attrs += '</div>';
 
-            if (joinId) {
-                joinGame(joinId);
-            } else {
-                createGame();
-            }
-        };
+    front.innerHTML = header + image + attrs;
+    
+    const back = document.createElement('div');
+    back.className = 'card-back rounded-xl shadow-lg border-2 border-amber-300 relative';
+    if(!isPlayer && isOpponentNameBackVisible()){
+        const lbl = document.createElement('div');
+        lbl.className = 'opponent-back-name';
+        lbl.innerText = data.name;
+        back.appendChild(lbl);
+    }
 
-        const createGame = async () => {
-            const gameId = Math.random().toString(36).substring(2, 8).toUpperCase();
-            state.multiplayer.gameId = gameId;
-            state.multiplayer.role = 'host';
+    card.appendChild(front);
+    card.appendChild(back);
+    return card;
+}
 
-            const fm = window.firebaseModules;
-            if (fm && window.db) {
-                const gameRef = fm.doc(window.db, "games", gameId);
-                await fm.setDoc(gameRef, {
-                    status: "waiting",
-                    hostId: state.multiplayer.playerId,
-                    hostName: state.playerName,
-                    createdAt: fm.serverTimestamp()
-                });
-            }
+function displayMultiplayerCards(gd){
+    const pc = document.getElementById('playerCard');
+    const ac = document.getElementById('aiCard');
+    pc.innerHTML=''; ac.innerHTML='';
+    
+    if(gd.currentCards[localPlayerId]) pc.appendChild(createCard(gd.currentCards[localPlayerId], true, true));
+    
+    const oppId = gd.playerIds.find(i=>i!==localPlayerId);
+    if(oppId && gd.currentCards[oppId]){
+        // Karte rendern
+        const c = createCard(gd.currentCards[oppId], false, false);
+        ac.appendChild(c);
+        
+        // Flip Logik
+        if(gd.lastResult){
+             setTimeout(()=> {
+                 c.classList.remove('card-flipped');
+                 playSound(sounds.flip);
+             }, 100);
+        }
+    } else {
+        ac.innerHTML = `<div class="w-full h-full bg-gray-200 rounded-xl flex items-center justify-center text-xs text-gray-500">Warte...</div>`;
+    }
+}
 
-            document.getElementById('lobby-link-container').classList.remove('hidden');
-            const link = `${window.location.origin}${window.location.pathname}?game=${gameId}`;
-            document.getElementById('game-link-input').value = link;
-            document.getElementById('lobby-waiting').classList.remove('hidden');
+/* --- GAME ACTIONS --- */
+window.selectAttribute = function(attr){
+    if(gameMode==='ai') selectAttributeAI(attr);
+    else if(gameMode==='multiplayer') multiplayerSelectAttribute(attr);
+};
 
-            subscribeToGame(gameId);
-        };
+window.nextRound = function(){
+    if(gameMode==='ai') nextRoundAI();
+    else if(gameMode==='multiplayer') multiplayerNextRound();
+};
 
-        const joinGame = async (gameId) => {
-            state.multiplayer.gameId = gameId;
-            state.multiplayer.role = 'guest';
-            document.getElementById('lobby-status').innerText = "Tritt bei...";
+async function multiplayerSelectAttribute(attr){
+    if(!localGameState || localGameState.turn!==localPlayerId) return;
+    const opp = localGameState.playerIds.find(id=>id!==localPlayerId);
+    const pv = localGameState.currentCards[localPlayerId][attr];
+    const ov = localGameState.currentCards[opp][attr];
+    
+    // Logik: Kleiner gewinnt bei DK & Schwinden
+    let pWins;
+    if(attr==='dk' || attr==='quellenSchwindenRadial') pWins = pv < ov ? true : (ov < pv ? false : 'tie');
+    else pWins = pv > ov ? true : (ov > pv ? false : 'tie');
+    
+    const winner = pWins==='tie' ? 'tie' : (pWins ? localPlayerId : opp);
+    
+    await updateDoc(doc(db,"games",gameId),{
+        lastResult: {winnerId:winner, attribute:attr, values:{[localPlayerId]:pv, [opp]:ov}},
+        lastActivity: serverTimestamp()
+    });
+}
 
-            const fm = window.firebaseModules;
-            if (fm && window.db) {
-                const gameRef = fm.doc(window.db, "games", gameId);
-                await fm.updateDoc(gameRef, {
-                    guestId: state.multiplayer.playerId,
-                    guestName: state.playerName,
-                    status: "playing"
-                });
-            }
-            subscribeToGame(gameId);
-        };
+async function multiplayerNextRound(){
+    if(!localGameState.lastResult) return;
+    const gs = localGameState;
+    const [p1,p2] = gs.playerIds;
+    let c1=gs.players[p1].cards.shift();
+    let c2=gs.players[p2].cards.shift();
+    // Cards reintegrieren
+    const w = gs.lastResult.winnerId;
+    if(w===p1){ if(c1) gs.players[p1].cards.push(c1); if(c2) gs.players[p1].cards.push(c2); }
+    else if(w===p2){ if(c1) gs.players[p2].cards.push(c1); if(c2) gs.players[p2].cards.push(c2); }
+    else { if(c1) gs.players[p1].cards.push(c1); if(c2) gs.players[p2].cards.push(c2); } // Tie
+    
+    // Check End
+    if(gs.players[p1].cards.length===0 || gs.players[p2].cards.length===0){
+        await updateDoc(doc(db,"games",gameId), {status:'finished', players:gs.players});
+        return;
+    }
+    
+    const nextT = w==='tie' ? gs.turn : w;
+    await updateDoc(doc(db,"games",gameId), {
+        lastResult:null, turn:nextT, players:gs.players,
+        currentCards:{[p1]:gs.players[p1].cards[0], [p2]:gs.players[p2].cards[0]}
+    });
+}
 
-        const subscribeToGame = (gameId) => {
-            const fm = window.firebaseModules;
-            if (!fm || !window.db) return;
+/* --- AI LOGIC --- */
+function startGameAI(name){
+    aiGame.playerName=name;
+    document.getElementById('playerNameDisplay').innerText=name.toUpperCase();
+    document.getElementById('opponentNameDisplay').innerText='COMPUTER';
+    const sh=shuffleArray([...woodCards]);
+    aiGame.playerCards=sh.slice(0,15);
+    aiGame.aiCards=sh.slice(15,30);
+    aiGame.currentPlayerCard=aiGame.playerCards[0];
+    aiGame.currentAiCard=aiGame.aiCards[0];
+    aiGame.turn='player';
+    
+    document.getElementById('gameContainer').classList.remove('hidden');
+    updateDisplayAI();
+}
 
-            const gameRef = fm.doc(window.db, "games", gameId);
-            state.multiplayer.unsub = fm.onSnapshot(gameRef, (docSnap) => {
-                const data = docSnap.data();
-                if (!data) return;
+function updateDisplayAI(){
+    const pc=aiGame.playerCards.length; const ac=aiGame.aiCards.length;
+    document.getElementById('playerCards').innerText=pc;
+    document.getElementById('aiCards').innerText=ac;
+    updateStatusBar(pc,ac);
+    
+    const pcEl = document.getElementById('playerCard');
+    const acEl = document.getElementById('aiCard');
+    pcEl.innerHTML=''; acEl.innerHTML='';
+    
+    if(aiGame.currentPlayerCard) pcEl.appendChild(createCard(aiGame.currentPlayerCard, true, true));
+    if(aiGame.currentAiCard) acEl.appendChild(createCard(aiGame.currentAiCard, false, false)); // AI immer verdeckt init
+    
+    if(aiGame.turn==='ai' && !aiGame.roundInProgress) setTimeout(aiTurn, 1000);
+}
 
-                if (data.status === 'playing' && state.mode === 'multi') {
-                    if (ui.screens.game.classList.contains('hidden')) {
-                        ui.screens.lobby.classList.add('hidden');
-                        ui.screens.game.classList.remove('hidden');
-                        
-                        if (state.multiplayer.role === 'host') {
-                            ui.text.oppName.innerText = data.guestName || "Gast";
-                            state.opponentName = data.guestName;
-                        } else {
-                            ui.text.oppName.innerText = data.hostName || "Host";
-                            state.opponentName = data.hostName;
-                        }
+function aiTurn(){
+    if(aiGame.roundInProgress) return;
+    const keys=Object.keys(attributeInfo);
+    const k=keys[Math.floor(Math.random()*keys.length)];
+    selectAttributeAI(k);
+}
 
-                        if (state.multiplayer.role === 'host' && !data.decks) {
-                            const fullDeck = shuffle([...woodCards]);
-                            const d1 = fullDeck.slice(0,15);
-                            const d2 = fullDeck.slice(15,30);
-                            fm.updateDoc(gameRef, {
-                                decks: { host: d1, guest: d2 },
-                                turn: data.hostId
-                            });
-                        }
-                    }
+function selectAttributeAI(attr){
+    aiGame.roundInProgress=true;
+    const pv=aiGame.currentPlayerCard[attr];
+    const av=aiGame.currentAiCard[attr];
+    
+    // Flip Animation AI
+    const ac=document.getElementById('aiCard').querySelector('.card-3d');
+    if(ac){ ac.classList.remove('card-flipped'); playSound(sounds.flip); }
+    
+    setTimeout(()=>{
+        let pWins;
+        if(attr==='dk'||attr==='quellenSchwindenRadial') pWins = pv<av ? true : (av<pv ? false : 'tie');
+        else pWins = pv>av ? true : (av>pv ? false : 'tie');
+        
+        const resText = pWins===true ? 'Du gewinnst!' : (pWins===false ? 'Computer gewinnt!' : 'Unentschieden');
+        const resColor = pWins===true ? 'text-green-600' : (pWins===false ? 'text-red-600' : 'text-gray-600');
+        
+        document.getElementById('resultText').innerText = resText;
+        document.getElementById('resultText').className = `text-xl font-black uppercase tracking-wide mb-1 ${resColor}`;
+        document.getElementById('resultDetails').innerText = `${attributeInfo[attr].name}: ${pv} vs ${av}`;
+        openBottomSheet(resText);
+        
+        if(pWins===true) { playSound(sounds.win); triggerWinStarAnimation(); lastRoundWinningWoodName = aiGame.currentPlayerCard.name; }
+        else if(pWins===false) { lastRoundWinningWoodName = aiGame.currentAiCard.name; }
+        else { lastRoundWinningWoodName = aiGame.currentPlayerCard.name; } // Tie
+        
+        // Karten verteilen
+        const pC=aiGame.playerCards.shift(); const aC=aiGame.aiCards.shift();
+        if(pWins===true){ aiGame.playerCards.push(pC, aC); aiGame.turn='player'; }
+        else if(pWins===false){ aiGame.aiCards.push(aC, pC); aiGame.turn='ai'; }
+        else { aiGame.playerCards.push(pC); aiGame.aiCards.push(aC); } // Tie
+        
+        if(aiGame.playerCards.length===0 || aiGame.aiCards.length===0) setTimeout(endGame, 1000);
+    }, 600);
+}
 
-                    if (data.decks) {
-                        if (state.multiplayer.role === 'host') {
-                            state.playerDeck = data.decks.host;
-                            state.opponentDeck = data.decks.guest;
-                        } else {
-                            state.playerDeck = data.decks.guest;
-                            state.opponentDeck = data.decks.host;
-                        }
-                        
-                        state.currentRound.activePlayer = (data.turn === state.multiplayer.playerId) ? 'player' : 'opponent';
-                        
-                        // Einfache Logik: Nur bei Start einer neuen Runde aktualisieren
-                        if (!state.currentRound.playerCard && state.playerDeck.length > 0) {
-                             startNewRound();
-                        }
-                    }
-                }
-            });
-        };
+function nextRoundAI(){
+    aiGame.currentPlayerCard=aiGame.playerCards[0];
+    aiGame.currentAiCard=aiGame.aiCards[0];
+    aiGame.roundInProgress=false;
+    updateDisplayAI();
+}
 
-        document.getElementById('btn-copy-link').addEventListener('click', () => {
-            const copyText = document.getElementById("game-link-input");
-            copyText.select();
-            navigator.clipboard.writeText(copyText.value);
-            alert("Link kopiert!");
-        });
+function triggerWinStarAnimation(){
+    const con = document.getElementById('animationContainer');
+    const star = document.createElement('div');
+    star.innerText='⭐'; star.className='falling-star';
+    star.style.left='50%'; star.style.top='20%';
+    con.appendChild(star);
+    playSound(sounds.starWin);
+    setTimeout(()=>star.remove(), 1200);
+}
 
-        initGame();
+function endGame(){
+    closeBottomSheet();
+    document.getElementById('gameContainer').classList.add('hidden');
+    const win = aiGame.playerCards.length>0 || (localGameState?.players?.[localPlayerId]?.cards?.length > 0);
+    const title = document.getElementById('gameOverTitle');
+    const text = document.getElementById('gameOverText');
+    const modal = document.getElementById('gameOverModal');
+    const reflect = document.getElementById('reflectionModal');
+    
+    if(win){
+        // Zeige Reflektion zuerst
+        document.getElementById('reflectionQuestion').innerText = reflectionQuestions[Math.floor(Math.random()*reflectionQuestions.length)];
+        reflect.classList.remove('hidden');
+    } else {
+        title.innerText = "VERLOREN";
+        title.className = "text-3xl font-black mb-2 text-red-600";
+        text.innerText = "Leider hat der Gegner gewonnen.";
+        modal.classList.remove('hidden');
+    }
+}
 
-    </script>
+window.showFinalWinScreen = function(){
+    document.getElementById('reflectionModal').classList.add('hidden');
+    const title = document.getElementById('gameOverTitle');
+    const text = document.getElementById('gameOverText');
+    title.innerText = "GEWONNEN!";
+    title.className = "text-3xl font-black mb-2 text-green-600";
+    text.innerText = "Herzlichen Glückwunsch! Du bist der Holz-Meister.";
+    document.getElementById('gameOverModal').classList.remove('hidden');
+    if(gameMode==='ai') saveToLeaderboard(aiGame.playerName);
+    else saveToLeaderboard(localGameState.players[localPlayerId].name);
+}
+
+/* --- HELPERS --- */
+function updateStatusBar(p, o){
+    const total=p+o; const pct=(total===0)?50:(p/total)*100;
+    const bar=document.getElementById('statusBar');
+    bar.style.width=`${pct}%`;
+    if(pct>60) bar.className='h-full bg-green-500 transition-all duration-500';
+    else if(pct<40) bar.className='h-full bg-red-500 transition-all duration-500';
+    else bar.className='h-full bg-amber-500 transition-all duration-500';
+}
+function shuffleArray(a){
+    for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+    return a;
+}
+
+/* --- INFO / LEADERBOARD --- */
+window.showWoodInfo = function(name){
+    const modal=document.getElementById('infoModal');
+    const title=document.getElementById('infoModalTitle');
+    const content=document.getElementById('infoModalContent');
+    
+    title.innerHTML = `🎓 ${name}`;
+    const w = woodInfo[name] || {};
+    
+    content.innerHTML=`
+        <div class="bg-purple-50 p-4 rounded-xl border-l-4 border-purple-500 text-sm text-gray-700 leading-relaxed mb-4">
+            ${w.info || 'Keine Info verfügbar.'}
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1">
+                <span class="text-[10px] font-bold uppercase text-gray-500 tracking-wider">Baum</span>
+                <img src="${w.bildBaum}" class="rounded-lg shadow-sm border w-full h-32 object-cover bg-gray-100" onerror="this.style.opacity=0.3">
+            </div>
+            <div class="space-y-1">
+                <span class="text-[10px] font-bold uppercase text-gray-500 tracking-wider">Querschnitt</span>
+                <img src="${w.bildQuerschnitt}" class="rounded-lg shadow-sm border w-full h-32 object-cover bg-gray-100" onerror="this.style.opacity=0.3">
+            </div>
+        </div>
+    `;
+    modal.classList.remove('hidden');
+};
+window.closeInfoModal = function(){ document.getElementById('infoModal').classList.add('hidden'); openBottomSheet(); };
+
+window.showLeaderboard = async function(){
+    const list=document.getElementById('leaderboardList');
+    list.innerHTML='<div class="text-center py-4 text-gray-500">Lade...</div>';
+    document.getElementById('gameOverModal').classList.add('hidden');
+    document.getElementById('leaderboardModal').classList.remove('hidden');
+    
+    try {
+        const q=query(collection(db,"leaderboard"),orderBy("wins","desc"),limit(10));
+        const snap=await getDocs(q);
+        if(snap.empty){ list.innerHTML='<div class="text-center py-4 text-gray-400">Keine Einträge</div>'; return; }
+        
+        list.innerHTML = snap.docs.map((d,i)=>`
+            <div class="flex justify-between items-center p-3 rounded-lg ${i%2===0?'bg-gray-50':'bg-white'} border border-gray-100">
+                <span class="font-bold text-gray-700 text-sm">${i+1}. ${d.data().name}</span>
+                <span class="font-bold text-amber-600 text-sm">${d.data().wins} 🏆</span>
+            </div>
+        `).join('');
+    } catch(e){ list.innerHTML='<div class="text-center text-red-400">Fehler beim Laden</div>'; }
+};
+window.closeLeaderboard = function(){
+    document.getElementById('leaderboardModal').classList.add('hidden');
+    document.getElementById('gameOverModal').classList.remove('hidden');
+};
+async function saveToLeaderboard(name){
+    if(!name) return;
+    const safe=name.replace(/[.#$[\]]/g,'_');
+    try{ await setDoc(doc(db,"leaderboard",safe),{name,wins:increment(1),lastWin:serverTimestamp()},{merge:true}); }catch(e){}
+}
+window.resetGame = function(){ location.reload(); };
+
+</script>
 </body>
 </html>
