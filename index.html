@@ -8,44 +8,118 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-        body{font-family:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-weight:300}
+        body{
+            font-family:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+            font-weight:300
+        }
 
-        .card-3d{transform-style:preserve-3d;transition:transform .6s}
+        .card-3d{
+            transform-style:preserve-3d;
+            transition:transform .6s
+        }
         .card-flipped{transform:rotateY(180deg)}
-        .card-front,.card-back{backface-visibility:hidden;position:absolute;width:100%;height:100%}
-        .card-back{transform:rotateY(180deg);background-image:url('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/65fd843a4db1ee434faaf81a32f77951a5afb72a/images/background_card.jpg');background-size:cover;background-position:center}
+        .card-front,.card-back{
+            backface-visibility:hidden;
+            position:absolute;
+            width:100%;
+            height:100%
+        }
+        .card-back{
+            transform:rotateY(180deg);
+            background-image:url('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/65fd843a4db1ee434faaf81a32f77951a5afb72a/images/background_card.jpg');
+            background-size:cover;
+            background-position:center
+        }
 
         .animate-pop-in{animation:pop-in .5s ease-out forwards}
         .animate-glow-win{animation:glow-win 1.2s ease-out}
         .animate-glow-lose{animation:glow-lose 1.2s ease-out}
-        @keyframes pop-in{0%{transform:scale(0);opacity:0}70%{transform:scale(1.2);opacity:1}100%{transform:scale(1)}}
-        @keyframes glow-win{0%{box-shadow:0 0 0 0 rgba(74,222,128,0)}50%{box-shadow:0 0 30px 15px rgba(74,222,128,.6)}100%{box-shadow:0 0 0 0 rgba(74,222,128,0)}}
-        @keyframes glow-lose{0%{box-shadow:0 0 0 0 rgba(248,113,113,0)}50%{box-shadow:0 0 30px 15px rgba(248,113,113,.6)}100%{box-shadow:0 0 0 0 rgba(248,113,113,0)}}
-        .hover-lift:hover{transform:translateY(-4px);box-shadow:0 10px 25px rgba(0,0,0,.15)}
+        @keyframes pop-in{
+            0%{transform:scale(0);opacity:0}
+            70%{transform:scale(1.2);opacity:1}
+            100%{transform:scale(1)}
+        }
+        @keyframes glow-win{
+            0%{box-shadow:0 0 0 0 rgba(74,222,128,0)}
+            50%{box-shadow:0 0 30px 15px rgba(74,222,128,.6)}
+            100%{box-shadow:0 0 0 0 rgba(74,222,128,0)}
+        }
+        @keyframes glow-lose{
+            0%{box-shadow:0 0 0 0 rgba(248,113,113,0)}
+            50%{box-shadow:0 0 30px 15px rgba(248,113,113,.6)}
+            100%{box-shadow:0 0 0 0 rgba(248,113,113,0)}
+        }
+        .hover-lift:hover{
+            transform:translateY(-4px);
+            box-shadow:0 10px 25px rgba(0,0,0,.15)
+        }
         .status-flash-win{animation:flash-green 1.2s ease-out}
         .status-flash-lose{animation:flash-red 1.2s ease-out}
-        @keyframes flash-green{50%{background-color:#22c55e;box-shadow:0 0 15px #22c55e}}
-        @keyframes flash-red{50%{background-color:#ef4444;box-shadow:0 0 15px #ef4444}}
+        @keyframes flash-green{
+            50%{background-color:#22c55e;box-shadow:0 0 15px #22c55e}
+        }
+        @keyframes flash-red{
+            50%{background-color:#ef4444;box-shadow:0 0 15px #ef4444}
+        }
 
-        .falling-star{position:absolute;font-size:7rem;z-index:100;animation:fall-and-fade 1.2s ease-in forwards}
-        @keyframes fall-and-fade{0%{transform:translateY(-30px) scale(1.5);opacity:0}30%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(var(--end-y)) scale(.3);opacity:0}}
+        .falling-star{
+            position:absolute;
+            font-size:7rem;
+            z-index:100;
+            animation:fall-and-fade 1.2s ease-in forwards
+        }
+        @keyframes fall-and-fade{
+            0%{transform:translateY(-30px) scale(1.5);opacity:0}
+            30%{transform:translateY(0) scale(1);opacity:1}
+            100%{transform:translateY(var(--end-y)) scale(.3);opacity:0}
+        }
 
         .card-background{
             background-image:url('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/e7cfc18394e2e7f2d0b91df1138b0d7bc7930699/images/background_front.jpg');
-            background-size:cover;background-position:center
+            background-size:cover;
+            background-position:center
         }
 
         /* Name auf der Rückseite der Gegnerkarte (Top-Drittel), halb so groß wie vorher */
         .opponent-back-name{
-            position:absolute;top:12%;left:0;width:100%;text-align:center;
-            font-family:Arial,Helvetica,sans-serif;color:#e5e7eb;font-weight:700;letter-spacing:.02em;line-height:1.1;z-index:2;
-            font-size:clamp(0.8rem,3vw,1.375rem); /* halbiert */
-            text-shadow:0 1px 2px rgba(0,0,0,.25);pointer-events:none;padding:0 .5rem
+            position:absolute;
+            top:12%;
+            left:0;
+            width:100%;
+            text-align:center;
+            font-family:Arial,Helvetica,sans-serif;
+            color:#e5e7eb;
+            font-weight:700;
+            letter-spacing:.02em;
+            line-height:1.1;
+            z-index:2;
+            font-size:clamp(0.8rem,3vw,1.375rem);
+            text-shadow:0 1px 2px rgba(0,0,0,.25);
+            pointer-events:none;
+            padding:0 .5rem
+        }
+
+        /* Namens-Badge im Bild (grauer, transparenter Kasten, weiße Schrift, oben links) */
+        .name-badge{
+            position:absolute;
+            top:4px;
+            left:4px;
+            padding:2px 6px;
+            border-radius:9999px;
+            background:rgba(31,41,55,0.65); /* grau, leicht transparent */
+            color:#f9fafb;
+            font-size:0.65rem;
+            font-weight:600;
+            max-width:calc(100% - 8px);
+            white-space:nowrap;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            letter-spacing:0.02em;
         }
 
         /* Bottom-sheet dimmer (hell) */
         .dimmer-light{background:rgba(0,0,0,0.2)}
-    
+
         /* Tiny, almost invisible hotspot for Zusatzwissen on the card image */
         .info-tiny-btn{
             position:absolute;
@@ -56,7 +130,7 @@
             border:none;
             padding:0;
             border-radius:9999px;
-            background:rgba(128,0,128,0.08); /* very faint */
+            background:rgba(128,0,128,0.08);
             z-index:10;
             cursor:pointer;
             outline:none;
@@ -164,7 +238,6 @@
             <h3 id="resultText" class="text-lg sm:text-xl font-bold"></h3>
             <p id="resultDetails" class="text-xs sm:text-sm text-gray-600 mt-auto pb-0.5"></p>
         </div>
-        <!-- Der alte "Nächster Zug"-Button im Hauptbereich entfällt, da jetzt das Bottom-Sheet verwendet wird. -->
     </div>
 </div>
 
@@ -423,7 +496,6 @@ document.addEventListener('DOMContentLoaded',async()=>{
   // Bottom-sheet button handlers
   bsInfoBtn.addEventListener('click',()=>{
     closeBottomSheet();
-    // open info modal for the winning card (if available)
     const currentCardName = lastRoundWinningWoodName || aiGame.currentPlayerCard?.name || 'Holzart';
     window.showWoodInfo(currentCardName);
   });
@@ -470,7 +542,7 @@ window.copyShareLink=async()=>{
   }
 };
 
-/* Multiplayer minimal (wie in deiner Fassung) */
+/* Multiplayer minimal */
 async function createGame(playerName){
   const lobby=document.getElementById('multiplayerLobbyModal');
   lobby.classList.remove('hidden');
@@ -479,7 +551,13 @@ async function createGame(playerName){
   const base=window.location.href.split('?')[0];
   document.getElementById('shareLink').value=`${base}?game=${gameId}`;
   const ref=doc(db,"games",gameId);
-  const data={gameId,status:'waiting',playerIds:[localPlayerId],players:{[localPlayerId]:{name:playerName,cards:[],status:'online'}},createdAt:serverTimestamp()};
+  const data={
+    gameId,
+    status:'waiting',
+    playerIds:[localPlayerId],
+    players:{[localPlayerId]:{name:playerName,cards:[],status:'online'}},
+    createdAt:serverTimestamp()
+  };
   try{await setDoc(ref,data);listenToGameChanges();}catch(e){alert("Fehler beim Erstellen des Spiels.");}
 }
 
@@ -508,16 +586,23 @@ async function joinGame(id,playerName){
       });
       listenToGameChanges();
     }else{
-      alert("Spiel nicht gefunden, bereits voll oder beendet."); window.location.search='';
+      alert("Spiel nicht gefunden, bereits voll oder beendet.");
+      window.location.search='';
     }
-  }catch(e){alert("Fehler beim Beitreten zum Spiel."); window.location.search='';}
+  }catch(e){
+    alert("Fehler beim Beitreten zum Spiel.");
+    window.location.search='';
+  }
 }
 
 function listenToGameChanges(){
   if(!gameId) return;
   const ref=doc(db,"games",gameId);
   unsubscribeGame=onSnapshot(ref,(ds)=>{
-    if(!ds.exists()){ if(gameMode==='multiplayer'){alert("Das Spiel wurde beendet oder gelöscht."); resetGame();} return; }
+    if(!ds.exists()){
+      if(gameMode==='multiplayer'){alert("Das Spiel wurde beendet oder gelöscht."); resetGame();}
+      return;
+    }
     const gameData=ds.data(); localGameState=gameData;
     if(gameData.status==='playing'||gameData.status==='finished'){
       if(hasCopiedShareLink || (gameData.playerIds.includes(localPlayerId)&&gameData.playerIds.length===2)){
@@ -555,17 +640,36 @@ function updateMultiplayerUI(gameData){
   turnIndicator.classList.remove('hidden');
 
   if(gameData.lastResult){
-    if(!roundSoundPlayed){ roundSoundPlayed=true; playSound(sounds.flip); if(gameData.lastResult.winnerId===localPlayerId) playSound(sounds.win); }
-    attributeSelection.classList.add('hidden'); resultDisplay.classList.remove('hidden');
+    if(!roundSoundPlayed){
+      roundSoundPlayed=true;
+      playSound(sounds.flip);
+      if(gameData.lastResult.winnerId===localPlayerId) playSound(sounds.win);
+    }
+    attributeSelection.classList.add('hidden');
+    resultDisplay.classList.remove('hidden');
     const {winnerId,attribute,values}=gameData.lastResult;
     const oppActualId=oppId||'opponent';
     const winnerName=winnerId===localPlayerId?'Du':(winnerId==='tie'?'':(gameData.players[winnerId]?.name||'Gegner'));
-    document.getElementById('resultText').textContent = winnerId==='tie' ? '🤝 Unentschieden!' : (winnerId===localPlayerId?`🎉 ${winnerName} gewinnt!`:`😞 ${winnerName} gewinnt!`);
-    document.getElementById('resultDetails').textContent = `${attributeInfo[attribute]?.name.split(' (')[0]||attribute}: ${values[localPlayerId]?.toLocaleString('de-DE')??'?'} vs ${values[oppActualId]?.toLocaleString('de-DE')??'?'}`;  /* highlight injected */  window.scrollTo({top:0,behavior:'smooth'});
+    document.getElementById('resultText').textContent =
+      winnerId==='tie'
+        ? '🤝 Unentschieden!'
+        : (winnerId===localPlayerId?`🎉 ${winnerName} gewinnt!`:`😞 ${winnerName} gewinnt!`);
+    document.getElementById('resultDetails').textContent =
+      `${attributeInfo[attribute]?.name.split(' (')[0]||attribute}: ` +
+      `${values[localPlayerId]?.toLocaleString('de-DE')??'?'} vs ${values[oppActualId]?.toLocaleString('de-DE')??'?'}`;
+    window.scrollTo({top:0,behavior:'smooth'});
   }else{
-    roundSoundPlayed=false; resultDisplay.classList.add('hidden');
-    if(gameData.turn===localPlayerId){ turnIndicator.textContent="Du bist am Zug!"; turnIndicator.className='text-sm font-semibold p-1 text-green-600'; attributeSelection.classList.remove('hidden'); }
-    else{ turnIndicator.textContent=`${gameData.players[gameData.turn]?.name||'Gegner'} ist am Zug...`; turnIndicator.className='text-sm font-semibold p-1 text-gray-500'; attributeSelection.classList.add('hidden'); }
+    roundSoundPlayed=false;
+    resultDisplay.classList.add('hidden');
+    if(gameData.turn===localPlayerId){
+      turnIndicator.textContent="Du bist am Zug!";
+      turnIndicator.className='text-sm font-semibold p-1 text-green-600';
+      attributeSelection.classList.remove('hidden');
+    }else{
+      turnIndicator.textContent=`${gameData.players[gameData.turn]?.name||'Gegner'} ist am Zug...`;
+      turnIndicator.className='text-sm font-semibold p-1 text-gray-500';
+      attributeSelection.classList.add('hidden');
+    }
   }
 
   if(gameData.status==='finished'){ endGame(); }
@@ -576,7 +680,10 @@ function updateStatusBar(p, o){
   const el=document.getElementById('statusBar');
   el.style.width=`${perc}%`;
   let c='#f59e0b';
-  if(perc<25)c='#ef4444'; else if(perc<45)c='#f97316'; else if(perc>75)c='#22c55e'; else if(perc>55)c='#84cc16';
+  if(perc<25)c='#ef4444';
+  else if(perc<45)c='#f97316';
+  else if(perc>75)c='#22c55e';
+  else if(perc>55)c='#84cc16';
   el.style.backgroundColor=c;
 }
 
@@ -592,8 +699,14 @@ function createCard(cardData,isRevealed=true,isPlayer=true){
   const front=document.createElement('div');
   front.className=`card-front card-background rounded-xl ${shadow} border-2 ${borderColor} p-2 sm:p-3 flex flex-col overflow-hidden`;
 
-  const canSelect=isPlayer && ((gameMode==='ai' && !aiGame.roundInProgress && aiGame.turn==='player') || (gameMode==='multiplayer' && localGameState?.turn===localPlayerId && !localGameState?.lastResult));
-  const showInfoBtn=isPlayer && ((gameMode==='ai' && aiGame.roundInProgress) || (gameMode==='multiplayer' && !!localGameState?.lastResult));
+  const canSelect=isPlayer && (
+    (gameMode==='ai' && !aiGame.roundInProgress && aiGame.turn==='player') ||
+    (gameMode==='multiplayer' && localGameState?.turn===localPlayerId && !localGameState?.lastResult)
+  );
+  const showInfoBtn=isPlayer && (
+    (gameMode==='ai' && aiGame.roundInProgress) ||
+    (gameMode==='multiplayer' && !!localGameState?.lastResult)
+  );
 
   const cardName=cardData?.name||'Unbekannt';
   const safeId=(cardName||'').replace(/[^a-zA-Z0-9]/g,'-')||'unknown';
@@ -601,46 +714,82 @@ function createCard(cardData,isRevealed=true,isPlayer=true){
   const wi=woodInfo[cardName]||{};
   const treeImg=wi.bildBaum||'https://placehold.co/160x120/d1d5db/374151?text=?';
 
-  // Bild jetzt doppelt so groß, rechteckig mit abgerundeten Ecken
-  const headerRight = `
-    <div class="flex-shrink-0 relative w-24 h-16 sm:w-28 sm:h-20">
-      <img src="${treeImg}" alt="${cardName}" id="wood-image-icon-${safeId}" class="absolute inset-0 w-full h-full object-cover rounded-xl border-2 border-amber-200">
-      <button id="player-info-button-${safeId}" onclick="window.showWoodInfo('${cardName.replace(/'/g,"\'")}')" class="${showInfoBtn ? 'info-tiny-btn' : 'hidden'}" aria-label="Zusatzwissen"></button>
-    </div>`;
+  // Attribute-Liste aufbauen
+  let attrsHtml = '<div class="space-y-1 mt-2 text-[0.7rem] sm:text-xs">';
+  for (const key in attributeInfo){
+    const a = attributeInfo[key];
+    if(!a) continue;
 
-  let attrs='<div class="space-y-1 mt-auto">';
-  for(const key in attributeInfo){
-    const a=attributeInfo[key];
-    const v=cardData?.[key]??'?';
-    const fv=typeof v==='number'?v.toLocaleString('de-DE'):v;
-    const unit=a.name.match(/\(([^)]+)\)/);
-    const unitText=unit?`<span class="block text-[10px] sm:text-xs text-gray-500 leading-tight">(${unit[1]})</span>`:'';
-    const label=(key==='quellenSchwindenRadial')?'Quellen/Schw.':a.name.replace(/\s*\(([^)]+)\)/,'');
-    const baseBg=canSelect?'bg-amber-100':'bg-amber-50';
-    const hov=canSelect?'hover:bg-amber-200':'';
-    const border=canSelect?'border-amber-600':'border-amber-300';
-    const txt=canSelect?'text-amber-700':'text-amber-800';
-    const common=`w-full flex justify-between items-center py-0.5 sm:py-1 px-1 rounded-lg text-left border ${border} ${baseBg}`;
-    if(canSelect){
-      attrs+=`<button data-attr="${key}" onclick="window.selectAttribute(\'${key}\')" class="${common} ${hov} transition-colors"><div class="flex items-center space-x-1 sm:space-x-2"><span class="text-xs sm:text-sm">${a.icon}</span><div><span class="text-[11px] sm:text-xs font-medium leading-tight">${label}</span>${unitText}</div></div><span class="font-semibold ${txt} text-sm sm:text-base">${fv}</span></button>`;
-    }else{
-      attrs+=`<div data-attr="${key}" class="${common}"><div class="flex items-center space-x-1 sm:space-x-2"><span class="text-xs sm:text-sm">${a.icon}</span><div><span class="text-[11px] sm:text-xs font-medium leading-tight text-gray-700">${label}</span>${unitText}</div></div><span class="font-semibold ${txt} text-sm sm:text-base">${fv}</span></div>`;
+    const rawVal = cardData?.[key];
+    const displayVal =
+      rawVal === undefined || rawVal === null
+        ? '?'
+        : (typeof rawVal === 'number'
+            ? rawVal.toLocaleString('de-DE')
+            : String(rawVal));
+
+    const unitMatch = a.name.match(/\(([^)]+)\)/);
+    const unitText = unitMatch
+      ? `<span class="block text-[10px] sm:text-[11px] text-gray-500 leading-tight">(${unitMatch[1]})</span>`
+      : '';
+
+    const label =
+      key === 'quellenSchwindenRadial'
+        ? 'Quellen/Schw.'
+        : a.name.replace(/\s*\(([^)]+)\)/, '');
+
+    const baseBg = canSelect ? 'bg-amber-100' : 'bg-amber-50';
+    const hov    = canSelect ? 'hover:bg-amber-200' : '';
+    const border = canSelect ? 'border-amber-600' : 'border-amber-300';
+    const txt    = canSelect ? 'text-amber-700' : 'text-amber-800';
+    const common =
+      `w-full flex justify-between items-center py-0.5 sm:py-1 px-1 ` +
+      `rounded-lg text-left border ${border} ${baseBg} ${txt} ${hov}`;
+
+    if (canSelect){
+      attrsHtml += `
+        <button data-attr="${key}"
+                onclick="window.selectAttribute('${key}')"
+                class="${common}">
+          <div class="flex flex-col">
+            <span class="font-semibold leading-tight">${label}</span>
+            ${unitText}
+          </div>
+          <span class="font-bold text-right">${displayVal}</span>
+        </button>`;
+    } else{
+      attrsHtml += `
+        <div data-attr="${key}" class="${common}">
+          <div class="flex flex-col">
+            <span class="font-semibold leading-tight">${label}</span>
+            ${unitText}
+          </div>
+          <span class="font-bold text-right">${displayVal}</span>
+        </div>`;
     }
   }
-  attrs+='</div>';
+  attrsHtml += '</div>';
 
-  // Header mit dynamischer Mindesthöhe, damit das größere Bild Platz hat
-  front.innerHTML=`
-    <div class="flex justify-between items-center w-full mb-2 px-1 min-h-[72px] sm:min-h-[84px]">
-      <h3 class="text-base sm:text-lg font-bold text-amber-800 truncate text-left mr-2">${cardName}</h3>
-      ${headerRight}
+  // Bild + Name oben links, volle Kartenbreite
+  front.innerHTML = `
+    <div class="w-full mb-2">
+      <div class="relative w-full h-16 sm:h-20">
+        <img src="${treeImg}" alt="${cardName}" id="wood-image-icon-${safeId}"
+             class="absolute inset-0 w-full h-full object-cover rounded-xl border-2 border-amber-200">
+        <div class="name-badge">${cardName}</div>
+        <button id="player-info-button-${safeId}"
+                onclick="window.showWoodInfo('${cardName.replace(/'/g,"\\'")}')"
+                class="${showInfoBtn ? 'info-tiny-btn' : 'hidden'}"
+                aria-label="Zusatzwissen"></button>
+      </div>
     </div>
-    ${attrs}`;
+    ${attrsHtml}
+  `;
 
   const back=document.createElement('div');
   back.className='card-back rounded-xl shadow-lg border-2 border-amber-300 flex items-center justify-center relative overflow-hidden';
 
-  // Gegner-Holzname auf Rückseite zeigen, falls eingestellt
+  // Gegner-Holzname auf Rückseite (optional)
   if(!isRevealed && !isPlayer && isOpponentNameBackVisible()){
     const label=document.createElement('div');
     label.className='opponent-back-name';
@@ -648,7 +797,8 @@ function createCard(cardData,isRevealed=true,isPlayer=true){
     back.appendChild(label);
   }
 
-  card.appendChild(front); card.appendChild(back);
+  card.appendChild(front);
+  card.appendChild(back);
   return card;
 }
 
@@ -668,8 +818,6 @@ function highlightChosenAttribute(attr){
 }
 /* === end highlight helpers === */
 
-
-
 function displayMultiplayerCards(gameData){
   if(!gameData.currentCards||!gameData.playerIds) return;
   const opp=gameData.playerIds.find(id=>id!==localPlayerId);
@@ -681,11 +829,23 @@ function displayMultiplayerCards(gameData){
   if(gameData.currentCards[localPlayerId]) pc.appendChild(createCard(gameData.currentCards[localPlayerId],true,true));
   else pc.innerHTML=`<div class="card-front bg-gray-200 ...">Warte auf Karte...</div>`;
 
-  if(opp && gameData.currentCards[opp]){
-    ac.appendChild(createCard(gameData.currentCards[opp],showOpp,false));
-  }else if(gameData.playerIds.length<2){
+  if (opp && gameData.currentCards[opp]) {
+    // Immer verdeckt einfügen
+    const oppCardEl = createCard(gameData.currentCards[opp], false, false);
+    ac.appendChild(oppCardEl);
+
+    // Wenn Ergebnis vorliegt, Karte sichtbar aufdrehen
+    if (showOpp) {
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          oppCardEl.classList.remove('card-flipped');   // Flip-Animation
+          try { playSound(sounds.flip); } catch(_) {}
+        }, 30);
+      });
+    }
+  } else if(gameData.playerIds.length<2){
     ac.innerHTML=`<div class="card-front bg-gray-200 ...">Wartet auf Spieler 2...</div>`;
-  }else{
+  } else{
     const dummy={name:"Gegner",dk:'?',haerte:'?',quellenSchwindenRadial:'?',dichte:'?',gewicht:'?'};
     ac.appendChild(createCard(dummy,false,false));
   }
@@ -706,12 +866,16 @@ async function multiplayerSelectAttribute(attribute){
   else{ pWins = pv>ov ? true : (ov>pv ? false : 'tie'); }
   const winner = pWins==='tie' ? 'tie' : (pWins ? localPlayerId : opp);
   try{
-    await updateDoc(doc(db,"games",gameId),{lastResult:{winnerId:winner,attribute,values:{[localPlayerId]:pv,[opp]:ov}},lastActivity:serverTimestamp()});
+    await updateDoc(doc(db,"games",gameId),{
+      lastResult:{winnerId:winner,attribute,values:{[localPlayerId]:pv,[opp]:ov}},
+      lastActivity:serverTimestamp()
+    });
   }catch(e){console.error(e)}
 }
 
 async function multiplayerNextRound(){
-  clearAttributeHighlights(); const pf=document.getElementById('playerCard')?.querySelector('.card-front'); if(pf) pf.classList.remove('animate-glow-win','animate-glow-lose');
+  clearAttributeHighlights();
+  const pf=document.getElementById('playerCard')?.querySelector('.card-front'); if(pf) pf.classList.remove('animate-glow-win','animate-glow-lose');
   const af=document.getElementById('aiCard')?.querySelector('.card-front'); if(af) af.classList.remove('animate-glow-win','animate-glow-lose');
   document.querySelectorAll('#playerCard .space-y-1 > *, #aiCard .space-y-1 > *').forEach(e=>e.classList.remove('bg-yellow-200','bg-gray-300'));
   if(!localGameState || !localGameState.lastResult || !gameId) return;
@@ -720,7 +884,8 @@ async function multiplayerNextRound(){
   const [p1,p2]=gs.playerIds;
   let p1Cards=[...gs.players[p1].cards], p2Cards=[...gs.players[p2].cards];
   if(p1Cards.length===0&&p2Cards.length===0 && gs.status!=='finished'){
-    await updateDoc(doc(db,"games",gameId),{status:'finished',lastResult:null}); return;
+    await updateDoc(doc(db,"games",gameId),{status:'finished',lastResult:null});
+    return;
   }
   const c1=p1Cards.shift(), c2=p2Cards.shift();
   if(gs.lastResult.winnerId===p1){ if(c1) p1Cards.push(c1); if(c2) p1Cards.push(c2); }
@@ -728,12 +893,18 @@ async function multiplayerNextRound(){
   else { if(c1) p1Cards.push(c1); if(c2) p2Cards.push(c2); }
 
   if(p1Cards.length===0 || p2Cards.length===0){
-    await updateDoc(doc(db,"games",gameId),{status:'finished',players:{[p1]:{...gs.players[p1],cards:p1Cards},[p2]:{...gs.players[p2],cards:p2Cards}},currentCards:{[p1]:null,[p2]:null},lastResult:null});
+    await updateDoc(doc(db,"games",gameId),{
+      status:'finished',
+      players:{[p1]:{...gs.players[p1],cards:p1Cards},[p2]:{...gs.players[p2],cards:p2Cards}},
+      currentCards:{[p1]:null,[p2]:null},
+      lastResult:null
+    });
     return;
   }
   const nextTurn = gs.lastResult.winnerId==='tie' ? gs.turn : gs.lastResult.winnerId;
   await updateDoc(doc(db,"games",gameId),{
-    lastResult:null,turn:nextTurn,
+    lastResult:null,
+    turn:nextTurn,
     players:{[p1]:{...gs.players[p1],cards:p1Cards},[p2]:{...gs.players[p2],cards:p2Cards}},
     currentCards:{[p1]:p1Cards[0]||null,[p2]:p2Cards[0]||null},
     lastActivity:serverTimestamp()
@@ -741,11 +912,24 @@ async function multiplayerNextRound(){
 }
 
 /* Controller */
-window.selectAttribute=function(attr){ if(gameMode==='ai') selectAttributeAI(attr); else if(gameMode==='multiplayer') multiplayerSelectAttribute(attr); };
-window.nextRound=function(){ if(gameMode==='ai') nextRoundAI(); else if(gameMode==='multiplayer') multiplayerNextRound(); };
+window.selectAttribute=function(attr){
+  if(gameMode==='ai') selectAttributeAI(attr);
+  else if(gameMode==='multiplayer') multiplayerSelectAttribute(attr);
+};
+window.nextRound=function(){
+  if(gameMode==='ai') nextRoundAI();
+  else if(gameMode==='multiplayer') multiplayerNextRound();
+};
 
 /* Helpers */
-function shuffleArray(a){const s=[...a]; for(let i=s.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [s[i],s[j]]=[s[j],s[i]];} return s;}
+function shuffleArray(a){
+  const s=[...a];
+  for(let i=s.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [s[i],s[j]]=[s[j],s[i]];
+  }
+  return s;
+}
 
 /* AI Flow */
 let lastRoundWinningWoodName = null;
@@ -773,11 +957,17 @@ function displayCardsAI(){
   const pc=document.getElementById('playerCard');
   const ac=document.getElementById('aiCard');
   pc.innerHTML=''; ac.innerHTML='';
-  if(aiGame.currentPlayerCard) pc.appendChild(createCard(aiGame.currentPlayerCard,true,true)); else pc.innerHTML=`<div class="card-front bg-gray-200 ...">Keine Karte</div>`;
+  if(aiGame.currentPlayerCard){
+    pc.appendChild(createCard(aiGame.currentPlayerCard,true,true));
+  } else{
+    pc.innerHTML=`<div class="card-front bg-gray-200 ...">Keine Karte</div>`;
+  }
   if(aiGame.currentAiCard){
-    const reveal=aiGame.roundInProgress;
-    ac.appendChild(createCard(aiGame.currentAiCard,reveal,false));
-  }else ac.innerHTML=`<div class="card-front bg-gray-200 ...">Keine Karte</div>`;
+    // IMMER erst verdeckt anzeigen – Flip passiert später gezielt
+    ac.appendChild(createCard(aiGame.currentAiCard,false,false));
+  } else{
+    ac.innerHTML=`<div class="card-front bg-gray-200 ...">Keine Karte</div>`;
+  }
 }
 
 function selectAttributeAI(attribute){
@@ -787,9 +977,12 @@ function selectAttributeAI(attribute){
   const av=aiGame.currentAiCard[attribute];
   if(pv===undefined||av===undefined){ aiGame.roundInProgress=false; return; }
 
-  // KI-Karte aufdecken (Flip-Animation)
+  // KI-Karte sichtbar aufdrehen
   const aiCardEl=document.getElementById('aiCard').querySelector('.card-3d');
-  if(aiCardEl){ aiCardEl.classList.remove('card-flipped'); playSound(sounds.flip); }
+  if(aiCardEl){
+    aiCardEl.classList.remove('card-flipped');
+    playSound(sounds.flip);
+  }
 
   let pWins;
   if(attribute==='quellenSchwindenRadial' || attribute==='dk'){ pWins = pv<av ? true : (av<pv ? false : 'tie'); }
@@ -798,9 +991,23 @@ function selectAttributeAI(attribute){
   const pMove=aiGame.playerCards.shift(), aMove=aiGame.aiCards.shift();
   let nextTurn=aiGame.turn;
   let resultTitle = '🤝 Unentschieden!';
-  if(pWins===true){ if(pMove) aiGame.playerCards.push(pMove); if(aMove) aiGame.playerCards.push(aMove); nextTurn='player'; resultTitle='🎉 Du gewinnst!'; lastRoundWinningWoodName = aiGame.currentPlayerCard.name; }
-  else if(pWins===false){ if(aMove) aiGame.aiCards.push(aMove); if(pMove) aiGame.aiCards.push(pMove); nextTurn='ai'; resultTitle='😞 KI gewinnt!'; lastRoundWinningWoodName = aiGame.currentAiCard.name; }
-  else { if(pMove) aiGame.playerCards.push(pMove); if(aMove) aiGame.aiCards.push(aMove); lastRoundWinningWoodName = (Math.random() < 0.5 ? aiGame.currentPlayerCard.name : aiGame.currentAiCard.name); }
+  if(pWins===true){
+    if(pMove) aiGame.playerCards.push(pMove);
+    if(aMove) aiGame.playerCards.push(aMove);
+    nextTurn='player';
+    resultTitle='🎉 Du gewinnst!';
+    lastRoundWinningWoodName = aiGame.currentPlayerCard.name;
+  } else if(pWins===false){
+    if(aMove) aiGame.aiCards.push(aMove);
+    if(pMove) aiGame.aiCards.push(pMove);
+    nextTurn='ai';
+    resultTitle='😞 KI gewinnt!';
+    lastRoundWinningWoodName = aiGame.currentAiCard.name;
+  } else{
+    if(pMove) aiGame.playerCards.push(pMove);
+    if(aMove) aiGame.aiCards.push(aMove);
+    lastRoundWinningWoodName = (Math.random() < 0.5 ? aiGame.currentPlayerCard.name : aiGame.currentAiCard.name);
+  }
 
   aiGame.turn=nextTurn;
 
@@ -810,11 +1017,11 @@ function selectAttributeAI(attribute){
     const resCls= pWins===true ? 'text-green-600' : (pWins===false ? 'text-red-600' : 'text-yellow-600');
     res.textContent= resultTitle;
     res.className=`text-lg sm:text-xl font-bold ${resCls}`;
-    document.getElementById('resultDetails').textContent=`${attributeInfo[attribute].name.split(' (')[0]}: ${pv.toLocaleString('de-DE')} vs ${av.toLocaleString('de-DE')}`;
-     document.getElementById('attributeSelection').classList.add('hidden');
+    document.getElementById('resultDetails').textContent=
+      `${attributeInfo[attribute].name.split(' (')[0]}: ${pv.toLocaleString('de-DE')} vs ${av.toLocaleString('de-DE')}`;
+    document.getElementById('attributeSelection').classList.add('hidden');
     document.getElementById('resultDisplay').classList.remove('hidden');
 
-    // 2s Pause, dann Bottom-Sheet
     setTimeout(()=>{
       openBottomSheet(resultTitle.replace(/^[^A-Za-zÄÖÜäöüß]+/,'').trim());
     },2000);
@@ -822,64 +1029,111 @@ function selectAttributeAI(attribute){
     if(pWins===true){ playSound(sounds.win); triggerWinStarAnimation(); }
     updateDisplayAI(); checkGameOverAI();
     window.scrollTo({top:0,behavior:'smooth'});
-  },600);
+  },600); // Flip-Dauer
 }
 
 function aiSelectAttribute(){
-  if(aiGame.roundInProgress || aiGame.turn!=='ai' || !aiGame.currentPlayerCard || !aiGame.currentAiCard) return;
-  aiGame.roundInProgress=true;
+  if (aiGame.roundInProgress || aiGame.turn !== 'ai' || !aiGame.currentPlayerCard || !aiGame.currentAiCard) return;
+  aiGame.roundInProgress = true;
 
   // Vor KI-Zug ggf. Overlays schließen
   closeBottomSheet();
   document.getElementById('infoModal').classList.add('hidden');
 
-  setTimeout(()=>{
-    const keys=Object.keys(attributeInfo);
-    const key=keys[Math.floor(Math.random()*keys.length)];
-    const pv=aiGame.currentPlayerCard[key], av=aiGame.currentAiCard[key];
-    if(pv===undefined||av===undefined){ aiGame.roundInProgress=false; nextRoundAI(); return; }
+  // KI "denkt"
+  setTimeout(() => {
+    const keys = Object.keys(attributeInfo);
+    const key = keys[Math.floor(Math.random() * keys.length)];
+    const pv = aiGame.currentPlayerCard[key];
+    const av = aiGame.currentAiCard[key];
+    if (pv === undefined || av === undefined) {
+      aiGame.roundInProgress = false;
+      nextRoundAI();
+      return;
+    }
 
-    // KI deckt Karte auf
-    const aiCardEl=document.getElementById('aiCard').querySelector('.card-3d');
-    if(aiCardEl){ aiCardEl.classList.remove('card-flipped'); playSound(sounds.flip); }
+    // KI-Karte zuerst sichtbar aufdrehen
+    const aiCardEl = document.getElementById('aiCard').querySelector('.card-3d');
+    if (aiCardEl) {
+      aiCardEl.classList.remove('card-flipped');
+      playSound(sounds.flip);
+    }
 
-    let pWins;
-    if(key==='quellenSchwindenRadial' || key==='dk'){ pWins = pv<av ? true : (av<pv ? false : 'tie'); }
-    else{ pWins = pv>av ? true : (av>pv ? false : 'tie'); }
+    // Nach Flip-Animation auswerten
+    setTimeout(() => {
+      let pWins;
+      if (key === 'quellenSchwindenRadial' || key === 'dk') {
+        pWins = pv < av ? true : (av < pv ? false : 'tie');
+      } else {
+        pWins = pv > av ? true : (av > pv ? false : 'tie');
+      }
 
-    const pMove=aiGame.playerCards.shift(), aMove=aiGame.aiCards.shift();
-    let nextTurn=aiGame.turn;
-    let resultTitle='🤝 Unentschieden!';
-    if(pWins===true){ if(pMove) aiGame.playerCards.push(pMove); if(aMove) aiGame.playerCards.push(aMove); nextTurn='player'; resultTitle='🎉 Du gewinnst!'; lastRoundWinningWoodName = aiGame.currentPlayerCard.name; }
-    else if(pWins===false){ if(aMove) aiGame.aiCards.push(aMove); if(pMove) aiGame.aiCards.push(pMove); nextTurn='ai'; resultTitle='😞 KI gewinnt!'; lastRoundWinningWoodName = aiGame.currentAiCard.name; }
-    else { if(pMove) aiGame.playerCards.push(pMove); if(aMove) aiGame.aiCards.push(aMove); lastRoundWinningWoodName = (Math.random() < 0.5 ? aiGame.currentPlayerCard.name : aiGame.currentAiCard.name); }
+      const pMove = aiGame.playerCards.shift();
+      const aMove = aiGame.aiCards.shift();
+      let nextTurn = aiGame.turn;
+      let resultTitle = '🤝 Unentschieden!';
 
-    displayCardsAI();
-    const res=document.getElementById('resultText');
-    const resCls= pWins===true ? 'text-green-600' : (pWins===false ? 'text-red-600' : 'text-yellow-600');
-    res.textContent= resultTitle;
-    res.className=`text-lg sm:text-xl font-bold ${resCls}`;
-    document.getElementById('resultDetails').textContent=`${attributeInfo[key].name.split(' (')[0]}: ${pv.toLocaleString('de-DE')} vs ${av.toLocaleString('de-DE')}`; highlightChosenAttribute(key); document.getElementById('attributeSelection').classList.add('hidden');
-    document.getElementById('resultDisplay').classList.remove('hidden');
+      if (pWins === true) {
+        if (pMove) aiGame.playerCards.push(pMove);
+        if (aMove) aiGame.playerCards.push(aMove);
+        nextTurn = 'player';
+        resultTitle = '🎉 Du gewinnst!';
+        lastRoundWinningWoodName = aiGame.currentPlayerCard.name;
+      } else if (pWins === false) {
+        if (aMove) aiGame.aiCards.push(aMove);
+        if (pMove) aiGame.aiCards.push(pMove);
+        nextTurn = 'ai';
+        resultTitle = '😞 KI gewinnt!';
+        lastRoundWinningWoodName = aiGame.currentAiCard.name;
+      } else {
+        if (pMove) aiGame.playerCards.push(pMove);
+        if (aMove) aiGame.aiCards.push(aMove);
+        lastRoundWinningWoodName =
+          (Math.random() < 0.5 ? aiGame.currentPlayerCard.name : aiGame.currentAiCard.name);
+      }
 
-    // 2s Pause, dann Bottom-Sheet
-    setTimeout(()=>{
-      openBottomSheet(resultTitle.replace(/^[^A-Za-zÄÖÜäöüß]+/,'').trim());
-    },2000);
+      displayCardsAI();
 
-    if(pWins===true){ playSound(sounds.win); triggerWinStarAnimation(); }
-    aiGame.turn=nextTurn;
-    updateDisplayAI(); checkGameOverAI();
-    window.scrollTo({top:0,behavior:'smooth'});
-  },1000); // KI "denkt" 1s
+      const res = document.getElementById('resultText');
+      const resCls =
+        pWins === true ? 'text-green-600' : (pWins === false ? 'text-red-600' : 'text-yellow-600');
+      res.textContent = resultTitle;
+      res.className = `text-lg sm:text-xl font-bold ${resCls}`;
+      document.getElementById('resultDetails').textContent =
+        `${attributeInfo[key].name.split(' (')[0]}: ` +
+        `${pv.toLocaleString('de-DE')} vs ${av.toLocaleString('de-DE')}`;
+      highlightChosenAttribute(key);
+      document.getElementById('attributeSelection').classList.add('hidden');
+      document.getElementById('resultDisplay').classList.remove('hidden');
+
+      setTimeout(() => {
+        openBottomSheet(resultTitle.replace(/^[^A-Za-zÄÖÜäöüß]+/,'').trim());
+      }, 2000);
+
+      if (pWins === true) {
+        playSound(sounds.win);
+        triggerWinStarAnimation();
+      }
+
+      aiGame.turn = nextTurn;
+      updateDisplayAI();
+      checkGameOverAI();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 600); // Flip-Dauer
+  }, 1000); // Denkpause
 }
 
 function nextRoundAI(){
-  clearAttributeHighlights(); const pf=document.getElementById('playerCard')?.querySelector('.card-front'); if(pf) pf.classList.remove('animate-glow-win','animate-glow-lose');
+  clearAttributeHighlights();
+  const pf=document.getElementById('playerCard')?.querySelector('.card-front'); if(pf) pf.classList.remove('animate-glow-win','animate-glow-lose');
   const af=document.getElementById('aiCard')?.querySelector('.card-front'); if(af) af.classList.remove('animate-glow-win','animate-glow-lose');
   document.querySelectorAll('#playerCard .space-y-1 > *, #aiCard .space-y-1 > *').forEach(e=>e.classList.remove('bg-yellow-200','bg-gray-300'));
 
-  if(aiGame.playerCards.length===0||aiGame.aiCards.length===0){ if(!document.getElementById('gameOverModal').classList.contains('hidden')){ } else { endGameAI(); } return; }
+  if(aiGame.playerCards.length===0||aiGame.aiCards.length===0){
+    if(!document.getElementById('gameOverModal').classList.contains('hidden')){ }
+    else { endGameAI(); }
+    return;
+  }
 
   aiGame.currentPlayerCard=aiGame.playerCards[0];
   aiGame.currentAiCard=aiGame.aiCards[0];
@@ -887,8 +1141,12 @@ function nextRoundAI(){
   document.getElementById('resultDisplay').classList.add('hidden');
   updateDisplayAI(); displayCardsAI();
 
-  if(aiGame.turn==='ai'){ document.getElementById('attributeSelection').classList.add('hidden'); aiSelectAttribute(); }
-  else{ document.getElementById('attributeSelection').classList.remove('hidden'); }
+  if(aiGame.turn==='ai'){
+    document.getElementById('attributeSelection').classList.add('hidden');
+    aiSelectAttribute();
+  } else{
+    document.getElementById('attributeSelection').classList.remove('hidden');
+  }
 }
 
 function updateDisplayAI(){
@@ -899,13 +1157,24 @@ function updateDisplayAI(){
   const ti=document.getElementById('turnIndicator'); ti.classList.remove('hidden');
   if(aiGame.roundInProgress){
     if(!document.getElementById('resultDisplay').classList.contains('hidden')) ti.textContent='';
-    else if(aiGame.turn==='ai'){ ti.textContent='Computer überlegt...'; ti.className='text-sm font-semibold p-1 text-gray-500'; }
-    else ti.textContent='';
-  }else if(aiGame.turn==='player'){ ti.textContent='Du bist am Zug!'; ti.className='text-sm font-semibold p-1 text-green-600'; }
-  else { ti.textContent='Computer ist am Zug...'; ti.className='text-sm font-semibold p-1 text-gray-500'; }
+    else if(aiGame.turn==='ai'){
+      ti.textContent='Computer überlegt...';
+      ti.className='text-sm font-semibold p-1 text-gray-500';
+    } else ti.textContent='';
+  }else if(aiGame.turn==='player'){
+    ti.textContent='Du bist am Zug!';
+    ti.className='text-sm font-semibold p-1 text-green-600';
+  } else{
+    ti.textContent='Computer ist am Zug...';
+    ti.className='text-sm font-semibold p-1 text-gray-500';
+  }
 }
 
-function checkGameOverAI(){ if(aiGame.roundInProgress){ if(aiGame.playerCards.length===0||aiGame.aiCards.length===0) setTimeout(endGameAI,300); } }
+function checkGameOverAI(){
+  if(aiGame.roundInProgress){
+    if(aiGame.playerCards.length===0||aiGame.aiCards.length===0) setTimeout(endGameAI,300);
+  }
+}
 
 function triggerWinStarAnimation(){
   const cont=document.getElementById('animationContainer');
@@ -924,8 +1193,11 @@ function triggerWinStarAnimation(){
 
 /* Enden, Leaderboard, Reset, Info */
 function endGame(){
-  if(gameMode==='ai'){ if(!document.getElementById('gameOverModal').classList.contains('hidden')||!document.getElementById('reflectionModal').classList.contains('hidden')){} else endGameAI(); }
-  else if(gameMode==='multiplayer'){
+  if(gameMode==='ai'){
+    if(!document.getElementById('gameOverModal').classList.contains('hidden')||
+       !document.getElementById('reflectionModal').classList.contains('hidden')){}
+    else endGameAI();
+  } else if(gameMode==='multiplayer'){
     const pc=localGameState?.players?.[localPlayerId]?.cards?.length??0;
     const opp=localGameState?.playerIds?.find(id=>id!==localPlayerId);
     const oc=localGameState?.players?.[opp]?.cards?.length??0;
@@ -937,10 +1209,13 @@ function endGame(){
 }
 
 function endGameAI(){
-  if(!document.getElementById('gameOverModal').classList.contains('hidden')||!document.getElementById('reflectionModal').classList.contains('hidden')) return;
+  if(!document.getElementById('gameOverModal').classList.contains('hidden')||
+     !document.getElementById('reflectionModal').classList.contains('hidden')) return;
   const win=aiGame.playerCards.length>0;
-  if(win){ saveToLeaderboard(aiGame.playerName); showReflectionOrWinScreen(); }
-  else showGameOverScreen(false);
+  if(win){
+    saveToLeaderboard(aiGame.playerName);
+    showReflectionOrWinScreen();
+  } else showGameOverScreen(false);
 }
 
 function showReflectionOrWinScreen(){
@@ -981,7 +1256,9 @@ async function saveToLeaderboard(name){
   if(!name) return;
   const safe=name.replace(/[.#$[\]]/g,'_');
   const ref=doc(db,"leaderboard",safe);
-  try{ await setDoc(ref,{name,wins:increment(1),lastWin:serverTimestamp()},{merge:true}); }catch(e){console.error(e)}
+  try{
+    await setDoc(ref,{name,wins:increment(1),lastWin:serverTimestamp()},{merge:true});
+  }catch(e){console.error(e)}
 }
 
 window.showLeaderboard=async function(){
@@ -992,12 +1269,21 @@ window.showLeaderboard=async function(){
   try{
     const q=query(collection(db,"leaderboard"),orderBy("wins","desc"),limit(10));
     const snap=await getDocs(q);
-    if(snap.empty){ list.innerHTML='<p class="text-gray-500 text-center">Noch keine Einträge vorhanden.</p>'; return; }
+    if(snap.empty){
+      list.innerHTML='<p class="text-gray-500 text-center">Noch keine Einträge vorhanden.</p>';
+      return;
+    }
     list.innerHTML=snap.docs.map((d,i)=>{
-      const data=d.data(); const safe=(data.name||'Unbekannt').replace(/</g,"&lt;").replace(/>/g,"&gt;");
-      return `<div class="flex justify-between items-center p-3 ${i%2===0?'bg-gray-50':'bg-white'} rounded-lg"><span class="font-semibold">${i+1}. ${safe}</span><span class="text-sm text-gray-600">${data.wins||0} Siege</span></div>`;
+      const data=d.data();
+      const safe=(data.name||'Unbekannt').replace(/</g,"&lt;").replace(/>/g,"&gt;");
+      return `<div class="flex justify-between items-center p-3 ${i%2===0?'bg-gray-50':'bg-white'} rounded-lg">
+                <span class="font-semibold">${i+1}. ${safe}</span>
+                <span class="text-sm text-gray-600">${data.wins||0} Siege</span>
+              </div>`;
     }).join('');
-  }catch(e){ list.innerHTML='<p class="text-red-500 text-center">Fehler beim Laden der Bestenliste.</p>'; }
+  }catch(e){
+    list.innerHTML='<p class="text-red-500 text-center">Fehler beim Laden der Bestenliste.</p>';
+  }
 };
 
 window.closeLeaderboard=function(){
@@ -1046,11 +1332,15 @@ window.showWoodInfo=function(woodName){
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
         <div>
           <h4 class="font-semibold mb-2 text-center text-sm sm:text-base">Baum</h4>
-          <img src="${info.bildBaum||''}" alt="Bild von ${woodName} Baum" class="w-full max-h-48 sm:max-h-60 h-auto rounded-lg object-contain mx-auto border" onerror="this.parentElement.style.display='none';">
+          <img src="${info.bildBaum||''}" alt="Bild von ${woodName} Baum"
+               class="w-full max-h-48 sm:max-h-60 h-auto rounded-lg object-contain mx-auto border"
+               onerror="this.parentElement.style.display='none';">
         </div>
         <div>
           <h4 class="font-semibold mb-2 text-center text-sm sm:text-base">Querschnitt</h4>
-          <img src="${info.bildQuerschnitt||''}" alt="Bild von ${woodName} Querschnitt" class="w-full max-h-48 sm:max-h-60 h-auto rounded-lg object-contain mx-auto border" onerror="this.parentElement.style.display='none';">
+          <img src="${info.bildQuerschnitt||''}" alt="Bild von ${woodName} Querschnitt"
+               class="w-full max-h-48 sm:max-h-60 h-auto rounded-lg object-contain mx-auto border"
+               onerror="this.parentElement.style.display='none';">
         </div>
       </div>`;
   }else{
@@ -1061,7 +1351,6 @@ window.showWoodInfo=function(woodName){
 window.closeInfoModal=function(){
   const info = document.getElementById('infoModal');
   if (info) info.classList.add('hidden');
-  // Re-open the previously shown bottom sheet with its current title
   const bsTitleEl = document.getElementById('bottomSheetTitle');
   const title = bsTitleEl && bsTitleEl.textContent ? bsTitleEl.textContent : 'Nächster Zug';
   openBottomSheet(title);
