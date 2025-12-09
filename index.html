@@ -715,7 +715,7 @@ function createCard(cardData,isRevealed=true,isPlayer=true){
   const treeImg=wi.bildBaum||'https://placehold.co/160x120/d1d5db/374151?text=?';
 
   // Attribute-Liste aufbauen
-let attrsHtml = '<div class="space-y-1 mt-2 text-xs sm:text-sm">';
+let attrsHtml = '<div class="space-y-1 mt-2 text-sm sm:text-sm">';
   for (const key in attributeInfo){
     const a = attributeInfo[key];
     if(!a) continue;
