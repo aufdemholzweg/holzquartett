@@ -249,7 +249,7 @@
    einfach deaktiviert, aber der Rest des Codes läuft weiter.
 */
 
-// Globale Variablen für Firebase-Instanzen (werden später befüllt)
+// Globale Variablen für Firebase-Instanzen
 let db = null;
 let auth = null;
 let localPlayerId = null;
@@ -258,7 +258,6 @@ let increment = null;
 let collection = null, query = null, orderBy = null, limit = null, getDocs = null;
 let doc = null, getDoc = null, setDoc = null, updateDoc = null, onSnapshot = null, deleteDoc = null;
 
-// Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyCyRXl8-JPr1xTXPDi1VG-eQk6fOnTpqUI",
   authDomain: "holzquartett-3a177.firebaseapp.com",
@@ -271,7 +270,7 @@ const firebaseConfig = {
 
 /* --- Initialisierung --- */
 async function initGameSystem() {
-    // 1. UI Handler binden (damit Buttons sofort funktionieren)
+    // 1. UI Handler binden
     window.showNamePrompt = showNamePrompt;
     window.showWoodInfo = showWoodInfo;
     window.closeInfoModal = closeInfoModal;
@@ -283,30 +282,29 @@ async function initGameSystem() {
     window.resetGame = resetGame;
     window.copyShareLink = copyShareLink;
 
-    // 2. Versuche Firebase zu laden (Async)
-    const mpBtn = document.getElementById('btnMultiplayer');
-    const mpTxt = document.getElementById('txtMultiplayer');
-    const fbStatus = document.getElementById('firebaseStatus');
-    
-    // Check Settings
+    // 2. Settings checken (bevor wir async warten)
     const soundToggle=document.getElementById('soundToggle');
-    isMuted = localStorage.getItem('holzquartett_isMuted')==='true';
-    soundToggle.checked = !isMuted;
-    soundToggle.addEventListener('change',(e)=>{
-        isMuted=!e.target.checked;
-        localStorage.setItem('holzquartett_isMuted',isMuted);
-        if(!isMuted) playSound(sounds.chime);
-    });
+    const savedMute=localStorage.getItem('holzquartett_isMuted');
+    isMuted=savedMute==='true';
+    if(soundToggle) {
+        soundToggle.checked = !isMuted;
+        soundToggle.addEventListener('change',(e)=>{
+            isMuted=!e.target.checked;
+            localStorage.setItem('holzquartett_isMuted',isMuted);
+            if(!isMuted) playSound(sounds.chime);
+        });
+    }
 
     const revealToggle=document.getElementById('revealBackToggle');
-    revealToggle.checked=isOpponentNameBackVisible();
-    revealToggle.addEventListener('change',e=>{
-        setOpponentNameBackVisible(e.target.checked);
-        if(gameMode==='ai') displayCardsAI();
-        if(gameMode==='multiplayer'&&localGameState) displayMultiplayerCards(localGameState);
-    });
+    if(revealToggle) {
+        revealToggle.checked=isOpponentNameBackVisible();
+        revealToggle.addEventListener('change',e=>{
+            setOpponentNameBackVisible(e.target.checked);
+            if(gameMode==='ai') displayCardsAI();
+            if(gameMode==='multiplayer'&&localGameState) displayMultiplayerCards(localGameState);
+        });
+    }
 
-    // Event Listener für Bottom Sheet
     document.getElementById('bsInfoBtn').addEventListener('click', () => {
         closeBottomSheet();
         const currentCardName = lastRoundWinningWoodName || aiGame.currentPlayerCard?.name || 'Holzart';
@@ -317,21 +315,25 @@ async function initGameSystem() {
         window.nextRound();
     });
 
+    // 3. Versuche Firebase zu laden (Async)
+    const mpBtn = document.getElementById('btnMultiplayer');
+    const mpTxt = document.getElementById('txtMultiplayer');
+    const fbStatus = document.getElementById('firebaseStatus');
+    
     try {
-        fbStatus.textContent = "Verbinde...";
-        fbStatus.classList.remove('hidden');
+        if(fbStatus) {
+            fbStatus.textContent = "Verbinde...";
+            fbStatus.classList.remove('hidden');
+        }
         
-        // Dynamische Imports
         const firebaseApp = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
         const firebaseAuth = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");
         const firebaseFirestore = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
 
-        // Zuweisung zu globalen Variablen
         const app = firebaseApp.initializeApp(firebaseConfig);
         auth = firebaseAuth.getAuth(app);
         db = firebaseFirestore.getFirestore(app);
         
-        // Firestore Funktionen mappen
         doc = firebaseFirestore.doc;
         getDoc = firebaseFirestore.getDoc;
         setDoc = firebaseFirestore.setDoc;
@@ -346,13 +348,11 @@ async function initGameSystem() {
         getDocs = firebaseFirestore.getDocs;
         increment = firebaseFirestore.increment;
 
-        // Auth
         await firebaseAuth.signInAnonymously(auth);
         
         firebaseAuth.onAuthStateChanged(auth, (user) => {
             if (user) {
                 localPlayerId = user.uid;
-                // Check ob Join Link
                 const p = new URLSearchParams(window.location.search);
                 const gid = p.get('game');
                 if (gid) {
@@ -363,20 +363,28 @@ async function initGameSystem() {
             }
         });
 
-        fbStatus.textContent = "Online bereit";
-        fbStatus.className = "text-xs text-green-500 mt-1";
+        if(fbStatus) {
+            fbStatus.textContent = "Online bereit";
+            fbStatus.className = "text-xs text-green-500 mt-1";
+        }
     } catch (e) {
         console.warn("Firebase konnte nicht geladen werden (Offline?). Multiplayer deaktiviert.", e);
-        mpBtn.classList.add('opacity-50', 'cursor-not-allowed', 'grayscale');
-        mpBtn.onclick = () => alert("Multiplayer ist im Offline-Modus nicht verfügbar.");
-        mpTxt.textContent = "Offline Modus";
-        fbStatus.textContent = "Keine Verbindung";
-        fbStatus.className = "text-xs text-gray-400 mt-1";
+        if(mpBtn) {
+            mpBtn.classList.add('opacity-50', 'cursor-not-allowed', 'grayscale');
+            mpBtn.onclick = () => alert("Multiplayer ist im Offline-Modus nicht verfügbar.");
+        }
+        if(mpTxt) mpTxt.textContent = "Offline Modus";
+        if(fbStatus) {
+            fbStatus.textContent = "Keine Verbindung";
+            fbStatus.className = "text-xs text-gray-400 mt-1";
+        }
     }
 }
 
-// Sofort starten
-initGameSystem();
+// ----------------------------------------------------------------------
+// WICHTIG: initGameSystem ganz am Ende aufrufen,
+// damit showLeaderboard/closeLeaderboard schon definiert sind (hoisting)
+// ----------------------------------------------------------------------
 
 /* --- Daten --- */
 const woodCards=[
@@ -898,7 +906,7 @@ async function multiplayerSelectAttribute(attr){
     
     let pWins;
     if(attr==='quellenSchwindenRadial' || attr==='dk'){ pWins = pv<ov ? true : (ov<pv ? false : 'tie'); }
-    else{ pWins = pv>ov ? true : (ov>pv ? false : 'tie'); }
+    else{ pWins = pv>av ? true : (av>pv ? false : 'tie'); }
     
     const winner = pWins==='tie' ? 'tie' : (pWins ? localPlayerId : opp);
     await updateDoc(doc(db,"games",gameId),{
@@ -1155,6 +1163,37 @@ async function saveToLeaderboard(name){
         await setDoc(doc(db,"leaderboard",safe),{name,wins:increment(1),lastWin:serverTimestamp()},{merge:true});
     } catch(e){}
 }
+
+/* --- LEADERBOARD & CLOSE FUNCTIONS --- */
+// Added here to fix hoisting issue
+async function showLeaderboard(){
+  if(!db) { alert("Bestenliste offline nicht verfügbar."); return; }
+  const list=document.getElementById('leaderboardList');
+  list.innerHTML='<p class="text-gray-500 text-center">Lade Bestenliste...</p>';
+  document.getElementById('gameOverModal').classList.add('hidden');
+  document.getElementById('leaderboardModal').classList.remove('hidden');
+  try{
+    const q=query(collection(db,"leaderboard"),orderBy("wins","desc"),limit(10));
+    const snap=await getDocs(q);
+    if(snap.empty){ list.innerHTML='<p class="text-gray-500 text-center">Noch keine Einträge vorhanden.</p>'; return; }
+    list.innerHTML=snap.docs.map((d,i)=>{
+      const data=d.data(); const safe=(data.name||'Unbekannt').replace(/</g,"&lt;").replace(/>/g,"&gt;");
+      return `<div class="flex justify-between items-center p-3 ${i%2===0?'bg-gray-50':'bg-white'} rounded-lg border-b border-gray-100 last:border-0"><span class="font-semibold text-gray-800">${i+1}. ${safe}</span><span class="text-sm font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded-full">${data.wins||0} Siege</span></div>`;
+    }).join('');
+  }catch(e){ list.innerHTML='<p class="text-red-500 text-center">Fehler beim Laden der Bestenliste.</p>'; }
+}
+
+function closeLeaderboard(){
+  document.getElementById('leaderboardModal').classList.add('hidden');
+  if(localGameState?.status==='finished' || (gameMode==='ai' && (aiGame.playerCards.length===0||aiGame.aiCards.length===0))){
+    document.getElementById('gameOverModal').classList.remove('hidden');
+  }else{
+    document.getElementById('setupModal').classList.remove('hidden');
+  }
+}
+
+// Ganz am Ende den Init aufrufen, wenn alles definiert ist
+initGameSystem();
 </script>
 </body>
 </html>
