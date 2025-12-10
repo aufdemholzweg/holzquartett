@@ -145,7 +145,7 @@
         </div>
         <div class="p-5 overflow-y-auto hide-scrollbar space-y-5">
             <h4 class="font-bold text-gray-700 text-md">Regeln (Quartett-Prinzip)</h4>
-            <p class="text-sm text-gray-600">Wer am Zug ist, wählt eine Eigenschaft. Je nach Kategorie gewinnt der höhere oder niedrigere Wert.</p>
+            <p class="text-sm text-gray-600 leading-relaxed">Die aktive Person wählt auf ihrer Karte die Eigenschaft, die den größtmöglichen Vorteil verspricht. Je nach Kategorie zählt der höchste oder der niedrigste Wert (siehe die Beschreibung der Eigenschaften). Gewinnt sie den Spielzug, erhält sie beide Karten, legt sie unter den eigenen Stapel und bleibt am Zug. Bei Gleichstand behalten beide ihre Karten. Das Zugrecht bleibt unverändert.</p>
             <div id="infoCategoryList" class="space-y-3 pt-3"></div>
         </div>
     </div>
@@ -553,7 +553,15 @@ function evaluateRoundAI(attr){
     document.getElementById('resultText').className = `text-2xl font-black uppercase tracking-wide mb-2 ${resColor}`;
     document.getElementById('resultDetails').innerText = `${attributeInfo[attr].name}: ${pv} vs ${av}`;
     
-    if(pWins===true) { playSound(sounds.win); showHappyWorm(); lastRoundWinningWoodName = aiGame.currentPlayerCard.name; }
+    if(pWins===true) { 
+        playSound(sounds.win); 
+        showHappyWorm(); 
+        lastRoundWinningWoodName = aiGame.currentPlayerCard.name; 
+    } else if (pWins===false) {
+        lastRoundWinningWoodName = aiGame.currentAiCard.name;
+    } else {
+        lastRoundWinningWoodName = aiGame.currentPlayerCard.name; // Fallback
+    }
     
     openBottomSheet(resText);
     const pC=aiGame.playerCards.shift(); const aC=aiGame.aiCards.shift();
@@ -628,6 +636,14 @@ function listenToGameChanges(){
             if(gd.lastResult){
                  const wId = gd.lastResult.winnerId;
                  const iWin = wId===localPlayerId;
+                 
+                 // Winner Wood Logic for Multiplayer
+                 if(wId === 'tie') {
+                     lastRoundWinningWoodName = gd.currentCards[localPlayerId].name;
+                 } else if (gd.currentCards[wId]) {
+                     lastRoundWinningWoodName = gd.currentCards[wId].name;
+                 }
+
                  if(!roundSoundPlayed && iWin) playSound(sounds.win);
                  roundSoundPlayed=true;
                  
@@ -838,19 +854,31 @@ window.resetGame = () => location.reload();
 function populateGameInfoModal() {
     const list = document.getElementById('infoCategoryList');
     if (!list) return;
+    
+    // Add descriptions map
+    const descriptions = {
+        dk: "Maß für die natürliche Widerstandsfähigkeit des Holzes gegen Pilze und Insekten (DK 1 = sehr dauerhaft, DK 5 = wenig dauerhaft). Im Spiel gewinnt der niedrigere DK-Wert.",
+        haerte: "Widerstand des Holzes gegen zusammendrückende Lasten; hohe Werte bedeuten hohe Belastbarkeit. Im Spiel gewinnt der höchste Wert.",
+        quellenSchwindenRadial: "Maß für Dimensionsänderungen bei Feuchtewechsel; kleine Werte bedeuten höhere Formstabilität. Im Spiel gewinnt der niedrigste Wert.",
+        dichte: "Masse pro Volumen; höhere Dichte geht oft mit größerer Härte und Tragfähigkeit einher. Im Spiel gewinnt der höchste Wert.",
+        gewicht: "Elastizitätsmodul als Maß für Steifigkeit; hohe Werte bedeuten geringere Durchbiegung. Im Spiel gewinnt der höchste Wert."
+    };
+
     let html = '';
     const order = ['dk', 'haerte', 'quellenSchwindenRadial', 'dichte', 'gewicht'];
     for (const key of order) {
         const info = attributeInfo[key];
         const isBetter = info.logic === 'Hoch gewinnt';
+        const desc = descriptions[key] || '';
         html += `
             <div class="p-3 rounded-xl border-2 ${isBetter ? 'border-green-400 bg-green-50' : 'border-blue-400/80 bg-blue-50/50'}">
                 <div class="flex justify-between items-center mb-1">
                     <span class="text-lg font-bold text-gray-800">${info.icon} ${info.name}</span>
                     <span class="text-sm font-semibold ${isBetter ? 'text-green-700' : 'text-blue-700'}">
-                        ${isBetter ? '⬆ Hoch' : '⬇ Niedrig'}
+                        ${isBetter ? '⬆ Hoch gewinnt' : '⬇ Niedrig gewinnt'}
                     </span>
                 </div>
+                <p class="text-xs text-gray-600 mt-1 leading-relaxed">${desc}</p>
             </div>`;
     }
     list.innerHTML = html;
