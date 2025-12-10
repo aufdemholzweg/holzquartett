@@ -12,5 +12,32 @@ Features
 Zwei Spielmodi:
 Einzelspieler: Trainiere dein Wissen gegen einen computergesteuerten Gegner.
 Multiplayer: Spiele in Echtzeit gegen Mitstudierende oder Freunde (inkl. QR-Code Lobby).
+30 Holzarten mit verschiedenen Eigenschaften (Dichte, Härte, etc.)
+
+
+Spielregeln
+Das Spiel basiert auf dem klassischen „Supertrumpf“-Prinzip:
+Ziel: Gewinne alle Karten des Gegners.
+Ablauf: Die aktive Person wählt eine Eigenschaft ihrer obersten Karte, die den größtmöglichen Vorteil verspricht.
+
+Die Eigenschafte
+Höherer Wert gewinnt bei: 💎 Druckfestigkeit, ⚖️ Rohdichte, 🏋️ E-Modul.
+Niedrigerer Wert gewinnt bei: 🛡️ Dauerhaftigkeit, ↔️ Quellen/Schwinden.
+Rundengewinn: Wer den Stich gewinnt, erhält beide Karten und legt sie unter den eigenen Stapel. Die Person bleibt am Zug.
+Unentschieden: Bei gleichen Werten behält jeder seine Karte (legt sie unter den Stapel). Das Zugrecht wechselt nicht.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 Viel Spaß beim "Holzen"!
