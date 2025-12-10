@@ -322,6 +322,19 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
+// Tracking Helper für Masterarbeit / Evaluation
+async function trackEvent(type) {
+    const ref = doc(db, "statistics", "usage"); 
+    try {
+        await setDoc(ref, {
+            [type]: increment(1),
+            last_activity: serverTimestamp()
+        }, { merge: true });
+    } catch (e) {
+        console.log("Tracking restricted:", e);
+    }
+}
+
 let gameMode=null, gameId=null, localPlayerId=null, unsubscribeGame=null, localGameState={}, hasCopiedShareLink=false;
 let isMuted=false;
 let roundSoundPlayed=false;
@@ -449,6 +462,8 @@ document.addEventListener('DOMContentLoaded', async()=>{
       if(gid){gameId=gid;gameMode='multiplayer';window.showNamePrompt('join');}
     }
   });
+  
+  trackEvent('visits');
 
   const soundToggle=document.getElementById('soundToggle');
   const savedMute=localStorage.getItem('holzquartett_isMuted');
@@ -503,6 +518,7 @@ window.copyShareLink=async()=>{
 };
 
 async function createGame(playerName){
+  trackEvent('games_multiplayer');
   const lobby=document.getElementById('multiplayerLobbyModal');
   lobby.classList.remove('hidden');
   hasCopiedShareLink=false;
@@ -784,6 +800,7 @@ async function multiplayerNextRound(){
 }
 
 function startGameAI(name){
+    trackEvent('games_ai');
     aiGame.playerName=name;
     document.getElementById('playerNameDisplay').innerText=name;
     document.getElementById('opponentNameDisplay').innerText='Gegner';
