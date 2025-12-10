@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Holz-Quartett</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- QR Code Library (bleibt global) -->
+    <!-- QR Code Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
         /* Optimierung für Mobile Viewports (Adressleiste) */
@@ -38,10 +37,9 @@
         }
         .card-back {
             transform: rotateY(180deg);
-            background-image: url('https://github.com/aufdemholzweg/holzquartett/blob/b9d51d5b5d930f643a3f3861262361b97c0beb7c/images/background_card.jpg?raw=true');
+            background-image: url('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/65fd843a4db1ee434faaf81a32f77951a5afb72a/images/background_card.jpg');
             background-size: cover;
             background-position: center;
-            border: 4px solid white;
         }
         .card-front-bg {
             background-color: #fffbeb; 
@@ -111,17 +109,17 @@
             border: 1px solid #fbbf24;
             transition: all 0.2s;
         }
-        /* Orange Flash (Aktive Auswahl) - GEÄNDERT */
+        /* Orange Flash (Spieler Auswahl) */
         .attr-box.flash-active {
-            background-color: #f97316 !important; /* orange-500 */
-            border-color: #ea580c !important; /* orange-600 */
+            background-color: #f97316 !important;
+            border-color: #ea580c !important;
             color: white !important;
         }
         .attr-box.flash-active span {
             color: white !important;
         }
         
-        /* Grau/Schwarz Highlight (Vergleichswert) */
+        /* Grau/Schwarz Highlight (KI Auswahl & Vergleich) */
         .attr-box.highlight-compare {
             background-color: #e5e7eb !important; /* gray-200 */
             border-color: #9ca3af !important; /* gray-400 */
@@ -136,13 +134,13 @@
 
 <!-- Header -->
 <header class="bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-md z-20 flex-shrink-0">
-    <div class="max-w-[600px] mx-auto px-4 py-3 relative flex justify-end items-center">
-        <!-- Titel Links (Jetzt absolut mittig) -->
-        <h1 class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-lg sm:text-2xl font-black tracking-wider uppercase drop-shadow-sm whitespace-nowrap">
+    <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
+        <!-- Titel Links -->
+        <h1 class="text-2xl sm:text-3xl font-black tracking-wider uppercase drop-shadow-sm">
             🌲 HOLZEN! 🌲
         </h1>
         <!-- Info Button Rechts -->
-        <button onclick="window.showGameInfo()" class="text-white hover:text-amber-100 p-2 rounded-full transition-colors active:scale-90 relative z-10">
+        <button onclick="window.showGameInfo()" class="text-white hover:text-amber-100 p-2 rounded-full transition-colors active:scale-90">
              <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
              </svg>
@@ -161,8 +159,8 @@
         <div class="flex flex-col w-[48%] max-w-[280px] gap-2 z-10">
             <!-- Score Box -->
             <div class="bg-white w-full rounded-2xl shadow-sm border border-orange-100 p-2 sm:p-3 text-center">
-                <div id="playerNameDisplay" class="text-base sm:text-lg font-bold text-amber-700 leading-tight truncate">Spieler</div>
-                <div class="text-[10px] sm:text-sm text-gray-500 mt-0.5">Karten: <span id="playerCards" class="font-bold text-xl sm:text-2xl text-gray-800">15</span></div>
+                <div id="playerNameDisplay" class="text-base sm:text-lg font-bold text-amber-700 leading-tight truncate">Chris</div>
+                <div class="text-[10px] sm:text-sm text-gray-500 mt-0.5">Karten: <span id="playerCards" class="font-bold text-xl sm:text-2xl text-gray-800">16</span></div>
             </div>
             
             <!-- Karte -->
@@ -176,7 +174,7 @@
             <!-- Score Box -->
             <div class="bg-white w-full rounded-2xl shadow-sm border border-orange-100 p-2 sm:p-3 text-center">
                 <div id="opponentNameDisplay" class="text-base sm:text-lg font-bold text-gray-600 leading-tight truncate">GEGNER</div>
-                <div class="text-[10px] sm:text-sm text-gray-500 mt-0.5">Karten: <span id="aiCards" class="font-bold text-xl sm:text-2xl text-gray-800">15</span></div>
+                <div class="text-[10px] sm:text-sm text-gray-500 mt-0.5">Karten: <span id="aiCards" class="font-bold text-xl sm:text-2xl text-gray-800">16</span></div>
             </div>
 
             <!-- Karte -->
@@ -239,7 +237,7 @@
 <!-- === SPLASH SCREEN (NEU) === -->
 <div id="splashModal" class="fixed inset-0 bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center z-[100]">
     <div class="text-center text-white p-8 animate-pulse" style="animation-duration: 1.5s;">
-        <h1 class="text-5xl sm:text-5xl font-black tracking-wider drop-shadow-lg">
+        <h1 class="text-5xl sm:text-7xl font-black tracking-wider drop-shadow-lg">
             🌲 HOLZEN! 🌲
         </h1>
     </div>
@@ -249,14 +247,14 @@
 <div id="gameInfoModal" class="fixed inset-0 dimmer flex items-center justify-center z-50 p-4 hidden">
     <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-[400px] max-h-[90vh] flex flex-col">
         <div class="bg-amber-500 p-4 flex justify-between items-center text-white shrink-0 shadow-md">
-            <h3 class="font-bold text-lg">Spielregeln & Eigenschaften</h3>
+            <h3 class="font-bold text-lg">Spielregeln & Kategorien</h3>
             <button onclick="document.getElementById('gameInfoModal').classList.add('hidden')" class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
         </div>
         <div class="p-5 overflow-y-auto hide-scrollbar space-y-5">
             <h4 class="font-bold text-gray-700 text-md">Regeln (Quartett-Prinzip)</h4>
-            <p class="text-sm text-gray-600">Wer am Zug ist, wählt eine Eigenschaft seiner Karte, die den größtmöglichen Vorteil verspricht (je nach Kategorie gewinnt der höchste oder der niedrigste Wert, siehe unten). Gewinnt die Person den Spielzug, erhält sie beide Karten, legt sie unter den eigenen Stapel und bleibt am Zug. Bei einem Unentschieden behalten beide ihre Karte, das Zugrecht bleibt unverändert.</p>
+            <p class="text-sm text-gray-600">Gewählt wird immer die Eigenschaft, die für den Gewinner das beste Ergebnis liefert (entweder der höchste oder der niedrigste Wert, siehe unten). Der Gewinner erhält beide Karten und ist im nächsten Zug wieder an der Reihe. Bei Gleichstand ("Unentschieden") behält jeder Spieler seine Karte, und der aktuelle Zugberechtigte bleibt derselbe.</p>
             
-            <h4 class="font-bold text-gray-700 text-md pt-3">Eigenschaften on Holz</h4>
+            <h4 class="font-bold text-gray-700 text-md pt-3">Eigenschaften & Gewinner-Logik</h4>
 
             <!-- Kategorie Liste -->
             <div id="infoCategoryList" class="space-y-3">
@@ -369,26 +367,26 @@
 
 <!-- Scripts -->
 <script type="module">
-// Import Firebase directly as module (v9+) to avoid namespace issues
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, deleteDoc, collection, query, orderBy, limit, getDocs, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, deleteDoc, collection, query, orderBy, limit, getDocs, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// Konfiguration automatisch laden
-const firebaseConfig = JSON.parse(__firebase_config);
+const firebaseConfig = {
+  apiKey: "AIzaSyCyRXl8-JPr1xTXPDi1VG-eQk6fOnTpqUI",
+  authDomain: "holzquartett-3a177.firebaseapp.com",
+  projectId: "holzquartett-3a177",
+  storageBucket: "holzquartett-3a177.appspot.com",
+  messagingSenderId: "1081595025073",
+  appId: "1:1081595025073:web:bc571fffb6e4f20b27f490",
+  measurementId: "G-HKLWFJE83K"
+};
+
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
 const db = getFirestore(app);
-const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-
-// Helper für korrekte Firestore Pfade in dieser Umgebung
-// Regel: /artifacts/{appId}/public/data/{collection}
-const getPublicCollection = (colName) => collection(db, 'artifacts', appId, 'public', 'data', colName);
-const getPublicDoc = (colName, docId) => doc(db, 'artifacts', appId, 'public', 'data', colName, docId);
+const auth = getAuth(app);
 
 async function trackEvent(type) {
-    // Tracking in 'statistics' collection
-    const ref = getPublicDoc("statistics", "usage"); 
+    const ref = doc(db, "statistics", "usage"); 
     try {
         await setDoc(ref, {
             [type]: increment(1),
@@ -399,76 +397,77 @@ async function trackEvent(type) {
     }
 }
 
-// Auth Init
-const initAuth = async () => {
-    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-        await signInWithCustomToken(auth, __initial_auth_token);
-    } else {
-        await signInAnonymously(auth);
-    }
-};
-initAuth();
-
 let gameMode=null, gameId=null, localPlayerId=null, unsubscribeGame=null, localGameState={}, hasCopiedShareLink=false;
 let isMuted=false;
 let roundSoundPlayed=false;
 const sounds={
- flip:new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_139083c224.mp3'),
- win:new Audio('https://github.com/aufdemholzweg/holzquartett/blob/894e048eea71ba49921abfe6827bd8dc723f8c2d/gewonnen.mp3?raw=true'),
- chime:new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c744c8.mp3'),
- starWin:new Audio('https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3')
+  flip:new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_139083c224.mp3'),
+  win:new Audio('https://github.com/aufdemholzweg/holzquartett/blob/894e048eea71ba49921abfe6827bd8dc723f8c2d/gewonnen.mp3?raw=true'),
+  chime:new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c744c8.mp3'),
+  starWin:new Audio('https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3')
 };
 function playSound(a){ if(!isMuted && a){ a.currentTime=0; a.play().catch(()=>{}); } }
 
 function isOpponentNameBackVisible(){ return localStorage.getItem('holzquartett_showOpponentNameOnBack')==='true'; }
 function setOpponentNameBackVisible(v){ localStorage.setItem('holzquartett_showOpponentNameOnBack', v?'true':'false'); }
 
-// --- HOLZ DATEN ---
-// GitHub Base URL
-const IMG_BASE = "https://github.com/aufdemholzweg/holzquartett/blob/b9d51d5b5d930f643a3f3861262361b97c0beb7c/images";
-const IMG_SUFFIX = "?raw=true";
-
-// Das Array mit expliziten Bildpfaden, um JPG/JPEG Konflikte zu vermeiden
 const woodCards=[
- {name:"Eiche",dk:2,haerte:85,quellenSchwindenRadial:4.0,dichte:650,gewicht:12000, imgTree:`${IMG_BASE}/eiche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/eiche_2.jpeg${IMG_SUFFIX}`},
- {name:"Buche",dk:5,haerte:80,quellenSchwindenRadial:5.8,dichte:720,gewicht:14000, imgTree:`${IMG_BASE}/buche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/buche_2.jpeg${IMG_SUFFIX}`},
- {name:"Kiefer",dk:3,haerte:40,quellenSchwindenRadial:3.5,dichte:520,gewicht:11000, imgTree:`${IMG_BASE}/kiefer_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/kiefer_2.jpg${IMG_SUFFIX}`},
- {name:"Fichte",dk:4,haerte:35,quellenSchwindenRadial:3.6,dichte:450,gewicht:11000, imgTree:`${IMG_BASE}/fichte_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/fichte_2.jpeg${IMG_SUFFIX}`},
- {name:"Tanne",dk:4,haerte:38,quellenSchwindenRadial:3.5,dichte:460,gewicht:10000, imgTree:`${IMG_BASE}/tanne_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/tanne_2.jpeg${IMG_SUFFIX}`},
- {name:"Lärche",dk:3,haerte:55,quellenSchwindenRadial:3.7,dichte:590,gewicht:12000, imgTree:`${IMG_BASE}/laerche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/laerche_2.jpeg${IMG_SUFFIX}`},
- {name:"Birke",dk:5,haerte:60,quellenSchwindenRadial:5.4,dichte:650,gewicht:13000, imgTree:`${IMG_BASE}/birke_1.jpg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/birke_2.jpeg${IMG_SUFFIX}`},
- {name:"Ahorn",dk:5,haerte:75,quellenSchwindenRadial:4.8,dichte:630,gewicht:12500, imgTree:`${IMG_BASE}/ahorn_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/ahorn_2.jpeg${IMG_SUFFIX}`},
- {name:"Esche",dk:5,haerte:90,quellenSchwindenRadial:4.9,dichte:700,gewicht:13000, imgTree:`${IMG_BASE}/esche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/esche_2.jpg${IMG_SUFFIX}`},
- {name:"Kirsche",dk:3,haerte:70,quellenSchwindenRadial:4.0,dichte:600,gewicht:11500, imgTree:`${IMG_BASE}/kirsche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/kirsche_2.jpeg${IMG_SUFFIX}`},
- {name:"Nussbaum",dk:3,haerte:65,quellenSchwindenRadial:4.0,dichte:640,gewicht:12000, imgTree:`${IMG_BASE}/nuss_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/nuss_2.jpeg${IMG_SUFFIX}`},
- {name:"Douglasie",dk:3,haerte:45,quellenSchwindenRadial:3.5,dichte:510,gewicht:12000, imgTree:`${IMG_BASE}/douglasie_1.jpg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/douglasie_2.jpg${IMG_SUFFIX}`},
- {name:"Zeder",dk:2,haerte:42,quellenSchwindenRadial:2.8,dichte:480,gewicht:9500, imgTree:`${IMG_BASE}/zeder_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/zeder_2.jpeg${IMG_SUFFIX}`},
- {name:"Mahagoni",dk:2,haerte:55,quellenSchwindenRadial:3.0,dichte:550,gewicht:10500, imgTree:`${IMG_BASE}/mahagoni_1.jpg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/mahagoni_2.jpeg${IMG_SUFFIX}`},
- {name:"Teak",dk:1,haerte:60,quellenSchwindenRadial:2.5,dichte:650,gewicht:11000, imgTree:`${IMG_BASE}/teak_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/teak_2.jpeg${IMG_SUFFIX}`},
- {name:"Bambus",dk:4,haerte:50,quellenSchwindenRadial:3.0,dichte:400,gewicht:18000, imgTree:`${IMG_BASE}/bambus_1.jpg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/bambus_2.jpg${IMG_SUFFIX}`},
- {name:"Pappel",dk:5,haerte:25,quellenSchwindenRadial:4.5,dichte:380,gewicht:9000, imgTree:`${IMG_BASE}/pappel_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/pappel_2.jpeg${IMG_SUFFIX}`},
- {name:"Weide",dk:5,haerte:30,quellenSchwindenRadial:4.0,dichte:420,gewicht:8000, imgTree:`${IMG_BASE}/weide_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/weide_2.jpeg${IMG_SUFFIX}`},
- {name:"Linde",dk:5,haerte:35,quellenSchwindenRadial:3.8,dichte:530,gewicht:9000, imgTree:`${IMG_BASE}/linde_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/linde_2.jpeg${IMG_SUFFIX}`},
- {name:"Ulme",dk:3,haerte:75,quellenSchwindenRadial:4.5,dichte:680,gewicht:11500, imgTree:`${IMG_BASE}/ulme_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/ulme_2.jpeg${IMG_SUFFIX}`},
- {name:"Kastanie",dk:2,haerte:50,quellenSchwindenRadial:3.5,dichte:600,gewicht:10000, imgTree:`${IMG_BASE}/kastanie_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/kastanie_2.jpeg${IMG_SUFFIX}`},
- {name:"Robinie",dk:1,haerte:80,quellenSchwindenRadial:3.0,dichte:730,gewicht:15000, imgTree:`${IMG_BASE}/robinie_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/robinie_2.jpg${IMG_SUFFIX}`},
- {name:"Hemlock",dk:4,haerte:40,quellenSchwindenRadial:3.6,dichte:500,gewicht:10000, imgTree:`${IMG_BASE}/hemlock_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/hemlock_2.jpeg${IMG_SUFFIX}`},
- // Zypresse war nicht in deiner Liste, ich nehme Fallback oder Platzhalter
- {name:"Zypresse",dk:2,haerte:48,quellenSchwindenRadial:3.0,dichte:520,gewicht:9000, imgTree:`https://placehold.co/400x300?text=Zypresse`, imgCross:`https://placehold.co/400x300?text=Zypresse+Quer`},
- {name:"Redwood",dk:2,haerte:35,quellenSchwindenRadial:2.8,dichte:400,gewicht:8500, imgTree:`${IMG_BASE}/redwood_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/redwood_2.jpeg${IMG_SUFFIX}`},
- {name:"Hickory",dk:3,haerte:95,quellenSchwindenRadial:5.5,dichte:750,gewicht:14000, imgTree:`${IMG_BASE}/hickory_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/hickory_2.jpeg${IMG_SUFFIX}`},
- {name:"Wenge",dk:2,haerte:88,quellenSchwindenRadial:3.8,dichte:880,gewicht:16000, imgTree:`${IMG_BASE}/wenge_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/wenge_2.jpeg${IMG_SUFFIX}`},
- {name:"Zebrano",dk:3,haerte:70,quellenSchwindenRadial:4.0,dichte:750,gewicht:13000, imgTree:`${IMG_BASE}/zebrano_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/zebrano_2.jpeg${IMG_SUFFIX}`},
- {name:"Palisander",dk:2,haerte:82,quellenSchwindenRadial:3.0,dichte:850,gewicht:16000, imgTree:`${IMG_BASE}/palisander_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/palisander_2.jpeg${IMG_SUFFIX}`},
- {name:"Ebenholz",dk:1,haerte:98,quellenSchwindenRadial:3.2,dichte:1200,gewicht:16500, imgTree:`${IMG_BASE}/ebenholz_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/ebenholz_2.jpeg${IMG_SUFFIX}`}
+ {name:"Eiche",dk:2,haerte:85,quellenSchwindenRadial:4.0,dichte:650,gewicht:12000},
+ {name:"Buche",dk:5,haerte:80,quellenSchwindenRadial:5.8,dichte:720,gewicht:14000},
+ {name:"Kiefer",dk:3,haerte:40,quellenSchwindenRadial:3.5,dichte:520,gewicht:11000},
+ {name:"Fichte",dk:4,haerte:35,quellenSchwindenRadial:3.6,dichte:450,gewicht:11000},
+ {name:"Tanne",dk:4,haerte:38,quellenSchwindenRadial:3.5,dichte:460,gewicht:10000},
+ {name:"Lärche",dk:3,haerte:55,quellenSchwindenRadial:3.7,dichte:590,gewicht:12000},
+ {name:"Birke",dk:5,haerte:60,quellenSchwindenRadial:5.4,dichte:650,gewicht:13000},
+ {name:"Ahorn",dk:5,haerte:75,quellenSchwindenRadial:4.8,dichte:630,gewicht:12500},
+ {name:"Esche",dk:5,haerte:90,quellenSchwindenRadial:4.9,dichte:700,gewicht:13000},
+ {name:"Kirsche",dk:3,haerte:70,quellenSchwindenRadial:4.0,dichte:600,gewicht:11500},
+ {name:"Nussbaum",dk:3,haerte:65,quellenSchwindenRadial:4.0,dichte:640,gewicht:12000},
+ {name:"Douglasie",dk:3,haerte:45,quellenSchwindenRadial:3.5,dichte:510,gewicht:12000},
+ {name:"Zeder",dk:2,haerte:42,quellenSchwindenRadial:2.8,dichte:480,gewicht:9500},
+ {name:"Mahagoni",dk:2,haerte:55,quellenSchwindenRadial:3.0,dichte:550,gewicht:10500},
+ {name:"Teak",dk:1,haerte:60,quellenSchwindenRadial:2.5,dichte:650,gewicht:11000},
+ {name:"Bambus",dk:4,haerte:50,quellenSchwindenRadial:3.0,dichte:400,gewicht:18000},
+ {name:"Pappel",dk:5,haerte:25,quellenSchwindenRadial:4.5,dichte:380,gewicht:9000},
+ {name:"Weide",dk:5,haerte:30,quellenSchwindenRadial:4.0,dichte:420,gewicht:8000},
+ {name:"Linde",dk:5,haerte:35,quellenSchwindenRadial:3.8,dichte:530,gewicht:9000},
+ {name:"Ulme",dk:3,haerte:75,quellenSchwindenRadial:4.5,dichte:680,gewicht:11500},
+ {name:"Kastanie",dk:2,haerte:50,quellenSchwindenRadial:3.5,dichte:600,gewicht:10000},
+ {name:"Robinie",dk:1,haerte:80,quellenSchwindenRadial:3.0,dichte:730,gewicht:15000},
+ {name:"Hemlock",dk:4,haerte:40,quellenSchwindenRadial:3.6,dichte:500,gewicht:10000},
+ {name:"Zypresse",dk:2,haerte:48,quellenSchwindenRadial:3.0,dichte:520,gewicht:9000},
+ {name:"Redwood",dk:2,haerte:35,quellenSchwindenRadial:2.8,dichte:400,gewicht:8500},
+ {name:"Hickory",dk:3,haerte:95,quellenSchwindenRadial:5.5,dichte:750,gewicht:14000},
+ {name:"Wenge",dk:2,haerte:88,quellenSchwindenRadial:3.8,dichte:880,gewicht:16000},
+ {name:"Zebrano",dk:3,haerte:70,quellenSchwindenRadial:4.0,dichte:750,gewicht:13000},
+ {name:"Palisander",dk:2,haerte:82,quellenSchwindenRadial:3.0,dichte:850,gewicht:16000},
+ {name:"Ebenholz",dk:1,haerte:98,quellenSchwindenRadial:3.2,dichte:1200,gewicht:16500}
 ];
+
+const getSlug = (name) => {
+    const map = {
+        'Eiche':'eiche', 'Buche':'buche', 'Kiefer':'kiefer', 'Fichte':'fichte', 'Tanne':'tanne',
+        'Lärche':'laerche', 'Birke':'birke', 'Ahorn':'ahorn', 'Esche':'esche', 'Kirsche':'kirsche',
+        'Nussbaum':'nussbaum', 'Douglasie':'douglasie', 'Zeder':'zeder', 'Mahagoni':'mahagoni',
+        'Teak':'teak', 'Bambus':'bambus', 'Pappel':'pappel', 'Weide':'weide', 'Linde':'linde',
+        'Ulme':'ulme', 'Kastanie':'kastanie', 'Robinie':'robinie', 'Hemlock':'hemlock',
+        'Zypresse':'zypresse', 'Redwood':'redwood', 'Hickory':'hickory', 'Wenge':'wenge',
+        'Zebrano':'zebrano', 'Palisander':'palisander', 'Ebenholz':'ebenholz'
+    };
+    return map[name] || name.toLowerCase();
+};
+const getWoodImage = (name, type) => {
+    const slug = getSlug(name);
+    const num = type === 'tree' ? '1' : '2';
+    return `https://github.com/aufdemholzweg/holzquartett/blob/main/images/${slug}_${num}.jpg?raw=true`;
+};
 
 const woodInfo = {};
 woodCards.forEach(c => {
     woodInfo[c.name] = {
         info: `Die ${c.name} ist eine Holzart mit einer Rohdichte von ca. ${c.dichte} kg/m³.`,
-        bildBaum: c.imgTree,
-        bildQuerschnitt: c.imgCross
+        bildBaum: getWoodImage(c.name, 'tree'),
+        bildQuerschnitt: getWoodImage(c.name, 'cross')
     };
 });
 
@@ -482,11 +481,11 @@ const reflectionQuestions=[
 ];
 
 const attributeInfo={
-  dk:{icon:'🛡️',name:'Dauerhaftigkeit',unit:'(DK)', logic: 'Niedrig gewinnt'},
-  haerte:{icon:'💎',name:'Druckfestigkeit',unit:'(N/mm²)', logic: 'Hoch gewinnt'},
-  quellenSchwindenRadial:{icon:'↔️',name:'Quellen/Schw.',unit:'(%)', logic: 'Niedrig gewinnt'},
-  dichte:{icon:'⚖️',name:'Rohdichte',unit:'(kg/m³)', logic: 'Hoch gewinnt'},
-  gewicht:{icon:'🏋️',name:'E-Modul',unit:'(N/mm²)', logic: 'Hoch gewinnt'}
+  dk:{icon:'🛡️',name:'Dauerhaftigkeit',unit:'(DK)', logic: 'Niedriger ist besser'},
+  haerte:{icon:'💎',name:'Druckfestigkeit',unit:'(N/mm²)', logic: 'Höher ist besser'},
+  quellenSchwindenRadial:{icon:'↔️',name:'Quellen/Schw.',unit:'(%)', logic: 'Niedriger ist besser'},
+  dichte:{icon:'⚖️',name:'Rohdichte',unit:'(kg/m³)', logic: 'Höher ist besser'},
+  gewicht:{icon:'🏋️',name:'E-Modul',unit:'(N/mm²)', logic: 'Höher ist besser'}
 };
 
 let aiGame={playerName:'',playerCards:[],aiCards:[],currentPlayerCard:null,currentAiCard:null,roundInProgress:false,turn:'player'};
@@ -521,15 +520,19 @@ document.addEventListener('DOMContentLoaded', async()=>{
   const setup = document.getElementById('setupModal');
   
   if (splash && setup) {
+      // 1. Splash sichtbar machen (ist es initial)
       splash.classList.remove('hidden');
       setup.classList.add('hidden');
 
+      // 2. Nach 2.5 Sekunden zum Setup wechseln
       setTimeout(() => {
           splash.classList.add('hidden');
           setup.classList.remove('hidden');
       }, 2500);
   }
+  // --- END SPLASH LOGIC ---
 
+  try{await signInAnonymously(auth);}catch(e){console.error(e)}
   onAuthStateChanged(auth,(user)=>{
     if(user){
       localPlayerId=user.uid;
@@ -560,11 +563,9 @@ document.addEventListener('DOMContentLoaded', async()=>{
   });
 
   bsInfoBtn.addEventListener('click',()=>window.showInfoModal());
-  bsNextBtn.addEventListener('click',()=>{
-      window.closeBottomSheet(); 
-      window.nextRound(); 
-  });
+  bsNextBtn.addEventListener('click',()=>window.nextRound());
   
+  // Game Info Modal vorbereiten
   window.populateGameInfoModal();
 });
 
@@ -589,7 +590,6 @@ window.showGameInfo = function() {
     const modal = document.getElementById('gameInfoModal');
     if (modal) modal.classList.remove('hidden');
 };
-window.closeBottomSheet = closeBottomSheet; 
 
 window.populateGameInfoModal = function() {
     const list = document.getElementById('infoCategoryList');
@@ -601,14 +601,14 @@ window.populateGameInfoModal = function() {
 
     for (const key of order) {
         const info = attributeInfo[key];
-        const isBetter = info.logic === 'Hoch gewinnt';
+        const isBetter = info.logic === 'Höher ist besser';
         
         html += `
             <div class="p-3 rounded-xl border-2 ${isBetter ? 'border-green-400 bg-green-50' : 'border-blue-400/80 bg-blue-50/50'}">
                 <div class="flex justify-between items-center mb-1">
                     <span class="text-lg font-bold text-gray-800">${info.icon} ${info.name}</span>
                     <span class="text-sm font-semibold ${isBetter ? 'text-green-700' : 'text-blue-700'}">
-                        ${isBetter ? '⬆ Hoch gewinnt' : '⬇ Niedrig gewinnt'}
+                        ${isBetter ? '⬆ Höher ist besser' : '⬇ Niedriger ist besser'}
                     </span>
                 </div>
                 <p class="text-[12px] text-gray-600 mt-1">
@@ -625,7 +625,7 @@ window.populateGameInfoModal = function() {
     list.innerHTML = html;
 };
 window.showInfoModal = function() {
-    closeBottomSheet(); 
+    closeBottomSheet(); // Stellt sicher, dass das BottomSheet geschlossen wird, bevor das Info-Modal erscheint
     document.getElementById('infoModal').classList.remove('hidden');
 };
 
@@ -637,7 +637,6 @@ window.copyShareLink=async()=>{
 };
 
 async function createGame(playerName){
-  if (!localPlayerId) return alert("Fehler: Authentifizierung läuft noch. Bitte kurz warten.");
   trackEvent('games_multiplayer');
   const lobby=document.getElementById('multiplayerLobbyModal');
   lobby.classList.remove('hidden');
@@ -656,7 +655,7 @@ async function createGame(playerName){
       height: 128
   });
 
-  const ref=getPublicDoc("games",gameId);
+  const ref=doc(db,"games",gameId);
   await setDoc(ref,{
     gameId, status:'waiting', playerIds:[localPlayerId],
     players:{[localPlayerId]:{name:playerName,cards:[],status:'online'}},
@@ -666,8 +665,7 @@ async function createGame(playerName){
 }
 
 async function joinGame(id,playerName){
-  if (!localPlayerId) return setTimeout(()=>joinGame(id, playerName), 500); // Warten auf Auth
-  const ref=getPublicDoc("games",id);
+  const ref=doc(db,"games",id);
   const snap=await getDoc(ref);
   if(snap.exists()&&snap.data().status==='waiting'){
       document.getElementById('lobbyTitle').textContent="Verbinde...";
@@ -692,7 +690,7 @@ async function joinGame(id,playerName){
 
 function listenToGameChanges(){
   if(!gameId) return;
-  unsubscribeGame=onSnapshot(getPublicDoc("games",gameId),(ds)=>{
+  unsubscribeGame=onSnapshot(doc(db,"games",gameId),(ds)=>{
     if(!ds.exists()) { resetGame(); return; }
     const gd=ds.data(); localGameState=gd;
     
@@ -706,7 +704,7 @@ function listenToGameChanges(){
 
 function updateMultiplayerUI(gd){
     if(document.getElementById('gameContainer').classList.contains('hidden') === false) {
-          scrollToGame();
+         scrollToGame();
     }
 
     const oppId=gd.playerIds.find(id=>id!==localPlayerId);
@@ -760,8 +758,8 @@ function createCard(data, isRevealed=true, isPlayer=true, isActive=false){
     let ringClass = '';
     
     if (isActive) {
-        borderClass = 'border-orange-500'; /* orange-500 */
-        ringClass = 'ring-4 ring-orange-200'; /* orange-200 */
+        borderClass = 'border-purple-600';
+        ringClass = 'ring-4 ring-purple-200';
     }
 
     front.className = `card-front card-front-bg rounded-2xl shadow-lg border-4 ${borderClass} ${ringClass} flex flex-col transition-all duration-300`;
@@ -771,9 +769,7 @@ function createCard(data, isRevealed=true, isPlayer=true, isActive=false){
             <h2 class="text-lg sm:text-xl font-bold text-amber-900 leading-none tracking-tight">${data.name}</h2>
         </div>`;
     
-    // Benutzung des im Array definierten Bildes
-    const imgUrl = data.imgTree;
-    
+    const imgUrl = getWoodImage(data.name, 'tree');
     const image = `
         <div class="mx-3 mt-1 mb-2 aspect-[4/3] rounded-xl overflow-hidden bg-white shadow-sm border border-orange-100">
             <img src="${imgUrl}" class="w-full h-full object-cover" onerror="this.style.opacity='0.2'">
@@ -788,13 +784,9 @@ function createCard(data, isRevealed=true, isPlayer=true, isActive=false){
         let flashClass = '';
         if(gameMode==='ai' && aiGame.roundInProgress && document.getElementById('resultDetails').innerText.includes(info.name)) {
              if(aiGame.turn === 'player'){
-                 // Wenn Spieler dran war: Eigene Auswahl violett, Gegner grau
-                 if (isPlayer) flashClass='flash-active'; 
-                 else flashClass='highlight-compare';
+                 flashClass='flash-active'; // Orange wenn Player dran war
              } else {
-                 // Wenn KI dran war: KI Auswahl violett, Spieler grau
-                 if (!isPlayer) flashClass='flash-active';
-                 else flashClass='highlight-compare';
+                 flashClass='highlight-compare'; // Grau/Schwarz wenn KI dran war
              }
         }
 
@@ -827,7 +819,7 @@ function createCard(data, isRevealed=true, isPlayer=true, isActive=false){
     // Wende Border-Logik auch auf Rückseite an
     let backBorder = 'border-4 border-white';
     if(isActive) {
-        backBorder = 'border-4 border-orange-500 ring-4 ring-orange-200'; /* orange-500 / orange-200 */
+        backBorder = 'border-4 border-purple-600 ring-4 ring-purple-200';
     }
     back.className = `card-back rounded-2xl shadow-lg relative ${backBorder} transition-all duration-300`;
     
@@ -884,9 +876,7 @@ window.selectAttribute = function(attr){
             if(ac){ ac.classList.remove('card-flipped'); playSound(sounds.flip); }
             
             // Highlight Grey
-            // Use specific selector for AI card to ensure correct highlighting
-            const aiCardEl = document.getElementById('aiCard');
-            const oppRow = aiCardEl.querySelector(`div[data-attr-row="${attr}"]`);
+            const oppRow = document.querySelector(`div[data-attr-row="${attr}"]`);
             if(oppRow) oppRow.classList.add('highlight-compare');
 
             // 3. Verzögerung 2s: Ergebnis
@@ -917,7 +907,7 @@ async function multiplayerSelectAttribute(attr){
     else pWins = pv > ov ? true : (ov > pv ? false : 'tie');
     
     const winner = pWins==='tie' ? 'tie' : (pWins ? localPlayerId : opp);
-    await updateDoc(getPublicDoc("games",gameId),{
+    await updateDoc(doc(db,"games",gameId),{
         lastResult: {winnerId:winner, attribute:attr, values:{[localPlayerId]:pv, [opp]:ov}},
         lastActivity: serverTimestamp()
     });
@@ -935,11 +925,11 @@ async function multiplayerNextRound(){
     else { if(c1) gs.players[p1].cards.push(c1); if(c2) gs.players[p2].cards.push(c2); }
     
     if(gs.players[p1].cards.length===0 || gs.players[p2].cards.length===0){
-        await updateDoc(getPublicDoc("games",gameId), {status:'finished', players:gs.players});
+        await updateDoc(doc(db,"games",gameId), {status:'finished', players:gs.players});
         return;
     }
     const nextT = w==='tie' ? gs.turn : w;
-    await updateDoc(getPublicDoc("games",gameId), {
+    await updateDoc(doc(db,"games",gameId), {
         lastResult:null, turn:nextT, players:gs.players,
         currentCards:{[p1]:gs.players[p1].cards[0], [p2]:gs.players[p2].cards[0]}
     });
@@ -987,16 +977,11 @@ function aiTurn(){
     const k=keys[Math.floor(Math.random()*keys.length)];
 
     aiGame.roundInProgress = true;
+    const row = document.querySelector(`div[data-attr-row="${k}"]`);
+    if(row) row.classList.add('highlight-compare'); // Grau
     
-    // KI Karte Zeile finden (muss orange sein) - explizit im AI Container suchen
-    const aiCardEl = document.getElementById('aiCard');
-    const row = aiCardEl.querySelector(`div[data-attr-row="${k}"]`);
-    if(row) row.classList.add('flash-active'); 
-    
-    // Spieler Karte Zeile finden (muss grau sein) - explizit im Player Container suchen
-    const playerCardEl = document.getElementById('playerCard');
-    const playerRow = playerCardEl.querySelector(`div[data-attr-btn="${k}"]`) || playerCardEl.querySelector(`div[data-attr-row="${k}"]`);
-    if(playerRow) playerRow.classList.add('highlight-compare'); 
+    const playerRow = document.querySelector(`div[data-attr-btn="${k}"]`) || document.querySelector(`div[data-attr-row="${k}"]`);
+    if(playerRow) playerRow.classList.add('highlight-compare'); // Grau
 
     setTimeout(() => { 
         // Flip
@@ -1062,7 +1047,7 @@ function triggerWinStarAnimation(){
 const wormPhrases = [
     "Super gemacht!", "Weiter so!", "Starke Runde!", "Gut gespielt!",
     "Clever gewählt!", "Sauber gelöst!", "Astrein!", "Meisterhaft!",
-    "Stark!", "Geil!", "Klasse!", "Läuft bei dir!", "Genau so!",
+    "Stark!", "Top!", "Klasse!", "Läuft!", "Genau so!",
     "Richtig so!", "Exzellent!", "On point!"
 ];
 
@@ -1177,7 +1162,7 @@ window.showLeaderboard = async function(){
     document.getElementById('leaderboardModal').classList.remove('hidden');
     
     try {
-        const q=query(getPublicCollection("leaderboard"),orderBy("wins","desc"),limit(10));
+        const q=query(collection(db,"leaderboard"),orderBy("wins","desc"),limit(10));
         const snap=await getDocs(q);
         if(snap.empty){ list.innerHTML='<div class="text-center py-4 text-gray-400">Keine Einträge</div>'; return; }
         
@@ -1196,7 +1181,7 @@ window.closeLeaderboard = function(){
 async function saveToLeaderboard(name){
     if(!name) return;
     const safe=name.replace(/[.#$[\]]/g,'_');
-    try{ await setDoc(getPublicDoc("leaderboard",safe),{name,wins:increment(1),lastWin:serverTimestamp()},{merge:true}); }catch(e){}
+    try{ await setDoc(doc(db,"leaderboard",safe),{name,wins:increment(1),lastWin:serverTimestamp()},{merge:true}); }catch(e){}
 }
 window.resetGame = function(){ location.reload(); };
 
