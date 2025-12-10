@@ -14,4 +14,3 @@ Einzelspieler: Trainiere dein Wissen gegen einen computergesteuerten Gegner.
 Multiplayer: Spiele in Echtzeit gegen Mitstudierende oder Freunde (inkl. QR-Code Lobby).
 
 Viel Spaß beim "Holzen"!
-<img width="454" height="323" alt="image" src="https://github.com/user-attachments/assets/f169db6e-8862-4e9e-bbd0-15d919df2acc" />
