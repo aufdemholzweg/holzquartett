@@ -247,7 +247,7 @@
 <!-- === SPLASH SCREEN (NEU) === -->
 <div id="splashModal" class="fixed inset-0 bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center z-[100]">
     <div class="text-center text-white p-8 animate-pulse" style="animation-duration: 1.5s;">
-        <h1 class="text-5xl sm:text-5xl font-black tracking-wider drop-shadow-lg">
+        <h1 class="text-4xl sm:text-5xl font-black tracking-wider drop-shadow-lg">
             🌲 HOLZEN! 🌲
         </h1>
     </div>
@@ -382,42 +382,100 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebas
 import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, deleteDoc, collection, query, orderBy, limit, getDocs, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-// Konfiguration automatisch laden
-const firebaseConfig = JSON.parse(__firebase_config);
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+// === FIREBASE CONFIGURATION (ROBUST HANDLING) ===
+let app, auth, db, appId;
+let isFirebaseAvailable = false;
 
-// Helper für korrekte Firestore Pfade in dieser Umgebung
-// Regel: /artifacts/{appId}/public/data/{collection}
-const getPublicCollection = (colName) => collection(db, 'artifacts', appId, 'public', 'data', colName);
-const getPublicDoc = (colName, docId) => doc(db, 'artifacts', appId, 'public', 'data', colName, docId);
+try {
+    // Check if configuration variables are available
+    if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+        const firebaseConfig = JSON.parse(__firebase_config);
+        app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        db = getFirestore(app);
+        appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        isFirebaseAvailable = true;
+    } else {
+        console.warn("Offline Mode: Firebase configuration not found. Multiplayer features disabled.");
+    }
+} catch (error) {
+    console.warn("Offline Mode: Error initializing Firebase.", error);
+    isFirebaseAvailable = false;
+}
 
-async function trackEvent(type) {
-    // Tracking in 'statistics' collection
-    const ref = getPublicDoc("statistics", "usage"); 
+// Helper for safe collection access
+const getPublicCollection = (colName) => {
+    if (!isFirebaseAvailable) return null;
+    return collection(db, 'artifacts', appId, 'public', 'data', colName);
+};
+const getPublicDoc = (colName, docId) => {
+    if (!isFirebaseAvailable) return null;
+    return doc(db, 'artifacts', appId, 'public', 'data', colName, docId);
+};
+
+// Safe Auth Init
+const initAuth = async () => {
+    if (!isFirebaseAvailable) return;
     try {
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+            await signInWithCustomToken(auth, __initial_auth_token);
+        } else {
+            await signInAnonymously(auth);
+        }
+    } catch (e) {
+        console.warn("Auth failed, running offline.");
+    }
+};
+initAuth();
+
+// Safe Tracking
+async function trackEvent(type) {
+    if (!isFirebaseAvailable) return;
+    try {
+        const ref = getPublicDoc("statistics", "usage"); 
         await setDoc(ref, {
             [type]: increment(1),
             last_activity: serverTimestamp()
         }, { merge: true });
     } catch (e) {
-        console.log("Tracking restricted:", e);
+        // Silent fail in offline
     }
 }
 
-// Auth Init
-const initAuth = async () => {
-    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-        await signInWithCustomToken(auth, __initial_auth_token);
-    } else {
-        await signInAnonymously(auth);
-    }
-};
-initAuth();
+// Safe Leaderboard Save
+async function saveToLeaderboard(name){
+    if (!isFirebaseAvailable || !name) return;
+    const safe=name.replace(/[.#$[\]]/g,'_');
+    try{ await setDoc(getPublicDoc("leaderboard",safe),{name,wins:increment(1),lastWin:serverTimestamp()},{merge:true}); }catch(e){}
+}
 
-let gameMode=null, gameId=null, localPlayerId=null, unsubscribeGame=null, localGameState={}, hasCopiedShareLink=false;
+// Safe Leaderboard Fetch
+window.showLeaderboard = async function(){
+    const list=document.getElementById('leaderboardList');
+    list.innerHTML='<div class="text-center py-4 text-gray-500">Lade...</div>';
+    document.getElementById('gameOverModal').classList.add('hidden');
+    document.getElementById('leaderboardModal').classList.remove('hidden');
+    
+    if (!isFirebaseAvailable) {
+        list.innerHTML = '<div class="text-center py-4 text-gray-400">Offline-Modus<br>Bestenliste nicht verfügbar</div>';
+        return;
+    }
+
+    try {
+        const q=query(getPublicCollection("leaderboard"),orderBy("wins","desc"),limit(10));
+        const snap=await getDocs(q);
+        if(snap.empty){ list.innerHTML='<div class="text-center py-4 text-gray-400">Keine Einträge</div>'; return; }
+        
+        list.innerHTML = snap.docs.map((d,i)=>`
+            <div class="flex justify-between items-center p-3 rounded-lg ${i%2===0?'bg-gray-50':'bg-white'} border border-gray-100">
+                <span class="font-bold text-gray-700 text-sm">${i+1}. ${d.data().name}</span>
+                <span class="font-bold text-amber-600 text-sm">${d.data().wins} 🏆</span>
+            </div>
+        `).join('');
+    } catch(e){ list.innerHTML='<div class="text-center text-red-400">Fehler beim Laden</div>'; }
+};
+
+let gameMode=null, gameId=null, localPlayerId='offline-player', unsubscribeGame=null, localGameState={}, hasCopiedShareLink=false;
 let isMuted=false;
 let roundSoundPlayed=false;
 const sounds={
@@ -811,6 +869,7 @@ window.copyShareLink=async()=>{
 };
 
 async function createGame(playerName){
+  if (!isFirebaseAvailable) return alert("Multiplayer ist im Offline-Modus nicht verfügbar."); // Robust check
   if (!localPlayerId) return alert("Fehler: Authentifizierung läuft noch. Bitte kurz warten.");
   trackEvent('games_multiplayer');
   const lobby=document.getElementById('multiplayerLobbyModal');
@@ -840,6 +899,7 @@ async function createGame(playerName){
 }
 
 async function joinGame(id,playerName){
+  if (!isFirebaseAvailable) return alert("Multiplayer ist im Offline-Modus nicht verfügbar.");
   if (!localPlayerId) return setTimeout(()=>joinGame(id, playerName), 500); // Warten auf Auth
   const ref=getPublicDoc("games",id);
   const snap=await getDoc(ref);
@@ -865,7 +925,7 @@ async function joinGame(id,playerName){
 }
 
 function listenToGameChanges(){
-  if(!gameId) return;
+  if(!gameId || !isFirebaseAvailable) return;
   unsubscribeGame=onSnapshot(getPublicDoc("games",gameId),(ds)=>{
     if(!ds.exists()) { resetGame(); return; }
     const gd=ds.data(); localGameState=gd;
@@ -1351,34 +1411,11 @@ window.showWoodInfo = function(name){
 };
 window.closeInfoModal = function(){ document.getElementById('infoModal').classList.add('hidden'); openBottomSheet(); };
 
-window.showLeaderboard = async function(){
-    const list=document.getElementById('leaderboardList');
-    list.innerHTML='<div class="text-center py-4 text-gray-500">Lade...</div>';
-    document.getElementById('gameOverModal').classList.add('hidden');
-    document.getElementById('leaderboardModal').classList.remove('hidden');
-    
-    try {
-        const q=query(getPublicCollection("leaderboard"),orderBy("wins","desc"),limit(10));
-        const snap=await getDocs(q);
-        if(snap.empty){ list.innerHTML='<div class="text-center py-4 text-gray-400">Keine Einträge</div>'; return; }
-        
-        list.innerHTML = snap.docs.map((d,i)=>`
-            <div class="flex justify-between items-center p-3 rounded-lg ${i%2===0?'bg-gray-50':'bg-white'} border border-gray-100">
-                <span class="font-bold text-gray-700 text-sm">${i+1}. ${d.data().name}</span>
-                <span class="font-bold text-amber-600 text-sm">${d.data().wins} 🏆</span>
-            </div>
-        `).join('');
-    } catch(e){ list.innerHTML='<div class="text-center text-red-400">Fehler beim Laden</div>'; }
-};
 window.closeLeaderboard = function(){
     document.getElementById('leaderboardModal').classList.add('hidden');
     document.getElementById('gameOverModal').classList.remove('hidden');
 };
-async function saveToLeaderboard(name){
-    if(!name) return;
-    const safe=name.replace(/[.#$[\]]/g,'_');
-    try{ await setDoc(getPublicDoc("leaderboard",safe),{name,wins:increment(1),lastWin:serverTimestamp()},{merge:true}); }catch(e){}
-}
+
 window.resetGame = function(){ location.reload(); };
 
 function scrollToGame() {
