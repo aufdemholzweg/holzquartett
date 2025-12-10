@@ -27,10 +27,12 @@ Rundengewinn: Wer den Stich gewinnt, erhält beide Karten und legt sie unter den
 Unentschieden: Bei gleichen Werten behält jeder seine Karte (legt sie unter den Stapel). Das Zugrecht wechselt nicht.
 
 
-Daten werden über das Portal Firebase gespeichert unter:
+Daten werden über das Portal "Firebase" gespeichert unter:
+
 https://console.firebase.google.com/project/holzquartett-3a177/firestore/databases/-default-/data/~2Fstatistics~2Fusage
 
 Sounds von "Pixabay", abrufbar unter: 
+
 https://pixabay.com/de/sound-effects/search/punkt/?pagi=3
 
 
