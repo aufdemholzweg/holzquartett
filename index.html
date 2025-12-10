@@ -37,9 +37,10 @@
         }
         .card-back {
             transform: rotateY(180deg);
-            background-image: url('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/65fd843a4db1ee434faaf81a32f77951a5afb72a/images/background_card.jpg');
+            background-image: url('https://github.com/aufdemholzweg/holzquartett/blob/b9d51d5b5d930f643a3f3861262361b97c0beb7c/images/background_card.jpg?raw=true');
             background-size: cover;
             background-position: center;
+            border: 4px solid white;
         }
         .card-front-bg {
             background-color: #fffbeb; 
@@ -136,7 +137,7 @@
 <header class="bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-md z-20 flex-shrink-0">
     <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
         <!-- Titel Links -->
-        <h1 class="text-2xl sm:text-3xl font-black tracking-wider uppercase drop-shadow-sm">
+        <h1 class="text-lg sm:text-2xl font-black tracking-wider uppercase drop-shadow-sm">
             🌲 HOLZEN! 🌲
         </h1>
         <!-- Info Button Rechts -->
@@ -563,7 +564,10 @@ document.addEventListener('DOMContentLoaded', async()=>{
   });
 
   bsInfoBtn.addEventListener('click',()=>window.showInfoModal());
-  bsNextBtn.addEventListener('click',()=>window.nextRound());
+  bsNextBtn.addEventListener('click',()=>{
+      window.closeBottomSheet(); // Fenster schließen
+      window.nextRound(); // Dann nächste Runde
+  });
   
   // Game Info Modal vorbereiten
   window.populateGameInfoModal();
@@ -590,6 +594,7 @@ window.showGameInfo = function() {
     const modal = document.getElementById('gameInfoModal');
     if (modal) modal.classList.remove('hidden');
 };
+window.closeBottomSheet = closeBottomSheet; // Explizit für Button
 
 window.populateGameInfoModal = function() {
     const list = document.getElementById('infoCategoryList');
@@ -625,7 +630,7 @@ window.populateGameInfoModal = function() {
     list.innerHTML = html;
 };
 window.showInfoModal = function() {
-    closeBottomSheet(); // Stellt sicher, dass das BottomSheet geschlossen wird, bevor das Info-Modal erscheint
+    closeBottomSheet(); 
     document.getElementById('infoModal').classList.remove('hidden');
 };
 
