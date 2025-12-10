@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -6,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Holz-Quartett</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- QR Code Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
         /* Optimierung für Mobile Viewports (Adressleiste) */
@@ -117,6 +118,7 @@
 </head>
 <body class="flex flex-col relative text-gray-800">
 
+<!-- Header -->
 <header class="bg-amber-600 text-white shadow-md z-20 flex-shrink-0">
     <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
         <div>
@@ -126,28 +128,36 @@
     </div>
 </header>
 
+<!-- === GAME AREA === -->
 <div id="gameContainer" class="hidden flex-grow flex flex-col items-center w-full max-w-4xl mx-auto relative p-2 overflow-hidden">
     <div id="animationContainer" class="absolute inset-0 pointer-events-none z-50 overflow-hidden"></div>
 
+    <!-- Haupt-Layout: Flex Row für zwei Spalten -->
     <div class="flex justify-center items-start gap-2 sm:gap-4 w-full flex-grow relative pb-2 mt-2"> 
         
+        <!-- SPALTE SPIELER -->
         <div class="flex flex-col w-[48%] max-w-[280px] gap-2 z-10">
+            <!-- Score Box -->
             <div class="bg-white w-full rounded-2xl shadow-sm border border-orange-100 p-2 sm:p-3 text-center">
                 <div id="playerNameDisplay" class="text-base sm:text-lg font-bold text-amber-700 leading-tight truncate">Chris</div>
                 <div class="text-[10px] sm:text-sm text-gray-500 mt-0.5">Karten: <span id="playerCards" class="font-bold text-xl sm:text-2xl text-gray-800">16</span></div>
             </div>
             
+            <!-- Karte -->
             <div class="w-full aspect-[20/46] perspective-1000 relative" id="playerCardContainer">
                 <div id="playerCard" class="w-full h-full relative"></div>
             </div>
         </div>
 
+        <!-- SPALTE GEGNER -->
         <div class="flex flex-col w-[48%] max-w-[280px] gap-2 z-10">
+            <!-- Score Box -->
             <div class="bg-white w-full rounded-2xl shadow-sm border border-orange-100 p-2 sm:p-3 text-center">
                 <div id="opponentNameDisplay" class="text-base sm:text-lg font-bold text-gray-600 leading-tight truncate">GEGNER</div>
                 <div class="text-[10px] sm:text-sm text-gray-500 mt-0.5">Karten: <span id="aiCards" class="font-bold text-xl sm:text-2xl text-gray-800">16</span></div>
             </div>
 
+            <!-- Karte -->
             <div class="w-full aspect-[20/46] perspective-1000 relative" id="aiCardContainer">
                 <div id="aiCard" class="w-full h-full relative"></div>
             </div>
@@ -155,13 +165,17 @@
 
     </div>
 
+    <!-- Statusbalken (Breiter & Kugel) -->
     <div class="w-full px-4 mt-2 mb-24 max-w-3xl"> 
         <div class="flex justify-between text-[9px] sm:text-[10px] font-bold text-gray-400 mb-1 px-1">
             <span>Dein Stapel</span><span>Gegner Stapel</span>
         </div>
+        <!-- Balken Container -->
         <div class="h-4 w-full bg-gray-200 rounded-full shadow-inner relative">
+            <!-- Farbiger Balken -->
             <div id="statusBar" class="h-full bg-amber-500 rounded-l-full transition-all duration-500 ease-out" style="width: 50%;"></div>
             
+            <!-- Die Kugel (Ball) -->
             <div id="statusBall" class="absolute top-1/2 w-6 h-6 rounded-full border-2 border-white shadow-md transition-all duration-500 ease-out z-10" 
                  style="left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at 30% 30%, #fbbf24, #d97706);">
             </div>
@@ -169,6 +183,7 @@
     </div>
 </div>
 
+<!-- === BOTTOM SHEET === -->
 <div id="bottomSheetBackdrop" class="hidden fixed inset-0 bg-black/20 z-30 transition-opacity"></div>
 <div id="bottomSheet" class="hidden fixed left-0 right-0 bottom-0 z-40 flex justify-center px-2 pb-6 transition-transform transform translate-y-full duration-300">
     <div class="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-200 w-full max-w-md p-5 flex flex-col items-center">
@@ -187,6 +202,7 @@
     </div>
 </div>
 
+<!-- === MODALS === -->
 <div id="setupModal" class="fixed inset-0 dimmer flex items-center justify-center z-50 p-4">
     <div class="bg-white rounded-2xl shadow-2xl overflow-hidden max-w-sm w-full">
         <div class="bg-amber-500 p-5 text-white text-center font-bold text-lg sm:text-xl tracking-wide shadow-md">
@@ -230,12 +246,18 @@
 <div id="multiplayerLobbyModal" class="hidden fixed inset-0 dimmer flex items-center justify-center z-50 p-4">
     <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full text-center">
         <h2 id="lobbyTitle" class="text-xl font-bold text-amber-800 mb-2">Lobby</h2>
-        <p id="lobbyText" class="text-sm text-gray-600 mb-4">Warte auf Mitspieler...</p>
+        <p id="lobbyText" class="text-sm text-gray-600 mb-4">Lass deinen Freund den QR-Code scannen:</p>
+        
+        <!-- QR Code Container -->
+        <div class="flex justify-center mb-4">
+            <div id="qrcode" class="p-2 bg-white rounded-lg border border-gray-200"></div>
+        </div>
+
         <div class="bg-gray-100 p-2 rounded mb-4 flex items-center gap-2">
             <input id="shareLink" type="text" class="bg-transparent text-xs w-full text-gray-600 font-mono" readonly>
             <button onclick="window.copyShareLink()" class="bg-white px-3 py-1 rounded text-xs font-bold border shadow-sm hover:bg-gray-50">Kopieren</button>
         </div>
-        <p id="lobbyStatus" class="text-sm text-green-600 font-bold animate-pulse"></p>
+        <p id="lobbyStatus" class="text-sm text-green-600 font-bold animate-pulse">Warte auf Mitspieler...</p>
     </div>
 </div>
 
@@ -280,6 +302,7 @@
     </div>
 </div>
 
+<!-- Scripts -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -485,8 +508,18 @@ async function createGame(playerName){
   hasCopiedShareLink=false;
   gameId=Math.random().toString(36).substring(2,8).toUpperCase();
   const base=window.location.href.split('?')[0];
-  document.getElementById('shareLink').value=`${base}?game=${gameId}`;
+  const joinUrl=`${base}?game=${gameId}`;
+  document.getElementById('shareLink').value=joinUrl;
   
+  // QR Code generieren
+  const qrContainer = document.getElementById('qrcode');
+  qrContainer.innerHTML = '';
+  new QRCode(qrContainer, {
+      text: joinUrl,
+      width: 128,
+      height: 128
+  });
+
   const ref=doc(db,"games",gameId);
   await setDoc(ref,{
     gameId, status:'waiting', playerIds:[localPlayerId],
@@ -604,14 +637,12 @@ function createCard(data, isRevealed=true, isPlayer=true){
         const info = attributeInfo[k];
         const rowClass = `attr-box w-full flex justify-between items-center px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl transition cursor-pointer select-none`;
         
-        // Logik für Re-Render Highlight
         let flashClass = '';
         if(gameMode==='ai' && aiGame.roundInProgress && document.getElementById('resultDetails').innerText.includes(info.name)) {
-             // Wenn Player dran war: Orange. Wenn KI dran war: Grau.
              if(aiGame.turn === 'player'){
-                 flashClass='flash-active';
+                 flashClass='flash-active'; // Orange wenn Player dran war
              } else {
-                 flashClass='highlight-compare';
+                 flashClass='highlight-compare'; // Grau/Schwarz wenn KI dran war
              }
         }
 
@@ -779,13 +810,13 @@ function aiTurn(){
 
     aiGame.roundInProgress = true;
     
-    // KI wählt -> Ihre Karte (eigentlich verdeckt) bekommt Highlight-Klasse für später
+    // KI wählt -> Ihre Karte (noch verdeckt, aber DOM existiert) markieren
     const row = document.querySelector(`div[data-attr-row="${k}"]`);
-    if(row) row.classList.add('highlight-compare'); // Grau/Schwarz
+    if(row) row.classList.add('highlight-compare'); // Grau
     
-    // Spieler Karte auch highlighten (Vergleich) - Grau
-    const playerRow = document.querySelector(`div[data-attr-btn="${k}"]`);
-    if(playerRow) playerRow.classList.add('highlight-compare');
+    // Spieler Karte auch markieren (Vergleich) - Grau
+    const playerRow = document.querySelector(`div[data-attr-btn="${k}"]`) || document.querySelector(`div[data-attr-row="${k}"]`);
+    if(playerRow) playerRow.classList.add('highlight-compare'); // Grau
 
     setTimeout(() => { selectAttributeAI(k); }, 2500);
 }
