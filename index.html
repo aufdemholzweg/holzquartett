@@ -11,6 +11,8 @@
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <!-- Markdown Parser für schöne KI-Antworten -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Confetti / Feuerwerk Bibliothek -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -40,8 +42,17 @@
         .animate-pulse-glow { animation: pulse-glow 2s infinite; }
         @keyframes pulse-glow { 0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); transform: translate(-50%, -50%) scale(1); } 50% { box-shadow: 0 0 15px 5px rgba(34, 197, 94, 0.4); transform: translate(-50%, -50%) scale(1.1); } 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); transform: translate(-50%, -50%) scale(1); } }
         
+        /* Wurm Animation (Zurück zur alten Pop-Up Animation von unten) */
         .animate-worm { animation: worm-pop-up 3.5s ease-in-out forwards; }
-        @keyframes worm-pop-up { 0% { transform: translateY(100%) rotate(0deg); opacity: 0; } 20% { transform: translateY(-20%) rotate(-10deg); opacity: 1; } 40% { transform: translateY(-20%) rotate(10deg); } 50% { transform: translateY(-30%) rotate(0deg) scale(1.1); } 60% { transform: translateY(-20%) rotate(-10deg) scale(1); } 80% { transform: translateY(-20%) rotate(0deg); opacity: 1; } 100% { transform: translateY(100%) rotate(0deg); opacity: 0; } }
+        @keyframes worm-pop-up { 
+            0% { transform: translateY(100%) rotate(0deg); opacity: 0; } 
+            20% { transform: translateY(-20%) rotate(-10deg); opacity: 1; } 
+            40% { transform: translateY(-20%) rotate(10deg); } 
+            50% { transform: translateY(-30%) rotate(0deg) scale(1.1); } /* Hüpfer */
+            60% { transform: translateY(-20%) rotate(-10deg) scale(1); } 
+            80% { transform: translateY(-20%) rotate(0deg); opacity: 1; } 
+            100% { transform: translateY(100%) rotate(0deg); opacity: 0; } 
+        }
         
         /* Utility Klassen */
         .opponent-back-name { position: absolute; top: 15%; width: 100%; text-align: center; color: rgba(255,255,255,0.95); font-weight: 700; font-size: 1.1rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5); pointer-events: none; }
@@ -94,17 +105,21 @@
                 <div id="playerCard" class="w-full h-full relative"></div>
             </div>
         </div>
+        
         <!-- SPALTE GEGNER -->
-        <div class="flex flex-col w-[48%] max-w-[280px] gap-2 z-10">
+        <div class="flex flex-col w-[48%] max-w-[280px] gap-2 z-10 relative">
             <div class="bg-white w-full rounded-2xl shadow-sm border border-orange-100 p-2 sm:p-3 text-center">
                 <div id="opponentNameDisplay" class="text-base sm:text-lg font-bold text-gray-600 leading-tight truncate">COMPUTER</div>
                 <div class="text-[10px] sm:text-sm text-gray-500 mt-0.5">Karten: <span id="aiCards" class="font-bold text-xl sm:text-2xl text-gray-800">15</span></div>
             </div>
+            
+            <!-- Karten Container -->
             <div class="w-full aspect-[20/46] perspective-1000 relative" id="aiCardContainer">
                 <div id="aiCard" class="w-full h-full relative"></div>
             </div>
         </div>
     </div>
+    
     <!-- Statusbalken (Visualisierung des Spielfortschritts) -->
     <div class="w-full mt-4 mb-24"> 
         <div class="flex justify-between text-[9px] sm:text-[10px] font-bold text-gray-400 mb-1 px-1">
@@ -117,10 +132,14 @@
     </div>
 </div>
 
-<!-- === FEEDBACK ELEMENT: HAPPY WOODWORM === -->
-<div id="happyWorm" class="fixed bottom-0 right-4 translate-y-full z-50 pointer-events-none transform transition-transform hidden">
+<!-- === FEEDBACK ELEMENT: HAPPY WOODWORM (Zurück auf alter Vertikalen Position: Unten Rechts) === -->
+<div id="happyWorm" class="fixed bottom-0 right-60 translate-y-full z-50 pointer-events-none transform transition-transform hidden">
     <div class="relative">
-        <div id="wormSpeech" class="absolute -top-10 -left-10 bg-white px-3 py-1.5 rounded-xl shadow-md border-2 border-amber-200 text-xs font-bold text-amber-800 whitespace-nowrap animate-bounce" style="animation-duration: 2s;">Stark! 🪵</div>
+        <!-- Sprechblase -->
+        <div id="wormSpeech" class="absolute -top-10 -left-10 bg-white px-3 py-1.5 rounded-xl shadow-md border-2 border-amber-200 text-xs font-bold text-amber-800 whitespace-nowrap animate-bounce" style="animation-duration: 2s;">
+            Stark! 🪵
+        </div>
+        <!-- Wurm Emoji (Groß) -->
         <div class="text-6xl filter drop-shadow-xl cursor-default select-none">🐛</div>
     </div>
 </div>
@@ -870,6 +889,27 @@ window.showFinalWinScreen = () => {
     document.getElementById('gameOverText').innerText = "Herzlichen Glückwunsch! Du bist der Holz-Meister.";
     document.getElementById('gameOverModal').classList.remove('hidden');
     
+    // FIREWORK ANIMATION START
+    var duration = 5 * 1000;
+    var animationEnd = Date.now() + duration;
+    var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 1000 };
+
+    var randomInRange = (min, max) => Math.random() * (max - min) + min;
+
+    var interval = setInterval(function() {
+        var timeLeft = animationEnd - Date.now();
+
+        if (timeLeft <= 0) {
+            return clearInterval(interval);
+        }
+
+        var particleCount = 50 * (timeLeft / duration);
+        // since particles fall down, start a bit higher than random
+        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+    }, 250);
+    // FIREWORK ANIMATION END
+
     // Leaderboard Update
     const name = gameMode==='ai' ? aiGame.playerName : localGameState.players[localPlayerId].name;
     saveToLeaderboard(name);
