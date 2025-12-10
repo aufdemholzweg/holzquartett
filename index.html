@@ -9,6 +9,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <!-- HTML2Canvas für Dokumentationszwecke (Masterarbeit) -->
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <!-- Markdown Parser für schöne KI-Antworten -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -53,6 +55,9 @@
         .attr-box.flash-active span { color: white !important; }
         .attr-box.highlight-compare { background-color: #e5e7eb !important; border-color: #9ca3af !important; color: #111827 !important; }
         .attr-box.highlight-compare span { color: #000000 !important; }
+
+        /* AI Chat Styles - Professionellerer Look */
+        .ai-chat-bubble { position: relative; background: #f8fafc; border-radius: 8px; padding: 12px; margin-top: 10px; font-size: 0.9rem; line-height: 1.5; border-left: 4px solid #d97706; }
     </style>
 </head>
 <body class="flex flex-col relative text-gray-800">
@@ -128,8 +133,8 @@
         <h3 id="resultText" class="text-xl sm:text-2xl font-black uppercase tracking-wide mb-2 text-gray-800"></h3>
         <p id="resultDetails" class="text-xs sm:text-sm text-gray-600 mb-6 font-mono bg-gray-100 px-3 py-1 rounded-lg"></p>
         <div class="flex gap-3 w-full">
-            <button id="bsInfoBtn" class="flex-1 bg-purple-600 hover:bg-purple-700 active:scale-95 text-white font-bold py-3 px-4 rounded-xl shadow-lg border-b-4 border-purple-800 transition text-sm sm:text-base">🎓 Zusatzwissen</button>
-            <button id="bsNextBtn" class="flex-1 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-bold py-3 px-4 rounded-xl shadow-lg border-b-4 border-amber-700 transition text-sm sm:text-base">Weiter &rarr;</button>
+            <button id="bsInfoBtn" class="flex-1 bg-amber-600 hover:bg-amber-700 active:scale-95 text-white font-bold py-3 px-4 rounded-xl shadow-lg border-b-4 border-amber-800 transition text-sm sm:text-base">🎓 Zusatzwissen</button>
+            <button id="bsNextBtn" class="flex-1 bg-green-600 hover:bg-green-700 active:scale-95 text-white font-bold py-3 px-4 rounded-xl shadow-lg border-b-4 border-green-800 transition text-sm sm:text-base">Weiter &rarr;</button>
         </div>
     </div>
 </div>
@@ -199,11 +204,14 @@
     </div>
 </div>
 
-<!-- Zusatzwissen Modal (Scaffolding) -->
+<!-- Zusatzwissen Modal (Scaffolding & AI) -->
 <div id="infoModal" class="hidden fixed inset-0 dimmer flex items-center justify-center z-50 p-4">
     <div class="bg-white rounded-2xl shadow-2xl overflow-hidden max-w-md w-full max-h-[90vh] flex flex-col">
-        <div class="bg-purple-700 p-4 flex justify-between items-center text-white shrink-0">
-            <h3 id="infoModalTitle" class="font-bold text-lg">🎓 Zusatzwissen</h3>
+        <div class="bg-amber-600 p-4 flex justify-between items-center text-white shrink-0 shadow-md">
+            <h3 id="infoModalTitle" class="font-bold text-lg flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                Fachwissen
+            </h3>
             <button onclick="window.closeInfoModal()" class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
         </div>
         <div id="infoModalContent" class="p-5 overflow-y-auto hide-scrollbar space-y-4"></div>
@@ -247,6 +255,8 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, deleteDoc, collection, query, orderBy, limit, getDocs, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const apiKey = ""; // Environment provided
 
 // === USER PROVIDED FIREBASE CONFIG ===
 const firebaseConfig = {
@@ -388,6 +398,47 @@ const attributeInfo={
 };
 
 function shuffleArray(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+
+// === AI FUNCTION ===
+async function askGemini(woodName, question) {
+    const aiOutput = document.getElementById('aiOutput');
+    const aiInput = document.getElementById('aiInput');
+    const aiBtn = document.getElementById('aiSendBtn');
+    
+    // UI Loading State
+    aiOutput.innerHTML = '<div class="flex items-center gap-2 text-gray-500"><svg class="animate-spin h-4 w-4 text-amber-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Recherchiere Fakten...</div>';
+    aiInput.disabled = true;
+    aiBtn.disabled = true;
+
+    // Prompt - Professional Style for Vocational Training
+    const prompt = `Du bist ein erfahrener Tischlermeister und Berufsschullehrer in einem Lernspiel für Holzberufe. 
+    Das aktuelle Holz ist: ${woodName}.
+    Die Frage des Nutzers ist: "${question}".
+    Antworte fachlich fundiert, präzise und praxisnah auf Deutsch. Vermeide kindliche Sprache. Nutze Fachbegriffe wo sinnvoll. Nutze Markdown für Fettungen wichtiger Begriffe. Halte die Antwort kompakt (max. 3-4 Sätze).`;
+
+    try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+        });
+        
+        if (!response.ok) throw new Error('API Fehler');
+        
+        const data = await response.json();
+        const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "Konnte keine Daten abrufen. Bitte versuche es erneut.";
+        
+        // Render Markdown
+        aiOutput.innerHTML = marked.parse(text);
+    } catch (e) {
+        console.error(e);
+        aiOutput.innerHTML = '<span class="text-red-500">Dienst derzeit nicht verfügbar (Verbindungsfehler).</span>';
+    } finally {
+        aiInput.disabled = false;
+        aiBtn.disabled = false;
+        aiInput.value = '';
+    }
+}
 
 // === CANVAS / SCREENSHOT FEATURE ===
 window.downloadResult = async function() {
@@ -911,9 +962,38 @@ document.getElementById('bsInfoBtn').addEventListener('click', ()=>{
                 </div>
             </div>`;
     }
+
+    // ✨ KI-Feature: Experten-Wissen UI (Updated)
+    const aiSection = document.createElement('div');
+    aiSection.className = "mt-6 p-4 bg-amber-50 border border-amber-200 rounded-xl";
+    aiSection.innerHTML = `
+        <h5 class="font-bold text-amber-800 text-sm mb-2 flex items-center gap-2">🤖 Experten-Wissen (KI)</h5>
+        <div id="aiOutput" class="ai-chat-bubble text-gray-700 bg-white shadow-sm min-h-[40px] text-sm">
+            Stelle eine fachliche Frage zu ${wood} oder nutze die Vorschläge.
+        </div>
+        <div class="flex gap-2 mt-3 overflow-x-auto pb-1 hide-scrollbar">
+            <button class="bg-white border border-amber-300 text-amber-800 text-xs px-3 py-1 rounded-full whitespace-nowrap hover:bg-amber-100 transition" onclick="window.triggerAiQuestion('${wood}', 'Nenne eine konkrete, fachgerechte Projektidee für dieses Holz mit einem kurzen Hinweis zur Konstruktion.')">🔨 Verwendung & Projekte</button>
+            <button class="bg-white border border-amber-300 text-amber-800 text-xs px-3 py-1 rounded-full whitespace-nowrap hover:bg-amber-100 transition" onclick="window.triggerAiQuestion('${wood}', 'Nenne ein interessantes, wenig bekanntes fachliches oder historisches Detail zu diesem Holz (Trivia).')">💡 Besonderheiten</button>
+            <button class="bg-white border border-amber-300 text-amber-800 text-xs px-3 py-1 rounded-full whitespace-nowrap hover:bg-amber-100 transition" onclick="window.triggerAiQuestion('${wood}', 'Wo wächst dieses Holz hauptsächlich und was sind die botanischen Besonderheiten?')">🌍 Vorkommen & Botanik</button>
+        </div>
+        <div class="flex gap-2 mt-2">
+            <input type="text" id="aiInput" class="flex-grow text-sm border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-amber-500 focus:outline-none" placeholder="Eigene Frage (z.B. Bearbeitung)...">
+            <button id="aiSendBtn" class="bg-amber-600 text-white p-2 rounded-lg hover:bg-amber-700 transition" onclick="window.triggerAiCustom('${wood}')">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+            </button>
+        </div>
+    `;
+    modalContent.appendChild(aiSection);
     
     document.getElementById('infoModal').classList.remove('hidden');
 });
+
+// Helper for AI Buttons
+window.triggerAiQuestion = (wood, q) => askGemini(wood, q);
+window.triggerAiCustom = (wood) => {
+    const val = document.getElementById('aiInput').value.trim();
+    if(val) askGemini(wood, val);
+};
 
 document.getElementById('bsNextBtn').addEventListener('click',()=> { closeBottomSheet(); window.nextRound(); });
 
