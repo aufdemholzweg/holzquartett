@@ -151,8 +151,8 @@
     </div>
 </div>
 
-<!-- Setup Modal (Startbildschirm) -->
-<div id="setupModal" class="fixed inset-0 dimmer flex items-center justify-center z-50 p-4 hidden">
+<!-- Setup Modal (Startbildschirm) - JETZT SICHTBAR PER DEFAULT (Kein "hidden") -->
+<div id="setupModal" class="fixed inset-0 dimmer flex items-center justify-center z-50 p-4">
     <div class="bg-white rounded-2xl shadow-2xl overflow-hidden max-w-sm w-full">
         <div class="bg-amber-500 p-5 text-white text-center font-bold text-lg sm:text-xl tracking-wide shadow-md">
             HOLZEN!<br><span class="text-sm font-normal opacity-90">Spielmodus wählen</span>
@@ -638,10 +638,16 @@ window.startGameAI = (name) => {
     updateDisplayAI();
 };
 
+let authRetries = 0;
 window.createGame = async (playerName) => {
     if (!auth.currentUser) { 
+        if(authRetries > 10) { 
+            console.error("Auth timeout"); 
+            alert("Verbindungsfehler: Firebase nicht erreichbar."); 
+            return; 
+        }
+        authRetries++;
         console.warn("Warte auf Auth...");
-        // Fallback: Kurz warten
         setTimeout(() => window.createGame(playerName), 500);
         return; 
     }
@@ -838,11 +844,15 @@ document.getElementById('bsInfoBtn').addEventListener('click', ()=>{
 });
 
 document.getElementById('bsNextBtn').addEventListener('click',()=> { closeBottomSheet(); window.nextRound(); });
-document.getElementById('setupModal').classList.remove('hidden');
 
 // Check URL for join (Multiplayer Deep Link)
 const p=new URLSearchParams(window.location.search);
-if(p.get('game')){ gameId=p.get('game'); window.showNamePrompt('join'); }
+if(p.get('game')){ 
+    // Wenn direktes Spiel, Setup verstecken und Join anzeigen
+    document.getElementById('setupModal').classList.add('hidden');
+    gameId=p.get('game'); 
+    window.showNamePrompt('join'); 
+}
 
 </script>
 </body>
