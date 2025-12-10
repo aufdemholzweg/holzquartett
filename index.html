@@ -471,10 +471,169 @@ const woodCards=[
  {name:"Ebenholz",dk:1,haerte:98,quellenSchwindenRadial:3.2,dichte:1200,gewicht:16500, imgTree:`${IMG_BASE}/ebenholz_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/ebenholz_2.jpeg${IMG_SUFFIX}`}
 ];
 
+const detailedWoodInfo = {
+    "Eiche": `
+        <p class="mb-2">Hart, schwer, sehr dauerhaft; hoher Gerbstoffanteil, daher widerstandsfähig gegen Pilze/Schädlinge, kann mit Eisen schwarz verfärben. Grobporig, deutliche Jahresringe.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Möbel, Fußböden, Treppen, Fassdauben, Außenbau (z. B. Terrassen), Fachwerk.</p>
+        <p class="italic text-gray-600"><strong>Zusatz:</strong> Traditionsholz und Symbol für Stärke; häufig in Wappen/Münzen.</p>
+    `,
+    "Buche": `
+        <p class="mb-2">Zäh, biegsam, gleichmäßige Struktur; ringporig mit dezenten Übergängen, harzarm.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Möbel, Parkett, Furniere, Sperrholz, Innenausbau.</p>
+        <p class="italic text-gray-600"><strong>Zusatz:</strong> Historisch beliebt für Räder/Griffe wegen Zähigkeit und Elastizität.</p>
+    `,
+    "Kiefer": `
+        <p class="mb-2">Weiches, harzhaltiges Nadelholz mit markanter Jahresringstruktur und Harzkanälen.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Bauholz, Dachstühle, Innenausbau, Paneele, einfache Möbel.</p>
+        <p class="italic text-gray-600"><strong>Zusatz:</strong> Kiefernharz diente früher als Klebstoff und Dichtmittel.</p>
+    `,
+    "Fichte": `
+        <p class="mb-2">Leichtes Bauholz mit gutem Festigkeits-Gewichts-Verhältnis; feine Zellstruktur ohne große Poren.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Bauholz, Innenverkleidung, Paneele, Möbelgrundkonstruktionen.</p>
+        <p class="italic text-gray-600"><strong>Zusatz:</strong> Klassiker im Dach- und Hallenbau vieler Alpenregionen.</p>
+    `,
+    "Tanne": `
+        <p class="mb-2">Harzarm, fein, ähnlich Fichte; dezente Jahresringe, keine großen Poren.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Innenausbau, Paneele, Bauholz, Möbel.</p>
+        <p class="italic text-gray-600"><strong>Zusatz:</strong> Angenehm geruchsarm im Innenraum durch wenig Harz.</p>
+    `,
+    "Lärche": `
+        <p class="mb-2">Relativ hart und witterungsbeständig; deutliche Jahresringe, harzhaltig.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Fassaden, Fenster, Terrassen, Außenmöbel.</p>
+        <p class="italic text-gray-600"><strong>Zusatz:</strong> Vergraut edel im Außenbereich auch ohne chemische Behandlung.</p>
+    `,
+    "Birke": `
+        <p class="mb-2">Helles, dekoratives Holz; zerstreutporig, feine gleichmäßige Struktur, gut biegbar.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Möbel, Furniere, Sperrholz, Innenausbau.</p>
+        <p class="italic text-gray-600"><strong>Zusatz:</strong> Birkenrinde wurde traditionell als wasserabweisendes Material genutzt.</p>
+    `,
+    "Ahorn": `
+        <p class="mb-2">Hart, hell, sehr fein und homogen; zerstreutporig.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Möbel, Parkett, Schneidebretter, Instrumentenbau.</p>
+        <p class="italic text-gray-600"><strong>Zusatz:</strong> Ahornsirup stammt v. a. aus nordamerikanischen Arten.</p>
+    `,
+    "Esche": `
+        <p class="mb-2">Sehr zäh und elastisch; ringporig mit deutlichen Frühholzporen.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Werkzeugstiele, Sportgeräte, Möbel, Parkett.</p>
+        <p class="italic text-gray-600"><strong>Zusatz:</strong> Klassisches Holz für Speichen und Stiele wegen Elastizität.</p>
+    `,
+    "Kirsche": `
+        <p class="mb-2">Warm rötlich, edel; ringporig, klare Jahresringe, dunkelt mit Licht nach.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Möbel, Furniere, Innenausbau.</p>
+        <p class="italic text-gray-600"><strong>Zusatz:</strong> Entwickelt mit der Zeit eine charakteristische, tiefere Farbigkeit.</p>
+    `,
+    "Nussbaum": `
+        <p class="mb-2">Dunkles, dekoratives Kernholz; zerstreutporig, markante Maserung.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Hochwertige Möbel, Furniere, Intarsien.</p>
+        <p class="italic text-gray-600"><strong>Zusatz:</strong> Renaissance-Liebling für repräsentative Innenausstattungen.</p>
+    `,
+    "Douglasie": `
+        <p class="mb-2">Robust, relativ dauerhaft; deutliche Jahresringe, gut für Außen.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Bauholz, Fassaden, Terrassen, Außenmöbel.</p>
+        <p class="italic text-gray-600"><strong>Zusatz:</strong> Ursprünglich nordamerikanisch, in Europa weit verbreitet.</p>
+    `,
+    "Zeder": `
+        <p class="mb-2">Angenehmer Duft, natürlich insektenabweisend; fein und gleichmäßig.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Möbel, Schränke, Fassaden, Innenraum.</p>
+        <p class="italic text-gray-600"><strong>Zusatz:</strong> Beliebt in Kleiderschränken wegen Geruch und Mottenabwehr.</p>
+    `,
+    "Mahagoni": `
+        <p class="mb-2">Tropisches Edelholz, dauerhaft; zerstreutporig, dekoratives Kernholz.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Möbel, Fenster, Bootsbau, hochwertige Ausbauten.</p>
+        <p class="italic text-gray-600"><strong>Zusatz:</strong> Teilweise artenschutzreguliert – Herkunft/Handel beachten.</p>
+    `,
+    "Teak": `
+        <p class="mb-2">Sehr witterungsbeständig (Öl-/Harzgehalt); fein zerstreutporig, edle Optik.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Gartenmöbel, Terrassen, Bootsdecks, Außenfenster.</p>
+        <p class="italic text-gray-600"><strong>Zusatz:</strong> Historisch geschätzt im Schiffbau wegen Dauerhaftigkeit.</p>
+    `,
+    "Bambus": `
+        <p class="mb-2">Botanisch Gras, aber sehr fest; röhrenartige Struktur statt klassischer Poren.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Böden, Möbel, Treppen, nachhaltiger Leichtbau.</p>
+        <p class="italic text-gray-600"><strong>Zusatz:</strong> Extrem schnelles Wachstum, daher ökologisch interessant.</p>
+    `,
+    "Pappel": `
+        <p class="mb-2">Sehr leicht und weich; feine Struktur, dezente Jahresringe.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Leichtbau, Verpackungen, Innenmöbel mit geringer Last.</p>
+        <p class="italic text-gray-600"><strong>Zusatz:</strong> Gern im Modell- und Fahrzeuginnenausbau genutzt.</p>
+    `,
+    "Weide": `
+        <p class="mb-2">Elastisch und biegsam; fein zerstreutporig.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Flechtwerk, Körbe, Gartenbau, leichte Möbel.</p>
+        <p class="italic text-gray-600"><strong>Zusatz:</strong> Weidenruten sind klassische Materialien für Geflechte.</p>
+    `,
+    "Linde": `
+        <p class="mb-2">Weich, homogen, sehr gut schnitzbar; fein zerstreutporig.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Bildhauerei, Orgelbau, Intarsien, feine Möbelteile.</p>
+        <p class="italic text-gray-600"><strong>Zusatz:</strong> Traditionsholz mittelalterlicher Schnitzer.</p>
+    `,
+    "Ulme": `
+        <p class="mb-2">Zäh, eher hart; ringporig, teils unruhiger Faserverlauf.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Möbel, Innenausbau, Reparatur- und Biegeteile.</p>
+        <p class="italic text-gray-600"><strong>Zusatz:</strong> Historisch im Wagenbau geschätzt.</p>
+    `,
+    "Kastanie": `
+        <p class="mb-2">Wetterbeständig, warm getönt; ringporig mit klarer Jahresringzeichnung.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Außenbau, Möbel, Balken, Gartenholz.</p>
+        <p class="italic text-gray-600"><strong>Zusatz:</strong> Oft Alternative zur Eiche im Außenbereich.</p>
+    `,
+    "Robinie": `
+        <p class="mb-2">Eines der härtesten europäischen Hölzer; sehr dauerhaft im Freien; ringporig.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Terrassen, Zäune, Spielplätze, Außenkonstruktionen.</p>
+        <p class="italic text-gray-600"><strong>Zusatz:</strong> „Europäisches Teak“ wegen seiner Dauerhaftigkeit.</p>
+    `,
+    "Hemlock": `
+        <p class="mb-2">Weiches, gleichmäßiges Nadelholz; feine Struktur, dezente Ringe.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Innenausbau, Paneele, Leichtbau, Möbel.</p>
+        <p class="italic text-gray-600"><strong>Zusatz:</strong> Gutes Verhältnis von Gewicht zu Stabilität.</p>
+    `,
+    "Zypresse": `
+        <p class="mb-2">Duftend, natürlich resistent; fein und gleichmäßig.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Außen- und Gartenholz, Fassaden, Möbel.</p>
+        <p class="italic text-gray-600"><strong>Zusatz:</strong> Traditionelles Bauholz im mediterranen Raum.</p>
+    `,
+    "Redwood": `
+        <p class="mb-2">Leicht, relativ dauerhaft; fein zerstreutporig, dekorative Farbe.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Außenholz, Zäune, Gartenkonstruktionen.</p>
+        <p class="italic text-gray-600"><strong>Zusatz:</strong> Stammt vom Küstenmammutbaum – einer der höchsten Baumarten.</p>
+    `,
+    "Hickory": `
+        <p class="mb-2">Sehr zäh und hart; ringporig mit ausgeprägten Poren.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Werkzeugstiele, Sportgeräte, stark beanspruchte Möbel.</p>
+        <p class="italic text-gray-600"><strong>Zusatz:</strong> Klassisches Holz für Peitschen- und Geräteschäfte.</p>
+    `,
+    "Wenge": `
+        <p class="mb-2">Dunkel, sehr hart; zerstreutporig, charakteristische Streifenzeichnung.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Luxusmöbel, Parkett, Furniere.</p>
+        <p class="italic text-gray-600"><strong>Zusatz:</strong> Wirkt in Kontrastkombinationen mit hellen Hölzern besonders.</p>
+    `,
+    "Zebrano": `
+        <p class="mb-2">Markante Streifenoptik; zerstreutporig mit dekorativer Maserung.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Designmöbel, Furniere, Intarsien.</p>
+        <p class="italic text-gray-600"><strong>Zusatz:</strong> Beliebt für auffällige Akzente.</p>
+    `,
+    "Palisander": `
+        <p class="mb-2">Dekorativ, fest und langlebig; feine, gleichmäßige Porung.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Gitarren/Instrumente, Möbel, Furniere.</p>
+        <p class="italic text-gray-600"><strong>Zusatz:</strong> Traditionell exklusiv im Instrumentenbau; Artenschutz-Lagen beachten.</p>
+    `,
+    "Ebenholz": `
+        <p class="mb-2">Extrem hart und dicht, nahezu schwarz; sehr feinporig.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Klaviertasten, Intarsien, Luxusdekore, Griffbretter.</p>
+        <p class="italic text-gray-600"><strong>Zusatz:</strong> Seit der Antike als edles, seltenes Holz geschätzt.</p>
+    `
+};
+
 const woodInfo = {};
 woodCards.forEach(c => {
+    // Falls keine spezifischen Infos da sind, Fallback
+    const content = detailedWoodInfo[c.name] || `
+        <p class="mb-2">Die ${c.name} ist eine Holzart mit einer Rohdichte von ca. ${c.dichte} kg/m³.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Allgemeine Holzverarbeitung.</p>
+    `;
+
     woodInfo[c.name] = {
-        info: `Die ${c.name} ist eine Holzart mit einer Rohdichte von ca. ${c.dichte} kg/m³.`,
+        text: content,
         bildBaum: c.imgTree,
         bildQuerschnitt: c.imgCross
     };
@@ -637,8 +796,11 @@ window.populateGameInfoModal = function() {
     list.innerHTML = html;
 };
 window.showInfoModal = function() {
+    if (lastRoundWinningWoodName) {
+        showWoodInfo(lastRoundWinningWoodName);
+    }
     closeBottomSheet(); 
-    document.getElementById('infoModal').classList.remove('hidden');
+    // showWoodInfo removes the 'hidden' class from infoModal
 };
 
 window.copyShareLink=async()=>{
@@ -742,6 +904,14 @@ function updateMultiplayerUI(gd){
         const winnerName = gd.lastResult.winnerId===localPlayerId ? 'Du gewinnst!' : (gd.lastResult.winnerId==='tie'?'Unentschieden':'Gegner gewinnt!');
         document.getElementById('resultText').className = gd.lastResult.winnerId===localPlayerId ? 'text-2xl font-black uppercase text-green-600' : 'text-2xl font-black uppercase text-red-600';
         document.getElementById('resultDetails').innerText = `${attributeInfo[gd.lastResult.attribute].name}: ${gd.lastResult.values[localPlayerId]} vs ${gd.lastResult.values[oppId]}`;
+        
+        // Determine winning wood for info modal
+        const winnerId = gd.lastResult.winnerId;
+        const relevantId = (winnerId === 'tie') ? localPlayerId : winnerId;
+        if (gd.currentCards && gd.currentCards[relevantId]) {
+             lastRoundWinningWoodName = gd.currentCards[relevantId].name;
+        }
+
         if(document.getElementById('bottomSheet').classList.contains('hidden')) openBottomSheet(winnerName);
         if(gd.lastResult.winnerId===localPlayerId) showHappyWorm(); // Holzwurm MP
     } else {
@@ -1161,19 +1331,18 @@ window.showWoodInfo = function(name){
     const content=document.getElementById('infoModalContent');
     
     const w = woodInfo[name] || {};
+    const details = w.text || "Keine Informationen verfügbar.";
     
     content.innerHTML=`
         <div class="bg-purple-50 p-4 rounded-xl border-l-4 border-purple-500 text-sm text-gray-700 leading-relaxed mb-4">
-            <span class="font-bold block mb-1 text-purple-700">${name}</span>
-            ${w.info || 'Keine Info verfügbar.'}
+            <h4 class="font-black text-lg text-purple-800 mb-2">${name}</h4>
+            ${details}
         </div>
         <div class="grid grid-cols-2 gap-3">
             <div class="space-y-1">
-                <span class="text-[10px] font-bold uppercase text-gray-500 tracking-wider">Baum</span>
                 <img src="${w.bildBaum}" class="rounded-lg shadow-sm border w-full h-32 object-cover bg-gray-100" onerror="this.style.opacity=0.3">
             </div>
             <div class="space-y-1">
-                <span class="text-[10px] font-bold uppercase text-gray-500 tracking-wider">Querschnitt</span>
                 <img src="${w.bildQuerschnitt}" class="rounded-lg shadow-sm border w-full h-32 object-cover bg-gray-100" onerror="this.style.opacity=0.3">
             </div>
         </div>
