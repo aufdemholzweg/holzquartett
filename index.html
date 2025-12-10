@@ -710,16 +710,29 @@ function displayMultiplayerCards(gd){
 window.selectAttribute = function(attr){
     if(gameMode==='ai') {
         if(aiGame.roundInProgress) return;
+        
+        // 1. User Button markieren
         const btn = document.querySelector(`div[data-attr-btn="${attr}"]`);
         if(btn) btn.classList.add('flash-active');
 
         aiGame.roundInProgress = true; 
         
-        const oppRow = document.querySelector(`div[data-attr-row="${attr}"]`);
-        if(oppRow) oppRow.classList.add('highlight-compare');
+        // 2. Verzögerung 0.5s: Karte drehen + Gegner markieren
+        setTimeout(() => {
+            // Flip
+            const ac=document.getElementById('aiCard').querySelector('.card-3d');
+            if(ac){ ac.classList.remove('card-flipped'); playSound(sounds.flip); }
+            
+            // Highlight Grey
+            const oppRow = document.querySelector(`div[data-attr-row="${attr}"]`);
+            if(oppRow) oppRow.classList.add('highlight-compare');
 
-        // 2.5 Sekunden Pause
-        setTimeout(() => { selectAttributeAI(attr); }, 2500);
+            // 3. Verzögerung 2s: Ergebnis
+            setTimeout(() => {
+                evaluateRoundAI(attr);
+            }, 2000);
+
+        }, 500);
 
     } else if(gameMode==='multiplayer') {
         multiplayerSelectAttribute(attr);
@@ -809,49 +822,49 @@ function aiTurn(){
     const k=keys[Math.floor(Math.random()*keys.length)];
 
     aiGame.roundInProgress = true;
-    
-    // KI wählt -> Ihre Karte (noch verdeckt, aber DOM existiert) markieren
     const row = document.querySelector(`div[data-attr-row="${k}"]`);
     if(row) row.classList.add('highlight-compare'); // Grau
     
-    // Spieler Karte auch markieren (Vergleich) - Grau
     const playerRow = document.querySelector(`div[data-attr-btn="${k}"]`) || document.querySelector(`div[data-attr-row="${k}"]`);
     if(playerRow) playerRow.classList.add('highlight-compare'); // Grau
 
-    setTimeout(() => { selectAttributeAI(k); }, 2500);
+    setTimeout(() => { 
+        // Flip
+        const ac=document.getElementById('aiCard').querySelector('.card-3d');
+        if(ac){ ac.classList.remove('card-flipped'); playSound(sounds.flip); }
+        
+        setTimeout(() => {
+             evaluateRoundAI(k);
+        }, 2000);
+    }, 500);
 }
 
-function selectAttributeAI(attr){
+function evaluateRoundAI(attr){
     const pv=aiGame.currentPlayerCard[attr];
     const av=aiGame.currentAiCard[attr];
     
-    const ac=document.getElementById('aiCard').querySelector('.card-3d');
-    if(ac){ ac.classList.remove('card-flipped'); playSound(sounds.flip); }
+    let pWins;
+    if(attr==='dk'||attr==='quellenSchwindenRadial') pWins = pv<av ? true : (av<pv ? false : 'tie');
+    else pWins = pv>av ? true : (av>pv ? false : 'tie');
     
-    setTimeout(()=>{
-        let pWins;
-        if(attr==='dk'||attr==='quellenSchwindenRadial') pWins = pv<av ? true : (av<pv ? false : 'tie');
-        else pWins = pv>av ? true : (av>pv ? false : 'tie');
-        
-        const resText = pWins===true ? 'Du gewinnst!' : (pWins===false ? 'Computer gewinnt!' : 'Unentschieden');
-        const resColor = pWins===true ? 'text-green-600' : (pWins===false ? 'text-red-600' : 'text-gray-600');
-        
-        document.getElementById('resultText').innerText = resText;
-        document.getElementById('resultText').className = `text-2xl font-black uppercase tracking-wide mb-2 ${resColor}`;
-        document.getElementById('resultDetails').innerText = `${attributeInfo[attr].name}: ${pv} vs ${av}`;
-        openBottomSheet(resText);
-        
-        if(pWins===true) { playSound(sounds.win); triggerWinStarAnimation(); lastRoundWinningWoodName = aiGame.currentPlayerCard.name; }
-        else if(pWins===false) { lastRoundWinningWoodName = aiGame.currentAiCard.name; }
-        else { lastRoundWinningWoodName = aiGame.currentPlayerCard.name; }
-        
-        const pC=aiGame.playerCards.shift(); const aC=aiGame.aiCards.shift();
-        if(pWins===true){ aiGame.playerCards.push(pC, aC); aiGame.turn='player'; }
-        else if(pWins===false){ aiGame.aiCards.push(aC, pC); aiGame.turn='ai'; }
-        else { aiGame.playerCards.push(pC); aiGame.aiCards.push(aC); }
-        
-        if(aiGame.playerCards.length===0 || aiGame.aiCards.length===0) setTimeout(endGame, 1000);
-    }, 600);
+    const resText = pWins===true ? 'Du gewinnst!' : (pWins===false ? 'Computer gewinnt!' : 'Unentschieden');
+    const resColor = pWins===true ? 'text-green-600' : (pWins===false ? 'text-red-600' : 'text-gray-600');
+    
+    document.getElementById('resultText').innerText = resText;
+    document.getElementById('resultText').className = `text-2xl font-black uppercase tracking-wide mb-2 ${resColor}`;
+    document.getElementById('resultDetails').innerText = `${attributeInfo[attr].name}: ${pv} vs ${av}`;
+    openBottomSheet(resText);
+    
+    if(pWins===true) { playSound(sounds.win); triggerWinStarAnimation(); lastRoundWinningWoodName = aiGame.currentPlayerCard.name; }
+    else if(pWins===false) { lastRoundWinningWoodName = aiGame.currentAiCard.name; }
+    else { lastRoundWinningWoodName = aiGame.currentPlayerCard.name; }
+    
+    const pC=aiGame.playerCards.shift(); const aC=aiGame.aiCards.shift();
+    if(pWins===true){ aiGame.playerCards.push(pC, aC); aiGame.turn='player'; }
+    else if(pWins===false){ aiGame.aiCards.push(aC, pC); aiGame.turn='ai'; }
+    else { aiGame.playerCards.push(pC); aiGame.aiCards.push(aC); }
+    
+    if(aiGame.playerCards.length===0 || aiGame.aiCards.length===0) setTimeout(endGame, 1000);
 }
 
 function nextRoundAI(){
