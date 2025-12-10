@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Holz-Quartett</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- QR Code Library -->
+    <!-- QR Code Library (bleibt global) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
         /* Optimierung für Mobile Viewports (Adressleiste) */
@@ -160,8 +161,8 @@
         <div class="flex flex-col w-[48%] max-w-[280px] gap-2 z-10">
             <!-- Score Box -->
             <div class="bg-white w-full rounded-2xl shadow-sm border border-orange-100 p-2 sm:p-3 text-center">
-                <div id="playerNameDisplay" class="text-base sm:text-lg font-bold text-amber-700 leading-tight truncate">Chris</div>
-                <div class="text-[10px] sm:text-sm text-gray-500 mt-0.5">Karten: <span id="playerCards" class="font-bold text-xl sm:text-2xl text-gray-800">16</span></div>
+                <div id="playerNameDisplay" class="text-base sm:text-lg font-bold text-amber-700 leading-tight truncate">Spieler</div>
+                <div class="text-[10px] sm:text-sm text-gray-500 mt-0.5">Karten: <span id="playerCards" class="font-bold text-xl sm:text-2xl text-gray-800">15</span></div>
             </div>
             
             <!-- Karte -->
@@ -175,7 +176,7 @@
             <!-- Score Box -->
             <div class="bg-white w-full rounded-2xl shadow-sm border border-orange-100 p-2 sm:p-3 text-center">
                 <div id="opponentNameDisplay" class="text-base sm:text-lg font-bold text-gray-600 leading-tight truncate">GEGNER</div>
-                <div class="text-[10px] sm:text-sm text-gray-500 mt-0.5">Karten: <span id="aiCards" class="font-bold text-xl sm:text-2xl text-gray-800">16</span></div>
+                <div class="text-[10px] sm:text-sm text-gray-500 mt-0.5">Karten: <span id="aiCards" class="font-bold text-xl sm:text-2xl text-gray-800">15</span></div>
             </div>
 
             <!-- Karte -->
@@ -368,26 +369,26 @@
 
 <!-- Scripts -->
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, deleteDoc, collection, query, orderBy, limit, getDocs, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+// Import Firebase directly as module (v9+) to avoid namespace issues
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, deleteDoc, collection, query, orderBy, limit, getDocs, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCyRXl8-JPr1xTXPDi1VG-eQk6fOnTpqUI",
-  authDomain: "holzquartett-3a177.firebaseapp.com",
-  projectId: "holzquartett-3a177",
-  storageBucket: "holzquartett-3a177.appspot.com",
-  messagingSenderId: "1081595025073",
-  appId: "1:1081595025073:web:bc571fffb6e4f20b27f490",
-  measurementId: "G-HKLWFJE83K"
-};
-
+// Konfiguration automatisch laden
+const firebaseConfig = JSON.parse(__firebase_config);
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
 const auth = getAuth(app);
+const db = getFirestore(app);
+const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+// Helper für korrekte Firestore Pfade in dieser Umgebung
+// Regel: /artifacts/{appId}/public/data/{collection}
+const getPublicCollection = (colName) => collection(db, 'artifacts', appId, 'public', 'data', colName);
+const getPublicDoc = (colName, docId) => doc(db, 'artifacts', appId, 'public', 'data', colName, docId);
 
 async function trackEvent(type) {
-    const ref = doc(db, "statistics", "usage"); 
+    // Tracking in 'statistics' collection
+    const ref = getPublicDoc("statistics", "usage"); 
     try {
         await setDoc(ref, {
             [type]: increment(1),
@@ -398,77 +399,76 @@ async function trackEvent(type) {
     }
 }
 
+// Auth Init
+const initAuth = async () => {
+    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+        await signInWithCustomToken(auth, __initial_auth_token);
+    } else {
+        await signInAnonymously(auth);
+    }
+};
+initAuth();
+
 let gameMode=null, gameId=null, localPlayerId=null, unsubscribeGame=null, localGameState={}, hasCopiedShareLink=false;
 let isMuted=false;
 let roundSoundPlayed=false;
 const sounds={
-  flip:new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_139083c224.mp3'),
-  win:new Audio('https://github.com/aufdemholzweg/holzquartett/blob/894e048eea71ba49921abfe6827bd8dc723f8c2d/gewonnen.mp3?raw=true'),
-  chime:new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c744c8.mp3'),
-  starWin:new Audio('https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3')
+ flip:new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_139083c224.mp3'),
+ win:new Audio('https://github.com/aufdemholzweg/holzquartett/blob/894e048eea71ba49921abfe6827bd8dc723f8c2d/gewonnen.mp3?raw=true'),
+ chime:new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c744c8.mp3'),
+ starWin:new Audio('https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3')
 };
 function playSound(a){ if(!isMuted && a){ a.currentTime=0; a.play().catch(()=>{}); } }
 
 function isOpponentNameBackVisible(){ return localStorage.getItem('holzquartett_showOpponentNameOnBack')==='true'; }
 function setOpponentNameBackVisible(v){ localStorage.setItem('holzquartett_showOpponentNameOnBack', v?'true':'false'); }
 
-const woodCards=[
- {name:"Eiche",dk:2,haerte:85,quellenSchwindenRadial:4.0,dichte:650,gewicht:12000},
- {name:"Buche",dk:5,haerte:80,quellenSchwindenRadial:5.8,dichte:720,gewicht:14000},
- {name:"Kiefer",dk:3,haerte:40,quellenSchwindenRadial:3.5,dichte:520,gewicht:11000},
- {name:"Fichte",dk:4,haerte:35,quellenSchwindenRadial:3.6,dichte:450,gewicht:11000},
- {name:"Tanne",dk:4,haerte:38,quellenSchwindenRadial:3.5,dichte:460,gewicht:10000},
- {name:"Lärche",dk:3,haerte:55,quellenSchwindenRadial:3.7,dichte:590,gewicht:12000},
- {name:"Birke",dk:5,haerte:60,quellenSchwindenRadial:5.4,dichte:650,gewicht:13000},
- {name:"Ahorn",dk:5,haerte:75,quellenSchwindenRadial:4.8,dichte:630,gewicht:12500},
- {name:"Esche",dk:5,haerte:90,quellenSchwindenRadial:4.9,dichte:700,gewicht:13000},
- {name:"Kirsche",dk:3,haerte:70,quellenSchwindenRadial:4.0,dichte:600,gewicht:11500},
- {name:"Nussbaum",dk:3,haerte:65,quellenSchwindenRadial:4.0,dichte:640,gewicht:12000},
- {name:"Douglasie",dk:3,haerte:45,quellenSchwindenRadial:3.5,dichte:510,gewicht:12000},
- {name:"Zeder",dk:2,haerte:42,quellenSchwindenRadial:2.8,dichte:480,gewicht:9500},
- {name:"Mahagoni",dk:2,haerte:55,quellenSchwindenRadial:3.0,dichte:550,gewicht:10500},
- {name:"Teak",dk:1,haerte:60,quellenSchwindenRadial:2.5,dichte:650,gewicht:11000},
- {name:"Bambus",dk:4,haerte:50,quellenSchwindenRadial:3.0,dichte:400,gewicht:18000},
- {name:"Pappel",dk:5,haerte:25,quellenSchwindenRadial:4.5,dichte:380,gewicht:9000},
- {name:"Weide",dk:5,haerte:30,quellenSchwindenRadial:4.0,dichte:420,gewicht:8000},
- {name:"Linde",dk:5,haerte:35,quellenSchwindenRadial:3.8,dichte:530,gewicht:9000},
- {name:"Ulme",dk:3,haerte:75,quellenSchwindenRadial:4.5,dichte:680,gewicht:11500},
- {name:"Kastanie",dk:2,haerte:50,quellenSchwindenRadial:3.5,dichte:600,gewicht:10000},
- {name:"Robinie",dk:1,haerte:80,quellenSchwindenRadial:3.0,dichte:730,gewicht:15000},
- {name:"Hemlock",dk:4,haerte:40,quellenSchwindenRadial:3.6,dichte:500,gewicht:10000},
- {name:"Zypresse",dk:2,haerte:48,quellenSchwindenRadial:3.0,dichte:520,gewicht:9000},
- {name:"Redwood",dk:2,haerte:35,quellenSchwindenRadial:2.8,dichte:400,gewicht:8500},
- {name:"Hickory",dk:3,haerte:95,quellenSchwindenRadial:5.5,dichte:750,gewicht:14000},
- {name:"Wenge",dk:2,haerte:88,quellenSchwindenRadial:3.8,dichte:880,gewicht:16000},
- {name:"Zebrano",dk:3,haerte:70,quellenSchwindenRadial:4.0,dichte:750,gewicht:13000},
- {name:"Palisander",dk:2,haerte:82,quellenSchwindenRadial:3.0,dichte:850,gewicht:16000},
- {name:"Ebenholz",dk:1,haerte:98,quellenSchwindenRadial:3.2,dichte:1200,gewicht:16500}
-];
+// --- HOLZ DATEN ---
+// GitHub Base URL
+const IMG_BASE = "https://github.com/aufdemholzweg/holzquartett/blob/b9d51d5b5d930f643a3f3861262361b97c0beb7c/images";
+const IMG_SUFFIX = "?raw=true";
 
-const getSlug = (name) => {
-    const map = {
-        'Eiche':'eiche', 'Buche':'buche', 'Kiefer':'kiefer', 'Fichte':'fichte', 'Tanne':'tanne',
-        'Lärche':'laerche', 'Birke':'birke', 'Ahorn':'ahorn', 'Esche':'esche', 'Kirsche':'kirsche',
-        'Nussbaum':'nussbaum', 'Douglasie':'douglasie', 'Zeder':'zeder', 'Mahagoni':'mahagoni',
-        'Teak':'teak', 'Bambus':'bambus', 'Pappel':'pappel', 'Weide':'weide', 'Linde':'linde',
-        'Ulme':'ulme', 'Kastanie':'kastanie', 'Robinie':'robinie', 'Hemlock':'hemlock',
-        'Zypresse':'zypresse', 'Redwood':'redwood', 'Hickory':'hickory', 'Wenge':'wenge',
-        'Zebrano':'zebrano', 'Palisander':'palisander', 'Ebenholz':'ebenholz'
-    };
-    return map[name] || name.toLowerCase();
-};
-const getWoodImage = (name, type) => {
-    const slug = getSlug(name);
-    const num = type === 'tree' ? '1' : '2';
-    return `https://github.com/aufdemholzweg/holzquartett/blob/main/images/${slug}_${num}.jpg?raw=true`;
-};
+// Das Array mit expliziten Bildpfaden, um JPG/JPEG Konflikte zu vermeiden
+const woodCards=[
+ {name:"Eiche",dk:2,haerte:85,quellenSchwindenRadial:4.0,dichte:650,gewicht:12000, imgTree:`${IMG_BASE}/eiche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/eiche_2.jpeg${IMG_SUFFIX}`},
+ {name:"Buche",dk:5,haerte:80,quellenSchwindenRadial:5.8,dichte:720,gewicht:14000, imgTree:`${IMG_BASE}/buche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/buche_2.jpeg${IMG_SUFFIX}`},
+ {name:"Kiefer",dk:3,haerte:40,quellenSchwindenRadial:3.5,dichte:520,gewicht:11000, imgTree:`${IMG_BASE}/kiefer_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/kiefer_2.jpg${IMG_SUFFIX}`},
+ {name:"Fichte",dk:4,haerte:35,quellenSchwindenRadial:3.6,dichte:450,gewicht:11000, imgTree:`${IMG_BASE}/fichte_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/fichte_2.jpeg${IMG_SUFFIX}`},
+ {name:"Tanne",dk:4,haerte:38,quellenSchwindenRadial:3.5,dichte:460,gewicht:10000, imgTree:`${IMG_BASE}/tanne_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/tanne_2.jpeg${IMG_SUFFIX}`},
+ {name:"Lärche",dk:3,haerte:55,quellenSchwindenRadial:3.7,dichte:590,gewicht:12000, imgTree:`${IMG_BASE}/laerche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/laerche_2.jpeg${IMG_SUFFIX}`},
+ {name:"Birke",dk:5,haerte:60,quellenSchwindenRadial:5.4,dichte:650,gewicht:13000, imgTree:`${IMG_BASE}/birke_1.jpg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/birke_2.jpeg${IMG_SUFFIX}`},
+ {name:"Ahorn",dk:5,haerte:75,quellenSchwindenRadial:4.8,dichte:630,gewicht:12500, imgTree:`${IMG_BASE}/ahorn_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/ahorn_2.jpeg${IMG_SUFFIX}`},
+ {name:"Esche",dk:5,haerte:90,quellenSchwindenRadial:4.9,dichte:700,gewicht:13000, imgTree:`${IMG_BASE}/esche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/esche_2.jpg${IMG_SUFFIX}`},
+ {name:"Kirsche",dk:3,haerte:70,quellenSchwindenRadial:4.0,dichte:600,gewicht:11500, imgTree:`${IMG_BASE}/kirsche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/kirsche_2.jpeg${IMG_SUFFIX}`},
+ {name:"Nussbaum",dk:3,haerte:65,quellenSchwindenRadial:4.0,dichte:640,gewicht:12000, imgTree:`${IMG_BASE}/nuss_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/nuss_2.jpeg${IMG_SUFFIX}`},
+ {name:"Douglasie",dk:3,haerte:45,quellenSchwindenRadial:3.5,dichte:510,gewicht:12000, imgTree:`${IMG_BASE}/douglasie_1.jpg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/douglasie_2.jpg${IMG_SUFFIX}`},
+ {name:"Zeder",dk:2,haerte:42,quellenSchwindenRadial:2.8,dichte:480,gewicht:9500, imgTree:`${IMG_BASE}/zeder_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/zeder_2.jpeg${IMG_SUFFIX}`},
+ {name:"Mahagoni",dk:2,haerte:55,quellenSchwindenRadial:3.0,dichte:550,gewicht:10500, imgTree:`${IMG_BASE}/mahagoni_1.jpg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/mahagoni_2.jpeg${IMG_SUFFIX}`},
+ {name:"Teak",dk:1,haerte:60,quellenSchwindenRadial:2.5,dichte:650,gewicht:11000, imgTree:`${IMG_BASE}/teak_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/teak_2.jpeg${IMG_SUFFIX}`},
+ {name:"Bambus",dk:4,haerte:50,quellenSchwindenRadial:3.0,dichte:400,gewicht:18000, imgTree:`${IMG_BASE}/bambus_1.jpg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/bambus_2.jpg${IMG_SUFFIX}`},
+ {name:"Pappel",dk:5,haerte:25,quellenSchwindenRadial:4.5,dichte:380,gewicht:9000, imgTree:`${IMG_BASE}/pappel_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/pappel_2.jpeg${IMG_SUFFIX}`},
+ {name:"Weide",dk:5,haerte:30,quellenSchwindenRadial:4.0,dichte:420,gewicht:8000, imgTree:`${IMG_BASE}/weide_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/weide_2.jpeg${IMG_SUFFIX}`},
+ {name:"Linde",dk:5,haerte:35,quellenSchwindenRadial:3.8,dichte:530,gewicht:9000, imgTree:`${IMG_BASE}/linde_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/linde_2.jpeg${IMG_SUFFIX}`},
+ {name:"Ulme",dk:3,haerte:75,quellenSchwindenRadial:4.5,dichte:680,gewicht:11500, imgTree:`${IMG_BASE}/ulme_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/ulme_2.jpeg${IMG_SUFFIX}`},
+ {name:"Kastanie",dk:2,haerte:50,quellenSchwindenRadial:3.5,dichte:600,gewicht:10000, imgTree:`${IMG_BASE}/kastanie_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/kastanie_2.jpeg${IMG_SUFFIX}`},
+ {name:"Robinie",dk:1,haerte:80,quellenSchwindenRadial:3.0,dichte:730,gewicht:15000, imgTree:`${IMG_BASE}/robinie_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/robinie_2.jpg${IMG_SUFFIX}`},
+ {name:"Hemlock",dk:4,haerte:40,quellenSchwindenRadial:3.6,dichte:500,gewicht:10000, imgTree:`${IMG_BASE}/hemlock_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/hemlock_2.jpeg${IMG_SUFFIX}`},
+ // Zypresse war nicht in deiner Liste, ich nehme Fallback oder Platzhalter
+ {name:"Zypresse",dk:2,haerte:48,quellenSchwindenRadial:3.0,dichte:520,gewicht:9000, imgTree:`https://placehold.co/400x300?text=Zypresse`, imgCross:`https://placehold.co/400x300?text=Zypresse+Quer`},
+ {name:"Redwood",dk:2,haerte:35,quellenSchwindenRadial:2.8,dichte:400,gewicht:8500, imgTree:`${IMG_BASE}/redwood_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/redwood_2.jpeg${IMG_SUFFIX}`},
+ {name:"Hickory",dk:3,haerte:95,quellenSchwindenRadial:5.5,dichte:750,gewicht:14000, imgTree:`${IMG_BASE}/hickory_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/hickory_2.jpeg${IMG_SUFFIX}`},
+ {name:"Wenge",dk:2,haerte:88,quellenSchwindenRadial:3.8,dichte:880,gewicht:16000, imgTree:`${IMG_BASE}/wenge_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/wenge_2.jpeg${IMG_SUFFIX}`},
+ {name:"Zebrano",dk:3,haerte:70,quellenSchwindenRadial:4.0,dichte:750,gewicht:13000, imgTree:`${IMG_BASE}/zebrano_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/zebrano_2.jpeg${IMG_SUFFIX}`},
+ {name:"Palisander",dk:2,haerte:82,quellenSchwindenRadial:3.0,dichte:850,gewicht:16000, imgTree:`${IMG_BASE}/palisander_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/palisander_2.jpeg${IMG_SUFFIX}`},
+ {name:"Ebenholz",dk:1,haerte:98,quellenSchwindenRadial:3.2,dichte:1200,gewicht:16500, imgTree:`${IMG_BASE}/ebenholz_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/ebenholz_2.jpeg${IMG_SUFFIX}`}
+];
 
 const woodInfo = {};
 woodCards.forEach(c => {
     woodInfo[c.name] = {
         info: `Die ${c.name} ist eine Holzart mit einer Rohdichte von ca. ${c.dichte} kg/m³.`,
-        bildBaum: getWoodImage(c.name, 'tree'),
-        bildQuerschnitt: getWoodImage(c.name, 'cross')
+        bildBaum: c.imgTree,
+        bildQuerschnitt: c.imgCross
     };
 });
 
@@ -521,19 +521,15 @@ document.addEventListener('DOMContentLoaded', async()=>{
   const setup = document.getElementById('setupModal');
   
   if (splash && setup) {
-      // 1. Splash sichtbar machen (ist es initial)
       splash.classList.remove('hidden');
       setup.classList.add('hidden');
 
-      // 2. Nach 2.5 Sekunden zum Setup wechseln
       setTimeout(() => {
           splash.classList.add('hidden');
           setup.classList.remove('hidden');
       }, 2500);
   }
-  // --- END SPLASH LOGIC ---
 
-  try{await signInAnonymously(auth);}catch(e){console.error(e)}
   onAuthStateChanged(auth,(user)=>{
     if(user){
       localPlayerId=user.uid;
@@ -565,11 +561,10 @@ document.addEventListener('DOMContentLoaded', async()=>{
 
   bsInfoBtn.addEventListener('click',()=>window.showInfoModal());
   bsNextBtn.addEventListener('click',()=>{
-      window.closeBottomSheet(); // Fenster schließen
-      window.nextRound(); // Dann nächste Runde
+      window.closeBottomSheet(); 
+      window.nextRound(); 
   });
   
-  // Game Info Modal vorbereiten
   window.populateGameInfoModal();
 });
 
@@ -594,7 +589,7 @@ window.showGameInfo = function() {
     const modal = document.getElementById('gameInfoModal');
     if (modal) modal.classList.remove('hidden');
 };
-window.closeBottomSheet = closeBottomSheet; // Explizit für Button
+window.closeBottomSheet = closeBottomSheet; 
 
 window.populateGameInfoModal = function() {
     const list = document.getElementById('infoCategoryList');
@@ -642,6 +637,7 @@ window.copyShareLink=async()=>{
 };
 
 async function createGame(playerName){
+  if (!localPlayerId) return alert("Fehler: Authentifizierung läuft noch. Bitte kurz warten.");
   trackEvent('games_multiplayer');
   const lobby=document.getElementById('multiplayerLobbyModal');
   lobby.classList.remove('hidden');
@@ -660,7 +656,7 @@ async function createGame(playerName){
       height: 128
   });
 
-  const ref=doc(db,"games",gameId);
+  const ref=getPublicDoc("games",gameId);
   await setDoc(ref,{
     gameId, status:'waiting', playerIds:[localPlayerId],
     players:{[localPlayerId]:{name:playerName,cards:[],status:'online'}},
@@ -670,7 +666,8 @@ async function createGame(playerName){
 }
 
 async function joinGame(id,playerName){
-  const ref=doc(db,"games",id);
+  if (!localPlayerId) return setTimeout(()=>joinGame(id, playerName), 500); // Warten auf Auth
+  const ref=getPublicDoc("games",id);
   const snap=await getDoc(ref);
   if(snap.exists()&&snap.data().status==='waiting'){
       document.getElementById('lobbyTitle').textContent="Verbinde...";
@@ -695,7 +692,7 @@ async function joinGame(id,playerName){
 
 function listenToGameChanges(){
   if(!gameId) return;
-  unsubscribeGame=onSnapshot(doc(db,"games",gameId),(ds)=>{
+  unsubscribeGame=onSnapshot(getPublicDoc("games",gameId),(ds)=>{
     if(!ds.exists()) { resetGame(); return; }
     const gd=ds.data(); localGameState=gd;
     
@@ -709,7 +706,7 @@ function listenToGameChanges(){
 
 function updateMultiplayerUI(gd){
     if(document.getElementById('gameContainer').classList.contains('hidden') === false) {
-         scrollToGame();
+          scrollToGame();
     }
 
     const oppId=gd.playerIds.find(id=>id!==localPlayerId);
@@ -774,7 +771,9 @@ function createCard(data, isRevealed=true, isPlayer=true, isActive=false){
             <h2 class="text-lg sm:text-xl font-bold text-amber-900 leading-none tracking-tight">${data.name}</h2>
         </div>`;
     
-    const imgUrl = getWoodImage(data.name, 'tree');
+    // Benutzung des im Array definierten Bildes
+    const imgUrl = data.imgTree;
+    
     const image = `
         <div class="mx-3 mt-1 mb-2 aspect-[4/3] rounded-xl overflow-hidden bg-white shadow-sm border border-orange-100">
             <img src="${imgUrl}" class="w-full h-full object-cover" onerror="this.style.opacity='0.2'">
@@ -912,7 +911,7 @@ async function multiplayerSelectAttribute(attr){
     else pWins = pv > ov ? true : (ov > pv ? false : 'tie');
     
     const winner = pWins==='tie' ? 'tie' : (pWins ? localPlayerId : opp);
-    await updateDoc(doc(db,"games",gameId),{
+    await updateDoc(getPublicDoc("games",gameId),{
         lastResult: {winnerId:winner, attribute:attr, values:{[localPlayerId]:pv, [opp]:ov}},
         lastActivity: serverTimestamp()
     });
@@ -930,11 +929,11 @@ async function multiplayerNextRound(){
     else { if(c1) gs.players[p1].cards.push(c1); if(c2) gs.players[p2].cards.push(c2); }
     
     if(gs.players[p1].cards.length===0 || gs.players[p2].cards.length===0){
-        await updateDoc(doc(db,"games",gameId), {status:'finished', players:gs.players});
+        await updateDoc(getPublicDoc("games",gameId), {status:'finished', players:gs.players});
         return;
     }
     const nextT = w==='tie' ? gs.turn : w;
-    await updateDoc(doc(db,"games",gameId), {
+    await updateDoc(getPublicDoc("games",gameId), {
         lastResult:null, turn:nextT, players:gs.players,
         currentCards:{[p1]:gs.players[p1].cards[0], [p2]:gs.players[p2].cards[0]}
     });
@@ -1167,7 +1166,7 @@ window.showLeaderboard = async function(){
     document.getElementById('leaderboardModal').classList.remove('hidden');
     
     try {
-        const q=query(collection(db,"leaderboard"),orderBy("wins","desc"),limit(10));
+        const q=query(getPublicCollection("leaderboard"),orderBy("wins","desc"),limit(10));
         const snap=await getDocs(q);
         if(snap.empty){ list.innerHTML='<div class="text-center py-4 text-gray-400">Keine Einträge</div>'; return; }
         
@@ -1186,7 +1185,7 @@ window.closeLeaderboard = function(){
 async function saveToLeaderboard(name){
     if(!name) return;
     const safe=name.replace(/[.#$[\]]/g,'_');
-    try{ await setDoc(doc(db,"leaderboard",safe),{name,wins:increment(1),lastWin:serverTimestamp()},{merge:true}); }catch(e){}
+    try{ await setDoc(getPublicDoc("leaderboard",safe),{name,wins:increment(1),lastWin:serverTimestamp()},{merge:true}); }catch(e){}
 }
 window.resetGame = function(){ location.reload(); };
 
