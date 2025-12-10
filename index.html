@@ -136,11 +136,19 @@
 
 <!-- Header -->
 <header class="bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-md z-20 flex-shrink-0">
-    <div class="max-w-[600px] mx-auto px-4 py-3 relative flex justify-end items-center">
+    <div class="max-w-[600px] mx-auto px-4 py-3 relative flex justify-between items-center">
+        <!-- Home Button Links -->
+        <button onclick="sessionStorage.setItem('skipSplash', 'true'); window.location.reload();" class="text-white hover:text-amber-100 p-2 rounded-full transition-colors active:scale-90 relative z-10">
+             <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+             </svg>
+        </button>
+
         <!-- Titel Links (Jetzt absolut mittig) -->
         <h1 class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-lg sm:text-2xl font-black tracking-wider uppercase drop-shadow-sm whitespace-nowrap">
             🌲 HOLZEN! 🌲
         </h1>
+        
         <!-- Info Button Rechts -->
         <button onclick="window.showGameInfo()" class="text-white hover:text-amber-100 p-2 rounded-full transition-colors active:scale-90 relative z-10">
              <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -151,7 +159,7 @@
 </header>
 
 <!-- === GAME AREA === -->
-<div id="gameContainer" class="hidden flex-grow flex flex-col items-center w-full max-w-4xl mx-auto relative p-2 overflow-hidden">
+<div id="gameContainer" class="hidden flex-grow flex flex-col items-center w-full max-w-[600px] mx-auto relative p-2 overflow-hidden">
     <div id="animationContainer" class="absolute inset-0 pointer-events-none z-50 overflow-hidden"></div>
 
     <!-- Haupt-Layout: Flex Row für zwei Spalten -->
@@ -175,7 +183,7 @@
         <div class="flex flex-col w-[48%] max-w-[280px] gap-2 z-10">
             <!-- Score Box -->
             <div class="bg-white w-full rounded-2xl shadow-sm border border-orange-100 p-2 sm:p-3 text-center">
-                <div id="opponentNameDisplay" class="text-base sm:text-lg font-bold text-gray-600 leading-tight truncate">GEGNER</div>
+                <div id="opponentNameDisplay" class="text-base sm:text-lg font-bold text-gray-600 leading-tight truncate">COMPUTER</div>
                 <div class="text-[10px] sm:text-sm text-gray-500 mt-0.5">Karten: <span id="aiCards" class="font-bold text-xl sm:text-2xl text-gray-800">15</span></div>
             </div>
 
@@ -188,9 +196,9 @@
     </div>
 
     <!-- Statusbalken (Breiter & Kugel) -->
-    <div class="w-full px-4 mt-2 mb-24 max-w-3xl"> 
+    <div class="w-full mt-4 mb-24"> 
         <div class="flex justify-between text-[9px] sm:text-[10px] font-bold text-gray-400 mb-1 px-1">
-            <span>Dein Stapel</span><span>Gegner Stapel</span>
+            <span>Dein Stapel</span><span>Gegenspieler</span>
         </div>
         <!-- Balken Container -->
         <div class="h-4 w-full bg-gray-200 rounded-full shadow-inner relative">
@@ -463,10 +471,170 @@ const woodCards=[
  {name:"Ebenholz",dk:1,haerte:98,quellenSchwindenRadial:3.2,dichte:1200,gewicht:16500, imgTree:`${IMG_BASE}/ebenholz_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/ebenholz_2.jpeg${IMG_SUFFIX}`}
 ];
 
+const detailedWoodInfo = {
+    "Eiche": {
+        desc: "Hart, schwer, sehr dauerhaft; hoher Gerbstoffanteil, daher widerstandsfähig gegen Pilze/Schädlinge, kann mit Eisen schwarz verfärben. Grobporig, deutliche Jahresringe.",
+        usage: "Möbel, Fußböden, Treppen, Fassdauben, Außenbau (z. B. Terrassen), Fachwerk.",
+        trivia: "Traditionsholz und Symbol für Stärke; häufig in Wappen/Münzen."
+    },
+    "Buche": {
+        desc: "Zäh, biegsam, gleichmäßige Struktur; ringporig mit dezenten Übergängen, harzarm.",
+        usage: "Möbel, Parkett, Furniere, Sperrholz, Innenausbau.",
+        trivia: "Historisch beliebt für Räder/Griffe wegen Zähigkeit und Elastizität."
+    },
+    "Kiefer": {
+        desc: "Weiches, harzhaltiges Nadelholz mit markanter Jahresringstruktur und Harzkanälen.",
+        usage: "Bauholz, Dachstühle, Innenausbau, Paneele, einfache Möbel.",
+        trivia: "Kiefernharz diente früher als Klebstoff und Dichtmittel."
+    },
+    "Fichte": {
+        desc: "Leichtes Bauholz mit gutem Festigkeits-Gewichts-Verhältnis; feine Zellstruktur ohne große Poren.",
+        usage: "Bauholz, Innenverkleidung, Paneele, Möbelgrundkonstruktionen.",
+        trivia: "Klassiker im Dach- und Hallenbau vieler Alpenregionen."
+    },
+    "Tanne": {
+        desc: "Harzarm, fein, ähnlich Fichte; dezente Jahresringe, keine großen Poren.",
+        usage: "Innenausbau, Paneele, Bauholz, Möbel.",
+        trivia: "Angenehm geruchsarm im Innenraum durch wenig Harz."
+    },
+    "Lärche": {
+        desc: "Relativ hart und witterungsbeständig; deutliche Jahresringe, harzhaltig.",
+        usage: "Fassaden, Fenster, Terrassen, Außenmöbel.",
+        trivia: "Vergraut edel im Außenbereich auch ohne chemische Behandlung."
+    },
+    "Birke": {
+        desc: "Helles, dekoratives Holz; zerstreutporig, feine gleichmäßige Struktur, gut biegbar.",
+        usage: "Möbel, Furniere, Sperrholz, Innenausbau.",
+        trivia: "Birkenrinde wurde traditionell als wasserabweisendes Material genutzt."
+    },
+    "Ahorn": {
+        desc: "Hart, hell, sehr fein und homogen; zerstreutporig.",
+        usage: "Möbel, Parkett, Schneidebretter, Instrumentenbau.",
+        trivia: "Ahornsirup stammt v. a. aus nordamerikanischen Arten."
+    },
+    "Esche": {
+        desc: "Sehr zäh und elastisch; ringporig mit deutlichen Frühholzporen.",
+        usage: "Werkzeugstiele, Sportgeräte, Möbel, Parkett.",
+        trivia: "Klassisches Holz für Speichen und Stiele wegen Elastizität."
+    },
+    "Kirsche": {
+        desc: "Warm rötlich, edel; ringporig, klare Jahresringe, dunkelt mit Licht nach.",
+        usage: "Möbel, Furniere, Innenausbau.",
+        trivia: "Entwickelt mit der Zeit eine charakteristische, tiefere Farbigkeit."
+    },
+    "Nussbaum": {
+        desc: "Dunkles, dekoratives Kernholz; zerstreutporig, markante Maserung.",
+        usage: "Hochwertige Möbel, Furniere, Intarsien.",
+        trivia: "Renaissance-Liebling für repräsentative Innenausstattungen."
+    },
+    "Douglasie": {
+        desc: "Robust, relativ dauerhaft; deutliche Jahresringe, gut für Außen.",
+        usage: "Bauholz, Fassaden, Terrassen, Außenmöbel.",
+        trivia: "Ursprünglich nordamerikanisch, in Europa weit verbreitet."
+    },
+    "Zeder": {
+        desc: "Angenehmer Duft, natürlich insektenabweisend; fein und gleichmäßig.",
+        usage: "Möbel, Schränke, Fassaden, Innenraum.",
+        trivia: "Beliebt in Kleiderschränken wegen Geruch und Mottenabwehr."
+    },
+    "Mahagoni": {
+        desc: "Tropisches Edelholz, dauerhaft; zerstreutporig, dekoratives Kernholz.",
+        usage: "Möbel, Fenster, Bootsbau, hochwertige Ausbauten.",
+        trivia: "Teilweise artenschutzreguliert – Herkunft/Handel beachten."
+    },
+    "Teak": {
+        desc: "Sehr witterungsbeständig (Öl-/Harzgehalt); fein zerstreutporig, edle Optik.",
+        usage: "Gartenmöbel, Terrassen, Bootsdecks, Außenfenster.",
+        trivia: "Historisch geschätzt im Schiffbau wegen Dauerhaftigkeit."
+    },
+    "Bambus": {
+        desc: "Botanisch Gras, aber sehr fest; röhrenartige Struktur statt klassischer Poren.",
+        usage: "Böden, Möbel, Treppen, nachhaltiger Leichtbau.",
+        trivia: "Extrem schnelles Wachstum, daher ökologisch interessant."
+    },
+    "Pappel": {
+        desc: "Sehr leicht und weich; feine Struktur, dezente Jahresringe.",
+        usage: "Leichtbau, Verpackungen, Innenmöbel mit geringer Last.",
+        trivia: "Gern im Modell- und Fahrzeuginnenausbau genutzt."
+    },
+    "Weide": {
+        desc: "Elastisch und biegsam; fein zerstreutporig.",
+        usage: "Flechtwerk, Körbe, Gartenbau, leichte Möbel.",
+        trivia: "Weidenruten sind klassische Materialien für Geflechte."
+    },
+    "Linde": {
+        desc: "Weich, homogen, sehr gut schnitzbar; fein zerstreutporig.",
+        usage: "Bildhauerei, Orgelbau, Intarsien, feine Möbelteile.",
+        trivia: "Traditionsholz mittelalterlicher Schnitzer."
+    },
+    "Ulme": {
+        desc: "Zäh, eher hart; ringporig, teils unruhiger Faserverlauf.",
+        usage: "Möbel, Innenausbau, Reparatur- und Biegeteile.",
+        trivia: "Historisch im Wagenbau geschätzt."
+    },
+    "Kastanie": {
+        desc: "Wetterbeständig, warm getönt; ringporig mit klarer Jahresringzeichnung.",
+        usage: "Außenbau, Möbel, Balken, Gartenholz.",
+        trivia: "Oft Alternative zur Eiche im Außenbereich."
+    },
+    "Robinie": {
+        desc: "Eines der härtesten europäischen Hölzer; sehr dauerhaft im Freien; ringporig.",
+        usage: "Terrassen, Zäune, Spielplätze, Außenkonstruktionen.",
+        trivia: "„Europäisches Teak“ wegen seiner Dauerhaftigkeit."
+    },
+    "Hemlock": {
+        desc: "Weiches, gleichmäßiges Nadelholz; feine Struktur, dezente Ringe.",
+        usage: "Innenausbau, Paneele, Leichtbau, Möbel.",
+        trivia: "Gutes Verhältnis von Gewicht zu Stabilität."
+    },
+    "Zypresse": {
+        desc: "Duftend, natürlich resistent; fein und gleichmäßig.",
+        usage: "Außen- und Gartenholz, Fassaden, Möbel.",
+        trivia: "Traditionelles Bauholz im mediterranen Raum."
+    },
+    "Redwood": {
+        desc: "Leicht, relativ dauerhaft; fein zerstreutporig, dekorative Farbe.",
+        usage: "Außenholz, Zäune, Gartenkonstruktionen.",
+        trivia: "Stammt vom Küstenmammutbaum – einer der höchsten Baumarten."
+    },
+    "Hickory": {
+        desc: "Sehr zäh und hart; ringporig mit ausgeprägten Poren.",
+        usage: "Werkzeugstiele, Sportgeräte, stark beanspruchte Möbel.",
+        trivia: "Klassisches Holz für Peitschen- und Geräteschäfte."
+    },
+    "Wenge": {
+        desc: "Dunkel, sehr hart; zerstreutporig, charakteristische Streifenzeichnung.",
+        usage: "Luxusmöbel, Parkett, Furniere.",
+        trivia: "Wirkt in Kontrastkombinationen mit hellen Hölzern besonders."
+    },
+    "Zebrano": {
+        desc: "Markante Streifenoptik; zerstreutporig mit dekorativer Maserung.",
+        usage: "Designmöbel, Furniere, Intarsien.",
+        trivia: "Beliebt für auffällige Akzente."
+    },
+    "Palisander": {
+        desc: "Dekorativ, fest und langlebig; feine, gleichmäßige Porung.",
+        usage: "Gitarren/Instrumente, Möbel, Furniere.",
+        trivia: "Traditionell exklusiv im Instrumentenbau; Artenschutz-Lagen beachten."
+    },
+    "Ebenholz": {
+        desc: "Extrem hart und dicht, nahezu schwarz; sehr feinporig.",
+        usage: "Klaviertasten, Intarsien, Luxusdekore, Griffbretter.",
+        trivia: "Seit der Antike als edles, seltenes Holz geschätzt."
+    }
+};
+
 const woodInfo = {};
 woodCards.forEach(c => {
+    // Falls keine spezifischen Infos da sind, Fallback
+    const details = detailedWoodInfo[c.name] || {
+        desc: `Die ${c.name} ist eine Holzart mit einer Rohdichte von ca. ${c.dichte} kg/m³.`,
+        usage: "Allgemeine Holzverarbeitung.",
+        trivia: "Keine weiteren Informationen verfügbar."
+    };
+
     woodInfo[c.name] = {
-        info: `Die ${c.name} ist eine Holzart mit einer Rohdichte von ca. ${c.dichte} kg/m³.`,
+        details: details,
         bildBaum: c.imgTree,
         bildQuerschnitt: c.imgCross
     };
@@ -520,7 +688,11 @@ document.addEventListener('DOMContentLoaded', async()=>{
   const splash = document.getElementById('splashModal');
   const setup = document.getElementById('setupModal');
   
-  if (splash && setup) {
+  if (sessionStorage.getItem('skipSplash')) {
+      if (splash) splash.classList.add('hidden');
+      if (setup) setup.classList.remove('hidden');
+      sessionStorage.removeItem('skipSplash');
+  } else if (splash && setup) {
       splash.classList.remove('hidden');
       setup.classList.add('hidden');
 
@@ -949,7 +1121,7 @@ function startGameAI(name){
     trackEvent('games_ai');
     aiGame.playerName=name;
     document.getElementById('playerNameDisplay').innerText=name;
-    document.getElementById('opponentNameDisplay').innerText='Gegner';
+    document.getElementById('opponentNameDisplay').innerText='COMPUTER'; // Change default from 'Gegner' to 'COMPUTER'
     const sh=shuffleArray([...woodCards]);
     aiGame.playerCards=sh.slice(0,15);
     aiGame.aiCards=sh.slice(15,30);
@@ -1149,11 +1321,22 @@ window.showWoodInfo = function(name){
     const content=document.getElementById('infoModalContent');
     
     const w = woodInfo[name] || {};
+    const details = w.details || { desc: "Keine Details.", usage: "Unbekannt", trivia: "" };
     
     content.innerHTML=`
         <div class="bg-purple-50 p-4 rounded-xl border-l-4 border-purple-500 text-sm text-gray-700 leading-relaxed mb-4">
-            <span class="font-bold block mb-1 text-purple-700">${name}</span>
-            ${w.info || 'Keine Info verfügbar.'}
+            <h4 class="font-black text-lg text-purple-800 mb-2">${name}</h4>
+            <p class="mb-3">${details.desc}</p>
+            
+            <div class="mb-3">
+                <span class="font-bold text-purple-700 block text-xs uppercase tracking-wider mb-1">Verwendung</span>
+                <span class="text-xs text-gray-800">${details.usage}</span>
+            </div>
+            
+            <div class="bg-white p-3 rounded-lg border border-purple-100 shadow-sm">
+                <span class="font-bold text-purple-600 block text-xs uppercase tracking-wider mb-1">💡 Gut zu wissen</span>
+                <span class="text-xs italic text-gray-600">${details.trivia}</span>
+            </div>
         </div>
         <div class="grid grid-cols-2 gap-3">
             <div class="space-y-1">
