@@ -1,22 +1,17 @@
-# 🌳 Holzarten-Eigenschaften-Quartett
-
-Ein responsives Quartett-Spiel für den Webbrowser – besonders optimiert für Smartphones.
-
-**Features:**
-- 30 Holzarten mit verschiedenen Eigenschaften
-- Singleplayer und Multiplayer Modus
-- Zugbasiertes Gameplay gegen eine KI
-- Punktestand, Siegbedingungen, Rangliste 
+# 🌲 Holzquartett: Ein Lernspiel
 
 
-**Live ausprobieren:** *(nachdem du GitHub Pages aktiviert hast)*  
-👉 https://<dein-nutzername>.github.io/holzquartett/
+Willkommen beim Holz-Quartett, einem digitalen Lernspiel für Berufsschüler und Lehramtsstudenten. Dieses Lernspiel wurde im Rahmen einer Masterarbeit an der Universität Hannover zum Thema Gamifizierung von Lernmedien in der Berufsbildung entwickelt.
 
-## Verwendung
-1. mit einem Link zum Spiel
-2. bei Multiplayer oder Singleplayer mit Versenden eines Einladungslinks
-3. Öffne `index.html` im Browser 
-4. Oder lade den Ordner in ein öffentliches GitHub-Repository hoch  
-5. Aktiviere GitHub Pages
+Es überträgt das beliebte Spielprinzip von "Supertrumpf" in den fachlichen Kontext, um Wissen über Holzarten spielerisch zu vermitteln und zu festigen.
 
-Viel Spaß beim Spielen! 🌲
+Das Spiel
+Ziel ist es, dem Gegner alle Karten abzunehmen, indem man Eigenschaften wählt, in denen das eigene Holz überlegen ist (z. B. höhere Dichte oder geringeres Schwindverhalten).
+
+Features
+Zwei Spielmodi:
+Einzelspieler: Trainiere dein Wissen gegen einen computergesteuerten Gegner.
+Multiplayer: Spiele in Echtzeit gegen Mitstudierende oder Freunde (inkl. QR-Code Lobby).
+
+Viel Spaß beim "Holzen"!
+<img width="454" height="323" alt="image" src="https://github.com/user-attachments/assets/f169db6e-8862-4e9e-bbd0-15d919df2acc" />
