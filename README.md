@@ -7,9 +7,7 @@ Ein responsives Quartett-Spiel für den Webbrowser – besonders optimiert für 
 - Singleplayer und Multiplayer Modus
 - Zugbasiertes Gameplay gegen eine KI
 - Punktestand, Siegbedingungen, Rangliste 
-- Icons für Holzart und zusätzliches Wissen zum Nachlesen
 
-- 
 
 **Live ausprobieren:** *(nachdem du GitHub Pages aktiviert hast)*  
 👉 https://<dein-nutzername>.github.io/holzquartett/
