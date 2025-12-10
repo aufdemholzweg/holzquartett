@@ -719,8 +719,6 @@ let lastRoundWinningWoodName = null;
 
 const bottomSheet = document.getElementById('bottomSheet');
 const bottomSheetBackdrop = document.getElementById('bottomSheetBackdrop');
-const bsInfoBtn = document.getElementById('bsInfoBtn');
-const bsNextBtn = document.getElementById('bsNextBtn');
 
 function openBottomSheet(title){
     if(title) document.getElementById('resultText').innerText = title;
@@ -740,64 +738,7 @@ function closeBottomSheet(){
     }, 300);
 }
 
-document.addEventListener('DOMContentLoaded', async()=>{
-  // --- SPLASH SCREEN LOGIC ---
-  const splash = document.getElementById('splashModal');
-  const setup = document.getElementById('setupModal');
-  
-  if (sessionStorage.getItem('skipSplash')) {
-      if (splash) splash.classList.add('hidden');
-      if (setup) setup.classList.remove('hidden');
-      sessionStorage.removeItem('skipSplash');
-  } else if (splash && setup) {
-      splash.classList.remove('hidden');
-      setup.classList.add('hidden');
-
-      setTimeout(() => {
-          splash.classList.add('hidden');
-          setup.classList.remove('hidden');
-      }, 2500);
-  }
-
-  onAuthStateChanged(auth,(user)=>{
-    if(user){
-      localPlayerId=user.uid;
-      const p=new URLSearchParams(window.location.search);
-      const gid=p.get('game');
-      if(gid){gameId=gid;gameMode='multiplayer';window.showNamePrompt('join');}
-    }
-  });
-  
-  trackEvent('visits');
-
-  const soundToggle=document.getElementById('soundToggle');
-  const savedMute=localStorage.getItem('holzquartett_isMuted');
-  isMuted=savedMute==='true';
-  soundToggle.checked=!isMuted;
-  soundToggle.addEventListener('change',(e)=>{
-    isMuted=!e.target.checked;
-    localStorage.setItem('holzquartett_isMuted',isMuted);
-    if(!isMuted) playSound(sounds.chime);
-  });
-
-  const revealToggle=document.getElementById('revealBackToggle');
-  revealToggle.checked=isOpponentNameBackVisible();
-  revealToggle.addEventListener('change',e=>{
-    setOpponentNameBackVisible(e.target.checked);
-    if(gameMode==='ai') displayCardsAI();
-    if(gameMode==='multiplayer'&&localGameState) displayMultiplayerCards(localGameState);
-  });
-
-  bsInfoBtn.addEventListener('click',()=>window.showInfoModal());
-  bsNextBtn.addEventListener('click',()=>{
-      window.closeBottomSheet(); 
-      window.nextRound(); 
-  });
-  
-  window.populateGameInfoModal();
-});
-
-// Exponiere Funktionen global
+// Exponiere Funktionen global - DIES MUSS VOR DEM LISTENER PASSIEREN
 window.showNamePrompt= (mode) => {
   document.getElementById('setupModal').classList.add('hidden');
   document.getElementById('nameModal').classList.remove('hidden');
@@ -858,7 +799,6 @@ window.showInfoModal = function() {
         showWoodInfo(lastRoundWinningWoodName);
     }
     closeBottomSheet(); 
-    // showWoodInfo removes the 'hidden' class from infoModal
 };
 
 window.copyShareLink=async()=>{
@@ -868,246 +808,43 @@ window.copyShareLink=async()=>{
   const s=document.getElementById('lobbyStatus'); if(s) s.textContent='Link kopiert! Warte...';
 };
 
-async function createGame(playerName){
-  if (!isFirebaseAvailable) return alert("Multiplayer ist im Offline-Modus nicht verfügbar."); // Robust check
-  if (!localPlayerId) return alert("Fehler: Authentifizierung läuft noch. Bitte kurz warten.");
-  trackEvent('games_multiplayer');
-  const lobby=document.getElementById('multiplayerLobbyModal');
-  lobby.classList.remove('hidden');
-  hasCopiedShareLink=false;
-  gameId=Math.random().toString(36).substring(2,8).toUpperCase();
-  const base=window.location.href.split('?')[0];
-  const joinUrl=`${base}?game=${gameId}`;
-  document.getElementById('shareLink').value=joinUrl;
-  
-  // QR Code generieren
-  const qrContainer = document.getElementById('qrcode');
-  qrContainer.innerHTML = '';
-  new QRCode(qrContainer, {
-      text: joinUrl,
-      width: 128,
-      height: 128
-  });
-
-  const ref=getPublicDoc("games",gameId);
-  await setDoc(ref,{
-    gameId, status:'waiting', playerIds:[localPlayerId],
-    players:{[localPlayerId]:{name:playerName,cards:[],status:'online'}},
-    createdAt:serverTimestamp()
-  });
-  listenToGameChanges();
-}
-
-async function joinGame(id,playerName){
-  if (!isFirebaseAvailable) return alert("Multiplayer ist im Offline-Modus nicht verfügbar.");
-  if (!localPlayerId) return setTimeout(()=>joinGame(id, playerName), 500); // Warten auf Auth
-  const ref=getPublicDoc("games",id);
-  const snap=await getDoc(ref);
-  if(snap.exists()&&snap.data().status==='waiting'){
-      document.getElementById('lobbyTitle').textContent="Verbinde...";
-      document.getElementById('multiplayerLobbyModal').classList.remove('hidden');
-      hasCopiedShareLink=true;
-      const shuffled=shuffleArray([...woodCards]);
-      const p1=snap.data().playerIds[0];
-      await updateDoc(ref,{
-        status:'playing',
-        playerIds:[p1,localPlayerId],
-        [`players.${localPlayerId}`]:{name:playerName,cards:shuffled.slice(15,30),status:'online'},
-        [`players.${p1}.cards`]:shuffled.slice(0,15),
-        turn:p1,
-        currentCards:{[p1]:shuffled[0],[localPlayerId]:shuffled[15]},
-        lastResult:null
-      });
-      listenToGameChanges();
-  } else {
-      alert("Spiel nicht verfügbar."); window.location.search='';
-  }
-}
-
-function listenToGameChanges(){
-  if(!gameId || !isFirebaseAvailable) return;
-  unsubscribeGame=onSnapshot(getPublicDoc("games",gameId),(ds)=>{
-    if(!ds.exists()) { resetGame(); return; }
-    const gd=ds.data(); localGameState=gd;
+window.showWoodInfo = function(name){
+    const modal=document.getElementById('infoModal');
+    const content=document.getElementById('infoModalContent');
     
-    if(gd.status==='playing'||gd.status==='finished'){
-        document.getElementById('multiplayerLobbyModal').classList.add('hidden');
-        document.getElementById('gameContainer').classList.remove('hidden');
-        updateMultiplayerUI(gd);
-    }
-  });
-}
-
-function updateMultiplayerUI(gd){
-    if(document.getElementById('gameContainer').classList.contains('hidden') === false) {
-          scrollToGame();
-    }
-
-    const oppId=gd.playerIds.find(id=>id!==localPlayerId);
-    document.getElementById('playerNameDisplay').innerText = gd.players[localPlayerId]?.name || 'DU';
-    document.getElementById('opponentNameDisplay').innerText = (oppId ? gd.players[oppId]?.name : 'GEGNER').toUpperCase();
+    const w = woodInfo[name] || {};
+    const details = w.text || "Keine Informationen verfügbar.";
     
-    const pCount = gd.players[localPlayerId]?.cards?.length||0;
-    const oCount = oppId ? (gd.players[oppId]?.cards?.length||0) : 0;
-    
-    document.getElementById('playerCards').innerText = pCount;
-    document.getElementById('aiCards').innerText = oCount;
-    updateStatusBar(pCount, oCount);
-    displayMultiplayerCards(gd);
-
-    if(gd.lastResult){
-        if(!roundSoundPlayed){
-            roundSoundPlayed=true;
-            playSound(sounds.flip);
-            if(gd.lastResult.winnerId===localPlayerId) playSound(sounds.win);
-        }
-        const winnerName = gd.lastResult.winnerId===localPlayerId ? 'Du gewinnst!' : (gd.lastResult.winnerId==='tie'?'Unentschieden':'Gegner gewinnt!');
-        document.getElementById('resultText').className = gd.lastResult.winnerId===localPlayerId ? 'text-2xl font-black uppercase text-green-600' : 'text-2xl font-black uppercase text-red-600';
-        document.getElementById('resultDetails').innerText = `${attributeInfo[gd.lastResult.attribute].name}: ${gd.lastResult.values[localPlayerId]} vs ${gd.lastResult.values[oppId]}`;
-        
-        // Determine winning wood for info modal
-        const winnerId = gd.lastResult.winnerId;
-        const relevantId = (winnerId === 'tie') ? localPlayerId : winnerId;
-        if (gd.currentCards && gd.currentCards[relevantId]) {
-             lastRoundWinningWoodName = gd.currentCards[relevantId].name;
-        }
-
-        if(document.getElementById('bottomSheet').classList.contains('hidden')) openBottomSheet(winnerName);
-        if(gd.lastResult.winnerId===localPlayerId) showHappyWorm(); // Holzwurm MP
-    } else {
-        roundSoundPlayed=false;
-        closeBottomSheet();
-    }
-    
-    const ti = document.getElementById('turnIndicator');
-    if(gd.turn===localPlayerId) ti.innerText = "Du bist am Zug!";
-    else ti.innerText = "Gegner wählt...";
-
-    if(gd.status==='finished') endGame();
-}
-
-function createCard(data, isRevealed=true, isPlayer=true, isActive=false){
-    const card = document.createElement('div');
-    card.className = `card-3d w-full h-full relative ${isPlayer?'cursor-pointer hover-lift':''}`;
-    if(!isRevealed) card.classList.add('card-flipped');
-
-    const canSelect = isPlayer && (
-        (gameMode==='ai' && aiGame.turn==='player' && !aiGame.roundInProgress) ||
-        (gameMode==='multiplayer' && localGameState.turn===localPlayerId && !localGameState.lastResult)
-    );
-
-    const front = document.createElement('div');
-    
-    let borderClass = 'border-orange-200';
-    let ringClass = '';
-    
-    if (isActive) {
-        borderClass = 'border-orange-500'; /* orange-500 */
-        ringClass = 'ring-4 ring-orange-200'; /* orange-200 */
-    }
-
-    front.className = `card-front card-front-bg rounded-2xl shadow-lg border-4 ${borderClass} ${ringClass} flex flex-col transition-all duration-300`;
-    
-    const header = `
-        <div class="pt-3 px-3 pb-1">
-            <h2 class="text-lg sm:text-xl font-bold text-amber-900 leading-none tracking-tight">${data.name}</h2>
-        </div>`;
-    
-    // Benutzung des im Array definierten Bildes
-    const imgUrl = data.imgTree;
-    
-    const image = `
-        <div class="mx-3 mt-1 mb-2 aspect-[4/3] rounded-xl overflow-hidden bg-white shadow-sm border border-orange-100">
-            <img src="${imgUrl}" class="w-full h-full object-cover" onerror="this.style.opacity='0.2'">
-        </div>`;
-    
-    let attrs = '<div class="flex-grow flex flex-col justify-start gap-1 sm:gap-2 px-2 sm:px-3 pb-2 sm:pb-3 overflow-y-auto hide-scrollbar">';
-    for(const k in attributeInfo){
-        const val = data[k];
-        const info = attributeInfo[k];
-        const rowClass = `attr-box w-full flex justify-between items-center px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl transition cursor-pointer select-none`;
-        
-        let flashClass = '';
-        if(gameMode==='ai' && aiGame.roundInProgress && document.getElementById('resultDetails').innerText.includes(info.name)) {
-             if(aiGame.turn === 'player'){
-                 // Wenn Spieler dran war: Eigene Auswahl violett, Gegner grau
-                 if (isPlayer) flashClass='flash-active'; 
-                 else flashClass='highlight-compare';
-             } else {
-                 // Wenn KI dran war: KI Auswahl violett, Spieler grau
-                 if (!isPlayer) flashClass='flash-active';
-                 else flashClass='highlight-compare';
-             }
-        }
-
-        const content = `
-            <div class="flex items-center gap-2 sm:gap-3">
-                <span class="text-base sm:text-xl opacity-80">${info.icon}</span>
-                <div class="flex flex-col text-left leading-none">
-                    <span class="font-bold text-gray-800 text-[10px] sm:text-sm mb-0.5">${info.name}</span>
-                    <span class="text-[9px] sm:text-[10px] text-gray-500 font-medium">${info.unit}</span>
-                </div>
+    content.innerHTML=`
+        <div class="bg-purple-50 p-4 rounded-xl border-l-4 border-purple-500 text-sm text-gray-700 leading-relaxed mb-4">
+            <h4 class="font-black text-lg text-purple-800 mb-2">${name}</h4>
+            ${details}
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1">
+                <img src="${w.bildBaum}" class="rounded-lg shadow-sm border w-full h-32 object-cover bg-gray-100" onerror="this.style.opacity=0.3">
             </div>
-            <span class="text-sm sm:text-lg font-bold text-amber-800">${val}</span>
-        `;
-        
-        if(canSelect){
-            attrs += `<div onclick="window.selectAttribute('${k}')" data-attr-btn="${k}" class="${rowClass} hover:brightness-95 ${flashClass}">
-                        ${content}
-                      </div>`;
-        } else {
-             attrs += `<div class="${rowClass} opacity-90 ${flashClass}" data-attr-row="${k}">
-                        ${content}
-                      </div>`;
-        }
-    }
-    attrs += '</div>';
+            <div class="space-y-1">
+                <img src="${w.bildQuerschnitt}" class="rounded-lg shadow-sm border w-full h-32 object-cover bg-gray-100" onerror="this.style.opacity=0.3">
+            </div>
+        </div>
+    `;
+    modal.classList.remove('hidden');
+};
+window.closeInfoModal = function(){ document.getElementById('infoModal').classList.add('hidden'); openBottomSheet(); };
 
-    front.innerHTML = header + image + attrs;
-    
-    const back = document.createElement('div');
-    // Wende Border-Logik auch auf Rückseite an
-    let backBorder = 'border-4 border-white';
-    if(isActive) {
-        backBorder = 'border-4 border-orange-500 ring-4 ring-orange-200'; /* orange-500 / orange-200 */
-    }
-    back.className = `card-back rounded-2xl shadow-lg relative ${backBorder} transition-all duration-300`;
-    
-    if(!isPlayer && isOpponentNameBackVisible()){
-        const lbl = document.createElement('div');
-        lbl.className = 'opponent-back-name';
-        lbl.innerText = data.name;
-        back.appendChild(lbl);
-    }
+window.closeLeaderboard = function(){
+    document.getElementById('leaderboardModal').classList.add('hidden');
+    document.getElementById('gameOverModal').classList.remove('hidden');
+};
 
-    card.appendChild(front);
-    card.appendChild(back);
-    return card;
-}
+window.resetGame = function(){ location.reload(); };
 
-function displayMultiplayerCards(gd){
-    const pc = document.getElementById('playerCard');
-    const ac = document.getElementById('aiCard');
-    pc.innerHTML=''; ac.innerHTML='';
-    
-    const isPlayerTurn = gd.turn === localPlayerId;
-
-    if(gd.currentCards[localPlayerId]) pc.appendChild(createCard(gd.currentCards[localPlayerId], true, true, isPlayerTurn));
-    
-    const oppId = gd.playerIds.find(i=>i!==localPlayerId);
-    if(oppId && gd.currentCards[oppId]){
-        const c = createCard(gd.currentCards[oppId], false, false, !isPlayerTurn);
-        ac.appendChild(c);
-        if(gd.lastResult){
-             setTimeout(()=> {
-                 c.classList.remove('card-flipped');
-                 playSound(sounds.flip);
-             }, 100);
-        }
-    } else {
-        ac.innerHTML = `<div class="w-full h-full bg-gray-200 rounded-2xl flex items-center justify-center text-xs text-gray-500">Warte...</div>`;
-    }
-}
+window.nextRound = function(){
+    scrollToGame();
+    if(gameMode==='ai') nextRoundAI();
+    else if(gameMode==='multiplayer') multiplayerNextRound();
+};
 
 window.selectAttribute = function(attr){
     if(gameMode==='ai') {
@@ -1143,211 +880,6 @@ window.selectAttribute = function(attr){
     }
 };
 
-window.nextRound = function(){
-    scrollToGame();
-    if(gameMode==='ai') nextRoundAI();
-    else if(gameMode==='multiplayer') multiplayerNextRound();
-};
-
-async function multiplayerSelectAttribute(attr){
-    if(!localGameState || localGameState.turn!==localPlayerId) return;
-    const opp = localGameState.playerIds.find(id=>id!==localPlayerId);
-    const pv = localGameState.currentCards[localPlayerId][attr];
-    const ov = localGameState.currentCards[opp][attr];
-    let pWins;
-    if(attr==='dk' || attr==='quellenSchwindenRadial') pWins = pv < ov ? true : (ov < pv ? false : 'tie');
-    else pWins = pv > ov ? true : (ov > pv ? false : 'tie');
-    
-    const winner = pWins==='tie' ? 'tie' : (pWins ? localPlayerId : opp);
-    await updateDoc(getPublicDoc("games",gameId),{
-        lastResult: {winnerId:winner, attribute:attr, values:{[localPlayerId]:pv, [opp]:ov}},
-        lastActivity: serverTimestamp()
-    });
-}
-
-async function multiplayerNextRound(){
-    if(!localGameState.lastResult) return;
-    const gs = localGameState;
-    const [p1,p2] = gs.playerIds;
-    let c1=gs.players[p1].cards.shift();
-    let c2=gs.players[p2].cards.shift();
-    const w = gs.lastResult.winnerId;
-    if(w===p1){ if(c1) gs.players[p1].cards.push(c1); if(c2) gs.players[p1].cards.push(c2); }
-    else if(w===p2){ if(c1) gs.players[p2].cards.push(c1); if(c2) gs.players[p2].cards.push(c2); }
-    else { if(c1) gs.players[p1].cards.push(c1); if(c2) gs.players[p2].cards.push(c2); }
-    
-    if(gs.players[p1].cards.length===0 || gs.players[p2].cards.length===0){
-        await updateDoc(getPublicDoc("games",gameId), {status:'finished', players:gs.players});
-        return;
-    }
-    const nextT = w==='tie' ? gs.turn : w;
-    await updateDoc(getPublicDoc("games",gameId), {
-        lastResult:null, turn:nextT, players:gs.players,
-        currentCards:{[p1]:gs.players[p1].cards[0], [p2]:gs.players[p2].cards[0]}
-    });
-}
-
-function startGameAI(name){
-    trackEvent('games_ai');
-    aiGame.playerName=name;
-    document.getElementById('playerNameDisplay').innerText=name;
-    document.getElementById('opponentNameDisplay').innerText='COMPUTER'; // Change default from 'Gegner' to 'COMPUTER'
-    const sh=shuffleArray([...woodCards]);
-    aiGame.playerCards=sh.slice(0,15);
-    aiGame.aiCards=sh.slice(15,30);
-    aiGame.currentPlayerCard=aiGame.playerCards[0];
-    aiGame.currentAiCard=aiGame.aiCards[0];
-    aiGame.turn='player';
-    
-    scrollToGame();
-
-    document.getElementById('gameContainer').classList.remove('hidden');
-    updateDisplayAI();
-}
-
-function updateDisplayAI(){
-    const pc=aiGame.playerCards.length; const ac=aiGame.aiCards.length;
-    document.getElementById('playerCards').innerText=pc;
-    document.getElementById('aiCards').innerText=ac;
-    updateStatusBar(pc,ac);
-    
-    const pcEl = document.getElementById('playerCard');
-    const acEl = document.getElementById('aiCard');
-    pcEl.innerHTML=''; acEl.innerHTML='';
-    
-    const isPlayerTurn = aiGame.turn === 'player';
-
-    if(aiGame.currentPlayerCard) pcEl.appendChild(createCard(aiGame.currentPlayerCard, true, true, isPlayerTurn));
-    if(aiGame.currentAiCard) acEl.appendChild(createCard(aiGame.currentAiCard, false, false, !isPlayerTurn));
-    
-    if(aiGame.turn==='ai' && !aiGame.roundInProgress) setTimeout(aiTurn, 1000);
-}
-
-function aiTurn(){
-    if(aiGame.roundInProgress) return;
-    const keys=Object.keys(attributeInfo);
-    const k=keys[Math.floor(Math.random()*keys.length)];
-
-    aiGame.roundInProgress = true;
-    
-    // KI Karte Zeile finden (muss orange sein) - explizit im AI Container suchen
-    const aiCardEl = document.getElementById('aiCard');
-    const row = aiCardEl.querySelector(`div[data-attr-row="${k}"]`);
-    if(row) row.classList.add('flash-active'); 
-    
-    // Spieler Karte Zeile finden (muss grau sein) - explizit im Player Container suchen
-    const playerCardEl = document.getElementById('playerCard');
-    const playerRow = playerCardEl.querySelector(`div[data-attr-btn="${k}"]`) || playerCardEl.querySelector(`div[data-attr-row="${k}"]`);
-    if(playerRow) playerRow.classList.add('highlight-compare'); 
-
-    setTimeout(() => { 
-        // Flip
-        const ac=document.getElementById('aiCard').querySelector('.card-3d');
-        if(ac){ ac.classList.remove('card-flipped'); playSound(sounds.flip); }
-        
-        setTimeout(() => {
-             evaluateRoundAI(k);
-        }, 2000);
-    }, 500);
-}
-
-function evaluateRoundAI(attr){
-    const pv=aiGame.currentPlayerCard[attr];
-    const av=aiGame.currentAiCard[attr];
-    
-    let pWins;
-    if(attr==='dk'||attr==='quellenSchwindenRadial') pWins = pv<av ? true : (av<pv ? false : 'tie');
-    else pWins = pv>av ? true : (av>pv ? false : 'tie');
-    
-    const resText = pWins===true ? 'Du gewinnst!' : (pWins===false ? 'Computer gewinnt!' : 'Unentschieden');
-    const resColor = pWins===true ? 'text-green-600' : (pWins===false ? 'text-red-600' : 'text-gray-600');
-    
-    document.getElementById('resultText').innerText = resText;
-    document.getElementById('resultText').className = `text-2xl font-black uppercase tracking-wide mb-2 ${resColor}`;
-    document.getElementById('resultDetails').innerText = `${attributeInfo[attr].name}: ${pv} vs ${av}`;
-    openBottomSheet(resText);
-    
-    if(pWins===true) { 
-        playSound(sounds.win); 
-        triggerWinStarAnimation(); 
-        showHappyWorm(); // Holzwurm
-        lastRoundWinningWoodName = aiGame.currentPlayerCard.name; 
-    }
-    else if(pWins===false) { lastRoundWinningWoodName = aiGame.currentAiCard.name; }
-    else { lastRoundWinningWoodName = aiGame.currentPlayerCard.name; }
-    
-    const pC=aiGame.playerCards.shift(); const aC=aiGame.aiCards.shift();
-    if(pWins===true){ aiGame.playerCards.push(pC, aC); aiGame.turn='player'; }
-    else if(pWins===false){ aiGame.aiCards.push(aC, pC); aiGame.turn='ai'; }
-    else { aiGame.playerCards.push(pC); aiGame.aiCards.push(aC); }
-    
-    if(aiGame.playerCards.length===0 || aiGame.aiCards.length===0) setTimeout(endGame, 1000);
-}
-
-function nextRoundAI(){
-    aiGame.currentPlayerCard=aiGame.playerCards[0];
-    aiGame.currentAiCard=aiGame.aiCards[0];
-    aiGame.roundInProgress=false;
-    updateDisplayAI();
-}
-
-function triggerWinStarAnimation(){
-    const con = document.getElementById('animationContainer');
-    const star = document.createElement('div');
-    star.innerText='⭐'; star.className='falling-star';
-    star.style.left='50%'; star.style.top='20%';
-    con.appendChild(star);
-    playSound(sounds.starWin);
-    setTimeout(()=>star.remove(), 1200);
-}
-
-const wormPhrases = [
-    "Super gemacht!", "Weiter so!", "Starke Runde!", "Gut gespielt!",
-    "Clever gewählt!", "Sauber gelöst!", "Astrein!", "Meisterhaft!",
-    "Stark!", "Geil!", "Klasse!", "Läuft bei dir!", "Genau so!",
-    "Richtig so!", "Exzellent!", "On point!"
-];
-
-function showHappyWorm() {
-    const worm = document.getElementById('happyWorm');
-    const speech = document.getElementById('wormSpeech');
-    
-    if(worm && speech) {
-        const text = wormPhrases[Math.floor(Math.random() * wormPhrases.length)];
-        speech.innerText = text;
-
-        worm.classList.remove('animate-worm');
-        void worm.offsetWidth; // Trigger reflow
-        worm.classList.add('animate-worm');
-        
-        worm.classList.remove('hidden');
-        
-        setTimeout(() => {
-            worm.classList.add('hidden');
-        }, 3500);
-    }
-}
-
-function endGame(){
-    closeBottomSheet();
-    document.getElementById('gameContainer').classList.add('hidden');
-    const win = aiGame.playerCards.length>0 || (localGameState?.players?.[localPlayerId]?.cards?.length > 0);
-    const title = document.getElementById('gameOverTitle');
-    const text = document.getElementById('gameOverText');
-    const modal = document.getElementById('gameOverModal');
-    const reflect = document.getElementById('reflectionModal');
-    
-    if(win){
-        document.getElementById('reflectionQuestion').innerText = reflectionQuestions[Math.floor(Math.random()*reflectionQuestions.length)];
-        reflect.classList.remove('hidden');
-    } else {
-        title.innerText = "VERLOREN";
-        title.className = "text-3xl font-black mb-2 text-red-600";
-        text.innerText = "Leider hat der Gegner gewonnen.";
-        modal.classList.remove('hidden');
-    }
-}
-
 window.showFinalWinScreen = function(){
     document.getElementById('reflectionModal').classList.add('hidden');
     const title = document.getElementById('gameOverTitle');
@@ -1360,70 +892,67 @@ window.showFinalWinScreen = function(){
     else saveToLeaderboard(localGameState.players[localPlayerId].name);
 }
 
-function updateStatusBar(p, o){
-    const total=p+o; const pct=(total===0)?50:(p/total)*100;
-    const bar=document.getElementById('statusBar');
-    const ball=document.getElementById('statusBall');
-    
-    bar.style.width=`${pct}%`;
-    ball.style.left=`${pct}%`;
-    
-    ball.classList.remove('animate-pulse-glow');
-    if(pct > 60) {
-        ball.style.background = 'radial-gradient(circle at 30% 30%, #4ade80, #16a34a)';
-        ball.classList.add('animate-pulse-glow');
-        bar.className='h-full bg-green-500 transition-all duration-500 ease-out';
-    } else if (pct < 40) {
-        ball.style.background = 'radial-gradient(circle at 30% 30%, #f87171, #dc2626)';
-        bar.className='h-full bg-red-500 transition-all duration-500 ease-out';
-    } else {
-        ball.style.background = 'radial-gradient(circle at 30% 30%, #fbbf24, #d97706)';
-        bar.className='h-full bg-amber-500 transition-all duration-500 ease-out';
+// === DOM CONTENT LOADED - AM ENDE ===
+document.addEventListener('DOMContentLoaded', async()=>{
+  // Buttons erst hier abfragen, wenn das DOM sicher geladen ist
+  const bsInfoBtn = document.getElementById('bsInfoBtn');
+  const bsNextBtn = document.getElementById('bsNextBtn');
+
+  if(bsInfoBtn) bsInfoBtn.addEventListener('click',()=>window.showInfoModal());
+  if(bsNextBtn) bsNextBtn.addEventListener('click',()=>{
+      window.closeBottomSheet(); 
+      window.nextRound(); 
+  });
+
+  // --- SPLASH SCREEN LOGIC ---
+  const splash = document.getElementById('splashModal');
+  const setup = document.getElementById('setupModal');
+  
+  if (sessionStorage.getItem('skipSplash')) {
+      if (splash) splash.classList.add('hidden');
+      if (setup) setup.classList.remove('hidden');
+      sessionStorage.removeItem('skipSplash');
+  } else if (splash && setup) {
+      splash.classList.remove('hidden');
+      setup.classList.add('hidden');
+
+      setTimeout(() => {
+          splash.classList.add('hidden');
+          setup.classList.remove('hidden');
+      }, 2500);
+  }
+
+  onAuthStateChanged(auth,(user)=>{
+    if(user){
+      localPlayerId=user.uid;
+      const p=new URLSearchParams(window.location.search);
+      const gid=p.get('game');
+      if(gid){gameId=gid;gameMode='multiplayer';window.showNamePrompt('join');}
     }
-}
-function shuffleArray(a){
-    for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
-    return a;
-}
+  });
+  
+  trackEvent('visits');
 
-window.showWoodInfo = function(name){
-    const modal=document.getElementById('infoModal');
-    const content=document.getElementById('infoModalContent');
-    
-    const w = woodInfo[name] || {};
-    const details = w.text || "Keine Informationen verfügbar.";
-    
-    content.innerHTML=`
-        <div class="bg-purple-50 p-4 rounded-xl border-l-4 border-purple-500 text-sm text-gray-700 leading-relaxed mb-4">
-            <h4 class="font-black text-lg text-purple-800 mb-2">${name}</h4>
-            ${details}
-        </div>
-        <div class="grid grid-cols-2 gap-3">
-            <div class="space-y-1">
-                <img src="${w.bildBaum}" class="rounded-lg shadow-sm border w-full h-32 object-cover bg-gray-100" onerror="this.style.opacity=0.3">
-            </div>
-            <div class="space-y-1">
-                <img src="${w.bildQuerschnitt}" class="rounded-lg shadow-sm border w-full h-32 object-cover bg-gray-100" onerror="this.style.opacity=0.3">
-            </div>
-        </div>
-    `;
-    modal.classList.remove('hidden');
-};
-window.closeInfoModal = function(){ document.getElementById('infoModal').classList.add('hidden'); openBottomSheet(); };
+  const soundToggle=document.getElementById('soundToggle');
+  const savedMute=localStorage.getItem('holzquartett_isMuted');
+  isMuted=savedMute==='true';
+  soundToggle.checked=!isMuted;
+  soundToggle.addEventListener('change',(e)=>{
+    isMuted=!e.target.checked;
+    localStorage.setItem('holzquartett_isMuted',isMuted);
+    if(!isMuted) playSound(sounds.chime);
+  });
 
-window.closeLeaderboard = function(){
-    document.getElementById('leaderboardModal').classList.add('hidden');
-    document.getElementById('gameOverModal').classList.remove('hidden');
-};
-
-window.resetGame = function(){ location.reload(); };
-
-function scrollToGame() {
-    const gc = document.getElementById('gameContainer');
-    if(gc && !gc.classList.contains('hidden')) {
-        gc.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-}
+  const revealToggle=document.getElementById('revealBackToggle');
+  revealToggle.checked=isOpponentNameBackVisible();
+  revealToggle.addEventListener('change',e=>{
+    setOpponentNameBackVisible(e.target.checked);
+    if(gameMode==='ai') displayCardsAI();
+    if(gameMode==='multiplayer'&&localGameState) displayMultiplayerCards(localGameState);
+  });
+  
+  window.populateGameInfoModal();
+});
 </script>
 </body>
 </html>
