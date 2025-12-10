@@ -1,3 +1,20 @@
+Das ist ein sehr hilfreicher Screenshot\! Das Design wirkt viel aufgeräumter und „wärmer“.
+
+Ich habe den Code nun exakt an dieses visuelle Vorbild angepasst:
+
+1.  **Layout-Struktur (Wichtigste Änderung):** Um sicherzustellen, dass die Namens-Boxen **exakt** so breit sind wie die Spielkarten, habe ich das Layout geändert. Es gibt nun zwei vertikale Säulen (Links: Spieler-Score + Karte / Rechts: Gegner-Score + Karte). Dadurch sind Score-Box und Karte immer perfekt bündig.
+2.  **Karten-Design:**
+      * Die Höhe wurde um ca. 5% reduziert (`aspect-[20/42]`).
+      * Der Hintergrund und die Rahmenfarben sind nun wärmer (Creme/Orange/Braun-Töne), passend zum Foto.
+3.  **Kategorien (Attribute):**
+      * Das Design der Buttons wurde komplett überarbeitet: Heller Hintergrund (`bg-orange-50`), abgerundete Ecken (`rounded-xl`), goldener Rahmen.
+      * Die Einheiten (z.B. `N/mm²`) stehen nun klein unter dem Namen der Eigenschaft.
+      * Der Wert steht fett und braun rechts außen.
+4.  **Statusbalken:** Befindet sich nun ganz unten unter den Karten.
+
+Hier ist die aktualisierte `index.html`.
+
+```html
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -9,7 +26,7 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
+            background-color: #fdfbf7; /* Wärmerer Hintergrund */
             touch-action: manipulation;
             overflow-x: hidden;
         }
@@ -27,7 +44,7 @@
             width: 100%;
             height: 100%;
             top: 0; left: 0;
-            border-radius: 0.75rem;
+            border-radius: 1rem; /* Etwas runder wie im Bild */
             overflow: hidden;
         }
         .card-back {
@@ -35,11 +52,12 @@
             background-image: url('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/65fd843a4db1ee434faaf81a32f77951a5afb72a/images/background_card.jpg');
             background-size: cover;
             background-position: center;
+            border: 4px solid white;
         }
         .card-front-bg {
-            background-image: url('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/e7cfc18394e2e7f2d0b91df1138b0d7bc7930699/images/background_front.jpg');
-            background-size: cover;
-            background-position: center;
+            /* Heller Creme-Hintergrund für die Vorderseite */
+            background-color: #fffbeb; 
+            background-image: linear-gradient(to bottom right, #fffbeb, #fef3c7);
         }
 
         /* Animationen */
@@ -64,21 +82,36 @@
             top: 15%;
             width: 100%;
             text-align: center;
-            color: rgba(255,255,255,0.9);
+            color: rgba(255,255,255,0.95);
             font-weight: 700;
             font-size: 1.1rem;
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
             pointer-events: none;
         }
 
-        /* Scrollbar ausblenden */
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
         .dimmer { background: rgba(0,0,0,0.4); backdrop-filter: blur(2px); }
+        
+        /* Spezieller Style für die Attribut-Boxen */
+        .attr-box {
+            background-color: #fff7ed; /* orange-50 */
+            border: 1px solid #fbbf24; /* amber-400 */
+            transition: all 0.2s;
+        }
+        /* Aktiver State für Orange Flash */
+        .attr-box.flash-active {
+            background-color: #f97316 !important; /* orange-500 */
+            border-color: #ea580c !important; /* orange-600 */
+            color: white !important;
+        }
+        .attr-box.flash-active span {
+            color: white !important;
+        }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col relative text-gray-800">
+<body class="min-h-screen flex flex-col relative text-gray-800">
 
 <header class="bg-amber-600 text-white shadow-md z-20 flex-shrink-0">
     <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
@@ -92,50 +125,54 @@
 <div id="gameContainer" class="hidden flex-grow flex flex-col items-center w-full max-w-4xl mx-auto relative p-2 overflow-hidden">
     <div id="animationContainer" class="absolute inset-0 pointer-events-none z-50 overflow-hidden"></div>
 
-    <div class="w-full mb-4 flex justify-between items-end gap-3 px-1">
-        <div class="bg-white p-2 rounded-lg shadow-md border-b-4 border-amber-500 text-center w-28 relative z-10">
-            <div id="playerNameDisplay" class="text-[10px] text-gray-500 font-bold uppercase tracking-wider truncate">DU</div>
-            <div id="playerCards" class="text-3xl font-bold text-gray-800 leading-none my-1">15</div>
-            <div class="text-[9px] text-gray-400 font-medium uppercase">Karten</div>
+    <div class="flex justify-center items-start gap-3 w-full flex-grow relative pb-4 mt-2"> 
+        
+        <div class="flex flex-col w-[48%] max-w-[240px] gap-2 z-10">
+            <div class="bg-white rounded-2xl shadow-sm border border-orange-100 p-3 text-center">
+                <div id="playerNameDisplay" class="text-lg font-bold text-amber-700 leading-tight">Chris</div>
+                <div class="text-sm text-gray-500 mt-0.5">Karten: <span id="playerCards" class="font-bold text-gray-800">16</span></div>
+            </div>
+            
+            <div class="w-full aspect-[20/42] perspective-1000 relative" id="playerCardContainer">
+                <div id="playerCard" class="w-full h-full relative"></div>
+            </div>
         </div>
 
-        <div class="bg-white p-2 rounded-lg shadow-md border-b-4 border-gray-400 text-center w-28 relative z-10">
-            <div id="opponentNameDisplay" class="text-[10px] text-gray-500 font-bold uppercase tracking-wider truncate">GEGNER</div>
-            <div id="aiCards" class="text-3xl font-bold text-gray-800 leading-none my-1">15</div>
-            <div class="text-[9px] text-gray-400 font-medium uppercase">Karten</div>
+        <div class="flex flex-col w-[48%] max-w-[240px] gap-2 z-10">
+            <div class="bg-white rounded-2xl shadow-sm border border-orange-100 p-3 text-center">
+                <div id="opponentNameDisplay" class="text-lg font-bold text-gray-600 leading-tight">GEGNER</div>
+                <div class="text-sm text-gray-500 mt-0.5">Karten: <span id="aiCards" class="font-bold text-gray-800">16</span></div>
+            </div>
+
+            <div class="w-full aspect-[20/42] perspective-1000 relative" id="aiCardContainer">
+                <div id="aiCard" class="w-full h-full relative"></div>
+            </div>
         </div>
+
     </div>
 
-    <div class="flex justify-center items-start gap-3 w-full flex-grow relative"> 
-        <div class="w-[48%] max-w-[240px] aspect-[20/45] perspective-1000 relative z-10" id="playerCardContainer">
-            <div id="playerCard" class="w-full h-full relative"></div>
-        </div>
-        <div class="w-[48%] max-w-[240px] aspect-[20/45] perspective-1000 relative z-10" id="aiCardContainer">
-            <div id="aiCard" class="w-full h-full relative"></div>
-        </div>
-    </div>
-
-    <div class="w-full px-1 mt-6 mb-20"> <div class="flex justify-between text-[10px] font-bold text-gray-500 mb-1 px-1">
-            <span>Dein Stapel</span><span>Gegner Stapel</span>
-        </div>
-        <div class="h-4 w-full bg-gray-300 rounded-full overflow-hidden border border-gray-400/30 shadow-inner relative">
+    <div class="w-full px-4 mb-20 max-w-md"> 
+        <div class="h-4 w-full bg-gray-200 rounded-full overflow-hidden border border-gray-300 shadow-inner relative">
             <div id="statusBar" class="h-full bg-amber-500 transition-all duration-500 ease-out" style="width: 50%;"></div>
+        </div>
+        <div class="flex justify-between text-[10px] font-bold text-gray-400 mt-1 px-2">
+            <span>Dein Stapel</span><span>Gegner Stapel</span>
         </div>
     </div>
 </div>
 
 <div id="bottomSheetBackdrop" class="hidden fixed inset-0 bg-black/20 z-30 transition-opacity"></div>
-<div id="bottomSheet" class="hidden fixed left-0 right-0 bottom-0 z-40 flex justify-center px-2 pb-4 transition-transform transform translate-y-full duration-300">
-    <div class="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-200 w-full max-w-md p-4 flex flex-col items-center">
+<div id="bottomSheet" class="hidden fixed left-0 right-0 bottom-0 z-40 flex justify-center px-2 pb-6 transition-transform transform translate-y-full duration-300">
+    <div class="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-200 w-full max-w-md p-5 flex flex-col items-center">
         <div id="turnIndicator" class="text-sm font-semibold text-gray-500 mb-1"></div>
-        <h3 id="resultText" class="text-xl font-black uppercase tracking-wide mb-1 text-gray-800"></h3>
-        <p id="resultDetails" class="text-xs text-gray-600 mb-4 font-mono"></p>
+        <h3 id="resultText" class="text-2xl font-black uppercase tracking-wide mb-2 text-gray-800"></h3>
+        <p id="resultDetails" class="text-sm text-gray-600 mb-6 font-mono bg-gray-100 px-3 py-1 rounded-lg"></p>
 
         <div class="flex gap-3 w-full">
-            <button id="bsInfoBtn" class="flex-1 bg-purple-600 hover:bg-purple-700 active:scale-95 text-white font-bold py-3 px-4 rounded-xl shadow border-b-4 border-purple-800 transition">
+            <button id="bsInfoBtn" class="flex-1 bg-purple-600 hover:bg-purple-700 active:scale-95 text-white font-bold py-3 px-4 rounded-xl shadow-lg border-b-4 border-purple-800 transition">
                 🎓 Zusatzwissen
             </button>
-            <button id="bsNextBtn" class="flex-1 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-bold py-3 px-4 rounded-xl shadow border-b-4 border-amber-700 transition">
+            <button id="bsNextBtn" class="flex-1 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-bold py-3 px-4 rounded-xl shadow-lg border-b-4 border-amber-700 transition">
                 Weiter &rarr;
             </button>
         </div>
@@ -201,10 +238,7 @@
             <h3 id="infoModalTitle" class="font-bold text-lg flex items-center gap-2">🎓 Zusatzwissen</h3>
             <button onclick="window.closeInfoModal()" class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
         </div>
-        
-        <div id="infoModalContent" class="p-5 overflow-y-auto hide-scrollbar space-y-4">
-            </div>
-        
+        <div id="infoModalContent" class="p-5 overflow-y-auto hide-scrollbar space-y-4"></div>
         <div class="p-3 bg-gray-50 border-t shrink-0 text-center">
             <button onclick="window.closeInfoModal()" class="text-purple-600 font-bold text-sm hover:underline">Schließen</button>
         </div>
@@ -240,7 +274,6 @@
 </div>
 
 <script type="module">
-/* Firebase Imports */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, deleteDoc, collection, query, orderBy, limit, getDocs, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -308,7 +341,6 @@ const woodCards=[
  {name:"Ebenholz",dk:1,haerte:98,quellenSchwindenRadial:3.2,dichte:1200,gewicht:16500}
 ];
 
-// Helper um Bilder zu generieren
 const getSlug = (name) => {
     const map = {
         'Eiche':'eiche', 'Buche':'buche', 'Kiefer':'kiefer', 'Fichte':'fichte', 'Tanne':'tanne',
@@ -327,11 +359,9 @@ const getWoodImage = (name, type) => {
     return `https://github.com/aufdemholzweg/holzquartett/blob/main/images/${slug}_${num}.jpg?raw=true`;
 };
 
-// Generiere woodInfo automatisch aus den Slugs, aber behalte Text-Fähigkeit
 const woodInfo = {};
 woodCards.forEach(c => {
     woodInfo[c.name] = {
-        // Hier könntest du spezifische Texte pflegen. Default:
         info: `Die ${c.name} ist eine Holzart mit einer Rohdichte von ca. ${c.dichte} kg/m³.`,
         bildBaum: getWoodImage(c.name, 'tree'),
         bildQuerschnitt: getWoodImage(c.name, 'cross')
@@ -348,11 +378,11 @@ const reflectionQuestions=[
 ];
 
 const attributeInfo={
-  dk:{icon:'🛡️',name:'Dauerhaftigkeit',unit:'(1-5)'},
-  haerte:{icon:'💎',name:'Druckfestigkeit',unit:'N/mm²'},
-  quellenSchwindenRadial:{icon:'↔️',name:'Schwinden',unit:'%'},
-  dichte:{icon:'⚖️',name:'Rohdichte',unit:'kg/m³'},
-  gewicht:{icon:'🏋️',name:'E-Modul',unit:'N/mm²'}
+  dk:{icon:'🛡️',name:'Dauerhaftigkeit',unit:'(DK)'},
+  haerte:{icon:'💎',name:'Druckfestigkeit',unit:'(N/mm²)'},
+  quellenSchwindenRadial:{icon:'↔️',name:'Quellen/Schw.',unit:'(%)'},
+  dichte:{icon:'⚖️',name:'Rohdichte',unit:'(kg/m³)'},
+  gewicht:{icon:'🏋️',name:'E-Modul',unit:'(N/mm²)'}
 };
 
 /* AI State */
@@ -523,9 +553,8 @@ function updateMultiplayerUI(gd){
             playSound(sounds.flip);
             if(gd.lastResult.winnerId===localPlayerId) playSound(sounds.win);
         }
-        // Zeige Bottom Sheet
         const winnerName = gd.lastResult.winnerId===localPlayerId ? 'Du gewinnst!' : (gd.lastResult.winnerId==='tie'?'Unentschieden':'Gegner gewinnt!');
-        document.getElementById('resultText').className = gd.lastResult.winnerId===localPlayerId ? 'text-xl font-black uppercase text-green-600' : 'text-xl font-black uppercase text-red-600';
+        document.getElementById('resultText').className = gd.lastResult.winnerId===localPlayerId ? 'text-2xl font-black uppercase text-green-600' : 'text-2xl font-black uppercase text-red-600';
         document.getElementById('resultDetails').innerText = `${attributeInfo[gd.lastResult.attribute].name}: ${gd.lastResult.values[localPlayerId]} vs ${gd.lastResult.values[oppId]}`;
         if(document.getElementById('bottomSheet').classList.contains('hidden')) openBottomSheet(winnerName);
     } else {
@@ -533,7 +562,6 @@ function updateMultiplayerUI(gd){
         closeBottomSheet();
     }
     
-    // Turn Indicator
     const ti = document.getElementById('turnIndicator');
     if(gd.turn===localPlayerId) ti.innerText = "Du bist am Zug!";
     else ti.innerText = "Gegner wählt...";
@@ -547,49 +575,60 @@ function createCard(data, isRevealed=true, isPlayer=true){
     card.className = `card-3d w-full h-full relative ${isPlayer?'cursor-pointer hover-lift':''}`;
     if(!isRevealed) card.classList.add('card-flipped');
 
-    // WICHTIG: Erlaube Klick nur wenn keine Runde läuft
     const canSelect = isPlayer && (
         (gameMode==='ai' && aiGame.turn==='player' && !aiGame.roundInProgress) ||
         (gameMode==='multiplayer' && localGameState.turn===localPlayerId && !localGameState.lastResult)
     );
 
     const front = document.createElement('div');
-    front.className = `card-front card-front-bg rounded-xl shadow-lg border-2 ${isPlayer?'border-amber-400':'border-gray-300'} p-2 flex flex-col`;
+    // Runde Ecken wie im Foto (rounded-2xl)
+    front.className = `card-front card-front-bg rounded-2xl shadow-lg border-4 ${isPlayer?'border-orange-200':'border-gray-200'} flex flex-col`;
     
-    // Header (Name oben links)
+    // Header (Name oben links) - Etwas größer
     const header = `
-        <div class="flex justify-between items-start mb-2 px-1 pt-1">
-            <h2 class="text-lg font-bold text-gray-800 leading-tight">${data.name}</h2>
+        <div class="pt-3 px-3 pb-1">
+            <h2 class="text-xl font-bold text-amber-900 leading-none tracking-tight">${data.name}</h2>
         </div>`;
     
-    // Bild
+    // Bild - Runder wie im Foto
     const imgUrl = getWoodImage(data.name, 'tree');
     const image = `
-        <div class="w-full aspect-[4/3] mb-3 rounded-lg overflow-hidden bg-gray-100 shadow-inner relative">
+        <div class="mx-3 mt-1 mb-2 aspect-[4/3] rounded-xl overflow-hidden bg-white shadow-sm border border-orange-100">
             <img src="${imgUrl}" class="w-full h-full object-cover" onerror="this.style.opacity='0.2'">
         </div>`;
     
-    // Attribute
-    let attrs = '<div class="flex-grow flex flex-col justify-start space-y-1 overflow-y-auto hide-scrollbar px-1">';
+    // Attribute - Layout wie im Foto
+    let attrs = '<div class="flex-grow flex flex-col justify-start space-y-2 px-3 pb-3 overflow-y-auto hide-scrollbar">';
     for(const k in attributeInfo){
         const val = data[k];
         const info = attributeInfo[k];
-        const rowClass = `w-full flex justify-between items-center px-2 py-2 rounded-md border border-transparent transition text-xs ${canSelect?'hover:bg-amber-100 cursor-pointer active:bg-amber-200':''}`;
+        // Standard Style (Creme Box, Gold Border)
+        const rowClass = `attr-box w-full flex justify-between items-center px-3 py-2 rounded-xl transition cursor-pointer select-none`;
         
-        // Highlight logic (zum "Halten" der Farbe während Vergleich)
-        let bg = 'bg-white/60';
-        if(gameMode==='ai' && aiGame.roundInProgress && document.getElementById('resultDetails').innerText.includes(info.name)) bg='bg-gray-300 font-bold';
+        let flashClass = '';
+        if(gameMode==='ai' && aiGame.roundInProgress && document.getElementById('resultDetails').innerText.includes(info.name)) {
+             // Ergebnis Highlight (nach Runde)
+             flashClass='flash-active';
+        }
+
+        const content = `
+            <div class="flex items-center gap-3">
+                <span class="text-xl opacity-80">${info.icon}</span>
+                <div class="flex flex-col text-left leading-none">
+                    <span class="font-bold text-gray-800 text-sm mb-0.5">${info.name}</span>
+                    <span class="text-[10px] text-gray-500 font-medium">${info.unit}</span>
+                </div>
+            </div>
+            <span class="text-lg font-bold text-amber-800">${val}</span>
+        `;
         
         if(canSelect){
-            // Füge spezifischen Selector für den "Flash" Effekt hinzu
-            attrs += `<button onclick="window.selectAttribute('${k}')" data-attr-btn="${k}" class="${rowClass} ${bg}">
-                        <span class="flex items-center gap-1.5 text-gray-700 font-medium"><span>${info.icon}</span> ${info.name}</span>
-                        <span class="font-bold text-gray-900">${val}</span>
-                      </button>`;
+            attrs += `<div onclick="window.selectAttribute('${k}')" data-attr-btn="${k}" class="${rowClass} hover:brightness-95 ${flashClass}">
+                        ${content}
+                      </div>`;
         } else {
-             attrs += `<div class="${rowClass} ${bg}" data-attr-row="${k}">
-                        <span class="flex items-center gap-1.5 text-gray-600 font-medium"><span>${info.icon}</span> ${info.name}</span>
-                        <span class="font-bold text-gray-900">${val}</span>
+             attrs += `<div class="${rowClass} opacity-90 ${flashClass}" data-attr-row="${k}">
+                        ${content}
                       </div>`;
         }
     }
@@ -598,7 +637,7 @@ function createCard(data, isRevealed=true, isPlayer=true){
     front.innerHTML = header + image + attrs;
     
     const back = document.createElement('div');
-    back.className = 'card-back rounded-xl shadow-lg border-2 border-amber-300 relative';
+    back.className = 'card-back rounded-2xl shadow-lg relative';
     if(!isPlayer && isOpponentNameBackVisible()){
         const lbl = document.createElement('div');
         lbl.className = 'opponent-back-name';
@@ -620,11 +659,8 @@ function displayMultiplayerCards(gd){
     
     const oppId = gd.playerIds.find(i=>i!==localPlayerId);
     if(oppId && gd.currentCards[oppId]){
-        // Karte rendern
         const c = createCard(gd.currentCards[oppId], false, false);
         ac.appendChild(c);
-        
-        // Flip Logik
         if(gd.lastResult){
              setTimeout(()=> {
                  c.classList.remove('card-flipped');
@@ -632,43 +668,27 @@ function displayMultiplayerCards(gd){
              }, 100);
         }
     } else {
-        ac.innerHTML = `<div class="w-full h-full bg-gray-200 rounded-xl flex items-center justify-center text-xs text-gray-500">Warte...</div>`;
+        ac.innerHTML = `<div class="w-full h-full bg-gray-200 rounded-2xl flex items-center justify-center text-xs text-gray-500">Warte...</div>`;
     }
 }
 
 /* --- GAME ACTIONS --- */
-// HIER IST DIE LOGIK FÜR DAS 1.5s ORANGE HIGHLIGHT
 window.selectAttribute = function(attr){
     if(gameMode==='ai') {
         if(aiGame.roundInProgress) return;
-        
-        // 1. Button sofort orange färben
-        const btn = document.querySelector(`button[data-attr-btn="${attr}"]`);
-        if(btn) {
-            btn.classList.remove('hover:bg-amber-100', 'bg-white/60');
-            btn.classList.add('bg-orange-500', 'text-white', 'border-orange-600');
-        }
+        const btn = document.querySelector(`div[data-attr-btn="${attr}"]`);
+        if(btn) btn.classList.add('flash-active');
 
-        // 2. Variable setzen damit nichts anderes geklickt wird
         aiGame.roundInProgress = true; 
-
-        // 3. Nach 1.5s die eigentliche Logik aufrufen
-        setTimeout(() => {
-            selectAttributeAI(attr); 
-        }, 1500);
+        setTimeout(() => { selectAttributeAI(attr); }, 1500);
 
     } else if(gameMode==='multiplayer') {
-        // Im Multiplayer machen wir es sofort (oder simulieren es ähnlich, wenn gewünscht)
-        // Um Desync zu vermeiden, senden wir es hier direkt ab.
-        // Das visuelle Feedback könnte man lokal auch einbauen, aber Sync ist wichtiger.
         multiplayerSelectAttribute(attr);
     }
 };
 
 window.nextRound = function(){
-    // SCROLL TO TOP BEI JEDER NEUEN RUNDE
     window.scrollTo({ top: 0, behavior: 'smooth' });
-
     if(gameMode==='ai') nextRoundAI();
     else if(gameMode==='multiplayer') multiplayerNextRound();
 };
@@ -678,14 +698,11 @@ async function multiplayerSelectAttribute(attr){
     const opp = localGameState.playerIds.find(id=>id!==localPlayerId);
     const pv = localGameState.currentCards[localPlayerId][attr];
     const ov = localGameState.currentCards[opp][attr];
-    
-    // Logik: Kleiner gewinnt bei DK & Schwinden
     let pWins;
     if(attr==='dk' || attr==='quellenSchwindenRadial') pWins = pv < ov ? true : (ov < pv ? false : 'tie');
     else pWins = pv > ov ? true : (ov > pv ? false : 'tie');
     
     const winner = pWins==='tie' ? 'tie' : (pWins ? localPlayerId : opp);
-    
     await updateDoc(doc(db,"games",gameId),{
         lastResult: {winnerId:winner, attribute:attr, values:{[localPlayerId]:pv, [opp]:ov}},
         lastActivity: serverTimestamp()
@@ -698,18 +715,15 @@ async function multiplayerNextRound(){
     const [p1,p2] = gs.playerIds;
     let c1=gs.players[p1].cards.shift();
     let c2=gs.players[p2].cards.shift();
-    // Cards reintegrieren
     const w = gs.lastResult.winnerId;
     if(w===p1){ if(c1) gs.players[p1].cards.push(c1); if(c2) gs.players[p1].cards.push(c2); }
     else if(w===p2){ if(c1) gs.players[p2].cards.push(c1); if(c2) gs.players[p2].cards.push(c2); }
-    else { if(c1) gs.players[p1].cards.push(c1); if(c2) gs.players[p2].cards.push(c2); } // Tie
+    else { if(c1) gs.players[p1].cards.push(c1); if(c2) gs.players[p2].cards.push(c2); }
     
-    // Check End
     if(gs.players[p1].cards.length===0 || gs.players[p2].cards.length===0){
         await updateDoc(doc(db,"games",gameId), {status:'finished', players:gs.players});
         return;
     }
-    
     const nextT = w==='tie' ? gs.turn : w;
     await updateDoc(doc(db,"games",gameId), {
         lastResult:null, turn:nextT, players:gs.players,
@@ -720,15 +734,14 @@ async function multiplayerNextRound(){
 /* --- AI LOGIC --- */
 function startGameAI(name){
     aiGame.playerName=name;
-    document.getElementById('playerNameDisplay').innerText=name.toUpperCase();
-    document.getElementById('opponentNameDisplay').innerText='COMPUTER';
+    document.getElementById('playerNameDisplay').innerText=name;
+    document.getElementById('opponentNameDisplay').innerText='Gegner';
     const sh=shuffleArray([...woodCards]);
     aiGame.playerCards=sh.slice(0,15);
     aiGame.aiCards=sh.slice(15,30);
     aiGame.currentPlayerCard=aiGame.playerCards[0];
     aiGame.currentAiCard=aiGame.aiCards[0];
     aiGame.turn='player';
-    
     document.getElementById('gameContainer').classList.remove('hidden');
     updateDisplayAI();
 }
@@ -744,7 +757,7 @@ function updateDisplayAI(){
     pcEl.innerHTML=''; acEl.innerHTML='';
     
     if(aiGame.currentPlayerCard) pcEl.appendChild(createCard(aiGame.currentPlayerCard, true, true));
-    if(aiGame.currentAiCard) acEl.appendChild(createCard(aiGame.currentAiCard, false, false)); // AI immer verdeckt init
+    if(aiGame.currentAiCard) acEl.appendChild(createCard(aiGame.currentAiCard, false, false));
     
     if(aiGame.turn==='ai' && !aiGame.roundInProgress) setTimeout(aiTurn, 1000);
 }
@@ -754,28 +767,17 @@ function aiTurn(){
     const keys=Object.keys(attributeInfo);
     const k=keys[Math.floor(Math.random()*keys.length)];
 
-    // KI wählt Eigenschaft -> Visuelles Feedback auf Spielerkarte (Vergleichswert)
-    // 1. Row finden
     aiGame.roundInProgress = true;
     const row = document.querySelector(`div[data-attr-row="${k}"]`);
-    if(row) {
-        row.classList.remove('bg-white/60');
-        row.classList.add('bg-orange-500', 'text-white', 'border-orange-600'); // Orange highlight
-    }
+    if(row) row.classList.add('flash-active');
     
-    // 2. 1.5s warten vor Reveal
-    setTimeout(() => {
-        selectAttributeAI(k);
-    }, 1500);
+    setTimeout(() => { selectAttributeAI(k); }, 1500);
 }
 
 function selectAttributeAI(attr){
-    // Hier ist roundInProgress bereits true (durch selectAttribute oder aiTurn gesetzt)
-    
     const pv=aiGame.currentPlayerCard[attr];
     const av=aiGame.currentAiCard[attr];
     
-    // Flip Animation AI
     const ac=document.getElementById('aiCard').querySelector('.card-3d');
     if(ac){ ac.classList.remove('card-flipped'); playSound(sounds.flip); }
     
@@ -788,19 +790,18 @@ function selectAttributeAI(attr){
         const resColor = pWins===true ? 'text-green-600' : (pWins===false ? 'text-red-600' : 'text-gray-600');
         
         document.getElementById('resultText').innerText = resText;
-        document.getElementById('resultText').className = `text-xl font-black uppercase tracking-wide mb-1 ${resColor}`;
+        document.getElementById('resultText').className = `text-2xl font-black uppercase tracking-wide mb-2 ${resColor}`;
         document.getElementById('resultDetails').innerText = `${attributeInfo[attr].name}: ${pv} vs ${av}`;
         openBottomSheet(resText);
         
         if(pWins===true) { playSound(sounds.win); triggerWinStarAnimation(); lastRoundWinningWoodName = aiGame.currentPlayerCard.name; }
         else if(pWins===false) { lastRoundWinningWoodName = aiGame.currentAiCard.name; }
-        else { lastRoundWinningWoodName = aiGame.currentPlayerCard.name; } // Tie
+        else { lastRoundWinningWoodName = aiGame.currentPlayerCard.name; }
         
-        // Karten verteilen
         const pC=aiGame.playerCards.shift(); const aC=aiGame.aiCards.shift();
         if(pWins===true){ aiGame.playerCards.push(pC, aC); aiGame.turn='player'; }
         else if(pWins===false){ aiGame.aiCards.push(aC, pC); aiGame.turn='ai'; }
-        else { aiGame.playerCards.push(pC); aiGame.aiCards.push(aC); } // Tie
+        else { aiGame.playerCards.push(pC); aiGame.aiCards.push(aC); }
         
         if(aiGame.playerCards.length===0 || aiGame.aiCards.length===0) setTimeout(endGame, 1000);
     }, 600);
@@ -833,7 +834,6 @@ function endGame(){
     const reflect = document.getElementById('reflectionModal');
     
     if(win){
-        // Zeige Reflektion zuerst
         document.getElementById('reflectionQuestion').innerText = reflectionQuestions[Math.floor(Math.random()*reflectionQuestions.length)];
         reflect.classList.remove('hidden');
     } else {
@@ -873,14 +873,13 @@ function shuffleArray(a){
 /* --- INFO / LEADERBOARD --- */
 window.showWoodInfo = function(name){
     const modal=document.getElementById('infoModal');
-    const title=document.getElementById('infoModalTitle');
     const content=document.getElementById('infoModalContent');
     
-    title.innerHTML = `🎓 ${name}`;
     const w = woodInfo[name] || {};
     
     content.innerHTML=`
         <div class="bg-purple-50 p-4 rounded-xl border-l-4 border-purple-500 text-sm text-gray-700 leading-relaxed mb-4">
+            <span class="font-bold block mb-1 text-purple-700">${name}</span>
             ${w.info || 'Keine Info verfügbar.'}
         </div>
         <div class="grid grid-cols-2 gap-3">
@@ -927,7 +926,7 @@ async function saveToLeaderboard(name){
     try{ await setDoc(doc(db,"leaderboard",safe),{name,wins:increment(1),lastWin:serverTimestamp()},{merge:true}); }catch(e){}
 }
 window.resetGame = function(){ location.reload(); };
-
 </script>
 </body>
 </html>
+```
