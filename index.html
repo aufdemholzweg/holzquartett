@@ -239,7 +239,7 @@
 <!-- === SPLASH SCREEN (NEU) === -->
 <div id="splashModal" class="fixed inset-0 bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center z-[100]">
     <div class="text-center text-white p-8 animate-pulse" style="animation-duration: 1.5s;">
-        <h1 class="text-5xl sm:text-7xl font-black tracking-wider drop-shadow-lg">
+        <h1 class="text-5xl sm:text-5xl font-black tracking-wider drop-shadow-lg">
             🌲 HOLZEN! 🌲
         </h1>
     </div>
@@ -249,14 +249,14 @@
 <div id="gameInfoModal" class="fixed inset-0 dimmer flex items-center justify-center z-50 p-4 hidden">
     <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-[400px] max-h-[90vh] flex flex-col">
         <div class="bg-amber-500 p-4 flex justify-between items-center text-white shrink-0 shadow-md">
-            <h3 class="font-bold text-lg">Spielregeln & Kategorien</h3>
+            <h3 class="font-bold text-lg">Spielregeln & Eigenschaften</h3>
             <button onclick="document.getElementById('gameInfoModal').classList.add('hidden')" class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
         </div>
         <div class="p-5 overflow-y-auto hide-scrollbar space-y-5">
             <h4 class="font-bold text-gray-700 text-md">Regeln (Quartett-Prinzip)</h4>
-            <p class="text-sm text-gray-600">Gewählt wird immer die Eigenschaft, die für den Gewinner das beste Ergebnis liefert (entweder der höchste oder der niedrigste Wert, siehe unten). Der Gewinner erhält beide Karten und ist im nächsten Zug wieder an der Reihe. Bei Gleichstand ("Unentschieden") behält jeder Spieler seine Karte, und der aktuelle Zugberechtigte bleibt derselbe.</p>
+            <p class="text-sm text-gray-600">Wer am Zug ist, wählt eine Eigenschaft seiner Karte, die den größtmöglichen Vorteil verspricht (je nach Kategorie gewinnt der höchste oder der niedrigste Wert, siehe unten). Gewinnt die Person den Spielzug, erhält sie beide Karten, legt sie unter den eigenen Stapel und bleibt am Zug. Bei einem Unentschieden behalten beide ihre Karte, das Zugrecht bleibt unverändert.</p>
             
-            <h4 class="font-bold text-gray-700 text-md pt-3">Eigenschaften & Gewinner-Logik</h4>
+            <h4 class="font-bold text-gray-700 text-md pt-3">Eigenschaften on Holz</h4>
 
             <!-- Kategorie Liste -->
             <div id="infoCategoryList" class="space-y-3">
@@ -482,11 +482,11 @@ const reflectionQuestions=[
 ];
 
 const attributeInfo={
-  dk:{icon:'🛡️',name:'Dauerhaftigkeit',unit:'(DK)', logic: 'Niedriger ist besser'},
-  haerte:{icon:'💎',name:'Druckfestigkeit',unit:'(N/mm²)', logic: 'Höher ist besser'},
-  quellenSchwindenRadial:{icon:'↔️',name:'Quellen/Schw.',unit:'(%)', logic: 'Niedriger ist besser'},
-  dichte:{icon:'⚖️',name:'Rohdichte',unit:'(kg/m³)', logic: 'Höher ist besser'},
-  gewicht:{icon:'🏋️',name:'E-Modul',unit:'(N/mm²)', logic: 'Höher ist besser'}
+  dk:{icon:'🛡️',name:'Dauerhaftigkeit',unit:'(DK)', logic: 'Niedrig gewinnt'},
+  haerte:{icon:'💎',name:'Druckfestigkeit',unit:'(N/mm²)', logic: 'Hoch gewinnt'},
+  quellenSchwindenRadial:{icon:'↔️',name:'Quellen/Schw.',unit:'(%)', logic: 'Niedrig gewinnt'},
+  dichte:{icon:'⚖️',name:'Rohdichte',unit:'(kg/m³)', logic: 'Hoch gewinnt'},
+  gewicht:{icon:'🏋️',name:'E-Modul',unit:'(N/mm²)', logic: 'Hoch gewinnt'}
 };
 
 let aiGame={playerName:'',playerCards:[],aiCards:[],currentPlayerCard:null,currentAiCard:null,roundInProgress:false,turn:'player'};
@@ -601,14 +601,14 @@ window.populateGameInfoModal = function() {
 
     for (const key of order) {
         const info = attributeInfo[key];
-        const isBetter = info.logic === 'Höher ist besser';
+        const isBetter = info.logic === 'Hoch gewinnt';
         
         html += `
             <div class="p-3 rounded-xl border-2 ${isBetter ? 'border-green-400 bg-green-50' : 'border-blue-400/80 bg-blue-50/50'}">
                 <div class="flex justify-between items-center mb-1">
                     <span class="text-lg font-bold text-gray-800">${info.icon} ${info.name}</span>
                     <span class="text-sm font-semibold ${isBetter ? 'text-green-700' : 'text-blue-700'}">
-                        ${isBetter ? '⬆ Höher ist besser' : '⬇ Niedriger ist besser'}
+                        ${isBetter ? '⬆ Hoch gewinnt' : '⬇ Niedrig gewinnt'}
                     </span>
                 </div>
                 <p class="text-[12px] text-gray-600 mt-1">
@@ -1062,7 +1062,7 @@ function triggerWinStarAnimation(){
 const wormPhrases = [
     "Super gemacht!", "Weiter so!", "Starke Runde!", "Gut gespielt!",
     "Clever gewählt!", "Sauber gelöst!", "Astrein!", "Meisterhaft!",
-    "Stark!", "Top!", "Klasse!", "Läuft!", "Genau so!",
+    "Stark!", "Geil!", "Klasse!", "Läuft bei dir!", "Genau so!",
     "Richtig so!", "Exzellent!", "On point!"
 ];
 
