@@ -198,10 +198,10 @@
 </div>
 
 <!-- === HAPPY WOODWORM (Holzwurm) === -->
-<div id="happyWorm" class="fixed bottom-0 right-4 translate-y-full z-50 pointer-events-none transform transition-transform">
+<div id="happyWorm" class="fixed bottom-0 right-4 translate-y-full z-50 pointer-events-none transform transition-transform hidden">
     <div class="relative">
         <!-- Sprechblase -->
-        <div class="absolute -top-10 -left-10 bg-white px-3 py-1.5 rounded-xl shadow-md border-2 border-amber-200 text-xs font-bold text-amber-800 whitespace-nowrap animate-bounce" style="animation-duration: 2s;">
+        <div id="wormSpeech" class="absolute -top-10 -left-10 bg-white px-3 py-1.5 rounded-xl shadow-md border-2 border-amber-200 text-xs font-bold text-amber-800 whitespace-nowrap animate-bounce" style="animation-duration: 2s;">
             Stark! 🪵
         </div>
         <!-- Wurm Emoji (Groß) -->
@@ -932,13 +932,30 @@ function triggerWinStarAnimation(){
     setTimeout(()=>star.remove(), 1200);
 }
 
+const wormPhrases = [
+    "Super gemacht!", "Weiter so!", "Starke Runde!", "Gut gespielt!",
+    "Clever gewählt!", "Sauber gelöst!", "Astrein!", "Meisterhaft!",
+    "Stark!", "Top!", "Klasse!", "Läuft!", "Genau so!",
+    "Richtig so!", "Exzellent!", "On point!"
+];
+
 function showHappyWorm() {
     const worm = document.getElementById('happyWorm');
-    if(worm) {
-        // Reset animation by removing and adding class
+    const speech = document.getElementById('wormSpeech');
+    
+    if(worm && speech) {
+        const text = wormPhrases[Math.floor(Math.random() * wormPhrases.length)];
+        speech.innerText = text;
+
         worm.classList.remove('animate-worm');
         void worm.offsetWidth; // Trigger reflow
         worm.classList.add('animate-worm');
+        
+        worm.classList.remove('hidden');
+        
+        setTimeout(() => {
+            worm.classList.add('hidden');
+        }, 3500);
     }
 }
 
