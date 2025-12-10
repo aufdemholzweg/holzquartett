@@ -82,6 +82,7 @@
             border: 1px solid #fbbf24; /* amber-400 */
             transition: all 0.2s;
         }
+        /* Aktiver State für Orange Flash (Auswahl) */
         .attr-box.flash-active {
             background-color: #f97316 !important;
             border-color: #ea580c !important;
@@ -89,6 +90,13 @@
         }
         .attr-box.flash-active span {
             color: white !important;
+        }
+
+        /* Aktiver State für GRAU Flash (Vergleich auf Gegnerkarte) */
+        .attr-box.highlight-compare {
+            background-color: #e5e7eb !important; /* gray-200 */
+            border-color: #9ca3af !important; /* gray-400 */
+            color: #1f2937 !important; /* gray-800 */
         }
     </style>
 </head>
@@ -509,7 +517,6 @@ function listenToGameChanges(){
 }
 
 function updateMultiplayerUI(gd){
-    // Scroll auch hier beim Start
     if(document.getElementById('gameContainer').classList.contains('hidden') === false) {
          window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -651,6 +658,11 @@ window.selectAttribute = function(attr){
         if(btn) btn.classList.add('flash-active');
 
         aiGame.roundInProgress = true; 
+        
+        // Highlight opponent card row (gray)
+        const oppRow = document.querySelector(`div[data-attr-row="${attr}"]`);
+        if(oppRow) oppRow.classList.add('highlight-compare');
+
         setTimeout(() => { selectAttributeAI(attr); }, 1500);
 
     } else if(gameMode==='multiplayer') {
@@ -713,7 +725,6 @@ function startGameAI(name){
     aiGame.currentAiCard=aiGame.aiCards[0];
     aiGame.turn='player';
     
-    // Auto-Scroll auch für KI Start
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
     document.getElementById('gameContainer').classList.remove('hidden');
@@ -745,6 +756,10 @@ function aiTurn(){
     const row = document.querySelector(`div[data-attr-row="${k}"]`);
     if(row) row.classList.add('flash-active');
     
+    // Highlight own (player's) row gray for comparison
+    const playerRow = document.querySelector(`div[data-attr-btn="${k}"]`) || document.querySelector(`div[data-attr-row="${k}"]`);
+    if(playerRow) playerRow.classList.add('highlight-compare');
+
     setTimeout(() => { selectAttributeAI(k); }, 1500);
 }
 
