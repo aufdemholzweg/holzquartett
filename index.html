@@ -136,11 +136,19 @@
 
 <!-- Header -->
 <header class="bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-md z-20 flex-shrink-0">
-    <div class="max-w-[600px] mx-auto px-4 py-3 relative flex justify-end items-center">
+    <div class="max-w-[600px] mx-auto px-4 py-3 relative flex justify-between items-center">
+        <!-- Home Button Links -->
+        <button onclick="sessionStorage.setItem('skipSplash', 'true'); window.location.reload();" class="text-white hover:text-amber-100 p-2 rounded-full transition-colors active:scale-90 relative z-10">
+             <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+             </svg>
+        </button>
+
         <!-- Titel Links (Jetzt absolut mittig) -->
         <h1 class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-lg sm:text-2xl font-black tracking-wider uppercase drop-shadow-sm whitespace-nowrap">
             🌲 HOLZEN! 🌲
         </h1>
+        
         <!-- Info Button Rechts -->
         <button onclick="window.showGameInfo()" class="text-white hover:text-amber-100 p-2 rounded-full transition-colors active:scale-90 relative z-10">
              <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -520,7 +528,11 @@ document.addEventListener('DOMContentLoaded', async()=>{
   const splash = document.getElementById('splashModal');
   const setup = document.getElementById('setupModal');
   
-  if (splash && setup) {
+  if (sessionStorage.getItem('skipSplash')) {
+      if (splash) splash.classList.add('hidden');
+      if (setup) setup.classList.remove('hidden');
+      sessionStorage.removeItem('skipSplash');
+  } else if (splash && setup) {
       splash.classList.remove('hidden');
       setup.classList.add('hidden');
 
