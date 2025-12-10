@@ -40,7 +40,6 @@
             background-image: url('https://raw.githubusercontent.com/aufdemholzweg/holzquartett/65fd843a4db1ee434faaf81a32f77951a5afb72a/images/background_card.jpg');
             background-size: cover;
             background-position: center;
-            /* Border wird nun via Tailwind gesteuert, Default hier entfernt oder überschrieben */
         }
         .card-front-bg {
             background-color: #fffbeb; 
@@ -134,12 +133,18 @@
 <body class="flex flex-col relative text-gray-800">
 
 <!-- Header -->
-<header class="bg-amber-600 text-white shadow-md z-20 flex-shrink-0">
+<header class="bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-md z-20 flex-shrink-0">
     <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
-        <div>
-            <h1 class="text-lg sm:text-xl font-bold tracking-wider uppercase">HOLZEN!</h1>
-            <p class="text-[9px] sm:text-[10px] opacity-90 uppercase tracking-wide">Masterarbeit Projekt</p>
-        </div>
+        <!-- Titel Links -->
+        <h1 class="text-2xl sm:text-3xl font-black tracking-wider uppercase drop-shadow-sm">
+            🌲 HOLZEN! 🌲
+        </h1>
+        <!-- Info Button Rechts -->
+        <button onclick="window.showGameInfo()" class="text-white hover:text-amber-100 p-2 rounded-full transition-colors active:scale-90">
+             <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+             </svg>
+        </button>
     </div>
 </header>
 
@@ -229,8 +234,39 @@
     </div>
 </div>
 
-<!-- === MODALS === -->
-<div id="setupModal" class="fixed inset-0 dimmer flex items-center justify-center z-50 p-4">
+<!-- === SPLASH SCREEN (NEU) === -->
+<div id="splashModal" class="fixed inset-0 bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center z-[100]">
+    <div class="text-center text-white p-8 animate-pulse" style="animation-duration: 1.5s;">
+        <h1 class="text-5xl sm:text-7xl font-black tracking-wider drop-shadow-lg">
+            🌲 HOLZEN! 🌲
+        </h1>
+    </div>
+</div>
+
+<!-- === GAME INFO MODAL (NEU) === -->
+<div id="gameInfoModal" class="fixed inset-0 dimmer flex items-center justify-center z-50 p-4 hidden">
+    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-[400px] max-h-[90vh] flex flex-col">
+        <div class="bg-amber-500 p-4 flex justify-between items-center text-white shrink-0 shadow-md">
+            <h3 class="font-bold text-lg">Spielregeln & Kategorien</h3>
+            <button onclick="document.getElementById('gameInfoModal').classList.add('hidden')" class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
+        </div>
+        <div class="p-5 overflow-y-auto hide-scrollbar space-y-5">
+            <h4 class="font-bold text-gray-700 text-md">Regeln (Quartett-Prinzip)</h4>
+            <p class="text-sm text-gray-600">Gewählt wird immer die Eigenschaft, die für den Gewinner das beste Ergebnis liefert (entweder der höchste oder der niedrigste Wert, siehe unten). Der Gewinner erhält beide Karten und ist im nächsten Zug wieder an der Reihe. Bei Gleichstand ("Unentschieden") behält jeder Spieler seine Karte, und der aktuelle Zugberechtigte bleibt derselbe.</p>
+            
+            <h4 class="font-bold text-gray-700 text-md pt-3">Eigenschaften & Gewinner-Logik</h4>
+
+            <!-- Kategorie Liste -->
+            <div id="infoCategoryList" class="space-y-3">
+                <!-- Dynamisch durch JS gefüllt -->
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<!-- === MODALS (rest) === -->
+<div id="setupModal" class="fixed inset-0 dimmer flex items-center justify-center z-50 p-4 hidden">
     <div class="bg-white rounded-2xl shadow-2xl overflow-hidden max-w-sm w-full">
         <div class="bg-amber-500 p-5 text-white text-center font-bold text-lg sm:text-xl tracking-wide shadow-md">
             HOLZEN!<br><span class="text-sm font-normal opacity-90">Spielmodus wählen</span>
@@ -445,11 +481,11 @@ const reflectionQuestions=[
 ];
 
 const attributeInfo={
-  dk:{icon:'🛡️',name:'Dauerhaftigkeit',unit:'(DK)'},
-  haerte:{icon:'💎',name:'Druckfestigkeit',unit:'(N/mm²)'},
-  quellenSchwindenRadial:{icon:'↔️',name:'Quellen/Schw.',unit:'(%)'},
-  dichte:{icon:'⚖️',name:'Rohdichte',unit:'(kg/m³)'},
-  gewicht:{icon:'🏋️',name:'E-Modul',unit:'(N/mm²)'}
+  dk:{icon:'🛡️',name:'Dauerhaftigkeit',unit:'(DK)', logic: 'Niedriger ist besser'},
+  haerte:{icon:'💎',name:'Druckfestigkeit',unit:'(N/mm²)', logic: 'Höher ist besser'},
+  quellenSchwindenRadial:{icon:'↔️',name:'Quellen/Schw.',unit:'(%)', logic: 'Niedriger ist besser'},
+  dichte:{icon:'⚖️',name:'Rohdichte',unit:'(kg/m³)', logic: 'Höher ist besser'},
+  gewicht:{icon:'🏋️',name:'E-Modul',unit:'(N/mm²)', logic: 'Höher ist besser'}
 };
 
 let aiGame={playerName:'',playerCards:[],aiCards:[],currentPlayerCard:null,currentAiCard:null,roundInProgress:false,turn:'player'};
@@ -479,6 +515,23 @@ function closeBottomSheet(){
 }
 
 document.addEventListener('DOMContentLoaded', async()=>{
+  // --- SPLASH SCREEN LOGIC ---
+  const splash = document.getElementById('splashModal');
+  const setup = document.getElementById('setupModal');
+  
+  if (splash && setup) {
+      // 1. Splash sichtbar machen (ist es initial)
+      splash.classList.remove('hidden');
+      setup.classList.add('hidden');
+
+      // 2. Nach 2.5 Sekunden zum Setup wechseln
+      setTimeout(() => {
+          splash.classList.add('hidden');
+          setup.classList.remove('hidden');
+      }, 2500);
+  }
+  // --- END SPLASH LOGIC ---
+
   try{await signInAnonymously(auth);}catch(e){console.error(e)}
   onAuthStateChanged(auth,(user)=>{
     if(user){
@@ -509,18 +562,15 @@ document.addEventListener('DOMContentLoaded', async()=>{
     if(gameMode==='multiplayer'&&localGameState) displayMultiplayerCards(localGameState);
   });
 
-  bsInfoBtn.addEventListener('click',()=>{
-    closeBottomSheet();
-    const name = lastRoundWinningWoodName || (aiGame.currentPlayerCard ? aiGame.currentPlayerCard.name : 'Holz');
-    window.showWoodInfo(name);
-  });
-  bsNextBtn.addEventListener('click',()=>{
-    closeBottomSheet();
-    window.nextRound();
-  });
+  bsInfoBtn.addEventListener('click',()=>window.showInfoModal());
+  bsNextBtn.addEventListener('click',()=>window.nextRound());
+  
+  // Game Info Modal vorbereiten
+  window.populateGameInfoModal();
 });
 
-window.showNamePrompt=(mode)=>{
+// Exponiere Funktionen global
+window.showNamePrompt= (mode) => {
   document.getElementById('setupModal').classList.add('hidden');
   document.getElementById('nameModal').classList.remove('hidden');
   const btn=document.getElementById('nameSubmitButton');
@@ -534,6 +584,49 @@ window.showNamePrompt=(mode)=>{
     else if(mode==='multiplayer'){gameMode='multiplayer';createGame(playerName);}
     else if(mode==='join'){joinGame(gameId,playerName);}
   });
+};
+
+window.showGameInfo = function() {
+    const modal = document.getElementById('gameInfoModal');
+    if (modal) modal.classList.remove('hidden');
+};
+
+window.populateGameInfoModal = function() {
+    const list = document.getElementById('infoCategoryList');
+    if (!list) return;
+
+    let html = '';
+    
+    const order = ['dk', 'haerte', 'quellenSchwindenRadial', 'dichte', 'gewicht'];
+
+    for (const key of order) {
+        const info = attributeInfo[key];
+        const isBetter = info.logic === 'Höher ist besser';
+        
+        html += `
+            <div class="p-3 rounded-xl border-2 ${isBetter ? 'border-green-400 bg-green-50' : 'border-blue-400/80 bg-blue-50/50'}">
+                <div class="flex justify-between items-center mb-1">
+                    <span class="text-lg font-bold text-gray-800">${info.icon} ${info.name}</span>
+                    <span class="text-sm font-semibold ${isBetter ? 'text-green-700' : 'text-blue-700'}">
+                        ${isBetter ? '⬆ Höher ist besser' : '⬇ Niedriger ist besser'}
+                    </span>
+                </div>
+                <p class="text-[12px] text-gray-600 mt-1">
+                    ${key === 'dk' ? 'Die Dauerhaftigkeitsklasse (DK) bewertet die natürliche Widerstandsfähigkeit gegen holzzerstörende Pilze (1=Sehr dauerhaft, 5=Nicht dauerhaft).' : 
+                      key === 'haerte' ? 'Die Druckfestigkeit gibt an, wie widerstandsfähig das Holz gegen Druck entlang der Faser ist.' :
+                      key === 'quellenSchwindenRadial' ? 'Dieser Wert beschreibt die Maßänderung des Holzes bei Feuchtigkeitswechsel. Ein niedriger Wert ist ideal.' :
+                      key === 'dichte' ? 'Die Rohdichte ist ein Maß für die Härte und Festigkeit des Holzes. Höhere Dichte = stabiler.' :
+                      key === 'gewicht' ? 'Der E-Modul (Elastizitätsmodul) beschreibt die Steifigkeit des Holzes. Ein höherer Wert bedeutet weniger Durchbiegung.' :
+                      'Keine Beschreibung verfügbar.'}
+                </p>
+            </div>
+        `;
+    }
+    list.innerHTML = html;
+};
+window.showInfoModal = function() {
+    closeBottomSheet(); // Stellt sicher, dass das BottomSheet geschlossen wird, bevor das Info-Modal erscheint
+    document.getElementById('infoModal').classList.remove('hidden');
 };
 
 window.copyShareLink=async()=>{
@@ -723,10 +816,7 @@ function createCard(data, isRevealed=true, isPlayer=true, isActive=false){
     front.innerHTML = header + image + attrs;
     
     const back = document.createElement('div');
-    // Wende Border-Logik auch auf Rückseite an, aber ohne Ring um es sauberer zu halten oder mit?
-    // User wollte "Die Karte die am Zug ist", auch wenn verdeckt.
-    // CSS class überschreibt inline styles nicht so gut, daher hier direkt.
-    // Default back image border removed in CSS, adding here.
+    // Wende Border-Logik auch auf Rückseite an
     let backBorder = 'border-4 border-white';
     if(isActive) {
         backBorder = 'border-4 border-purple-600 ring-4 ring-purple-200';
