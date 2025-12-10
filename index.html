@@ -13,7 +13,7 @@
             background-color: #fdfbf7;
             touch-action: manipulation;
             overflow-x: hidden;
-            min-height: 100dvh; /* Dynamic Viewport Height */
+            min-height: 100dvh;
         }
 
         /* 3D Karten Effekte */
@@ -60,6 +60,16 @@
             100% { transform: translateY(300px) scale(0.5) rotate(180deg); opacity: 0; }
         }
 
+        /* Glitzer / Pulsieren für den Status-Ball */
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); transform: translate(-50%, -50%) scale(1); }
+            50% { box-shadow: 0 0 15px 5px rgba(34, 197, 94, 0.4); transform: translate(-50%, -50%) scale(1.1); }
+            100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); transform: translate(-50%, -50%) scale(1); }
+        }
+        .animate-pulse-glow {
+            animation: pulse-glow 2s infinite;
+        }
+
         /* Name auf Rückseite Gegner */
         .opponent-back-name {
             position: absolute;
@@ -78,10 +88,9 @@
         
         .dimmer { background: rgba(0,0,0,0.4); backdrop-filter: blur(2px); }
         
-        /* Spezieller Style für die Attribut-Boxen */
         .attr-box {
-            background-color: #fff7ed; /* orange-50 */
-            border: 1px solid #fbbf24; /* amber-400 */
+            background-color: #fff7ed;
+            border: 1px solid #fbbf24;
             transition: all 0.2s;
         }
         .attr-box.flash-active {
@@ -93,9 +102,9 @@
             color: white !important;
         }
         .attr-box.highlight-compare {
-            background-color: #e5e7eb !important; /* gray-200 */
-            border-color: #9ca3af !important; /* gray-400 */
-            color: #1f2937 !important; /* gray-800 */
+            background-color: #e5e7eb !important;
+            border-color: #9ca3af !important;
+            color: #1f2937 !important;
         }
     </style>
 </head>
@@ -139,12 +148,16 @@
 
     </div>
 
-    <div class="w-full px-1 mt-1 mb-24 max-w-[580px]"> 
-        <div class="h-3 sm:h-4 w-full bg-gray-200 rounded-full overflow-hidden border border-gray-300 shadow-inner relative">
-            <div id="statusBar" class="h-full bg-amber-500 transition-all duration-500 ease-out" style="width: 50%;"></div>
-        </div>
-        <div class="flex justify-between text-[9px] sm:text-[10px] font-bold text-gray-400 mt-1 px-2">
+    <div class="w-full px-4 mt-2 mb-24 max-w-3xl"> 
+        <div class="flex justify-between text-[9px] sm:text-[10px] font-bold text-gray-400 mb-1 px-1">
             <span>Dein Stapel</span><span>Gegner Stapel</span>
+        </div>
+        <div class="h-4 w-full bg-gray-200 rounded-full shadow-inner relative">
+            <div id="statusBar" class="h-full bg-amber-500 rounded-l-full transition-all duration-500 ease-out" style="width: 50%;"></div>
+            
+            <div id="statusBall" class="absolute top-1/2 w-6 h-6 rounded-full border-2 border-white shadow-md transition-all duration-500 ease-out z-10" 
+                 style="left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at 30% 30%, #fbbf24, #d97706);">
+            </div>
         </div>
     </div>
 </div>
@@ -179,7 +192,6 @@
             <button onclick="window.showNamePrompt('multiplayer')" class="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 active:scale-[0.98] text-white font-bold py-4 rounded-xl shadow-lg transform transition duration-200 flex items-center justify-center gap-3">
                 <span class="text-2xl">🌍</span> Online gegen Freunde
             </button>
-
             <div class="pt-4 space-y-4 border-t border-gray-100 mt-4">
                 <div class="flex items-center justify-between">
                     <span class="text-sm font-bold text-gray-700 flex items-center gap-2">🔊 Ton an</span>
@@ -578,7 +590,6 @@ function createCard(data, isRevealed=true, isPlayer=true){
             <img src="${imgUrl}" class="w-full h-full object-cover" onerror="this.style.opacity='0.2'">
         </div>`;
     
-    // RESPONSIVE PADDING & GAP IN ATTRIBUTE CONTAINER
     let attrs = '<div class="flex-grow flex flex-col justify-start gap-1 sm:gap-2 px-2 sm:px-3 pb-2 sm:pb-3 overflow-y-auto hide-scrollbar">';
     for(const k in attributeInfo){
         const val = data[k];
@@ -659,11 +670,11 @@ window.selectAttribute = function(attr){
 
         aiGame.roundInProgress = true; 
         
-        // Highlight opponent card row (gray)
         const oppRow = document.querySelector(`div[data-attr-row="${attr}"]`);
         if(oppRow) oppRow.classList.add('highlight-compare');
 
-        setTimeout(() => { selectAttributeAI(attr); }, 1500);
+        // Verzögerung 2.5 Sekunden wie gewünscht
+        setTimeout(() => { selectAttributeAI(attr); }, 2500);
 
     } else if(gameMode==='multiplayer') {
         multiplayerSelectAttribute(attr);
@@ -756,11 +767,10 @@ function aiTurn(){
     const row = document.querySelector(`div[data-attr-row="${k}"]`);
     if(row) row.classList.add('flash-active');
     
-    // Highlight own (player's) row gray for comparison
     const playerRow = document.querySelector(`div[data-attr-btn="${k}"]`) || document.querySelector(`div[data-attr-row="${k}"]`);
     if(playerRow) playerRow.classList.add('highlight-compare');
 
-    setTimeout(() => { selectAttributeAI(k); }, 1500);
+    setTimeout(() => { selectAttributeAI(k); }, 2500);
 }
 
 function selectAttributeAI(attr){
@@ -848,10 +858,24 @@ window.showFinalWinScreen = function(){
 function updateStatusBar(p, o){
     const total=p+o; const pct=(total===0)?50:(p/total)*100;
     const bar=document.getElementById('statusBar');
+    const ball=document.getElementById('statusBall');
+    
     bar.style.width=`${pct}%`;
-    if(pct>60) bar.className='h-full bg-green-500 transition-all duration-500';
-    else if(pct<40) bar.className='h-full bg-red-500 transition-all duration-500';
-    else bar.className='h-full bg-amber-500 transition-all duration-500';
+    ball.style.left=`${pct}%`;
+    
+    // Farblogik für Kugel & Glitzer
+    ball.classList.remove('animate-pulse-glow');
+    if(pct > 60) {
+        ball.style.background = 'radial-gradient(circle at 30% 30%, #4ade80, #16a34a)'; // Grün
+        ball.classList.add('animate-pulse-glow');
+        bar.className='h-full bg-green-500 transition-all duration-500 ease-out';
+    } else if (pct < 40) {
+        ball.style.background = 'radial-gradient(circle at 30% 30%, #f87171, #dc2626)'; // Rot
+        bar.className='h-full bg-red-500 transition-all duration-500 ease-out';
+    } else {
+        ball.style.background = 'radial-gradient(circle at 30% 30%, #fbbf24, #d97706)'; // Amber
+        bar.className='h-full bg-amber-500 transition-all duration-500 ease-out';
+    }
 }
 function shuffleArray(a){
     for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
