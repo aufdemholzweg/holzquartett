@@ -72,6 +72,20 @@
             animation: pulse-glow 2s infinite;
         }
 
+        /* Holzwurm Animation */
+        @keyframes worm-pop-up {
+            0% { transform: translateY(100%) rotate(0deg); opacity: 0; }
+            20% { transform: translateY(-20%) rotate(-10deg); opacity: 1; }
+            40% { transform: translateY(-20%) rotate(10deg); }
+            50% { transform: translateY(-30%) rotate(0deg) scale(1.1); } /* Hüpfer */
+            60% { transform: translateY(-20%) rotate(-10deg) scale(1); }
+            80% { transform: translateY(-20%) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100%) rotate(0deg); opacity: 0; }
+        }
+        .animate-worm {
+            animation: worm-pop-up 3.5s ease-in-out forwards;
+        }
+
         /* Name auf Rückseite Gegner */
         .opponent-back-name {
             position: absolute;
@@ -180,6 +194,18 @@
                  style="left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at 30% 30%, #fbbf24, #d97706);">
             </div>
         </div>
+    </div>
+</div>
+
+<!-- === HAPPY WOODWORM (Holzwurm) === -->
+<div id="happyWorm" class="fixed bottom-0 right-4 translate-y-full z-50 pointer-events-none transform transition-transform">
+    <div class="relative">
+        <!-- Sprechblase -->
+        <div class="absolute -top-10 -left-10 bg-white px-3 py-1.5 rounded-xl shadow-md border-2 border-amber-200 text-xs font-bold text-amber-800 whitespace-nowrap animate-bounce" style="animation-duration: 2s;">
+            Stark! 🪵
+        </div>
+        <!-- Wurm Emoji (Groß) -->
+        <div class="text-6xl filter drop-shadow-xl cursor-default select-none">🐛</div>
     </div>
 </div>
 
@@ -322,7 +348,6 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-// Tracking Helper für Masterarbeit / Evaluation
 async function trackEvent(type) {
     const ref = doc(db, "statistics", "usage"); 
     try {
@@ -610,6 +635,7 @@ function updateMultiplayerUI(gd){
         document.getElementById('resultText').className = gd.lastResult.winnerId===localPlayerId ? 'text-2xl font-black uppercase text-green-600' : 'text-2xl font-black uppercase text-red-600';
         document.getElementById('resultDetails').innerText = `${attributeInfo[gd.lastResult.attribute].name}: ${gd.lastResult.values[localPlayerId]} vs ${gd.lastResult.values[oppId]}`;
         if(document.getElementById('bottomSheet').classList.contains('hidden')) openBottomSheet(winnerName);
+        if(gd.lastResult.winnerId===localPlayerId) showHappyWorm(); // Holzwurm MP
     } else {
         roundSoundPlayed=false;
         closeBottomSheet();
@@ -872,7 +898,12 @@ function evaluateRoundAI(attr){
     document.getElementById('resultDetails').innerText = `${attributeInfo[attr].name}: ${pv} vs ${av}`;
     openBottomSheet(resText);
     
-    if(pWins===true) { playSound(sounds.win); triggerWinStarAnimation(); lastRoundWinningWoodName = aiGame.currentPlayerCard.name; }
+    if(pWins===true) { 
+        playSound(sounds.win); 
+        triggerWinStarAnimation(); 
+        showHappyWorm(); // Holzwurm
+        lastRoundWinningWoodName = aiGame.currentPlayerCard.name; 
+    }
     else if(pWins===false) { lastRoundWinningWoodName = aiGame.currentAiCard.name; }
     else { lastRoundWinningWoodName = aiGame.currentPlayerCard.name; }
     
@@ -899,6 +930,16 @@ function triggerWinStarAnimation(){
     con.appendChild(star);
     playSound(sounds.starWin);
     setTimeout(()=>star.remove(), 1200);
+}
+
+function showHappyWorm() {
+    const worm = document.getElementById('happyWorm');
+    if(worm) {
+        // Reset animation by removing and adding class
+        worm.classList.remove('animate-worm');
+        void worm.offsetWidth; // Trigger reflow
+        worm.classList.add('animate-worm');
+    }
 }
 
 function endGame(){
