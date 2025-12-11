@@ -261,47 +261,61 @@
 
 <!-- JAVASCRIPT -->
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, deleteDoc, collection, query, orderBy, limit, getDocs, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, deleteDoc, collection, query, orderBy, limit, getDocs, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-const apiKey = "AIzaSyCB9jx92yxJymq8YHbB1DomjNi-UaI60S4"; // Provided API Key
+const apiKey = ""; // API Key via Environment
 
-// === USER PROVIDED FIREBASE CONFIG ===
-const firebaseConfig = {
-  apiKey: "AIzaSyCyRXl8-JPr1xTXPDi1VG-eQk6fOnTpqUI",
-  authDomain: "holzquartett-3a177.firebaseapp.com",
-  projectId: "holzquartett-3a177",
-  storageBucket: "holzquartett-3a177.appspot.com",
-  messagingSenderId: "1081595025073",
-  appId: "1:1081595025073:web:bc571fffb6e4f20b27f490",
-  measurementId: "G-HKLWFJE83K"
-};
-
-// Initialisierung
+// === FIREBASE CONFIG & AUTH SETUP (Standard Canvas Pattern) ===
+const firebaseConfig = JSON.parse(__firebase_config);
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
 const auth = getAuth(app);
+const db = getFirestore(app);
+const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
-// Authentifizierung starten
-signInAnonymously(auth).catch((error) => console.error("Firebase Auth Error:", error));
+// Auth Initialization Logic
+let localPlayerId = null;
+const initAuth = async () => {
+    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+        try {
+            await signInWithCustomToken(auth, __initial_auth_token);
+        } catch (e) {
+            await signInAnonymously(auth);
+        }
+    } else {
+        await signInAnonymously(auth);
+    }
+};
+initAuth();
+
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        localPlayerId = user.uid;
+    }
+});
+
+// Helper for strict paths
+function getPublicDataRef(coll, docId) {
+    return docId ? doc(db, 'artifacts', appId, 'public', 'data', coll, docId) : collection(db, 'artifacts', appId, 'public', 'data', coll);
+}
 
 // Logging Funktion für Forschungszwecke (Gamification Usage)
 async function trackEvent(type) {
-    if (!auth.currentUser) return; // Nur loggen wenn User da ist
-    const ref = doc(db, "statistics", "usage"); 
+    if (!localPlayerId) return; 
+    const ref = getPublicDataRef("statistics", "usage"); 
     try {
         await setDoc(ref, {
             [type]: increment(1),
             last_activity: serverTimestamp()
         }, { merge: true });
     } catch (e) {
-        console.warn("Tracking eingeschränkt (Permissions/Network).");
+        console.warn("Tracking eingeschränkt (Permissions/Network).", e);
     }
 }
 
 // Globale Variablen
-let gameMode=null, gameId=null, localPlayerId=null, unsubscribeGame=null, localGameState={}, hasCopiedShareLink=false;
+let gameMode=null, gameId=null, unsubscribeGame=null, localGameState={}, hasCopiedShareLink=false;
 let isMuted=false;
 let roundSoundPlayed=false;
 let lastRoundWinningWoodName = null;
@@ -311,10 +325,10 @@ let wormTarget = Math.floor(Math.random() * 3) + 3;
 
 // Sounds
 const sounds={
-  flip:new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_139083c224.mp3'),
-  win:new Audio('https://github.com/aufdemholzweg/holzquartett/blob/894e048eea71ba49921abfe6827bd8dc723f8c2d/gewonnen.mp3?raw=true'),
-  chime:new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c744c8.mp3'),
-  starWin:new Audio('https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3')
+ flip:new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_139083c224.mp3'),
+ win:new Audio('https://github.com/aufdemholzweg/holzquartett/blob/894e048eea71ba49921abfe6827bd8dc723f8c2d/gewonnen.mp3?raw=true'),
+ chime:new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c744c8.mp3'),
+ starWin:new Audio('https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3')
 };
 function playSound(a){ if(!isMuted && a){ a.currentTime=0; a.play().catch(()=>{}); } }
 
@@ -359,6 +373,27 @@ const woodCards=[
  {name:"🌴 Palisander",dk:2,haerte:82,quellenSchwindenRadial:3.0,dichte:850,gewicht:16000, imgTree:`${IMG_BASE}/palisander_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/palisander_2.jpeg${IMG_SUFFIX}`},
  {name:"🌴 Ebenholz",dk:1,haerte:98,quellenSchwindenRadial:3.2,dichte:1200,gewicht:16500, imgTree:`${IMG_BASE}/ebenholz_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/ebenholz_2.jpeg${IMG_SUFFIX}`}
 ];
+
+// Funktion zum Vorladen der Bilder
+const preloadImages = () => {
+    // console.log("Starte Preloading der Bilder...");
+    const bg = new Image();
+    bg.src = 'https://github.com/aufdemholzweg/holzquartett/blob/b9d51d5b5d930f643a3f3861262361b97c0beb7c/images/background_card.jpg?raw=true';
+    
+    woodCards.forEach(card => {
+        if(card.imgTree) {
+            const i1 = new Image();
+            i1.src = card.imgTree;
+        }
+        if(card.imgCross) {
+            const i2 = new Image();
+            i2.src = card.imgCross;
+        }
+    });
+};
+
+// Start preload immediately
+preloadImages();
 
 const detailedWoodInfo = {
     "🌳 Eiche": `<p class="mb-2">Hart, schwer, sehr dauerhaft; hoher Gerbstoffanteil, daher widerstandsfähig gegen Pilze/Schädlinge, kann mit Eisen schwarz verfärben. Grobporig, deutliche Jahresringe.</p><p class="mb-2"><strong>Verwendung:</strong> Möbel, Fußböden, Treppen, Fassdauben, Außenbau (z. B. Terrassen), Fachwerk.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Traditionsholz und Symbol für Stärke; häufig in Wappen/Münzen.</p>`,
@@ -411,6 +446,17 @@ const attributeInfo={
 function shuffleArray(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
 
 // === AI FUNCTION ===
+window.triggerAiQuestion = (woodName, question) => {
+    askGemini(woodName, question);
+};
+
+window.triggerAiCustom = (woodName) => {
+    const input = document.getElementById('aiInput');
+    if(input && input.value.trim()) {
+        askGemini(woodName, input.value.trim());
+    }
+};
+
 async function askGemini(woodName, question) {
     const aiOutput = document.getElementById('aiOutput');
     const aiInput = document.getElementById('aiInput');
@@ -584,7 +630,8 @@ function closeBottomSheet(){
 async function saveToLeaderboard(name){
     if(!name) return;
     const safe=name.replace(/[.#$[\]]/g,'_');
-    try{ await setDoc(doc(db, "leaderboard", safe),{name,wins:increment(1),lastWin:serverTimestamp()},{merge:true}); }catch(e){}
+    const ref = getPublicDataRef("leaderboard", safe);
+    try{ await setDoc(ref,{name,wins:increment(1),lastWin:serverTimestamp()},{merge:true}); }catch(e){}
 }
 
 function endGame(winnerName){
@@ -684,7 +731,7 @@ function aiTurn(){
 // Multiplayer Functions
 function listenToGameChanges(){
     if(!gameId) return;
-    unsubscribeGame=onSnapshot(doc(db, "games", gameId),(ds)=>{
+    unsubscribeGame=onSnapshot(getPublicDataRef("games", gameId),(ds)=>{
         if(!ds.exists()) { window.resetGame(); return; }
         const gd=ds.data(); localGameState=gd;
         if(gd.status==='playing'||gd.status==='finished'){
@@ -769,10 +816,10 @@ window.startGameAI = (name) => {
 
 let authRetries = 0;
 window.createGame = async (playerName) => {
-    if (!auth.currentUser) { 
+    if (!localPlayerId) { 
         if(authRetries > 10) { 
             console.error("Auth timeout"); 
-            alert("Verbindungsfehler: Firebase nicht erreichbar."); 
+            alert("Verbindungsfehler: Authentifizierung nicht bereit."); 
             return; 
         }
         authRetries++;
@@ -780,7 +827,7 @@ window.createGame = async (playerName) => {
         setTimeout(() => window.createGame(playerName), 500);
         return; 
     }
-    localPlayerId = auth.currentUser.uid;
+    
     trackEvent('games_multiplayer');
     gameMode='multiplayer';
     const lobby=document.getElementById('multiplayerLobbyModal'); lobby.classList.remove('hidden');
@@ -791,7 +838,7 @@ window.createGame = async (playerName) => {
     document.getElementById('qrcode').innerHTML = "";
     new QRCode(document.getElementById('qrcode'), {text: joinUrl, width: 128, height: 128});
     
-    await setDoc(doc(db, "games", gameId),{
+    await setDoc(getPublicDataRef("games", gameId),{
         gameId, status:'waiting', playerIds:[localPlayerId],
         players:{[localPlayerId]:{name:playerName,cards:[],status:'online'}},
         createdAt:serverTimestamp()
@@ -800,10 +847,10 @@ window.createGame = async (playerName) => {
 };
 
 window.joinGame = async (id, playerName) => {
-    if (!auth.currentUser) { setTimeout(()=>window.joinGame(id,playerName), 500); return; }
-    localPlayerId = auth.currentUser.uid;
+    if (!localPlayerId) { setTimeout(()=>window.joinGame(id,playerName), 500); return; }
+    
     gameMode='multiplayer'; gameId = id;
-    const ref=doc(db, "games", id);
+    const ref=getPublicDataRef("games", id);
     const snap=await getDoc(ref);
     if(snap.exists() && snap.data().status==='waiting'){
         document.getElementById('lobbyTitle').textContent="Verbinde...";
@@ -847,7 +894,7 @@ window.selectAttribute = async (attr) => {
         let pWins = (logic === 'Niedrig gewinnt') ? (pv < ov) : (pv > ov);
         if(pv === ov) pWins = 'tie';
         const winner = pWins==='tie' ? 'tie' : (pWins ? localPlayerId : opp);
-        await updateDoc(doc(db, "games", gameId),{
+        await updateDoc(getPublicDataRef("games", gameId),{
             lastResult: {winnerId:winner, attribute:attr, values:{[localPlayerId]:pv, [opp]:ov}}
         });
     }
@@ -874,11 +921,11 @@ window.nextRound = async () => {
         
         // Prüfen ob Spiel vorbei
         if(gs.players[p1].cards.length===0 || gs.players[p2].cards.length===0){
-            await updateDoc(doc(db, "games", gameId), {status:'finished', players:gs.players});
+            await updateDoc(getPublicDataRef("games", gameId), {status:'finished', players:gs.players});
             return;
         }
         const nextT = w==='tie' ? gs.turn : w;
-        await updateDoc(doc(db, "games", gameId), {
+        await updateDoc(getPublicDataRef("games", gameId), {
             lastResult:null, turn:nextT, players:gs.players,
             currentCards:{[p1]:gs.players[p1].cards[0], [p2]:gs.players[p2].cards[0]}
         });
@@ -941,11 +988,14 @@ window.showLeaderboard = async () => {
     document.getElementById('gameOverModal').classList.add('hidden');
     document.getElementById('leaderboardModal').classList.remove('hidden');
     try {
-        const q=query(collection(db, "leaderboard"),orderBy("wins","desc"),limit(10));
+        const q=query(getPublicDataRef("leaderboard"),orderBy("wins","desc"),limit(10));
         const snap=await getDocs(q);
         if(snap.empty){ list.innerHTML='<div class="text-center py-4 text-gray-400">Keine Einträge</div>'; return; }
         list.innerHTML = snap.docs.map((d,i)=>`<div class="flex justify-between p-3 rounded-lg ${i%2===0?'bg-gray-50':'bg-white'} border border-gray-100"><span class="font-bold text-gray-700">${i+1}. ${d.data().name}</span><span class="font-bold text-amber-600">${d.data().wins} 🏆</span></div>`).join('');
-    } catch(e){ list.innerHTML='<div class="text-center text-red-400 text-sm">Fehler (Netzwerk/Rechte)<br>Bitte Firestore Regeln prüfen.</div>'; }
+    } catch(e){ 
+        console.error(e);
+        list.innerHTML='<div class="text-center text-red-400 text-sm">Fehler (Netzwerk/Rechte)<br>Bitte Firestore Regeln prüfen.</div>'; 
+    }
 };
 
 window.copyShareLink = () => { 
