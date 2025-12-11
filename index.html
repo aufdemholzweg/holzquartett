@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -5,21 +6,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Holz-Quartett: Gamifizierung in der Berufsbildung</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- QR Code Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- HTML2Canvas für Dokumentationszwecke (Masterarbeit) -->
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <!-- Markdown Parser für schöne KI-Antworten -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
+        /* Basis-Styling für mobile Optimierung */
         body { font-family: 'Inter', sans-serif; background-color: #fdfbf7; touch-action: manipulation; overflow-x: hidden; min-height: 100dvh; }
         
-        /* 3D Karten */
+        /* 3D Karten-Effekte */
         .perspective-1000 { perspective: 1000px; }
         .card-3d { transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
         .card-flipped { transform: rotateY(180deg); }
         .card-front, .card-back { backface-visibility: hidden; position: absolute; width: 100%; height: 100%; top: 0; left: 0; border-radius: 1rem; overflow: hidden; box-sizing: border-box; }
         
+        /* Karten-Rückseite mit Fallback */
         .card-back { 
             transform: rotateY(180deg); 
             background-color: #2c3e50;
@@ -32,67 +37,55 @@
         .card-front-bg { background-color: #fffbeb; background-image: linear-gradient(to bottom right, #fffbeb, #fef3c7); }
         .hover-lift:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
         
-        /* Animationen */
+        /* Animationen für Gamification-Elemente */
         .animate-pulse-glow { animation: pulse-glow 2s infinite; }
         @keyframes pulse-glow { 0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); transform: translate(-50%, -50%) scale(1); } 50% { box-shadow: 0 0 15px 5px rgba(34, 197, 94, 0.4); transform: translate(-50%, -50%) scale(1.1); } 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); transform: translate(-50%, -50%) scale(1); } }
         
         .animate-worm { animation: worm-pop-up 3.5s ease-in-out forwards; }
-        @keyframes worm-pop-up { 
-            0% { transform: translateY(100%) rotate(0deg); opacity: 0; } 
-            20% { transform: translateY(-20%) rotate(-10deg); opacity: 1; } 
-            40% { transform: translateY(-20%) rotate(10deg); } 
-            50% { transform: translateY(-30%) rotate(0deg) scale(1.1); } 
-            60% { transform: translateY(-20%) rotate(-10deg) scale(1); } 
-            80% { transform: translateY(-20%) rotate(0deg); opacity: 1; } 
-            100% { transform: translateY(100%) rotate(0deg); opacity: 0; } 
-        }
+        @keyframes worm-pop-up { 0% { transform: translateY(100%) rotate(0deg); opacity: 0; } 20% { transform: translateY(-20%) rotate(-10deg); opacity: 1; } 40% { transform: translateY(-20%) rotate(10deg); } 50% { transform: translateY(-30%) rotate(0deg) scale(1.1); } 60% { transform: translateY(-20%) rotate(-10deg) scale(1); } 80% { transform: translateY(-20%) rotate(0deg); opacity: 1; } 100% { transform: translateY(100%) rotate(0deg); opacity: 0; } }
         
-        .opponent-back-name { 
-            position: absolute; top: 15%; width: 100%; text-align: center; 
-            color: rgba(255,255,255,0.95); font-weight: 700; font-size: 1.1rem; 
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8); pointer-events: none; 
-            background: rgba(0,0,0,0.3); padding: 4px 0; backdrop-filter: blur(2px);
-        }
+        /* Utility Klassen */
+        .opponent-back-name { position: absolute; top: 15%; width: 100%; text-align: center; color: rgba(255,255,255,0.95); font-weight: 700; font-size: 1.1rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5); pointer-events: none; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .dimmer { background: rgba(0,0,0,0.4); backdrop-filter: blur(2px); }
         
+        /* Interaktive Elemente */
         .attr-box { background-color: #fff7ed; border: 1px solid #fbbf24; transition: all 0.2s; }
         .attr-box.flash-active { background-color: #f97316 !important; border-color: #ea580c !important; color: white !important; }
         .attr-box.flash-active span { color: white !important; }
         .attr-box.highlight-compare { background-color: #e5e7eb !important; border-color: #9ca3af !important; color: #111827 !important; }
         .attr-box.highlight-compare span { color: #000000 !important; }
 
+        /* AI Chat Styles - Professionellerer Look */
         .ai-chat-bubble { position: relative; background: #f8fafc; border-radius: 8px; padding: 12px; margin-top: 10px; font-size: 0.9rem; line-height: 1.5; border-left: 4px solid #d97706; }
-
-        /* NEU: Carousel Styles für Themenwahl */
-        .snap-x { scroll-snap-type: x mandatory; }
-        .snap-center { scroll-snap-align: center; }
-        .theme-card-selected { border-color: #f59e0b; background-color: #fffbeb; transform: scale(1.05); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
     </style>
 </head>
 <body class="flex flex-col relative text-gray-800">
 
-<!-- Header -->
+<!-- Header Area -->
 <header class="bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-md z-20 flex-shrink-0">
     <div class="max-w-[600px] mx-auto px-4 py-3 relative flex justify-between items-center">
-        <button onclick="window.location.reload();" class="text-white hover:text-amber-100 p-2 rounded-full transition-colors active:scale-90 relative z-10">
+        <!-- Reload Button -->
+        <button onclick="window.location.reload();" class="text-white hover:text-amber-100 p-2 rounded-full transition-colors active:scale-90 relative z-10" aria-label="Neu laden">
              <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
         </button>
+        <!-- Titel -->
         <h1 class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-lg sm:text-2xl font-black tracking-wider uppercase drop-shadow-sm whitespace-nowrap">
             🌲 HOLZEN! 🌲
         </h1>
-        <button onclick="window.showGameInfo()" class="text-white hover:text-amber-100 p-2 rounded-full transition-colors active:scale-90 relative z-10">
+        <!-- Info Button -->
+        <button onclick="window.showGameInfo()" class="text-white hover:text-amber-100 p-2 rounded-full transition-colors active:scale-90 relative z-10" aria-label="Spielregeln">
              <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
         </button>
     </div>
 </header>
 
-<!-- Game Container -->
+<!-- === GAME AREA === -->
 <div id="gameContainer" class="hidden flex-grow flex flex-col items-center w-full max-w-[600px] mx-auto relative p-2 overflow-hidden">
     <div id="animationContainer" class="absolute inset-0 pointer-events-none z-50 overflow-hidden"></div>
     <div class="flex justify-center items-start gap-2 sm:gap-4 w-full flex-grow relative pb-2 mt-2"> 
-        <!-- Spieler -->
+        <!-- SPALTE SPIELER -->
         <div class="flex flex-col w-[48%] max-w-[280px] gap-2 z-10">
             <div class="bg-white w-full rounded-2xl shadow-sm border border-orange-100 p-2 sm:p-3 text-center">
                 <div id="playerNameDisplay" class="text-base sm:text-lg font-bold text-amber-700 leading-tight truncate">Spieler</div>
@@ -102,8 +95,8 @@
                 <div id="playerCard" class="w-full h-full relative"></div>
             </div>
         </div>
-        <!-- Gegner -->
-        <div class="flex flex-col w-[48%] max-w-[280px] gap-2 z-10 relative">
+        <!-- SPALTE GEGNER -->
+        <div class="flex flex-col w-[48%] max-w-[280px] gap-2 z-10">
             <div class="bg-white w-full rounded-2xl shadow-sm border border-orange-100 p-2 sm:p-3 text-center">
                 <div id="opponentNameDisplay" class="text-base sm:text-lg font-bold text-gray-600 leading-tight truncate">COMPUTER</div>
                 <div class="text-[10px] sm:text-sm text-gray-500 mt-0.5">Karten: <span id="aiCards" class="font-bold text-xl sm:text-2xl text-gray-800">15</span></div>
@@ -113,8 +106,7 @@
             </div>
         </div>
     </div>
-    
-    <!-- Status -->
+    <!-- Statusbalken (Visualisierung des Spielfortschritts) -->
     <div class="w-full mt-4 mb-24"> 
         <div class="flex justify-between text-[9px] sm:text-[10px] font-bold text-gray-400 mb-1 px-1">
             <span>Dein Stapel</span><span>Gegenspieler</span>
@@ -126,7 +118,7 @@
     </div>
 </div>
 
-<!-- Happy Woodworm -->
+<!-- === FEEDBACK ELEMENT: HAPPY WOODWORM === -->
 <div id="happyWorm" class="fixed bottom-0 right-4 translate-y-full z-50 pointer-events-none transform transition-transform hidden">
     <div class="relative">
         <div id="wormSpeech" class="absolute -top-10 -left-10 bg-white px-3 py-1.5 rounded-xl shadow-md border-2 border-amber-200 text-xs font-bold text-amber-800 whitespace-nowrap animate-bounce" style="animation-duration: 2s;">Stark! 🪵</div>
@@ -134,7 +126,7 @@
     </div>
 </div>
 
-<!-- Bottom Sheet -->
+<!-- === BOTTOM SHEET (Ergebnisanzeige) === -->
 <div id="bottomSheetBackdrop" class="hidden fixed inset-0 bg-black/20 z-30 transition-opacity"></div>
 <div id="bottomSheet" class="hidden fixed left-0 right-0 bottom-0 z-40 flex justify-center px-2 pb-6 transition-transform transform translate-y-full duration-300">
     <div class="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-200 w-full max-w-md p-5 flex flex-col items-center">
@@ -148,7 +140,7 @@
     </div>
 </div>
 
-<!-- Modals -->
+<!-- === MODALS === -->
 
 <!-- Info Modal -->
 <div id="gameInfoModal" class="fixed inset-0 dimmer flex items-center justify-center z-50 p-4 hidden">
@@ -165,62 +157,32 @@
     </div>
 </div>
 
-<!-- Setup Modal mit Themen-Slider -->
+<!-- Setup Modal (Startbildschirm) - JETZT SICHTBAR PER DEFAULT (Kein "hidden") -->
 <div id="setupModal" class="fixed inset-0 dimmer flex items-center justify-center z-50 p-4">
     <div class="bg-white rounded-2xl shadow-2xl overflow-hidden max-w-sm w-full">
         <div class="bg-amber-500 p-5 text-white text-center font-bold text-lg sm:text-xl tracking-wide shadow-md">
             HOLZEN!<br><span class="text-sm font-normal opacity-90">Spielmodus wählen</span>
         </div>
-        
-        <!-- THEMEN-WAHL (NEU) -->
-        <div class="pt-4 px-2">
-            <p class="text-xs font-bold text-gray-500 mb-2 px-2 uppercase tracking-wider">Thema wählen:</p>
-            <div class="flex overflow-x-auto snap-x snap-mandatory gap-3 pb-4 px-2 hide-scrollbar" id="themeCarousel">
-                
-                <!-- Karte 1: Holzarten -->
-                <div class="snap-center shrink-0 w-32 h-24 rounded-xl border-2 border-amber-500 bg-amber-50 p-2 flex flex-col items-center justify-center cursor-pointer transition transform theme-card-selected" onclick="window.selectTheme('wood', this)">
-                    <span class="text-3xl mb-1">🌲</span>
-                    <span class="font-bold text-amber-900 text-xs uppercase">Holzarten</span>
-                </div>
-
-                <!-- Karte 2: Mikroskopie (NEU) -->
-                <div class="snap-center shrink-0 w-32 h-24 rounded-xl border-2 border-gray-200 bg-white p-2 flex flex-col items-center justify-center cursor-pointer transition transform hover:border-blue-300" onclick="window.selectTheme('micro', this)">
-                    <span class="text-3xl mb-1">🔬</span>
-                    <span class="font-bold text-gray-700 text-xs uppercase">Mikroskopie</span>
-                </div>
-
-                <!-- Platzhalter -->
-                <div class="snap-center shrink-0 w-32 h-24 rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 p-2 flex flex-col items-center justify-center opacity-60">
-                    <span class="text-2xl mb-1">➕</span>
-                    <span class="font-bold text-gray-400 text-xs">Bald mehr...</span>
-                </div>
-
-            </div>
-        </div>
-
-        <div class="p-6 pt-2 space-y-4">
+        <div class="p-6 space-y-5">
             <button onclick="window.showNamePrompt('ai')" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold py-4 rounded-xl shadow-lg flex items-center justify-center gap-3 active:scale-95 transition-transform">
                 <span class="text-2xl">🤖</span> Gegen Computer
             </button>
             <button onclick="window.showNamePrompt('multiplayer')" class="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg flex items-center justify-center gap-3 active:scale-95 transition-transform">
                 <span class="text-2xl">🌍</span> Online gegen Freunde
             </button>
-            
-            <div class="pt-4 border-t border-gray-100 flex flex-col gap-3">
-                 <label class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer">
-                    <input type="checkbox" id="soundToggle" class="w-5 h-5 text-amber-600 rounded border-gray-300 focus:ring-amber-500">
-                    <span class="text-sm font-bold text-gray-700">🔊 Ton an</span>
-                 </label>
-                 <label class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer">
-                    <input type="checkbox" id="revealBackToggle" class="w-5 h-5 text-amber-600 rounded border-gray-300 focus:ring-amber-500">
-                    <span class="text-sm font-bold text-gray-700">👀 Gegner-Karte sichtbar</span>
-                 </label>
+            <div class="pt-4 border-t border-gray-100 flex justify-between items-center">
+                 <span class="text-sm font-bold text-gray-700">🔊 Ton an</span>
+                 <input type="checkbox" id="soundToggle" class="accent-green-500 w-5 h-5">
+            </div>
+            <div class="flex justify-between items-center">
+                 <span class="text-sm font-bold text-gray-700">👀 Gegner-Karte sichtbar</span>
+                 <input type="checkbox" id="revealBackToggle" class="accent-green-500 w-5 h-5">
             </div>
         </div>
     </div>
 </div>
 
-<!-- Name Eingabe -->
+<!-- Name Eingabe Modal -->
 <div id="nameModal" class="hidden fixed inset-0 dimmer flex items-center justify-center z-50 p-4">
     <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-xs w-full text-center">
         <h2 class="text-xl font-bold text-gray-800 mb-6">Dein Name</h2>
@@ -243,18 +205,21 @@
     </div>
 </div>
 
-<!-- Zusatzwissen -->
+<!-- Zusatzwissen Modal (Scaffolding & AI) -->
 <div id="infoModal" class="hidden fixed inset-0 dimmer flex items-center justify-center z-50 p-4">
     <div class="bg-white rounded-2xl shadow-2xl overflow-hidden max-w-md w-full max-h-[90vh] flex flex-col">
         <div class="bg-amber-600 p-4 flex justify-between items-center text-white shrink-0 shadow-md">
-            <h3 id="infoModalTitle" class="font-bold text-lg flex items-center gap-2">Fachwissen</h3>
+            <h3 id="infoModalTitle" class="font-bold text-lg flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                Fachwissen
+            </h3>
             <button onclick="window.closeInfoModal()" class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
         </div>
         <div id="infoModalContent" class="p-5 overflow-y-auto hide-scrollbar space-y-4"></div>
     </div>
 </div>
 
-<!-- Game Over -->
+<!-- Game Over Modal -->
 <div id="gameOverModal" class="hidden fixed inset-0 dimmer flex items-center justify-center z-50 p-4">
     <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full text-center">
         <h2 id="gameOverTitle" class="text-3xl font-black mb-2 text-gray-800">SPIELENDE</h2>
@@ -267,7 +232,7 @@
     </div>
 </div>
 
-<!-- Reflexion -->
+<!-- Reflexions-Modal (Didaktisches Element) -->
 <div id="reflectionModal" class="hidden fixed inset-0 dimmer flex items-center justify-center z-50 p-4">
     <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full">
         <h2 class="text-xl font-bold text-amber-800 mb-4">🎉 Super gespielt!</h2>
@@ -277,7 +242,7 @@
     </div>
 </div>
 
-<!-- Leaderboard -->
+<!-- Leaderboard Modal -->
 <div id="leaderboardModal" class="hidden fixed inset-0 dimmer flex items-center justify-center z-50 p-4">
     <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full flex flex-col max-h-[80vh]">
         <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">🏆 Bestenliste</h2>
@@ -286,14 +251,15 @@
     </div>
 </div>
 
-<!-- JAVASCRIPT -->
+<!-- JAVASCRIPT LOGIC -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, deleteDoc, collection, query, orderBy, limit, getDocs, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const apiKey = "AIzaSyCB9jx92yxJymq8YHbB1DomjNi-UaI60S4"; // Provided API Key
+const apiKey = "AIzaSyCB9jx92yxJymq8YHbB1DomjNi-UaI60S4"; // Environment provided
 
+// === USER PROVIDED FIREBASE CONFIG ===
 const firebaseConfig = {
   apiKey: "AIzaSyCyRXl8-JPr1xTXPDi1VG-eQk6fOnTpqUI",
   authDomain: "holzquartett-3a177.firebaseapp.com",
@@ -304,145 +270,36 @@ const firebaseConfig = {
   measurementId: "G-HKLWFJE83K"
 };
 
+// Initialisierung
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
+
+// Authentifizierung starten
 signInAnonymously(auth).catch((error) => console.error("Firebase Auth Error:", error));
 
+// Logging Funktion für Forschungszwecke (Gamification Usage)
 async function trackEvent(type) {
-    if (!auth.currentUser) return; 
+    if (!auth.currentUser) return; // Nur loggen wenn User da ist
     const ref = doc(db, "statistics", "usage"); 
     try {
         await setDoc(ref, {
             [type]: increment(1),
-            last_activity: serverTimestamp(),
-            theme: currentTheme // Log das gespielte Thema
+            last_activity: serverTimestamp()
         }, { merge: true });
     } catch (e) {
-        console.warn("Tracking restricted.");
+        console.warn("Tracking eingeschränkt (Permissions/Network).");
     }
 }
 
-// THEME & GAME STATE
-let currentTheme = 'wood'; // Default
+// Globale Variablen
 let gameMode=null, gameId=null, localPlayerId=null, unsubscribeGame=null, localGameState={}, hasCopiedShareLink=false;
 let isMuted=false;
 let roundSoundPlayed=false;
 let lastRoundWinningWoodName = null;
 let aiGame={playerName:'',playerCards:[],aiCards:[],currentPlayerCard:null,currentAiCard:null,roundInProgress:false,turn:'player'};
-let wormTurnCount = 0;
-let wormTarget = Math.floor(Math.random() * 3) + 3;
 
-// --- DATA: THEME 1 - WOOD ---
-const IMG_BASE = "https://github.com/aufdemholzweg/holzquartett/blob/b9d51d5b5d930f643a3f3861262361b97c0beb7c/images";
-const IMG_SUFFIX = "?raw=true";
-
-const woodCards=[
- {name:"🌳 Eiche",dk:2,haerte:85,quellenSchwindenRadial:4.0,dichte:650,gewicht:12000, imgTree:`${IMG_BASE}/eiche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/eiche_2.jpeg${IMG_SUFFIX}`},
- {name:"🌳 Buche",dk:5,haerte:80,quellenSchwindenRadial:5.8,dichte:720,gewicht:14000, imgTree:`${IMG_BASE}/buche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/buche_2.jpeg${IMG_SUFFIX}`},
- {name:"🌲 Kiefer",dk:3,haerte:40,quellenSchwindenRadial:3.5,dichte:520,gewicht:11000, imgTree:`${IMG_BASE}/kiefer_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/kiefer_2.jpg${IMG_SUFFIX}`},
- {name:"🌲 Fichte",dk:4,haerte:35,quellenSchwindenRadial:3.6,dichte:450,gewicht:11000, imgTree:`${IMG_BASE}/fichte_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/fichte_2.jpeg${IMG_SUFFIX}`},
- {name:"🌲 Tanne",dk:4,haerte:38,quellenSchwindenRadial:3.5,dichte:460,gewicht:10000, imgTree:`${IMG_BASE}/tanne_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/tanne_2.jpeg${IMG_SUFFIX}`},
- {name:"� Lärche",dk:3,haerte:55,quellenSchwindenRadial:3.7,dichte:590,gewicht:12000, imgTree:`${IMG_BASE}/laerche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/laerche_2.jpeg${IMG_SUFFIX}`},
- {name:"🌳 Birke",dk:5,haerte:60,quellenSchwindenRadial:5.4,dichte:650,gewicht:13000, imgTree:`${IMG_BASE}/birke_1.jpg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/birke_2.jpeg${IMG_SUFFIX}`},
- {name:"🌳 Ahorn",dk:5,haerte:75,quellenSchwindenRadial:4.8,dichte:630,gewicht:12500, imgTree:`${IMG_BASE}/ahorn_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/ahorn_2.jpeg${IMG_SUFFIX}`},
- {name:"🌳 Esche",dk:5,haerte:90,quellenSchwindenRadial:4.9,dichte:700,gewicht:13000, imgTree:`${IMG_BASE}/esche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/esche_2.jpg${IMG_SUFFIX}`},
- {name:"🌳 Kirsche",dk:3,haerte:70,quellenSchwindenRadial:4.0,dichte:600,gewicht:11500, imgTree:`${IMG_BASE}/kirsche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/kirsche_2.jpeg${IMG_SUFFIX}`},
- {name:"🌳 Nussbaum",dk:3,haerte:65,quellenSchwindenRadial:4.0,dichte:640,gewicht:12000, imgTree:`${IMG_BASE}/nuss_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/nuss_2.jpeg${IMG_SUFFIX}`},
- {name:"🌲 Douglasie",dk:3,haerte:45,quellenSchwindenRadial:3.5,dichte:510,gewicht:12000, imgTree:`${IMG_BASE}/douglasie_1.jpg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/douglasie_2.jpg${IMG_SUFFIX}`},
- {name:"🌲 Zeder",dk:2,haerte:42,quellenSchwindenRadial:2.8,dichte:480,gewicht:9500, imgTree:`${IMG_BASE}/zeder_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/zeder_2.jpeg${IMG_SUFFIX}`},
- {name:"🌴 Mahagoni",dk:2,haerte:55,quellenSchwindenRadial:3.0,dichte:550,gewicht:10500, imgTree:`${IMG_BASE}/mahagoni_1.jpg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/mahagoni_2.jpeg${IMG_SUFFIX}`},
- {name:"🌴 Teak",dk:1,haerte:60,quellenSchwindenRadial:2.5,dichte:650,gewicht:11000, imgTree:`${IMG_BASE}/teak_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/teak_2.jpeg${IMG_SUFFIX}`},
- {name:"🌴 Bambus",dk:4,haerte:50,quellenSchwindenRadial:3.0,dichte:400,gewicht:18000, imgTree:`${IMG_BASE}/bambus_1.jpg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/bambus_2.jpg${IMG_SUFFIX}`},
- {name:"🌳 Pappel",dk:5,haerte:25,quellenSchwindenRadial:4.5,dichte:380,gewicht:9000, imgTree:`${IMG_BASE}/pappel_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/pappel_2.jpeg${IMG_SUFFIX}`},
- {name:"🌴 Meranti",dk:3,haerte:45,quellenSchwindenRadial:3.0,dichte:650,gewicht:12500, imgTree:"https://github.com/aufdemholzweg/holzquartett/blob/main/images/meranti_1.jpg?raw=true", imgCross:"https://github.com/aufdemholzweg/holzquartett/blob/main/images/meranti_2.jpeg?raw=true"},
- {name:"🌳 Linde",dk:5,haerte:35,quellenSchwindenRadial:3.8,dichte:530,gewicht:9000, imgTree:`${IMG_BASE}/linde_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/linde_2.jpeg${IMG_SUFFIX}`},
- {name:"🌳 Ulme",dk:3,haerte:75,quellenSchwindenRadial:4.5,dichte:680,gewicht:11500, imgTree:`${IMG_BASE}/ulme_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/ulme_2.jpeg${IMG_SUFFIX}`},
- {name:"🌳 Kastanie",dk:2,haerte:50,quellenSchwindenRadial:3.5,dichte:600,gewicht:10000, imgTree:`${IMG_BASE}/kastanie_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/kastanie_2.jpeg${IMG_SUFFIX}`},
- {name:"🌳 Robinie",dk:1,haerte:80,quellenSchwindenRadial:3.0,dichte:730,gewicht:15000, imgTree:`${IMG_BASE}/robinie_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/robinie_2.jpg${IMG_SUFFIX}`},
- {name:"🌲 Hemlock",dk:4,haerte:40,quellenSchwindenRadial:3.6,dichte:500,gewicht:10000, imgTree:`${IMG_BASE}/hemlock_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/hemlock_2.jpeg${IMG_SUFFIX}`},
- {name:"🌳 Erle",dk:5,haerte:30,quellenSchwindenRadial:3.4,dichte:530,gewicht:9700, imgTree:"https://github.com/aufdemholzweg/holzquartett/blob/main/images/erle_1.jpeg?raw=true", imgCross:"https://github.com/aufdemholzweg/holzquartett/blob/main/images/erle_2.jpeg?raw=true"},
- {name:"🌲 Redwood",dk:2,haerte:35,quellenSchwindenRadial:2.8,dichte:400,gewicht:8500, imgTree:`${IMG_BASE}/redwood_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/redwood_2.jpeg${IMG_SUFFIX}`},
- {name:"🌳 Hickory",dk:3,haerte:95,quellenSchwindenRadial:5.5,dichte:750,gewicht:14000, imgTree:`${IMG_BASE}/hickory_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/hickory_2.jpeg${IMG_SUFFIX}`},
- {name:"🌴 Wenge",dk:2,haerte:88,quellenSchwindenRadial:3.8,dichte:880,gewicht:16000, imgTree:`${IMG_BASE}/wenge_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/wenge_2.jpeg${IMG_SUFFIX}`},
- {name:"🌴 Zebrano",dk:3,haerte:70,quellenSchwindenRadial:4.0,dichte:750,gewicht:13000, imgTree:`${IMG_BASE}/zebrano_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/zebrano_2.jpeg${IMG_SUFFIX}`},
- {name:"🌴 Palisander",dk:2,haerte:82,quellenSchwindenRadial:3.0,dichte:850,gewicht:16000, imgTree:`${IMG_BASE}/palisander_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/palisander_2.jpeg${IMG_SUFFIX}`},
- {name:"🌴 Ebenholz",dk:1,haerte:98,quellenSchwindenRadial:3.2,dichte:1200,gewicht:16500, imgTree:`${IMG_BASE}/ebenholz_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/ebenholz_2.jpeg${IMG_SUFFIX}`}
-];
-
-const woodAttributes = {
- dk:{icon:'🛡️',name:'Dauerhaftigkeit',unit:'(DK)', logic: 'Niedrig gewinnt', desc: "Widerstandsfähigkeit des (unbehandelten) Kernholzes gegen holzzerstörende Pilze, Insekten und ggf. Termiten. In EN 350 wird das in Dauerhaftigkeitsklassen DC 1 (sehr dauerhaft) bis DC 5 (nicht dauerhaft) eingeteilt."},
- haerte:{icon:'💎',name:'Druckfestigkeit',unit:'(N/mm²)', logic: 'Hoch gewinnt', desc: "Maximale Druckspannung, die das Holz längs der Faser erträgt (N/mm²), bevor es versagt. Sie korreliert stark mit der Rohdichte."},
- quellenSchwindenRadial:{icon:'↔️',name:'Quellen/Schw.',unit:'(%)', logic: 'Niedrig gewinnt', desc: "Maßänderungen des Holzes bei wechselnder Holzfeuchte (radial/tangentiales Schwinden und Quellen zwischen Fasersättigungsbereich (30% und dartrocken 0% Holzfeuchte). Hölzer mit geringen Schwindmaßen gelten als formstabil."},
- dichte:{icon:'⚖️',name:'Rohdichte',unit:'(kg/m³)', logic: 'Hoch gewinnt', desc: "Masse pro Volumen bei definierter Holzfeuchte (hier bei 12 %, laut DIN EN 350 ), in kg/m³."},
- gewicht:{icon:'🏋️',name:'E-Modul',unit:'(N/mm²)', logic: 'Hoch gewinnt', desc: "Maß für die Steifigkeit: Wie stark verformt sich das Holz bei Biege-/Zugbelastung? Angegeben in N/mm²"}
-};
-
-// --- DATA: THEME 2 - MIKROSKOPIE & SCHÄDEN (Aus den PDFs) ---
-const microCards = [
-    {name:"🔬 Tracheiden", wall: 2.5, lignin: 25, damage: 0, size: 30, zoom: 400, imgTree: "https://placehold.co/400x300?text=Tracheiden+Längs", imgCross: "https://placehold.co/400x300?text=Tracheiden+Quer"},
-    {name:"🔬 Gefäße (Poren)", wall: 1.5, lignin: 20, damage: 0, size: 150, zoom: 100, imgTree: "https://placehold.co/400x300?text=Gefäße+Längs", imgCross: "https://placehold.co/400x300?text=Gefäße+Quer"},
-    {name:"🦠 Braunfäule", wall: 0.5, lignin: 80, damage: 9, size: 5, zoom: 400, imgTree: "https://placehold.co/400x300?text=Braunfäule+Würfelbruch", imgCross: "https://placehold.co/400x300?text=Zellwandabbau"},
-    {name:"🦠 Weißfäule", wall: 0.2, lignin: 5, damage: 8, size: 5, zoom: 400, imgTree: "https://placehold.co/400x300?text=Weißfäule+Faserig", imgCross: "https://placehold.co/400x300?text=Ligninabbau"},
-    {name:"🦠 Moderfäule", wall: 1.0, lignin: 40, damage: 6, size: 3, zoom: 1000, imgTree: "https://placehold.co/400x300?text=Kavernen+in+S2", imgCross: "https://placehold.co/400x300?text=Kavernen+Quer"},
-    {name:"🍄 Bläuepilz", wall: 2.5, lignin: 25, damage: 1, size: 4, zoom: 400, imgTree: "https://placehold.co/400x300?text=Blaue+Hyphen", imgCross: "https://placehold.co/400x300?text=In+Markstrahlen"},
-    {name:"🧪 Lignin (Phlorogluzin)", wall: 3.0, lignin: 100, damage: 0, size: 0, zoom: 100, imgTree: "https://placehold.co/400x300?text=Rotfärbung", imgCross: "https://placehold.co/400x300?text=Verholzte+Zellen"},
-    {name:"🌱 Cellulose (Astrablau)", wall: 2.0, lignin: 0, damage: 0, size: 0, zoom: 100, imgTree: "https://placehold.co/400x300?text=Blaufärbung", imgCross: "https://placehold.co/400x300?text=Unverholzt"},
-    {name:"💧 Tüpfel (Nadelholz)", wall: 1.0, lignin: 30, damage: 0, size: 15, zoom: 1000, imgTree: "https://placehold.co/400x300?text=Hoftüpfel+Aufsicht", imgCross: "https://placehold.co/400x300?text=Torus+Margo"},
-    {name:"🧱 Parenchym", wall: 0.8, lignin: 10, damage: 0, size: 20, zoom: 400, imgTree: "https://placehold.co/400x300?text=Speicherzellen", imgCross: "https://placehold.co/400x300?text=Stärke+Inhalt"}
-].concat(Array(6).fill(null).map((_,i) => ({
-    name: `🔬 Probe ${i+11}`, wall: (Math.random()*5).toFixed(1), lignin: Math.floor(Math.random()*100), damage: Math.floor(Math.random()*10), size: Math.floor(Math.random()*200), zoom: 400, imgTree: "https://placehold.co/400x300?text=Probe", imgCross: "https://placehold.co/400x300?text=Detail"
-})));
-
-const microAttributes = {
-    wall: {icon:'🧱',name:'Zellwanddicke',unit:'(µm)', logic: 'Hoch gewinnt', desc: "Dicke der Zellwand. Spätholztracheiden haben dickere Wände als Frühholz."},
-    lignin: {icon:'🔴',name:'Ligningehalt',unit:'(%)', logic: 'Hoch gewinnt', desc: "Anteil des Lignins. Phlorogluzin färbt Lignin rot. Druckholz hat erhöhten Ligningehalt."},
-    damage: {icon:'⚠️',name:'Schadenspotenzial',unit:'(0-10)', logic: 'Niedrig gewinnt', desc: "Zerstörungskraft des Pilzes. Braunfäule zerstört Cellulose schnell (Würfelbruch)."},
-    size: {icon:'📏',name:'Strukturgröße',unit:'(µm)', logic: 'Hoch gewinnt', desc: "Durchmesser von Zellen oder Poren (Gefäßen). Laubhölzer haben oft große Gefäße."},
-    zoom: {icon:'🔍',name:'Vergrößerung',unit:'(x)', logic: 'Hoch gewinnt', desc: "Nötige Vergrößerung, um Details wie Tüpfel oder Moderfäule-Kavernen zu sehen."}
-};
-
-const microDetails = {
-    "🦠 Braunfäule": "<p>Der Pilz baut vorwiegend Cellulose ab. Das Ligningerüst bleibt zurück. Das Holz wird braun und bricht würfelartig (Würfelbruch). Im Mikroskop sieht man, dass die Zellwand ihre Doppelbrechung verliert.</p>",
-    "🦠 Weißfäule": "<p>Der Pilz baut Lignin und Cellulose ab. Das Holz wird faserig und hell (Weißfäule). Im Mikroskop sieht man oft eine Ausdünnung der Zellwände von innen her.</p>",
-    "🦠 Moderfäule": "<p>Typisch bei hoher Feuchte. Die Pilze wachsen IN der Zellwand (S2-Schicht) und bilden dort typische Kavernen (Löcher), die im polarisierten Licht gut zu sehen sind.</p>",
-    "🍄 Bläuepilz": "<p>Besiedelt nur den Splint und ernährt sich von Zellinhalten (Zucker, Stärke), zerstört aber NICHT die Zellwand. Technisch kein Festigkeitsverlust, aber optischer Mangel.</p>"
-};
-
-// --- GLOBAL GAME DATA OBJECT ---
-const gameData = {
-    wood: {
-        cards: woodCards,
-        attributes: woodAttributes,
-        details: detailedWoodInfo,
-        title: "Holzarten"
-    },
-    micro: {
-        cards: microCards,
-        attributes: microAttributes,
-        details: microDetails,
-        title: "Mikroskopie"
-    }
-};
-
-let currentTheme = 'wood'; // Default Start Theme
-
-// --- FUNCTIONS ---
-
-function selectTheme(theme, el) {
-    currentTheme = theme;
-    // Visuelles Feedback im Carousel
-    document.querySelectorAll('#themeCarousel > div').forEach(div => {
-        div.classList.remove('theme-card-selected', 'border-amber-500', 'bg-amber-50');
-        div.classList.add('border-gray-200', 'bg-white');
-    });
-    el.classList.remove('border-gray-200', 'bg-white');
-    el.classList.add('theme-card-selected', 'border-amber-500', 'bg-amber-50');
-}
-
-// Make selectTheme global
-window.selectTheme = selectTheme;
-
+// Sounds
 const sounds={
   flip:new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_139083c224.mp3'),
   win:new Audio('https://github.com/aufdemholzweg/holzquartett/blob/894e048eea71ba49921abfe6827bd8dc723f8c2d/gewonnen.mp3?raw=true'),
@@ -451,9 +308,95 @@ const sounds={
 };
 function playSound(a){ if(!isMuted && a){ a.currentTime=0; a.play().catch(()=>{}); } }
 
+// Einstellungen Speicherung
 function isOpponentNameBackVisible(){ return localStorage.getItem('holzquartett_showOpponentNameOnBack')==='true'; }
 function setOpponentNameBackVisible(v){ localStorage.setItem('holzquartett_showOpponentNameOnBack', v?'true':'false'); }
 
+// Daten Konstanten
+const IMG_BASE = "https://github.com/aufdemholzweg/holzquartett/blob/b9d51d5b5d930f643a3f3861262361b97c0beb7c/images";
+const IMG_SUFFIX = "?raw=true";
+
+// Holzdaten (Muss für Masterarbeit validiert werden!)
+const woodCards=[
+ {name:"Eiche",dk:2,haerte:85,quellenSchwindenRadial:4.0,dichte:650,gewicht:12000, imgTree:`${IMG_BASE}/eiche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/eiche_2.jpeg${IMG_SUFFIX}`},
+ {name:"Buche",dk:5,haerte:80,quellenSchwindenRadial:5.8,dichte:720,gewicht:14000, imgTree:`${IMG_BASE}/buche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/buche_2.jpeg${IMG_SUFFIX}`},
+ {name:"Kiefer",dk:3,haerte:40,quellenSchwindenRadial:3.5,dichte:520,gewicht:11000, imgTree:`${IMG_BASE}/kiefer_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/kiefer_2.jpg${IMG_SUFFIX}`},
+ {name:"Fichte",dk:4,haerte:35,quellenSchwindenRadial:3.6,dichte:450,gewicht:11000, imgTree:`${IMG_BASE}/fichte_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/fichte_2.jpeg${IMG_SUFFIX}`},
+ {name:"Tanne",dk:4,haerte:38,quellenSchwindenRadial:3.5,dichte:460,gewicht:10000, imgTree:`${IMG_BASE}/tanne_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/tanne_2.jpeg${IMG_SUFFIX}`},
+ {name:"Lärche",dk:3,haerte:55,quellenSchwindenRadial:3.7,dichte:590,gewicht:12000, imgTree:`${IMG_BASE}/laerche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/laerche_2.jpeg${IMG_SUFFIX}`},
+ {name:"Birke",dk:5,haerte:60,quellenSchwindenRadial:5.4,dichte:650,gewicht:13000, imgTree:`${IMG_BASE}/birke_1.jpg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/birke_2.jpeg${IMG_SUFFIX}`},
+ {name:"Ahorn",dk:5,haerte:75,quellenSchwindenRadial:4.8,dichte:630,gewicht:12500, imgTree:`${IMG_BASE}/ahorn_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/ahorn_2.jpeg${IMG_SUFFIX}`},
+ {name:"Esche",dk:5,haerte:90,quellenSchwindenRadial:4.9,dichte:700,gewicht:13000, imgTree:`${IMG_BASE}/esche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/esche_2.jpg${IMG_SUFFIX}`},
+ {name:"Kirsche",dk:3,haerte:70,quellenSchwindenRadial:4.0,dichte:600,gewicht:11500, imgTree:`${IMG_BASE}/kirsche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/kirsche_2.jpeg${IMG_SUFFIX}`},
+ {name:"Nussbaum",dk:3,haerte:65,quellenSchwindenRadial:4.0,dichte:640,gewicht:12000, imgTree:`${IMG_BASE}/nuss_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/nuss_2.jpeg${IMG_SUFFIX}`},
+ {name:"Douglasie",dk:3,haerte:45,quellenSchwindenRadial:3.5,dichte:510,gewicht:12000, imgTree:`${IMG_BASE}/douglasie_1.jpg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/douglasie_2.jpg${IMG_SUFFIX}`},
+ {name:"Zeder",dk:2,haerte:42,quellenSchwindenRadial:2.8,dichte:480,gewicht:9500, imgTree:`${IMG_BASE}/zeder_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/zeder_2.jpeg${IMG_SUFFIX}`},
+ {name:"Mahagoni",dk:2,haerte:55,quellenSchwindenRadial:3.0,dichte:550,gewicht:10500, imgTree:`${IMG_BASE}/mahagoni_1.jpg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/mahagoni_2.jpeg${IMG_SUFFIX}`},
+ {name:"Teak",dk:1,haerte:60,quellenSchwindenRadial:2.5,dichte:650,gewicht:11000, imgTree:`${IMG_BASE}/teak_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/teak_2.jpeg${IMG_SUFFIX}`},
+ {name:"Bambus",dk:4,haerte:50,quellenSchwindenRadial:3.0,dichte:400,gewicht:18000, imgTree:`${IMG_BASE}/bambus_1.jpg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/bambus_2.jpg${IMG_SUFFIX}`},
+ {name:"Pappel",dk:5,haerte:25,quellenSchwindenRadial:4.5,dichte:380,gewicht:9000, imgTree:`${IMG_BASE}/pappel_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/pappel_2.jpeg${IMG_SUFFIX}`},
+ {name:"Weide",dk:5,haerte:30,quellenSchwindenRadial:4.0,dichte:420,gewicht:8000, imgTree:`${IMG_BASE}/weide_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/weide_2.jpeg${IMG_SUFFIX}`},
+ {name:"Linde",dk:5,haerte:35,quellenSchwindenRadial:3.8,dichte:530,gewicht:9000, imgTree:`${IMG_BASE}/linde_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/linde_2.jpeg${IMG_SUFFIX}`},
+ {name:"Ulme",dk:3,haerte:75,quellenSchwindenRadial:4.5,dichte:680,gewicht:11500, imgTree:`${IMG_BASE}/ulme_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/ulme_2.jpeg${IMG_SUFFIX}`},
+ {name:"Kastanie",dk:2,haerte:50,quellenSchwindenRadial:3.5,dichte:600,gewicht:10000, imgTree:`${IMG_BASE}/kastanie_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/kastanie_2.jpeg${IMG_SUFFIX}`},
+ {name:"Robinie",dk:1,haerte:80,quellenSchwindenRadial:3.0,dichte:730,gewicht:15000, imgTree:`${IMG_BASE}/robinie_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/robinie_2.jpg${IMG_SUFFIX}`},
+ {name:"Hemlock",dk:4,haerte:40,quellenSchwindenRadial:3.6,dichte:500,gewicht:10000, imgTree:`${IMG_BASE}/hemlock_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/hemlock_2.jpeg${IMG_SUFFIX}`},
+ {name:"Zypresse",dk:2,haerte:48,quellenSchwindenRadial:3.0,dichte:520,gewicht:9000, imgTree:`https://placehold.co/400x300?text=Zypresse`, imgCross:`https://placehold.co/400x300?text=Zypresse+Quer`},
+ {name:"Redwood",dk:2,haerte:35,quellenSchwindenRadial:2.8,dichte:400,gewicht:8500, imgTree:`${IMG_BASE}/redwood_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/redwood_2.jpeg${IMG_SUFFIX}`},
+ {name:"Hickory",dk:3,haerte:95,quellenSchwindenRadial:5.5,dichte:750,gewicht:14000, imgTree:`${IMG_BASE}/hickory_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/hickory_2.jpeg${IMG_SUFFIX}`},
+ {name:"Wenge",dk:2,haerte:88,quellenSchwindenRadial:3.8,dichte:880,gewicht:16000, imgTree:`${IMG_BASE}/wenge_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/wenge_2.jpeg${IMG_SUFFIX}`},
+ {name:"Zebrano",dk:3,haerte:70,quellenSchwindenRadial:4.0,dichte:750,gewicht:13000, imgTree:`${IMG_BASE}/zebrano_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/zebrano_2.jpeg${IMG_SUFFIX}`},
+ {name:"Palisander",dk:2,haerte:82,quellenSchwindenRadial:3.0,dichte:850,gewicht:16000, imgTree:`${IMG_BASE}/palisander_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/palisander_2.jpeg${IMG_SUFFIX}`},
+ {name:"Ebenholz",dk:1,haerte:98,quellenSchwindenRadial:3.2,dichte:1200,gewicht:16500, imgTree:`${IMG_BASE}/ebenholz_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/ebenholz_2.jpeg${IMG_SUFFIX}`}
+];
+
+const detailedWoodInfo = {
+    "Eiche": `<p class="mb-2">Hart, schwer, sehr dauerhaft; hoher Gerbstoffanteil, daher widerstandsfähig gegen Pilze/Schädlinge, kann mit Eisen schwarz verfärben. Grobporig, deutliche Jahresringe.</p><p class="mb-2"><strong>Verwendung:</strong> Möbel, Fußböden, Treppen, Fassdauben, Außenbau (z. B. Terrassen), Fachwerk.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Traditionsholz und Symbol für Stärke; häufig in Wappen/Münzen.</p>`,
+    "Buche": `<p class="mb-2">Zäh, biegsam, gleichmäßige Struktur; ringporig mit dezenten Übergängen, harzarm.</p><p class="mb-2"><strong>Verwendung:</strong> Möbel, Parkett, Furniere, Sperrholz, Innenausbau.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Historisch beliebt für Räder/Griffe wegen Zähigkeit und Elastizität.</p>`,
+    "Kiefer": `<p class="mb-2">Weiches, harzhaltiges Nadelholz mit markanter Jahresringstruktur und Harzkanälen.</p><p class="mb-2"><strong>Verwendung:</strong> Bauholz, Dachstühle, Innenausbau, Paneele, einfache Möbel.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Kiefernharz diente früher als Klebstoff und Dichtmittel.</p>`,
+    "Fichte": `<p class="mb-2">Leichtes Bauholz mit gutem Festigkeits-Gewichts-Verhältnis; feine Zellstruktur ohne große Poren.</p><p class="mb-2"><strong>Verwendung:</strong> Bauholz, Innenverkleidung, Paneele, Möbelgrundkonstruktionen.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Klassiker im Dach- und Hallenbau vieler Alpenregionen.</p>`,
+    "Tanne": `<p class="mb-2">Harzarm, fein, ähnlich Fichte; dezente Jahresringe, keine großen Poren.</p><p class="mb-2"><strong>Verwendung:</strong> Innenausbau, Paneele, Bauholz, Möbel.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Angenehm geruchsarm im Innenraum durch wenig Harz.</p>`,
+    "Lärche": `<p class="mb-2">Relativ hart und witterungsbeständig; deutliche Jahresringe, harzhaltig.</p><p class="mb-2"><strong>Verwendung:</strong> Fassaden, Fenster, Terrassen, Außenmöbel.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Vergraut edel im Außenbereich auch ohne chemische Behandlung.</p>`,
+    "Birke": `<p class="mb-2">Helles, dekoratives Holz; zerstreutporig, feine gleichmäßige Struktur, gut biegbar.</p><p class="mb-2"><strong>Verwendung:</strong> Möbel, Furniere, Sperrholz, Innenausbau.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Birkenrinde wurde traditionell als wasserabweisendes Material genutzt.</p>`,
+    "Ahorn": `<p class="mb-2">Hart, hell, sehr fein und homogen; zerstreutporig.</p><p class="mb-2"><strong>Verwendung:</strong> Möbel, Parkett, Schneidebretter, Instrumentenbau.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Ahornsirup stammt v. a. aus nordamerikanischen Arten.</p>`,
+    "Esche": `<p class="mb-2">Sehr zäh und elastisch; ringporig mit deutlichen Frühholzporen.</p><p class="mb-2"><strong>Verwendung:</strong> Werkzeugstiele, Sportgeräte, Möbel, Parkett.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Klassisches Holz für Speichen und Stiele wegen Elastizität.</p>`,
+    "Kirsche": `<p class="mb-2">Warm rötlich, edel; ringporig, klare Jahresringe, dunkelt mit Licht nach.</p><p class="mb-2"><strong>Verwendung:</strong> Möbel, Furniere, Innenausbau.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Entwickelt mit der Zeit eine charakteristische, tiefere Farbigkeit.</p>`,
+    "Nussbaum": `<p class="mb-2">Dunkles, dekoratives Kernholz; zerstreutporig, markante Maserung.</p><p class="mb-2"><strong>Verwendung:</strong> Hochwertige Möbel, Furniere, Intarsien.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Renaissance-Liebling für repräsentative Innenausstattungen.</p>`,
+    "Douglasie": `<p class="mb-2">Robust, relativ dauerhaft; deutliche Jahresringe, gut für Außen.</p><p class="mb-2"><strong>Verwendung:</strong> Bauholz, Fassaden, Terrassen, Außenmöbel.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Ursprünglich nordamerikanisch, in Europa weit verbreitet.</p>`,
+    "Zeder": `<p class="mb-2">Angenehmer Duft, natürlich insektenabweisend; fein und gleichmäßig.</p><p class="mb-2"><strong>Verwendung:</strong> Möbel, Schränke, Fassaden, Innenraum.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Beliebt in Kleiderschränken wegen Geruch und Mottenabwehr.</p>`,
+    "Mahagoni": `<p class="mb-2">Tropisches Edelholz, dauerhaft; zerstreutporig, dekoratives Kernholz.</p><p class="mb-2"><strong>Verwendung:</strong> Möbel, Fenster, Bootsbau, hochwertige Ausbauten.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Teilweise artenschutzreguliert – Herkunft/Handel beachten.</p>`,
+    "Teak": `<p class="mb-2">Sehr witterungsbeständig (Öl-/Harzgehalt); fein zerstreutporig, edle Optik.</p><p class="mb-2"><strong>Verwendung:</strong> Gartenmöbel, Terrassen, Bootsdecks, Außenfenster.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Historisch geschätzt im Schiffbau wegen Dauerhaftigkeit.</p>`,
+    "Bambus": `<p class="mb-2">Botanisch Gras, aber sehr fest; röhrenartige Struktur statt klassischer Poren.</p><p class="mb-2"><strong>Verwendung:</strong> Böden, Möbel, Treppen, nachhaltiger Leichtbau.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Extrem schnelles Wachstum, daher ökologisch interessant.</p>`,
+    "Pappel": `<p class="mb-2">Sehr leicht und weich; feine Struktur, dezente Jahresringe.</p><p class="mb-2"><strong>Verwendung:</strong> Leichtbau, Verpackungen, Innenmöbel mit geringer Last.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Gern im Modell- und Fahrzeuginnenausbau genutzt.</p>`,
+    "Weide": `<p class="mb-2">Elastisch und biegsam; fein zerstreutporig.</p><p class="mb-2"><strong>Verwendung:</strong> Flechtwerk, Körbe, Gartenbau, leichte Möbel.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Weidenruten sind klassische Materialien für Geflechte.</p>`,
+    "Linde": `<p class="mb-2">Weich, homogen, sehr gut schnitzbar; fein zerstreutporig.</p><p class="mb-2"><strong>Verwendung:</strong> Bildhauerei, Orgelbau, Intarsien, feine Möbelteile.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Traditionsholz mittelalterlicher Schnitzer.</p>`,
+    "Ulme": `<p class="mb-2">Zäh, eher hart; ringporig, teils unruhiger Faserverlauf.</p><p class="mb-2"><strong>Verwendung:</strong> Möbel, Innenausbau, Reparatur- und Biegeteile.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Historisch im Wagenbau geschätzt.</p>`,
+    "Kastanie": `<p class="mb-2">Wetterbeständig, warm getönt; ringporig mit klarer Jahresringzeichnung.</p><p class="mb-2"><strong>Verwendung:</strong> Außenbau, Möbel, Balken, Gartenholz.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Oft Alternative zur Eiche im Außenbereich.</p>`,
+    "Robinie": `<p class="mb-2">Eines der härtesten europäischen Hölzer; sehr dauerhaft im Freien; ringporig.</p><p class="mb-2"><strong>Verwendung:</strong> Terrassen, Zäune, Spielplätze, Außenkonstruktionen.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> „Europäisches Teak“ wegen seiner Dauerhaftigkeit.</p>`,
+    "Hemlock": `<p class="mb-2">Weiches, gleichmäßiges Nadelholz; feine Struktur, dezente Ringe.</p><p class="mb-2"><strong>Verwendung:</strong> Innenausbau, Paneele, Leichtbau, Möbel.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Gutes Verhältnis von Gewicht zu Stabilität.</p>`,
+    "Zypresse": `<p class="mb-2">Duftend, natürlich resistent; fein und gleichmäßig.</p><p class="mb-2"><strong>Verwendung:</strong> Außen- und Gartenholz, Fassaden, Möbel.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Traditionelles Bauholz im mediterranen Raum.</p>`,
+    "Redwood": `<p class="mb-2">Leicht, relativ dauerhaft; fein zerstreutporig, dekorative Farbe.</p><p class="mb-2"><strong>Verwendung:</strong> Außenholz, Zäune, Gartenkonstruktionen.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Stammt vom Küstenmammutbaum – einer der höchsten Baumarten.</p>`,
+    "Hickory": `<p class="mb-2">Sehr zäh und hart; ringporig mit ausgeprägten Poren.</p><p class="mb-2"><strong>Verwendung:</strong> Werkzeugstiele, Sportgeräte, stark beanspruchte Möbel.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Klassisches Holz für Peitschen- und Geräteschäfte.</p>`,
+    "Wenge": `<p class="mb-2">Dunkel, sehr hart; zerstreutporig, charakteristische Streifenzeichnung.</p><p class="mb-2"><strong>Verwendung:</strong> Luxusmöbel, Parkett, Furniere.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Wirkt in Kontrastkombinationen mit hellen Hölzern besonders.</p>`,
+    "Zebrano": `<p class="mb-2">Markante Streifenoptik; zerstreutporig mit dekorativer Maserung.</p><p class="mb-2"><strong>Verwendung:</strong> Designmöbel, Furniere, Intarsien.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Beliebt für auffällige Akzente.</p>`,
+    "Palisander": `<p class="mb-2">Dekorativ, fest und langlebig; feine, gleichmäßige Porung.</p><p class="mb-2"><strong>Verwendung:</strong> Gitarren/Instrumente, Möbel, Furniere.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Traditionell exklusiv im Instrumentenbau; Artenschutz-Lagen beachten.</p>`,
+    "Ebenholz": `<p class="mb-2">Extrem hart und dicht, nahezu schwarz; sehr feinporig.</p><p class="mb-2"><strong>Verwendung:</strong> Klaviertasten, Intarsien, Luxusdekore, Griffbretter.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Seit der Antike als edles, seltenes Holz geschätzt.</p>`
+};
+
+const reflectionQuestions=[
+ "Welches Holz würdest du für Gartenmöbel wählen und warum?",
+ "Eine Küchenarbeitsplatte muss schnittfest sein. Welches Holz eignet sich?",
+ "Für einen Dielenboden: Hartes oder weiches Holz?",
+ "Warum verfärbt sich Eiche mit Eisen?"
+];
+
+const attributeInfo={
+ dk:{icon:'🛡️',name:'Dauerhaftigkeit',unit:'(DK)', logic: 'Niedrig gewinnt'},
+ haerte:{icon:'💎',name:'Druckfestigkeit',unit:'(N/mm²)', logic: 'Hoch gewinnt'},
+ quellenSchwindenRadial:{icon:'↔️',name:'Quellen/Schw.',unit:'(%)', logic: 'Niedrig gewinnt'},
+ dichte:{icon:'⚖️',name:'Rohdichte',unit:'(kg/m³)', logic: 'Hoch gewinnt'},
+ gewicht:{icon:'🏋️',name:'E-Modul',unit:'(N/mm²)', logic: 'Hoch gewinnt'}
+};
 
 function shuffleArray(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
 
@@ -468,13 +411,9 @@ async function askGemini(woodName, question) {
     aiInput.disabled = true;
     aiBtn.disabled = true;
 
-    // Prompt context based on theme
-    let roleDescription = "Du bist ein erfahrener Tischlermeister.";
-    if(currentTheme === 'micro') roleDescription = "Du bist ein Experte für Holzanatomie und Holzpathologie (Mikroskopie).";
-
-    const prompt = `${roleDescription} Wir spielen ein Lernspiel.
-    Das aktuelle Thema ist: ${gameData[currentTheme].title}.
-    Die Karte ist: ${woodName}.
+    // Prompt - Professional Style for Vocational Training
+    const prompt = `Du bist ein erfahrener Tischlermeister und Berufsschullehrer in einem Lernspiel für Holzberufe. 
+    Das aktuelle Holz ist: ${woodName}.
     Die Frage des Nutzers ist: "${question}".
     Antworte fachlich fundiert, präzise und praxisnah auf Deutsch. Vermeide kindliche Sprache. Nutze Fachbegriffe wo sinnvoll. Nutze Markdown für Fettungen wichtiger Begriffe. Halte die Antwort kompakt (max. 3-4 Sätze).`;
 
@@ -523,15 +462,6 @@ function showHappyWorm() {
     void worm.offsetWidth; 
     worm.classList.add('animate-worm');
     setTimeout(() => worm.classList.add('hidden'), 3500);
-}
-
-function checkWormAppearance(isWin) {
-    wormTurnCount++;
-    if (isWin && wormTurnCount >= wormTarget) {
-        showHappyWorm();
-        wormTurnCount = 0;
-        wormTarget = Math.floor(Math.random() * 3) + 3;
-    }
 }
 
 // === CANVAS / SCREENSHOT FEATURE ===
@@ -590,18 +520,17 @@ function createCard(data, isRevealed, isPlayer, isActive, highlightAttr){
                 </div>
                 <div class="flex-grow flex flex-col justify-start gap-1 sm:gap-2 px-2 pb-2 overflow-y-auto hide-scrollbar">`;
     
-    // DYNAMIC ATTRIBUTES BASED ON THEME
-    const currentAttributes = gameData[currentTheme].attributes;
-
-    for(const k in currentAttributes){
-        const info = currentAttributes[k];
-        let flashClass = (highlightAttr === k) ? (isActive ? 'flash-active' : 'highlight-compare') : '';
-        const rowInner = `<div class="flex items-center gap-2"><span class="text-base">${info.icon}</span><div class="flex flex-col text-left leading-none"><span class="font-bold text-gray-800 text-[10px] sm:text-sm">${info.name}</span><span class="text-[9px] text-gray-500 font-medium">${info.unit}</span></div></div><span class="text-sm font-bold text-amber-800">${data[k]}</span>`;
-        if(canSelect) {
-             html += `<div onclick="window.selectAttribute('${k}')" data-attr-btn="${k}" class="attr-box w-full flex justify-between items-center px-2 py-1.5 rounded-xl cursor-pointer hover:brightness-95 ${flashClass}">${rowInner}</div>`;
-        } else {
-             html += `<div class="attr-box w-full flex justify-between items-center px-2 py-1.5 rounded-xl opacity-90 ${flashClass}" data-attr-row="${k}">${rowInner}</div>`;
+    for(const k in attributeInfo){
+        const info = attributeInfo[k];
+        let flashClass = '';
+        // Korrigierte Logik: Färbung nur wenn highlightAttr gesetzt ist
+        if(highlightAttr === k) {
+             flashClass = isActive ? 'flash-active' : 'highlight-compare';
         }
+        
+        const rowInner = `<div class="flex items-center gap-2"><span class="text-base">${info.icon}</span><div class="flex flex-col text-left leading-none"><span class="font-bold text-gray-800 text-[10px] sm:text-sm">${info.name}</span><span class="text-[9px] text-gray-500 font-medium">${info.unit}</span></div></div><span class="text-sm font-bold text-amber-800">${data[k]}</span>`;
+        if(canSelect) html += `<div onclick="window.selectAttribute('${k}')" data-attr-btn="${k}" class="attr-box w-full flex justify-between items-center px-2 py-1.5 rounded-xl cursor-pointer hover:brightness-95 ${flashClass}">${rowInner}</div>`;
+        else html += `<div class="attr-box w-full flex justify-between items-center px-2 py-1.5 rounded-xl opacity-90 ${flashClass}" data-attr-row="${k}">${rowInner}</div>`;
     }
     html += '</div>';
     front.innerHTML = html;
@@ -610,10 +539,7 @@ function createCard(data, isRevealed, isPlayer, isActive, highlightAttr){
     const back = document.createElement('div');
     back.className = `card-back rounded-2xl shadow-lg relative ${isActive ? 'border-orange-500' : 'border-white'}`;
     if(!isPlayer && isOpponentNameBackVisible()){
-        const lbl = document.createElement('div'); 
-        lbl.className = 'opponent-back-name'; 
-        lbl.innerText = data.name; 
-        back.appendChild(lbl);
+        const lbl = document.createElement('div'); lbl.className = 'opponent-back-name'; lbl.innerText = data.name; back.appendChild(lbl);
     }
 
     card.appendChild(front); card.appendChild(back);
@@ -682,9 +608,7 @@ function updateDisplayAI(){
 
 function evaluateRoundAI(attr){
     const pv=aiGame.currentPlayerCard[attr]; const av=aiGame.currentAiCard[attr];
-    // LOGIC NOW DEPENDS ON THEME
-    const logic = gameData[currentTheme].attributes[attr].logic;
-    
+    const logic = attributeInfo[attr].logic;
     let pWins = (logic === 'Niedrig gewinnt') ? (pv < av) : (pv > av);
     if(pv === av) pWins = 'tie';
 
@@ -693,18 +617,15 @@ function evaluateRoundAI(attr){
     
     document.getElementById('resultText').innerText = resText;
     document.getElementById('resultText').className = `text-2xl font-black uppercase tracking-wide mb-2 ${resColor}`;
-    // Dynamic Attribute Name from Theme
-    document.getElementById('resultDetails').innerText = `${gameData[currentTheme].attributes[attr].name}: ${pv} vs ${av}`;
+    document.getElementById('resultDetails').innerText = `${attributeInfo[attr].name}: ${pv} vs ${av}`;
     
     if(pWins===true) { 
         playSound(sounds.win); 
-        checkWormAppearance(true); 
+        showHappyWorm(); 
         lastRoundWinningWoodName = aiGame.currentPlayerCard.name; 
     } else if (pWins===false) {
-        checkWormAppearance(false);
         lastRoundWinningWoodName = aiGame.currentAiCard.name;
     } else {
-        checkWormAppearance(false);
         lastRoundWinningWoodName = aiGame.currentPlayerCard.name; // Fallback
     }
     
@@ -720,8 +641,7 @@ function evaluateRoundAI(attr){
 
 function aiTurn(){
     if(aiGame.roundInProgress) return;
-    const currentAttributes = gameData[currentTheme].attributes;
-    const keys=Object.keys(currentAttributes);
+    const keys=Object.keys(attributeInfo);
     const k=keys[Math.floor(Math.random()*keys.length)];
     aiGame.roundInProgress = true;
     const aiCardEl = document.getElementById('aiCard');
@@ -795,9 +715,8 @@ function listenToGameChanges(){
                  
                  const resText = iWin ? 'Du gewinnst!' : (wId==='tie'?'Unentschieden':'Gegner gewinnt!');
                  document.getElementById('resultText').className = iWin ? 'text-2xl font-black uppercase text-green-600' : 'text-2xl font-black uppercase text-red-600';
-                 // Dynamic Attribute Text
-                 document.getElementById('resultDetails').innerText = `${gameData[currentTheme].attributes[gd.lastResult.attribute].name}: ${gd.lastResult.values[localPlayerId]} vs ${gd.lastResult.values[oppId]}`;
-                 if(iWin) checkWormAppearance(true);
+                 document.getElementById('resultDetails').innerText = `${attributeInfo[gd.lastResult.attribute].name}: ${gd.lastResult.values[localPlayerId]} vs ${gd.lastResult.values[oppId]}`;
+                 if(iWin) showHappyWorm();
                  if(document.getElementById('bottomSheet').classList.contains('hidden')) openBottomSheet(resText);
             } else {
                  roundSoundPlayed=false; closeBottomSheet();
@@ -819,19 +738,9 @@ window.startGameAI = (name) => {
     trackEvent('games_ai');
     gameMode='ai'; aiGame.playerName=name;
     document.getElementById('playerNameDisplay').innerText=name;
-    
-    // START NEW LOGIC: Use selected Theme Deck
-    const deck = gameData[currentTheme].cards;
-    const sh=shuffleArray([...deck]);
-    
-    // Split deck
-    const mid = Math.floor(sh.length / 2);
-    aiGame.playerCards=sh.slice(0, mid); 
-    aiGame.aiCards=sh.slice(mid);
-    
-    aiGame.currentPlayerCard=aiGame.playerCards[0]; 
-    aiGame.currentAiCard=aiGame.aiCards[0];
-    
+    const sh=shuffleArray([...woodCards]);
+    aiGame.playerCards=sh.slice(0,15); aiGame.aiCards=sh.slice(15,30);
+    aiGame.currentPlayerCard=aiGame.playerCards[0]; aiGame.currentAiCard=aiGame.aiCards[0];
     document.getElementById('gameContainer').classList.remove('hidden');
     updateDisplayAI();
 };
@@ -862,7 +771,6 @@ window.createGame = async (playerName) => {
     
     await setDoc(doc(db, "games", gameId),{
         gameId, status:'waiting', playerIds:[localPlayerId],
-        theme: currentTheme, // Save chosen theme
         players:{[localPlayerId]:{name:playerName,cards:[],status:'online'}},
         createdAt:serverTimestamp()
     });
@@ -878,23 +786,15 @@ window.joinGame = async (id, playerName) => {
     if(snap.exists() && snap.data().status==='waiting'){
         document.getElementById('lobbyTitle').textContent="Verbinde...";
         document.getElementById('multiplayerLobbyModal').classList.remove('hidden');
-        
-        // SYNC THEME
-        const serverTheme = snap.data().theme || 'wood';
-        currentTheme = serverTheme;
-
-        // Use correct deck
-        const deck = gameData[currentTheme].cards;
-        const sh=shuffleArray([...deck]);
-        const mid = Math.floor(sh.length / 2);
+        const sh=shuffleArray([...woodCards]);
         const p1=snap.data().playerIds[0];
         
         // Karten verteilen
         await updateDoc(ref,{
             status:'playing', playerIds:[p1,localPlayerId],
-            [`players.${localPlayerId}`]:{name:playerName,cards:sh.slice(mid),status:'online'},
-            [`players.${p1}.cards`]:sh.slice(0,mid),
-            turn:p1, currentCards:{[p1]:sh[0],[localPlayerId]:sh[mid]}, // first of each half
+            [`players.${localPlayerId}`]:{name:playerName,cards:sh.slice(15,30),status:'online'},
+            [`players.${p1}.cards`]:sh.slice(0,15),
+            turn:p1, currentCards:{[p1]:sh.slice(0,15)[0],[localPlayerId]:sh.slice(15,30)[0]},
             lastResult:null
         });
         listenToGameChanges();
@@ -921,11 +821,9 @@ window.selectAttribute = async (attr) => {
         const opp = localGameState.playerIds.find(id=>id!==localPlayerId);
         const pv = localGameState.currentCards[localPlayerId][attr];
         const ov = localGameState.currentCards[opp][attr];
-        
-        const logic = gameData[currentTheme].attributes[attr].logic; // Dynamic Logic
+        const logic = attributeInfo[attr].logic;
         let pWins = (logic === 'Niedrig gewinnt') ? (pv < ov) : (pv > ov);
         if(pv === ov) pWins = 'tie';
-        
         const winner = pWins==='tie' ? 'tie' : (pWins ? localPlayerId : opp);
         await updateDoc(doc(db, "games", gameId),{
             lastResult: {winnerId:winner, attribute:attr, values:{[localPlayerId]:pv, [opp]:ov}}
@@ -947,10 +845,12 @@ window.nextRound = async () => {
         let c2=gs.players[p2].cards.shift();
         const w = gs.lastResult.winnerId;
         
+        // Karten zum Gewinner
         if(w===p1){ if(c1) gs.players[p1].cards.push(c1); if(c2) gs.players[p1].cards.push(c2); }
         else if(w===p2){ if(c1) gs.players[p2].cards.push(c1); if(c2) gs.players[p2].cards.push(c2); }
         else { if(c1) gs.players[p1].cards.push(c1); if(c2) gs.players[p2].cards.push(c2); }
         
+        // Prüfen ob Spiel vorbei
         if(gs.players[p1].cards.length===0 || gs.players[p2].cards.length===0){
             await updateDoc(doc(db, "games", gameId), {status:'finished', players:gs.players});
             return;
@@ -971,19 +871,7 @@ window.showFinalWinScreen = () => {
     document.getElementById('gameOverText').innerText = "Herzlichen Glückwunsch! Du bist der Holz-Meister.";
     document.getElementById('gameOverModal').classList.remove('hidden');
     
-    // FIREWORK
-    var duration = 5 * 1000;
-    var animationEnd = Date.now() + duration;
-    var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 1000 };
-    var randomInRange = (min, max) => Math.random() * (max - min) + min;
-    var interval = setInterval(function() {
-        var timeLeft = animationEnd - Date.now();
-        if (timeLeft <= 0) { return clearInterval(interval); }
-        var particleCount = 50 * (timeLeft / duration);
-        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
-        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
-    }, 250);
-
+    // Leaderboard Update
     const name = gameMode==='ai' ? aiGame.playerName : localGameState.players[localPlayerId].name;
     saveToLeaderboard(name);
 };
@@ -1033,15 +921,23 @@ function populateGameInfoModal() {
     const list = document.getElementById('infoCategoryList');
     if (!list) return;
     
-    // Dynamic Description Mapping
-    const currentAttributes = gameData[currentTheme].attributes;
+    // Add descriptions map
+    const descriptions = {
+        dk: "Maß für die natürliche Widerstandsfähigkeit des Holzes gegen Pilze und Insekten (DK 1 = sehr dauerhaft, DK 5 = wenig dauerhaft). Im Spiel gewinnt der niedrigere DK-Wert.",
+        haerte: "Widerstand des Holzes gegen zusammendrückende Lasten; hohe Werte bedeuten hohe Belastbarkeit. Im Spiel gewinnt der höchste Wert.",
+        quellenSchwindenRadial: "Maß für Dimensionsänderungen bei Feuchtewechsel; kleine Werte bedeuten höhere Formstabilität. Im Spiel gewinnt der niedrigste Wert.",
+        dichte: "Masse pro Volumen; höhere Dichte geht oft mit größerer Härte und Tragfähigkeit einher. Im Spiel gewinnt der höchste Wert.",
+        gewicht: "Elastizitätsmodul als Maß für Steifigkeit; hohe Werte bedeuten geringere Durchbiegung. Im Spiel gewinnt der höchste Wert."
+    };
 
     let html = '';
-    for (const key in currentAttributes) {
-        const info = currentAttributes[key];
+    const order = ['dk', 'haerte', 'quellenSchwindenRadial', 'dichte', 'gewicht'];
+    for (const key of order) {
+        const info = attributeInfo[key];
         const isBetter = info.logic === 'Hoch gewinnt';
-        const desc = info.desc || "Fachwert.";
-        html += `<div class="p-3 rounded-xl border-2 ${isBetter ? 'border-green-400 bg-green-50' : 'border-blue-400/80 bg-blue-50/50'}">
+        const desc = descriptions[key] || '';
+        html += `
+            <div class="p-3 rounded-xl border-2 ${isBetter ? 'border-green-400 bg-green-50' : 'border-blue-400/80 bg-blue-50/50'}">
                 <div class="flex justify-between items-center mb-1">
                     <span class="text-lg font-bold text-gray-800">${info.icon} ${info.name}</span>
                     <span class="text-sm font-semibold ${isBetter ? 'text-green-700' : 'text-blue-700'}">
@@ -1053,64 +949,51 @@ function populateGameInfoModal() {
     }
     list.innerHTML = html;
     document.getElementById('gameInfoModal').classList.remove('hidden');
-}
+};
 
-// Ensure init calls this
+// Listeners
 document.getElementById('bsInfoBtn').addEventListener('click', ()=>{ 
-    const wood = lastRoundWinningWoodName || (aiGame.currentPlayerCard ? aiGame.currentPlayerCard.name : "Unbekannt");
-    
-    // Fetch details based on theme
-    const detailsMap = gameData[currentTheme].details;
-    const cleanWood = wood.replace(/^[^\w\u00C0-\u00FF]+/, '').trim();
-    let content = "";
-    
-    // Find key logic
-    let foundKey = Object.keys(detailsMap).find(k => k.includes(cleanWood));
-    if(foundKey) content = detailsMap[foundKey];
-    else content = `<p>Keine Detailinfo verfügbar.</p>`;
-    
-    // Images
-    const deck = gameData[currentTheme].cards;
-    const cardData = deck.find(c=>c.name===wood);
-    
+    const wood = lastRoundWinningWoodName || (aiGame.currentPlayerCard ? aiGame.currentPlayerCard.name : "Eiche");
+    const content = detailedWoodInfo[wood] || `<p>Keine Detailinfo zu ${wood}</p>`;
     const modalContent = document.getElementById('infoModalContent');
     modalContent.innerHTML = `<h4 class="font-bold text-xl mb-2">${wood}</h4>` + content;
     
+    // Updated Logic: Dual Coding (Bild + Text)
+    const cardData = woodCards.find(c=>c.name===wood);
     if(cardData) {
-        modalContent.innerHTML += `<div class="grid grid-cols-2 gap-3 mt-4">
-            <div><p class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Bild 1</p><img src="${cardData.imgTree}" class="w-full h-32 object-cover rounded-lg border border-gray-200 shadow-sm"></div>
-            <div><p class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Bild 2</p><img src="${cardData.imgCross}" class="w-full h-32 object-cover rounded-lg border border-gray-200 shadow-sm"></div>
-        </div>`;
-    }
-    
-    // AI Section Re-Integration
-    const aiSection = document.createElement('div');
-    aiSection.className = "mt-6 p-4 bg-amber-50 border border-amber-200 rounded-xl";
-    // Slightly different suggestions based on theme
-    let suggestions = "";
-    if(currentTheme === 'wood') {
-        suggestions = `
-            <button class="bg-white border border-amber-300 text-amber-800 text-xs px-3 py-1 rounded-full whitespace-nowrap hover:bg-amber-100 transition" onclick="window.triggerAiQuestion('${cleanWood}', 'Nenne eine konkrete Projektidee.')">🔨 Projektidee</button>
-            <button class="bg-white border border-amber-300 text-amber-800 text-xs px-3 py-1 rounded-full whitespace-nowrap hover:bg-amber-100 transition" onclick="window.triggerAiQuestion('${cleanWood}', 'Besonderheiten?')">💡 Besonderheiten</button>
-        `;
-    } else {
-        suggestions = `
-            <button class="bg-white border border-amber-300 text-amber-800 text-xs px-3 py-1 rounded-full whitespace-nowrap hover:bg-amber-100 transition" onclick="window.triggerAiQuestion('${cleanWood}', 'Erkläre die Funktion dieser Struktur.')">🧬 Funktion</button>
-            <button class="bg-white border border-amber-300 text-amber-800 text-xs px-3 py-1 rounded-full whitespace-nowrap hover:bg-amber-100 transition" onclick="window.triggerAiQuestion('${cleanWood}', 'Wie erkennt man das im Mikroskop?')">🔬 Erkennung</button>
-        `;
+        // Fallback für fehlende Bilder sicherstellen
+        const img1 = cardData.imgTree || 'https://placehold.co/400x300?text=Bild+fehlt';
+        const img2 = cardData.imgCross || 'https://placehold.co/400x300?text=Detail+fehlt';
+        
+        modalContent.innerHTML += `
+            <div class="grid grid-cols-2 gap-3 mt-4">
+                <div>
+                    <p class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Maserung</p>
+                    <img src="${img1}" class="w-full h-32 object-cover rounded-lg border border-gray-200 shadow-sm cursor-pointer hover:opacity-90 transition" onclick="window.open(this.src, '_blank')">
+                </div>
+                <div>
+                    <p class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Detailansicht</p>
+                    <img src="${img2}" class="w-full h-32 object-cover rounded-lg border border-gray-200 shadow-sm cursor-pointer hover:opacity-90 transition" onclick="window.open(this.src, '_blank')">
+                </div>
+            </div>`;
     }
 
+    // ✨ KI-Feature: Experten-Wissen UI (Updated)
+    const aiSection = document.createElement('div');
+    aiSection.className = "mt-6 p-4 bg-amber-50 border border-amber-200 rounded-xl";
     aiSection.innerHTML = `
         <h5 class="font-bold text-amber-800 text-sm mb-2 flex items-center gap-2">🤖 Experten-Wissen (KI)</h5>
         <div id="aiOutput" class="ai-chat-bubble text-gray-700 bg-white shadow-sm min-h-[40px] text-sm">
-            Stelle eine fachliche Frage zu ${cleanWood}.
+            Stelle eine fachliche Frage zu ${wood} oder nutze die Vorschläge.
         </div>
         <div class="flex gap-2 mt-3 overflow-x-auto pb-1 hide-scrollbar">
-            ${suggestions}
+            <button class="bg-white border border-amber-300 text-amber-800 text-xs px-3 py-1 rounded-full whitespace-nowrap hover:bg-amber-100 transition" onclick="window.triggerAiQuestion('${wood}', 'Nenne eine konkrete, fachgerechte Projektidee für dieses Holz mit einem kurzen Hinweis zur Konstruktion.')">🔨 Verwendung & Projekte</button>
+            <button class="bg-white border border-amber-300 text-amber-800 text-xs px-3 py-1 rounded-full whitespace-nowrap hover:bg-amber-100 transition" onclick="window.triggerAiQuestion('${wood}', 'Nenne ein interessantes, wenig bekanntes fachliches oder historisches Detail zu diesem Holz (Trivia).')">💡 Besonderheiten</button>
+            <button class="bg-white border border-amber-300 text-amber-800 text-xs px-3 py-1 rounded-full whitespace-nowrap hover:bg-amber-100 transition" onclick="window.triggerAiQuestion('${wood}', 'Wo wächst dieses Holz hauptsächlich und was sind die botanischen Besonderheiten?')">🌍 Vorkommen & Botanik</button>
         </div>
         <div class="flex gap-2 mt-2">
-            <input type="text" id="aiInput" class="flex-grow text-sm border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-amber-500 focus:outline-none" placeholder="Eigene Frage...">
-            <button id="aiSendBtn" class="bg-amber-600 text-white p-2 rounded-lg hover:bg-amber-700 transition" onclick="window.triggerAiCustom('${cleanWood}')">
+            <input type="text" id="aiInput" class="flex-grow text-sm border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-amber-500 focus:outline-none" placeholder="Eigene Frage (z.B. Bearbeitung)...">
+            <button id="aiSendBtn" class="bg-amber-600 text-white p-2 rounded-lg hover:bg-amber-700 transition" onclick="window.triggerAiCustom('${wood}')">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
             </button>
         </div>
@@ -1120,67 +1003,24 @@ document.getElementById('bsInfoBtn').addEventListener('click', ()=>{
     document.getElementById('infoModal').classList.remove('hidden');
 });
 
-// Update join game logic to read theme
-window.joinGame = async (id, playerName) => {
-    // ...
-    const ref=doc(db, "games", id);
-    const snap=await getDoc(ref);
-    if(snap.exists()){
-        // SYNC THEME!
-        const serverTheme = snap.data().theme || 'wood';
-        currentTheme = serverTheme; 
-        
-        // UI Logic for lobby...
-        document.getElementById('lobbyTitle').textContent="Verbinde...";
-        document.getElementById('multiplayerLobbyModal').classList.remove('hidden');
-        
-        const deck = gameData[currentTheme].cards;
-        const sh=shuffleArray([...deck]);
-        const mid = Math.floor(sh.length / 2);
-        const p1=snap.data().playerIds[0];
-        
-        // Karten verteilen
-        await updateDoc(ref,{
-            status:'playing', playerIds:[p1,localPlayerId],
-            [`players.${localPlayerId}`]:{name:playerName,cards:sh.slice(mid),status:'online'},
-            [`players.${p1}.cards`]:sh.slice(0,mid),
-            turn:p1, currentCards:{[p1]:sh[0],[localPlayerId]:sh[mid]}, 
-            lastResult:null
-        });
-        listenToGameChanges();
-    } else {
-        alert("Spiel nicht gefunden.");
-    }
-};
-
-// ... other existing functions ...
+// Helper for AI Buttons
 window.triggerAiQuestion = (wood, q) => askGemini(wood, q);
 window.triggerAiCustom = (wood) => {
     const val = document.getElementById('aiInput').value.trim();
     if(val) askGemini(wood, val);
 };
 
-// --- NEU: Event Listener für die Einstellungen (Sound & Sichtbarkeit) ---
-const sToggle = document.getElementById('soundToggle');
-const rToggle = document.getElementById('revealBackToggle');
+document.getElementById('bsNextBtn').addEventListener('click',()=> { closeBottomSheet(); window.nextRound(); });
 
-if(sToggle) {
-    sToggle.checked = !isMuted; 
-    sToggle.addEventListener('change', (e) => { isMuted = !e.target.checked; });
-}
-
-if(rToggle) {
-    rToggle.checked = isOpponentNameBackVisible();
-    rToggle.addEventListener('change', (e) => { setOpponentNameBackVisible(e.target.checked); });
-}
-
+// Check URL for join (Multiplayer Deep Link)
 const p=new URLSearchParams(window.location.search);
 if(p.get('game')){ 
+    // Wenn direktes Spiel, Setup verstecken und Join anzeigen
     document.getElementById('setupModal').classList.add('hidden');
     gameId=p.get('game'); 
     window.showNamePrompt('join'); 
 }
+
 </script>
 </body>
 </html>
-```�
