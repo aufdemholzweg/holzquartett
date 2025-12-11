@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -12,6 +11,8 @@
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <!-- Markdown Parser für schöne KI-Antworten -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Confetti / Feuerwerk Bibliothek -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -41,8 +42,17 @@
         .animate-pulse-glow { animation: pulse-glow 2s infinite; }
         @keyframes pulse-glow { 0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); transform: translate(-50%, -50%) scale(1); } 50% { box-shadow: 0 0 15px 5px rgba(34, 197, 94, 0.4); transform: translate(-50%, -50%) scale(1.1); } 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); transform: translate(-50%, -50%) scale(1); } }
         
+        /* Wurm Animation (Zurück zur alten Pop-Up Animation von unten) */
         .animate-worm { animation: worm-pop-up 3.5s ease-in-out forwards; }
-        @keyframes worm-pop-up { 0% { transform: translateY(100%) rotate(0deg); opacity: 0; } 20% { transform: translateY(-20%) rotate(-10deg); opacity: 1; } 40% { transform: translateY(-20%) rotate(10deg); } 50% { transform: translateY(-30%) rotate(0deg) scale(1.1); } 60% { transform: translateY(-20%) rotate(-10deg) scale(1); } 80% { transform: translateY(-20%) rotate(0deg); opacity: 1; } 100% { transform: translateY(100%) rotate(0deg); opacity: 0; } }
+        @keyframes worm-pop-up { 
+            0% { transform: translateY(100%) rotate(0deg); opacity: 0; } 
+            20% { transform: translateY(-20%) rotate(-10deg); opacity: 1; } 
+            40% { transform: translateY(-20%) rotate(10deg); } 
+            50% { transform: translateY(-30%) rotate(0deg) scale(1.1); } /* Hüpfer */
+            60% { transform: translateY(-20%) rotate(-10deg) scale(1); } 
+            80% { transform: translateY(-20%) rotate(0deg); opacity: 1; } 
+            100% { transform: translateY(100%) rotate(0deg); opacity: 0; } 
+        }
         
         /* Utility Klassen */
         .opponent-back-name { position: absolute; top: 15%; width: 100%; text-align: center; color: rgba(255,255,255,0.95); font-weight: 700; font-size: 1.1rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5); pointer-events: none; }
@@ -95,17 +105,21 @@
                 <div id="playerCard" class="w-full h-full relative"></div>
             </div>
         </div>
+        
         <!-- SPALTE GEGNER -->
-        <div class="flex flex-col w-[48%] max-w-[280px] gap-2 z-10">
+        <div class="flex flex-col w-[48%] max-w-[280px] gap-2 z-10 relative">
             <div class="bg-white w-full rounded-2xl shadow-sm border border-orange-100 p-2 sm:p-3 text-center">
                 <div id="opponentNameDisplay" class="text-base sm:text-lg font-bold text-gray-600 leading-tight truncate">COMPUTER</div>
                 <div class="text-[10px] sm:text-sm text-gray-500 mt-0.5">Karten: <span id="aiCards" class="font-bold text-xl sm:text-2xl text-gray-800">15</span></div>
             </div>
+            
+            <!-- Karten Container -->
             <div class="w-full aspect-[20/46] perspective-1000 relative" id="aiCardContainer">
                 <div id="aiCard" class="w-full h-full relative"></div>
             </div>
         </div>
     </div>
+    
     <!-- Statusbalken (Visualisierung des Spielfortschritts) -->
     <div class="w-full mt-4 mb-24"> 
         <div class="flex justify-between text-[9px] sm:text-[10px] font-bold text-gray-400 mb-1 px-1">
@@ -118,10 +132,14 @@
     </div>
 </div>
 
-<!-- === FEEDBACK ELEMENT: HAPPY WOODWORM === -->
-<div id="happyWorm" class="fixed bottom-0 right-4 translate-y-full z-50 pointer-events-none transform transition-transform hidden">
+<!-- === FEEDBACK ELEMENT: HAPPY WOODWORM (Zurück auf alter Vertikalen Position: Unten Rechts) === -->
+<div id="happyWorm" class="fixed bottom-0 right-20 translate-y-full z-50 pointer-events-none transform transition-transform hidden">
     <div class="relative">
-        <div id="wormSpeech" class="absolute -top-10 -left-10 bg-white px-3 py-1.5 rounded-xl shadow-md border-2 border-amber-200 text-xs font-bold text-amber-800 whitespace-nowrap animate-bounce" style="animation-duration: 2s;">Stark! 🪵</div>
+        <!-- Sprechblase -->
+        <div id="wormSpeech" class="absolute -top-10 -left-10 bg-white px-3 py-1.5 rounded-xl shadow-md border-2 border-amber-200 text-xs font-bold text-amber-800 whitespace-nowrap animate-bounce" style="animation-duration: 2s;">
+            Stark! 🪵
+        </div>
+        <!-- Wurm Emoji (Groß) -->
         <div class="text-6xl filter drop-shadow-xl cursor-default select-none">🐛</div>
     </div>
 </div>
@@ -170,13 +188,21 @@
             <button onclick="window.showNamePrompt('multiplayer')" class="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg flex items-center justify-center gap-3 active:scale-95 transition-transform">
                 <span class="text-2xl">🌍</span> Online gegen Freunde
             </button>
+            
+            <!-- Toggle Switches (Schieberegler) -->
             <div class="pt-4 border-t border-gray-100 flex justify-between items-center">
                  <span class="text-sm font-bold text-gray-700">🔊 Ton an</span>
-                 <input type="checkbox" id="soundToggle" class="accent-green-500 w-5 h-5">
+                 <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="soundToggle" class="sr-only peer">
+                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                 </label>
             </div>
             <div class="flex justify-between items-center">
                  <span class="text-sm font-bold text-gray-700">👀 Gegner-Karte sichtbar</span>
-                 <input type="checkbox" id="revealBackToggle" class="accent-green-500 w-5 h-5">
+                 <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="revealBackToggle" class="sr-only peer">
+                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                 </label>
             </div>
         </div>
     </div>
@@ -318,69 +344,69 @@ const IMG_SUFFIX = "?raw=true";
 
 // Holzdaten (Muss für Masterarbeit validiert werden!)
 const woodCards=[
- {name:"Eiche",dk:2,haerte:85,quellenSchwindenRadial:4.0,dichte:650,gewicht:12000, imgTree:`${IMG_BASE}/eiche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/eiche_2.jpeg${IMG_SUFFIX}`},
- {name:"Buche",dk:5,haerte:80,quellenSchwindenRadial:5.8,dichte:720,gewicht:14000, imgTree:`${IMG_BASE}/buche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/buche_2.jpeg${IMG_SUFFIX}`},
- {name:"Kiefer",dk:3,haerte:40,quellenSchwindenRadial:3.5,dichte:520,gewicht:11000, imgTree:`${IMG_BASE}/kiefer_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/kiefer_2.jpg${IMG_SUFFIX}`},
- {name:"Fichte",dk:4,haerte:35,quellenSchwindenRadial:3.6,dichte:450,gewicht:11000, imgTree:`${IMG_BASE}/fichte_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/fichte_2.jpeg${IMG_SUFFIX}`},
- {name:"Tanne",dk:4,haerte:38,quellenSchwindenRadial:3.5,dichte:460,gewicht:10000, imgTree:`${IMG_BASE}/tanne_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/tanne_2.jpeg${IMG_SUFFIX}`},
- {name:"Lärche",dk:3,haerte:55,quellenSchwindenRadial:3.7,dichte:590,gewicht:12000, imgTree:`${IMG_BASE}/laerche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/laerche_2.jpeg${IMG_SUFFIX}`},
- {name:"Birke",dk:5,haerte:60,quellenSchwindenRadial:5.4,dichte:650,gewicht:13000, imgTree:`${IMG_BASE}/birke_1.jpg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/birke_2.jpeg${IMG_SUFFIX}`},
- {name:"Ahorn",dk:5,haerte:75,quellenSchwindenRadial:4.8,dichte:630,gewicht:12500, imgTree:`${IMG_BASE}/ahorn_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/ahorn_2.jpeg${IMG_SUFFIX}`},
- {name:"Esche",dk:5,haerte:90,quellenSchwindenRadial:4.9,dichte:700,gewicht:13000, imgTree:`${IMG_BASE}/esche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/esche_2.jpg${IMG_SUFFIX}`},
- {name:"Kirsche",dk:3,haerte:70,quellenSchwindenRadial:4.0,dichte:600,gewicht:11500, imgTree:`${IMG_BASE}/kirsche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/kirsche_2.jpeg${IMG_SUFFIX}`},
- {name:"Nussbaum",dk:3,haerte:65,quellenSchwindenRadial:4.0,dichte:640,gewicht:12000, imgTree:`${IMG_BASE}/nuss_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/nuss_2.jpeg${IMG_SUFFIX}`},
- {name:"Douglasie",dk:3,haerte:45,quellenSchwindenRadial:3.5,dichte:510,gewicht:12000, imgTree:`${IMG_BASE}/douglasie_1.jpg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/douglasie_2.jpg${IMG_SUFFIX}`},
- {name:"Zeder",dk:2,haerte:42,quellenSchwindenRadial:2.8,dichte:480,gewicht:9500, imgTree:`${IMG_BASE}/zeder_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/zeder_2.jpeg${IMG_SUFFIX}`},
- {name:"Mahagoni",dk:2,haerte:55,quellenSchwindenRadial:3.0,dichte:550,gewicht:10500, imgTree:`${IMG_BASE}/mahagoni_1.jpg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/mahagoni_2.jpeg${IMG_SUFFIX}`},
- {name:"Teak",dk:1,haerte:60,quellenSchwindenRadial:2.5,dichte:650,gewicht:11000, imgTree:`${IMG_BASE}/teak_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/teak_2.jpeg${IMG_SUFFIX}`},
- {name:"Bambus",dk:4,haerte:50,quellenSchwindenRadial:3.0,dichte:400,gewicht:18000, imgTree:`${IMG_BASE}/bambus_1.jpg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/bambus_2.jpg${IMG_SUFFIX}`},
- {name:"Pappel",dk:5,haerte:25,quellenSchwindenRadial:4.5,dichte:380,gewicht:9000, imgTree:`${IMG_BASE}/pappel_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/pappel_2.jpeg${IMG_SUFFIX}`},
- {name:"Weide",dk:5,haerte:30,quellenSchwindenRadial:4.0,dichte:420,gewicht:8000, imgTree:`${IMG_BASE}/weide_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/weide_2.jpeg${IMG_SUFFIX}`},
- {name:"Linde",dk:5,haerte:35,quellenSchwindenRadial:3.8,dichte:530,gewicht:9000, imgTree:`${IMG_BASE}/linde_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/linde_2.jpeg${IMG_SUFFIX}`},
- {name:"Ulme",dk:3,haerte:75,quellenSchwindenRadial:4.5,dichte:680,gewicht:11500, imgTree:`${IMG_BASE}/ulme_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/ulme_2.jpeg${IMG_SUFFIX}`},
- {name:"Kastanie",dk:2,haerte:50,quellenSchwindenRadial:3.5,dichte:600,gewicht:10000, imgTree:`${IMG_BASE}/kastanie_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/kastanie_2.jpeg${IMG_SUFFIX}`},
- {name:"Robinie",dk:1,haerte:80,quellenSchwindenRadial:3.0,dichte:730,gewicht:15000, imgTree:`${IMG_BASE}/robinie_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/robinie_2.jpg${IMG_SUFFIX}`},
- {name:"Hemlock",dk:4,haerte:40,quellenSchwindenRadial:3.6,dichte:500,gewicht:10000, imgTree:`${IMG_BASE}/hemlock_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/hemlock_2.jpeg${IMG_SUFFIX}`},
- {name:"Zypresse",dk:2,haerte:48,quellenSchwindenRadial:3.0,dichte:520,gewicht:9000, imgTree:`https://placehold.co/400x300?text=Zypresse`, imgCross:`https://placehold.co/400x300?text=Zypresse+Quer`},
- {name:"Redwood",dk:2,haerte:35,quellenSchwindenRadial:2.8,dichte:400,gewicht:8500, imgTree:`${IMG_BASE}/redwood_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/redwood_2.jpeg${IMG_SUFFIX}`},
- {name:"Hickory",dk:3,haerte:95,quellenSchwindenRadial:5.5,dichte:750,gewicht:14000, imgTree:`${IMG_BASE}/hickory_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/hickory_2.jpeg${IMG_SUFFIX}`},
- {name:"Wenge",dk:2,haerte:88,quellenSchwindenRadial:3.8,dichte:880,gewicht:16000, imgTree:`${IMG_BASE}/wenge_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/wenge_2.jpeg${IMG_SUFFIX}`},
- {name:"Zebrano",dk:3,haerte:70,quellenSchwindenRadial:4.0,dichte:750,gewicht:13000, imgTree:`${IMG_BASE}/zebrano_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/zebrano_2.jpeg${IMG_SUFFIX}`},
- {name:"Palisander",dk:2,haerte:82,quellenSchwindenRadial:3.0,dichte:850,gewicht:16000, imgTree:`${IMG_BASE}/palisander_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/palisander_2.jpeg${IMG_SUFFIX}`},
- {name:"Ebenholz",dk:1,haerte:98,quellenSchwindenRadial:3.2,dichte:1200,gewicht:16500, imgTree:`${IMG_BASE}/ebenholz_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/ebenholz_2.jpeg${IMG_SUFFIX}`}
+ {name:"🌳 Eiche",dk:2,haerte:85,quellenSchwindenRadial:4.0,dichte:650,gewicht:12000, imgTree:`${IMG_BASE}/eiche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/eiche_2.jpeg${IMG_SUFFIX}`},
+ {name:"🌳 Buche",dk:5,haerte:80,quellenSchwindenRadial:5.8,dichte:720,gewicht:14000, imgTree:`${IMG_BASE}/buche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/buche_2.jpeg${IMG_SUFFIX}`},
+ {name:"🌲 Kiefer",dk:3,haerte:40,quellenSchwindenRadial:3.5,dichte:520,gewicht:11000, imgTree:`${IMG_BASE}/kiefer_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/kiefer_2.jpg${IMG_SUFFIX}`},
+ {name:"🌲 Fichte",dk:4,haerte:35,quellenSchwindenRadial:3.6,dichte:450,gewicht:11000, imgTree:`${IMG_BASE}/fichte_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/fichte_2.jpeg${IMG_SUFFIX}`},
+ {name:"🌲 Tanne",dk:4,haerte:38,quellenSchwindenRadial:3.5,dichte:460,gewicht:10000, imgTree:`${IMG_BASE}/tanne_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/tanne_2.jpeg${IMG_SUFFIX}`},
+ {name:"🌲 Lärche",dk:3,haerte:55,quellenSchwindenRadial:3.7,dichte:590,gewicht:12000, imgTree:`${IMG_BASE}/laerche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/laerche_2.jpeg${IMG_SUFFIX}`},
+ {name:"🌳 Birke",dk:5,haerte:60,quellenSchwindenRadial:5.4,dichte:650,gewicht:13000, imgTree:`${IMG_BASE}/birke_1.jpg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/birke_2.jpeg${IMG_SUFFIX}`},
+ {name:"🌳 Ahorn",dk:5,haerte:75,quellenSchwindenRadial:4.8,dichte:630,gewicht:12500, imgTree:`${IMG_BASE}/ahorn_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/ahorn_2.jpeg${IMG_SUFFIX}`},
+ {name:"🌳 Esche",dk:5,haerte:90,quellenSchwindenRadial:4.9,dichte:700,gewicht:13000, imgTree:`${IMG_BASE}/esche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/esche_2.jpg${IMG_SUFFIX}`},
+ {name:"🌳 Kirsche",dk:3,haerte:70,quellenSchwindenRadial:4.0,dichte:600,gewicht:11500, imgTree:`${IMG_BASE}/kirsche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/kirsche_2.jpeg${IMG_SUFFIX}`},
+ {name:"🌳 Nussbaum",dk:3,haerte:65,quellenSchwindenRadial:4.0,dichte:640,gewicht:12000, imgTree:`${IMG_BASE}/nuss_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/nuss_2.jpeg${IMG_SUFFIX}`},
+ {name:"🌲 Douglasie",dk:3,haerte:45,quellenSchwindenRadial:3.5,dichte:510,gewicht:12000, imgTree:`${IMG_BASE}/douglasie_1.jpg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/douglasie_2.jpg${IMG_SUFFIX}`},
+ {name:"🌲 Zeder",dk:2,haerte:42,quellenSchwindenRadial:2.8,dichte:480,gewicht:9500, imgTree:`${IMG_BASE}/zeder_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/zeder_2.jpeg${IMG_SUFFIX}`},
+ {name:"🌴 Mahagoni",dk:2,haerte:55,quellenSchwindenRadial:3.0,dichte:550,gewicht:10500, imgTree:`${IMG_BASE}/mahagoni_1.jpg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/mahagoni_2.jpeg${IMG_SUFFIX}`},
+ {name:"🌴 Teak",dk:1,haerte:60,quellenSchwindenRadial:2.5,dichte:650,gewicht:11000, imgTree:`${IMG_BASE}/teak_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/teak_2.jpeg${IMG_SUFFIX}`},
+ {name:"🌴 Bambus",dk:4,haerte:50,quellenSchwindenRadial:3.0,dichte:400,gewicht:18000, imgTree:`${IMG_BASE}/bambus_1.jpg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/bambus_2.jpg${IMG_SUFFIX}`},
+ {name:"🌳 Pappel",dk:5,haerte:25,quellenSchwindenRadial:4.5,dichte:380,gewicht:9000, imgTree:`${IMG_BASE}/pappel_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/pappel_2.jpeg${IMG_SUFFIX}`},
+ {name:"🌳 Weide",dk:5,haerte:30,quellenSchwindenRadial:4.0,dichte:420,gewicht:8000, imgTree:`${IMG_BASE}/weide_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/weide_2.jpeg${IMG_SUFFIX}`},
+ {name:"🌳 Linde",dk:5,haerte:35,quellenSchwindenRadial:3.8,dichte:530,gewicht:9000, imgTree:`${IMG_BASE}/linde_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/linde_2.jpeg${IMG_SUFFIX}`},
+ {name:"🌳 Ulme",dk:3,haerte:75,quellenSchwindenRadial:4.5,dichte:680,gewicht:11500, imgTree:`${IMG_BASE}/ulme_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/ulme_2.jpeg${IMG_SUFFIX}`},
+ {name:"🌳 Kastanie",dk:2,haerte:50,quellenSchwindenRadial:3.5,dichte:600,gewicht:10000, imgTree:`${IMG_BASE}/kastanie_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/kastanie_2.jpeg${IMG_SUFFIX}`},
+ {name:"🌳 Robinie",dk:1,haerte:80,quellenSchwindenRadial:3.0,dichte:730,gewicht:15000, imgTree:`${IMG_BASE}/robinie_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/robinie_2.jpg${IMG_SUFFIX}`},
+ {name:"🌲 Hemlock",dk:4,haerte:40,quellenSchwindenRadial:3.6,dichte:500,gewicht:10000, imgTree:`${IMG_BASE}/hemlock_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/hemlock_2.jpeg${IMG_SUFFIX}`},
+ {name:"🌲 Zypresse",dk:2,haerte:48,quellenSchwindenRadial:3.0,dichte:520,gewicht:9000, imgTree:`https://placehold.co/400x300?text=Zypresse`, imgCross:`https://placehold.co/400x300?text=Zypresse+Quer`},
+ {name:"🌲 Redwood",dk:2,haerte:35,quellenSchwindenRadial:2.8,dichte:400,gewicht:8500, imgTree:`${IMG_BASE}/redwood_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/redwood_2.jpeg${IMG_SUFFIX}`},
+ {name:"🌳 Hickory",dk:3,haerte:95,quellenSchwindenRadial:5.5,dichte:750,gewicht:14000, imgTree:`${IMG_BASE}/hickory_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/hickory_2.jpeg${IMG_SUFFIX}`},
+ {name:"🌴 Wenge",dk:2,haerte:88,quellenSchwindenRadial:3.8,dichte:880,gewicht:16000, imgTree:`${IMG_BASE}/wenge_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/wenge_2.jpeg${IMG_SUFFIX}`},
+ {name:"🌴 Zebrano",dk:3,haerte:70,quellenSchwindenRadial:4.0,dichte:750,gewicht:13000, imgTree:`${IMG_BASE}/zebrano_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/zebrano_2.jpeg${IMG_SUFFIX}`},
+ {name:"🌴 Palisander",dk:2,haerte:82,quellenSchwindenRadial:3.0,dichte:850,gewicht:16000, imgTree:`${IMG_BASE}/palisander_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/palisander_2.jpeg${IMG_SUFFIX}`},
+ {name:"🌴 Ebenholz",dk:1,haerte:98,quellenSchwindenRadial:3.2,dichte:1200,gewicht:16500, imgTree:`${IMG_BASE}/ebenholz_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/ebenholz_2.jpeg${IMG_SUFFIX}`}
 ];
 
 const detailedWoodInfo = {
-    "Eiche": `<p class="mb-2">Hart, schwer, sehr dauerhaft; hoher Gerbstoffanteil, daher widerstandsfähig gegen Pilze/Schädlinge, kann mit Eisen schwarz verfärben. Grobporig, deutliche Jahresringe.</p><p class="mb-2"><strong>Verwendung:</strong> Möbel, Fußböden, Treppen, Fassdauben, Außenbau (z. B. Terrassen), Fachwerk.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Traditionsholz und Symbol für Stärke; häufig in Wappen/Münzen.</p>`,
-    "Buche": `<p class="mb-2">Zäh, biegsam, gleichmäßige Struktur; ringporig mit dezenten Übergängen, harzarm.</p><p class="mb-2"><strong>Verwendung:</strong> Möbel, Parkett, Furniere, Sperrholz, Innenausbau.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Historisch beliebt für Räder/Griffe wegen Zähigkeit und Elastizität.</p>`,
-    "Kiefer": `<p class="mb-2">Weiches, harzhaltiges Nadelholz mit markanter Jahresringstruktur und Harzkanälen.</p><p class="mb-2"><strong>Verwendung:</strong> Bauholz, Dachstühle, Innenausbau, Paneele, einfache Möbel.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Kiefernharz diente früher als Klebstoff und Dichtmittel.</p>`,
-    "Fichte": `<p class="mb-2">Leichtes Bauholz mit gutem Festigkeits-Gewichts-Verhältnis; feine Zellstruktur ohne große Poren.</p><p class="mb-2"><strong>Verwendung:</strong> Bauholz, Innenverkleidung, Paneele, Möbelgrundkonstruktionen.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Klassiker im Dach- und Hallenbau vieler Alpenregionen.</p>`,
-    "Tanne": `<p class="mb-2">Harzarm, fein, ähnlich Fichte; dezente Jahresringe, keine großen Poren.</p><p class="mb-2"><strong>Verwendung:</strong> Innenausbau, Paneele, Bauholz, Möbel.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Angenehm geruchsarm im Innenraum durch wenig Harz.</p>`,
-    "Lärche": `<p class="mb-2">Relativ hart und witterungsbeständig; deutliche Jahresringe, harzhaltig.</p><p class="mb-2"><strong>Verwendung:</strong> Fassaden, Fenster, Terrassen, Außenmöbel.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Vergraut edel im Außenbereich auch ohne chemische Behandlung.</p>`,
-    "Birke": `<p class="mb-2">Helles, dekoratives Holz; zerstreutporig, feine gleichmäßige Struktur, gut biegbar.</p><p class="mb-2"><strong>Verwendung:</strong> Möbel, Furniere, Sperrholz, Innenausbau.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Birkenrinde wurde traditionell als wasserabweisendes Material genutzt.</p>`,
-    "Ahorn": `<p class="mb-2">Hart, hell, sehr fein und homogen; zerstreutporig.</p><p class="mb-2"><strong>Verwendung:</strong> Möbel, Parkett, Schneidebretter, Instrumentenbau.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Ahornsirup stammt v. a. aus nordamerikanischen Arten.</p>`,
-    "Esche": `<p class="mb-2">Sehr zäh und elastisch; ringporig mit deutlichen Frühholzporen.</p><p class="mb-2"><strong>Verwendung:</strong> Werkzeugstiele, Sportgeräte, Möbel, Parkett.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Klassisches Holz für Speichen und Stiele wegen Elastizität.</p>`,
-    "Kirsche": `<p class="mb-2">Warm rötlich, edel; ringporig, klare Jahresringe, dunkelt mit Licht nach.</p><p class="mb-2"><strong>Verwendung:</strong> Möbel, Furniere, Innenausbau.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Entwickelt mit der Zeit eine charakteristische, tiefere Farbigkeit.</p>`,
-    "Nussbaum": `<p class="mb-2">Dunkles, dekoratives Kernholz; zerstreutporig, markante Maserung.</p><p class="mb-2"><strong>Verwendung:</strong> Hochwertige Möbel, Furniere, Intarsien.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Renaissance-Liebling für repräsentative Innenausstattungen.</p>`,
-    "Douglasie": `<p class="mb-2">Robust, relativ dauerhaft; deutliche Jahresringe, gut für Außen.</p><p class="mb-2"><strong>Verwendung:</strong> Bauholz, Fassaden, Terrassen, Außenmöbel.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Ursprünglich nordamerikanisch, in Europa weit verbreitet.</p>`,
-    "Zeder": `<p class="mb-2">Angenehmer Duft, natürlich insektenabweisend; fein und gleichmäßig.</p><p class="mb-2"><strong>Verwendung:</strong> Möbel, Schränke, Fassaden, Innenraum.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Beliebt in Kleiderschränken wegen Geruch und Mottenabwehr.</p>`,
-    "Mahagoni": `<p class="mb-2">Tropisches Edelholz, dauerhaft; zerstreutporig, dekoratives Kernholz.</p><p class="mb-2"><strong>Verwendung:</strong> Möbel, Fenster, Bootsbau, hochwertige Ausbauten.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Teilweise artenschutzreguliert – Herkunft/Handel beachten.</p>`,
-    "Teak": `<p class="mb-2">Sehr witterungsbeständig (Öl-/Harzgehalt); fein zerstreutporig, edle Optik.</p><p class="mb-2"><strong>Verwendung:</strong> Gartenmöbel, Terrassen, Bootsdecks, Außenfenster.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Historisch geschätzt im Schiffbau wegen Dauerhaftigkeit.</p>`,
-    "Bambus": `<p class="mb-2">Botanisch Gras, aber sehr fest; röhrenartige Struktur statt klassischer Poren.</p><p class="mb-2"><strong>Verwendung:</strong> Böden, Möbel, Treppen, nachhaltiger Leichtbau.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Extrem schnelles Wachstum, daher ökologisch interessant.</p>`,
-    "Pappel": `<p class="mb-2">Sehr leicht und weich; feine Struktur, dezente Jahresringe.</p><p class="mb-2"><strong>Verwendung:</strong> Leichtbau, Verpackungen, Innenmöbel mit geringer Last.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Gern im Modell- und Fahrzeuginnenausbau genutzt.</p>`,
-    "Weide": `<p class="mb-2">Elastisch und biegsam; fein zerstreutporig.</p><p class="mb-2"><strong>Verwendung:</strong> Flechtwerk, Körbe, Gartenbau, leichte Möbel.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Weidenruten sind klassische Materialien für Geflechte.</p>`,
-    "Linde": `<p class="mb-2">Weich, homogen, sehr gut schnitzbar; fein zerstreutporig.</p><p class="mb-2"><strong>Verwendung:</strong> Bildhauerei, Orgelbau, Intarsien, feine Möbelteile.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Traditionsholz mittelalterlicher Schnitzer.</p>`,
-    "Ulme": `<p class="mb-2">Zäh, eher hart; ringporig, teils unruhiger Faserverlauf.</p><p class="mb-2"><strong>Verwendung:</strong> Möbel, Innenausbau, Reparatur- und Biegeteile.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Historisch im Wagenbau geschätzt.</p>`,
-    "Kastanie": `<p class="mb-2">Wetterbeständig, warm getönt; ringporig mit klarer Jahresringzeichnung.</p><p class="mb-2"><strong>Verwendung:</strong> Außenbau, Möbel, Balken, Gartenholz.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Oft Alternative zur Eiche im Außenbereich.</p>`,
-    "Robinie": `<p class="mb-2">Eines der härtesten europäischen Hölzer; sehr dauerhaft im Freien; ringporig.</p><p class="mb-2"><strong>Verwendung:</strong> Terrassen, Zäune, Spielplätze, Außenkonstruktionen.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> „Europäisches Teak“ wegen seiner Dauerhaftigkeit.</p>`,
-    "Hemlock": `<p class="mb-2">Weiches, gleichmäßiges Nadelholz; feine Struktur, dezente Ringe.</p><p class="mb-2"><strong>Verwendung:</strong> Innenausbau, Paneele, Leichtbau, Möbel.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Gutes Verhältnis von Gewicht zu Stabilität.</p>`,
-    "Zypresse": `<p class="mb-2">Duftend, natürlich resistent; fein und gleichmäßig.</p><p class="mb-2"><strong>Verwendung:</strong> Außen- und Gartenholz, Fassaden, Möbel.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Traditionelles Bauholz im mediterranen Raum.</p>`,
-    "Redwood": `<p class="mb-2">Leicht, relativ dauerhaft; fein zerstreutporig, dekorative Farbe.</p><p class="mb-2"><strong>Verwendung:</strong> Außenholz, Zäune, Gartenkonstruktionen.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Stammt vom Küstenmammutbaum – einer der höchsten Baumarten.</p>`,
-    "Hickory": `<p class="mb-2">Sehr zäh und hart; ringporig mit ausgeprägten Poren.</p><p class="mb-2"><strong>Verwendung:</strong> Werkzeugstiele, Sportgeräte, stark beanspruchte Möbel.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Klassisches Holz für Peitschen- und Geräteschäfte.</p>`,
-    "Wenge": `<p class="mb-2">Dunkel, sehr hart; zerstreutporig, charakteristische Streifenzeichnung.</p><p class="mb-2"><strong>Verwendung:</strong> Luxusmöbel, Parkett, Furniere.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Wirkt in Kontrastkombinationen mit hellen Hölzern besonders.</p>`,
-    "Zebrano": `<p class="mb-2">Markante Streifenoptik; zerstreutporig mit dekorativer Maserung.</p><p class="mb-2"><strong>Verwendung:</strong> Designmöbel, Furniere, Intarsien.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Beliebt für auffällige Akzente.</p>`,
-    "Palisander": `<p class="mb-2">Dekorativ, fest und langlebig; feine, gleichmäßige Porung.</p><p class="mb-2"><strong>Verwendung:</strong> Gitarren/Instrumente, Möbel, Furniere.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Traditionell exklusiv im Instrumentenbau; Artenschutz-Lagen beachten.</p>`,
-    "Ebenholz": `<p class="mb-2">Extrem hart und dicht, nahezu schwarz; sehr feinporig.</p><p class="mb-2"><strong>Verwendung:</strong> Klaviertasten, Intarsien, Luxusdekore, Griffbretter.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Seit der Antike als edles, seltenes Holz geschätzt.</p>`
+    "🌳 Eiche": `<p class="mb-2">Hart, schwer, sehr dauerhaft; hoher Gerbstoffanteil, daher widerstandsfähig gegen Pilze/Schädlinge, kann mit Eisen schwarz verfärben. Grobporig, deutliche Jahresringe.</p><p class="mb-2"><strong>Verwendung:</strong> Möbel, Fußböden, Treppen, Fassdauben, Außenbau (z. B. Terrassen), Fachwerk.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Traditionsholz und Symbol für Stärke; häufig in Wappen/Münzen.</p>`,
+    "🌳 Buche": `<p class="mb-2">Zäh, biegsam, gleichmäßige Struktur; ringporig mit dezenten Übergängen, harzarm.</p><p class="mb-2"><strong>Verwendung:</strong> Möbel, Parkett, Furniere, Sperrholz, Innenausbau.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Historisch beliebt für Räder/Griffe wegen Zähigkeit und Elastizität.</p>`,
+    "🌲 Kiefer": `<p class="mb-2">Weiches, harzhaltiges Nadelholz mit markanter Jahresringstruktur und Harzkanälen.</p><p class="mb-2"><strong>Verwendung:</strong> Bauholz, Dachstühle, Innenausbau, Paneele, einfache Möbel.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Kiefernharz diente früher als Klebstoff und Dichtmittel.</p>`,
+    "🌲 Fichte": `<p class="mb-2">Leichtes Bauholz mit gutem Festigkeits-Gewichts-Verhältnis; feine Zellstruktur ohne große Poren.</p><p class="mb-2"><strong>Verwendung:</strong> Bauholz, Innenverkleidung, Paneele, Möbelgrundkonstruktionen.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Klassiker im Dach- und Hallenbau vieler Alpenregionen.</p>`,
+    "🌲 Tanne": `<p class="mb-2">Harzarm, fein, ähnlich Fichte; dezente Jahresringe, keine großen Poren.</p><p class="mb-2"><strong>Verwendung:</strong> Innenausbau, Paneele, Bauholz, Möbel.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Angenehm geruchsarm im Innenraum durch wenig Harz.</p>`,
+    "🌲 Lärche": `<p class="mb-2">Relativ hart und witterungsbeständig; deutliche Jahresringe, harzhaltig.</p><p class="mb-2"><strong>Verwendung:</strong> Fassaden, Fenster, Terrassen, Außenmöbel.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Vergraut edel im Außenbereich auch ohne chemische Behandlung.</p>`,
+    "🌳 Birke": `<p class="mb-2">Helles, dekoratives Holz; zerstreutporig, feine gleichmäßige Struktur, gut biegbar.</p><p class="mb-2"><strong>Verwendung:</strong> Möbel, Furniere, Sperrholz, Innenausbau.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Birkenrinde wurde traditionell als wasserabweisendes Material genutzt.</p>`,
+    "🌳 Ahorn": `<p class="mb-2">Hart, hell, sehr fein und homogen; zerstreutporig.</p><p class="mb-2"><strong>Verwendung:</strong> Möbel, Parkett, Schneidebretter, Instrumentenbau.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Ahornsirup stammt v. a. aus nordamerikanischen Arten.</p>`,
+    "🌳 Esche": `<p class="mb-2">Sehr zäh und elastisch; ringporig mit deutlichen Frühholzporen.</p><p class="mb-2"><strong>Verwendung:</strong> Werkzeugstiele, Sportgeräte, Möbel, Parkett.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Klassisches Holz für Speichen und Stiele wegen Elastizität.</p>`,
+    "🌳 Kirsche": `<p class="mb-2">Warm rötlich, edel; ringporig, klare Jahresringe, dunkelt mit Licht nach.</p><p class="mb-2"><strong>Verwendung:</strong> Möbel, Furniere, Innenausbau.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Entwickelt mit der Zeit eine charakteristische, tiefere Farbigkeit.</p>`,
+    "🌳 Nussbaum": `<p class="mb-2">Dunkles, dekoratives Kernholz; zerstreutporig, markante Maserung.</p><p class="mb-2"><strong>Verwendung:</strong> Hochwertige Möbel, Furniere, Intarsien.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Renaissance-Liebling für repräsentative Innenausstattungen.</p>`,
+    "🌲 Douglasie": `<p class="mb-2">Robust, relativ dauerhaft; deutliche Jahresringe, gut für Außen.</p><p class="mb-2"><strong>Verwendung:</strong> Bauholz, Fassaden, Terrassen, Außenmöbel.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Ursprünglich nordamerikanisch, in Europa weit verbreitet.</p>`,
+    "🌲 Zeder": `<p class="mb-2">Angenehmer Duft, natürlich insektenabweisend; fein und gleichmäßig.</p><p class="mb-2"><strong>Verwendung:</strong> Möbel, Schränke, Fassaden, Innenraum.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Beliebt in Kleiderschränken wegen Geruch und Mottenabwehr.</p>`,
+    "🌴 Mahagoni": `<p class="mb-2">Tropisches Edelholz, dauerhaft; zerstreutporig, dekoratives Kernholz.</p><p class="mb-2"><strong>Verwendung:</strong> Möbel, Fenster, Bootsbau, hochwertige Ausbauten.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Teilweise artenschutzreguliert – Herkunft/Handel beachten.</p>`,
+    "🌴 Teak": `<p class="mb-2">Sehr witterungsbeständig (Öl-/Harzgehalt); fein zerstreutporig, edle Optik.</p><p class="mb-2"><strong>Verwendung:</strong> Gartenmöbel, Terrassen, Bootsdecks, Außenfenster.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Historisch geschätzt im Schiffbau wegen Dauerhaftigkeit.</p>`,
+    "🌴 Bambus": `<p class="mb-2">Botanisch Gras, aber sehr fest; röhrenartige Struktur statt klassischer Poren.</p><p class="mb-2"><strong>Verwendung:</strong> Böden, Möbel, Treppen, nachhaltiger Leichtbau.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Extrem schnelles Wachstum, daher ökologisch interessant.</p>`,
+    "🌳 Pappel": `<p class="mb-2">Sehr leicht und weich; feine Struktur, dezente Jahresringe.</p><p class="mb-2"><strong>Verwendung:</strong> Leichtbau, Verpackungen, Innenmöbel mit geringer Last.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Gern im Modell- und Fahrzeuginnenausbau genutzt.</p>`,
+    "🌳 Weide": `<p class="mb-2">Elastisch und biegsam; fein zerstreutporig.</p><p class="mb-2"><strong>Verwendung:</strong> Flechtwerk, Körbe, Gartenbau, leichte Möbel.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Weidenruten sind klassische Materialien für Geflechte.</p>`,
+    "🌳 Linde": `<p class="mb-2">Weich, homogen, sehr gut schnitzbar; fein zerstreutporig.</p><p class="mb-2"><strong>Verwendung:</strong> Bildhauerei, Orgelbau, Intarsien, feine Möbelteile.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Traditionsholz mittelalterlicher Schnitzer.</p>`,
+    "🌳 Ulme": `<p class="mb-2">Zäh, eher hart; ringporig, teils unruhiger Faserverlauf.</p><p class="mb-2"><strong>Verwendung:</strong> Möbel, Innenausbau, Reparatur- und Biegeteile.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Historisch im Wagenbau geschätzt.</p>`,
+    "🌳 Kastanie": `<p class="mb-2">Wetterbeständig, warm getönt; ringporig mit klarer Jahresringzeichnung.</p><p class="mb-2"><strong>Verwendung:</strong> Außenbau, Möbel, Balken, Gartenholz.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Oft Alternative zur Eiche im Außenbereich.</p>`,
+    "🌳 Robinie": `<p class="mb-2">Eines der härtesten europäischen Hölzer; sehr dauerhaft im Freien; ringporig.</p><p class="mb-2"><strong>Verwendung:</strong> Terrassen, Zäune, Spielplätze, Außenkonstruktionen.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> „Europäisches Teak“ wegen seiner Dauerhaftigkeit.</p>`,
+    "🌲 Hemlock": `<p class="mb-2">Weiches, gleichmäßiges Nadelholz; feine Struktur, dezente Ringe.</p><p class="mb-2"><strong>Verwendung:</strong> Innenausbau, Paneele, Leichtbau, Möbel.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Gutes Verhältnis von Gewicht zu Stabilität.</p>`,
+    "🌲 Zypresse": `<p class="mb-2">Duftend, natürlich resistent; fein und gleichmäßig.</p><p class="mb-2"><strong>Verwendung:</strong> Außen- und Gartenholz, Fassaden, Möbel.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Traditionelles Bauholz im mediterranen Raum.</p>`,
+    "🌲 Redwood": `<p class="mb-2">Leicht, relativ dauerhaft; fein zerstreutporig, dekorative Farbe.</p><p class="mb-2"><strong>Verwendung:</strong> Außenholz, Zäune, Gartenkonstruktionen.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Stammt vom Küstenmammutbaum – einer der höchsten Baumarten.</p>`,
+    "🌳 Hickory": `<p class="mb-2">Sehr zäh und hart; ringporig mit ausgeprägten Poren.</p><p class="mb-2"><strong>Verwendung:</strong> Werkzeugstiele, Sportgeräte, stark beanspruchte Möbel.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Klassisches Holz für Peitschen- und Geräteschäfte.</p>`,
+    "🌴 Wenge": `<p class="mb-2">Dunkel, sehr hart; zerstreutporig, charakteristische Streifenzeichnung.</p><p class="mb-2"><strong>Verwendung:</strong> Luxusmöbel, Parkett, Furniere.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Wirkt in Kontrastkombinationen mit hellen Hölzern besonders.</p>`,
+    "🌴 Zebrano": `<p class="mb-2">Markante Streifenoptik; zerstreutporig mit dekorativer Maserung.</p><p class="mb-2"><strong>Verwendung:</strong> Designmöbel, Furniere, Intarsien.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Beliebt für auffällige Akzente.</p>`,
+    "🌴 Palisander": `<p class="mb-2">Dekorativ, fest und langlebig; feine, gleichmäßige Porung.</p><p class="mb-2"><strong>Verwendung:</strong> Gitarren/Instrumente, Möbel, Furniere.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Traditionell exklusiv im Instrumentenbau; Artenschutz-Lagen beachten.</p>`,
+    "🌴 Ebenholz": `<p class="mb-2">Extrem hart und dicht, nahezu schwarz; sehr feinporig.</p><p class="mb-2"><strong>Verwendung:</strong> Klaviertasten, Intarsien, Luxusdekore, Griffbretter.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Seit der Antike als edles, seltenes Holz geschätzt.</p>`
 };
 
 const reflectionQuestions=[
@@ -871,6 +897,27 @@ window.showFinalWinScreen = () => {
     document.getElementById('gameOverText').innerText = "Herzlichen Glückwunsch! Du bist der Holz-Meister.";
     document.getElementById('gameOverModal').classList.remove('hidden');
     
+    // FIREWORK ANIMATION START
+    var duration = 5 * 1000;
+    var animationEnd = Date.now() + duration;
+    var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 1000 };
+
+    var randomInRange = (min, max) => Math.random() * (max - min) + min;
+
+    var interval = setInterval(function() {
+        var timeLeft = animationEnd - Date.now();
+
+        if (timeLeft <= 0) {
+            return clearInterval(interval);
+        }
+
+        var particleCount = 50 * (timeLeft / duration);
+        // since particles fall down, start a bit higher than random
+        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+    }, 250);
+    // FIREWORK ANIMATION END
+
     // Leaderboard Update
     const name = gameMode==='ai' ? aiGame.playerName : localGameState.players[localPlayerId].name;
     saveToLeaderboard(name);
