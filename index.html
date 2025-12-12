@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -301,10 +300,10 @@ let aiGame={playerName:'',playerCards:[],aiCards:[],currentPlayerCard:null,curre
 
 // Sounds
 const sounds={
-  flip:new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_139083c224.mp3'),
-  win:new Audio('https://github.com/aufdemholzweg/holzquartett/blob/894e048eea71ba49921abfe6827bd8dc723f8c2d/gewonnen.mp3?raw=true'),
-  chime:new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c744c8.mp3'),
-  starWin:new Audio('https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3')
+ flip:new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_139083c224.mp3'),
+ win:new Audio('https://github.com/aufdemholzweg/holzquartett/blob/894e048eea71ba49921abfe6827bd8dc723f8c2d/gewonnen.mp3?raw=true'),
+ chime:new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c744c8.mp3'),
+ starWin:new Audio('https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3')
 };
 function playSound(a){ if(!isMuted && a){ a.currentTime=0; a.play().catch(()=>{}); } }
 
@@ -742,6 +741,10 @@ window.startGameAI = (name) => {
     aiGame.playerCards=sh.slice(0,15); aiGame.aiCards=sh.slice(15,30);
     aiGame.currentPlayerCard=aiGame.playerCards[0]; aiGame.currentAiCard=aiGame.aiCards[0];
     document.getElementById('gameContainer').classList.remove('hidden');
+    
+    // NEW SCROLL LOGIC
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
     updateDisplayAI();
 };
 
@@ -797,6 +800,10 @@ window.joinGame = async (id, playerName) => {
             turn:p1, currentCards:{[p1]:sh.slice(0,15)[0],[localPlayerId]:sh.slice(15,30)[0]},
             lastResult:null
         });
+        
+        // NEW SCROLL LOGIC
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
         listenToGameChanges();
     } else {
         alert("Spiel nicht gefunden oder voll.");
@@ -832,7 +839,9 @@ window.selectAttribute = async (attr) => {
 };
 
 window.nextRound = async () => {
-    document.getElementById('gameContainer').scrollIntoView();
+    // NEW SCROLL LOGIC - Scroll to top instead of just scrollIntoView
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
     if(gameMode==='ai'){
         aiGame.currentPlayerCard=aiGame.playerCards[0];
         aiGame.currentAiCard=aiGame.aiCards[0];
