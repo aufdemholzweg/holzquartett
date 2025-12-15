@@ -65,17 +65,27 @@
 <!-- Header Area -->
 <header class="bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-md z-20 flex-shrink-0">
     <div class="max-w-[600px] mx-auto px-4 py-3 relative flex justify-between items-center">
-        <!-- Reload Button -->
-        <button onclick="window.location.reload();" class="text-white hover:text-amber-100 p-2 rounded-full transition-colors active:scale-90 relative z-10" aria-label="Neu laden">
-             <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-        </button>
+        
+        <!-- DYNAMIC NAV BUTTON (Wird per JS gesteuert) -->
+        <a id="navButton" href="index.html" class="relative z-10 w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center text-white shadow-sm hover:bg-white/30 transition-all border border-white/30" aria-label="Zurück zur Startseite">
+             <!-- Default: Fingerabdruck -->
+             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 20 C 10 18, 10 6, 14 4" opacity="0.5" />
+                <path d="M9 21 C 14 19, 14 5, 18 3" opacity="0.7" />
+                <path d="M13 22 C 18 20, 18 4, 22 2" opacity="0.9" />
+                <path d="M2 15 C 6 13, 6 9, 10 7" opacity="0.3" />
+                <path d="M15 22 C 19 20, 19 12, 22 10" opacity="0.5" />
+             </svg>
+        </a>
+
         <!-- Titel -->
-        <h1 class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-lg sm:text-2xl font-black tracking-wider uppercase drop-shadow-sm whitespace-nowrap">
+        <h1 class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-lg sm:text-2xl font-black tracking-wider uppercase drop-shadow-sm whitespace-nowrap pointer-events-none">
             🌲 HOLZEN! 🌲
         </h1>
+        
         <!-- Info Button -->
         <button onclick="window.showGameInfo()" class="text-white hover:text-amber-100 p-2 rounded-full transition-colors active:scale-90 relative z-10" aria-label="Spielregeln">
-             <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
         </button>
     </div>
 </header>
@@ -159,8 +169,21 @@
 <!-- Setup Modal (Startbildschirm) - JETZT SICHTBAR PER DEFAULT (Kein "hidden") -->
 <div id="setupModal" class="fixed inset-0 dimmer flex items-center justify-center z-50 p-4">
     <div class="bg-white rounded-2xl shadow-2xl overflow-hidden max-w-sm w-full">
-        <div class="bg-amber-500 p-5 text-white text-center font-bold text-lg sm:text-xl tracking-wide shadow-md">
+        <!-- Header des Startbildschirms: Button hinzugefügt und 'relative' Klasse ergänzt -->
+        <div class="bg-amber-500 p-5 text-white text-center font-bold text-lg sm:text-xl tracking-wide shadow-md relative">
             HOLZEN!<br><span class="text-sm font-normal opacity-90">Spielmodus wählen</span>
+            
+            <!-- NEUER BUTTON OBEN RECHTS (Holztechnik-Logo) -->
+            <!-- Hier kannst du später das href="..." anpassen -->
+            <a href="index.html" class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center text-white shadow-sm hover:bg-white/30 transition-all border border-white/30" aria-label="Zum Launcher">
+                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 20 C 10 18, 10 6, 14 4" opacity="0.5" />
+                    <path d="M9 21 C 14 19, 14 5, 18 3" opacity="0.7" />
+                    <path d="M13 22 C 18 20, 18 4, 22 2" opacity="0.9" />
+                    <path d="M2 15 C 6 13, 6 9, 10 7" opacity="0.3" />
+                    <path d="M15 22 C 19 20, 19 12, 22 10" opacity="0.5" />
+                 </svg>
+            </a>
         </div>
         <div class="p-6 space-y-5">
             <button onclick="window.showNamePrompt('ai')" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold py-4 rounded-xl shadow-lg flex items-center justify-center gap-3 active:scale-95 transition-transform">
@@ -256,7 +279,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, deleteDoc, collection, query, orderBy, limit, getDocs, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const apiKey = "AIzaSyCB9jx92yxJymq8YHbB1DomjNi-UaI60S4"; // Environment provided
+const apiKey = ""; // Environment provided
 
 // === USER PROVIDED FIREBASE CONFIG ===
 const firebaseConfig = {
@@ -276,6 +299,46 @@ const auth = getAuth(app);
 
 // Authentifizierung starten
 signInAnonymously(auth).catch((error) => console.error("Firebase Auth Error:", error));
+
+// === SVG ICONS (Defined at top to avoid reference errors) ===
+const NAV_ICONS = {
+    fingerprint: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 20 C 10 18, 10 6, 14 4" opacity="0.5" />
+                <path d="M9 21 C 14 19, 14 5, 18 3" opacity="0.7" />
+                <path d="M13 22 C 18 20, 18 4, 22 2" opacity="0.9" />
+                <path d="M2 15 C 6 13, 6 9, 10 7" opacity="0.3" />
+                <path d="M15 22 C 19 20, 19 12, 22 10" opacity="0.5" />
+             </svg>`,
+    house: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                <polyline points="9 22 9 12 15 12 15 22" />
+            </svg>`
+};
+
+// --- HELPER TO SWITCH NAV BUTTON ---
+window.setNavState = (state) => {
+    const btn = document.getElementById('navButton');
+    if(!btn) return;
+    
+    if(state === 'game') {
+        // Show House -> Reload/Cancel Game
+        btn.innerHTML = NAV_ICONS.house;
+        btn.removeAttribute('href'); 
+        btn.onclick = (e) => { 
+            e.preventDefault(); 
+            if(confirm('Spiel abbrechen und zum Startbildschirm zurückkehren?')) {
+                window.location.reload(); 
+            }
+        };
+        btn.setAttribute('aria-label', 'Zurück zur Holzen! Startseite');
+    } else {
+        // Show Fingerprint -> Link to Index (Launcher)
+        btn.innerHTML = NAV_ICONS.fingerprint;
+        btn.href = 'https://aufdemholzweg.github.io/Splashscreen-Holztechnik/';
+        btn.onclick = null; 
+        btn.setAttribute('aria-label', 'Zurück zum Launcher');
+    }
+};
 
 // Logging Funktion für Forschungszwecke (Gamification Usage)
 async function trackEvent(type) {
@@ -340,7 +403,7 @@ const woodCards=[
  {name:"Kastanie",dk:2,haerte:50,quellenSchwindenRadial:3.5,dichte:600,gewicht:10000, imgTree:`${IMG_BASE}/kastanie_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/kastanie_2.jpeg${IMG_SUFFIX}`},
  {name:"Robinie",dk:1,haerte:80,quellenSchwindenRadial:3.0,dichte:730,gewicht:15000, imgTree:`${IMG_BASE}/robinie_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/robinie_2.jpg${IMG_SUFFIX}`},
  {name:"Hemlock",dk:4,haerte:40,quellenSchwindenRadial:3.6,dichte:500,gewicht:10000, imgTree:`${IMG_BASE}/hemlock_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/hemlock_2.jpeg${IMG_SUFFIX}`},
- {name:"Zypresse",dk:2,haerte:48,quellenSchwindenRadial:3.0,dichte:520,gewicht:9000, imgTree:`https://placehold.co/400x300?text=Zypresse`, imgCross:`https://placehold.co/400x300?text=Zypresse+Quer`},
+ {name:"Erle",dk:5,haerte:30,quellenSchwindenRadial:4.4,dichte:530,gewicht:9700, imgTree:`https://github.com/aufdemholzweg/holzquartett/blob/main/images/erle_1.jpeg?raw=true`, imgCross:`https://github.com/aufdemholzweg/holzquartett/blob/main/images/erle_2.jpeg?raw=true`},
  {name:"Redwood",dk:2,haerte:35,quellenSchwindenRadial:2.8,dichte:400,gewicht:8500, imgTree:`${IMG_BASE}/redwood_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/redwood_2.jpeg${IMG_SUFFIX}`},
  {name:"Hickory",dk:3,haerte:95,quellenSchwindenRadial:5.5,dichte:750,gewicht:14000, imgTree:`${IMG_BASE}/hickory_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/hickory_2.jpeg${IMG_SUFFIX}`},
  {name:"Wenge",dk:2,haerte:88,quellenSchwindenRadial:3.8,dichte:880,gewicht:16000, imgTree:`${IMG_BASE}/wenge_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/wenge_2.jpeg${IMG_SUFFIX}`},
@@ -373,7 +436,7 @@ const detailedWoodInfo = {
     "Kastanie": `<p class="mb-2">Wetterbeständig, warm getönt; ringporig mit klarer Jahresringzeichnung.</p><p class="mb-2"><strong>Verwendung:</strong> Außenbau, Möbel, Balken, Gartenholz.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Oft Alternative zur Eiche im Außenbereich.</p>`,
     "Robinie": `<p class="mb-2">Eines der härtesten europäischen Hölzer; sehr dauerhaft im Freien; ringporig.</p><p class="mb-2"><strong>Verwendung:</strong> Terrassen, Zäune, Spielplätze, Außenkonstruktionen.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> „Europäisches Teak“ wegen seiner Dauerhaftigkeit.</p>`,
     "Hemlock": `<p class="mb-2">Weiches, gleichmäßiges Nadelholz; feine Struktur, dezente Ringe.</p><p class="mb-2"><strong>Verwendung:</strong> Innenausbau, Paneele, Leichtbau, Möbel.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Gutes Verhältnis von Gewicht zu Stabilität.</p>`,
-    "Zypresse": `<p class="mb-2">Duftend, natürlich resistent; fein und gleichmäßig.</p><p class="mb-2"><strong>Verwendung:</strong> Außen- und Gartenholz, Fassaden, Möbel.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Traditionelles Bauholz im mediterranen Raum.</p>`,
+    "Erle": `<p class="mb-2">Rötlich-weißes Holz, das an der Luft schnell nachdunkelt. Weich, aber zäh. Unter Wasser extrem dauerhaft (Venedig-Pfähle).</p><p class="mb-2"><strong>Verwendung:</strong> Möbel, Drechslerei, Modellbau, Blindholz, Wasserbau (historisch).</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Wird oft als Imitat für Kirschbaum oder Mahagoni verwendet.</p>`,
     "Redwood": `<p class="mb-2">Leicht, relativ dauerhaft; fein zerstreutporig, dekorative Farbe.</p><p class="mb-2"><strong>Verwendung:</strong> Außenholz, Zäune, Gartenkonstruktionen.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Stammt vom Küstenmammutbaum – einer der höchsten Baumarten.</p>`,
     "Hickory": `<p class="mb-2">Sehr zäh und hart; ringporig mit ausgeprägten Poren.</p><p class="mb-2"><strong>Verwendung:</strong> Werkzeugstiele, Sportgeräte, stark beanspruchte Möbel.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Klassisches Holz für Peitschen- und Geräteschäfte.</p>`,
     "Wenge": `<p class="mb-2">Dunkel, sehr hart; zerstreutporig, charakteristische Streifenzeichnung.</p><p class="mb-2"><strong>Verwendung:</strong> Luxusmöbel, Parkett, Furniere.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Wirkt in Kontrastkombinationen mit hellen Hölzern besonders.</p>`,
@@ -736,6 +799,10 @@ function listenToGameChanges(){
 window.startGameAI = (name) => {
     trackEvent('games_ai');
     gameMode='ai'; aiGame.playerName=name;
+    
+    // Switch to House Button (Playing State)
+    window.setNavState('game');
+
     document.getElementById('playerNameDisplay').innerText=name;
     const sh=shuffleArray([...woodCards]);
     aiGame.playerCards=sh.slice(0,15); aiGame.aiCards=sh.slice(15,30);
@@ -804,6 +871,9 @@ window.joinGame = async (id, playerName) => {
         // NEW SCROLL LOGIC
         window.scrollTo({ top: 0, behavior: 'smooth' });
         
+        // Switch to House Button (Playing State)
+        window.setNavState('game');
+
         listenToGameChanges();
     } else {
         alert("Spiel nicht gefunden oder voll.");
@@ -1029,6 +1099,41 @@ if(p.get('game')){
     gameId=p.get('game'); 
     window.showNamePrompt('join'); 
 }
+
+// === SVG ICONS DATA ===
+const svgs = {
+    fingerprint: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 20 C 10 18, 10 6, 14 4" opacity="0.5" />
+                <path d="M9 21 C 14 19, 14 5, 18 3" opacity="0.7" />
+                <path d="M13 22 C 18 20, 18 4, 22 2" opacity="0.9" />
+                <path d="M2 15 C 6 13, 6 9, 10 7" opacity="0.3" />
+                <path d="M15 22 C 19 20, 19 12, 22 10" opacity="0.5" />
+             </svg>`,
+    house: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                <polyline points="9 22 9 12 15 12 15 22" />
+            </svg>`
+};
+
+// --- HELPER TO SWITCH NAV BUTTON ---
+window.setNavState = (state) => {
+    const btn = document.getElementById('navButton');
+    if(!btn) return;
+    
+    if(state === 'game') {
+        // Show House -> Reload
+        btn.innerHTML = svgs.house;
+        btn.removeAttribute('href'); // remove link
+        btn.onclick = () => window.location.reload();
+        btn.setAttribute('aria-label', 'Zurück zur Holzen! Startseite');
+    } else {
+        // Show Fingerprint -> Link to Index
+        btn.innerHTML = svgs.fingerprint;
+        btn.href = 'index.html';
+        btn.onclick = null; // remove custom click
+        btn.setAttribute('aria-label', 'Zurück zum Launcher');
+    }
+};
 
 </script>
 </body>
