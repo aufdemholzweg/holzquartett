@@ -11,6 +11,8 @@
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <!-- Markdown Parser für schöne KI-Antworten -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Confetti Library für den Gewinner-Effekt -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -248,7 +250,6 @@
         <h2 id="gameOverTitle" class="text-3xl font-black mb-2 text-gray-800">SPIELENDE</h2>
         <p id="gameOverText" class="text-gray-600 mb-6"></p>
         <div class="space-y-3">
-            <button onclick="window.downloadResult()" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3 rounded-lg shadow">📸 Ergebnis speichern</button>
             <button onclick="window.showLeaderboard()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 rounded-lg border border-gray-300">🏆 Bestenliste</button>
             <button onclick="window.resetGame()" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 rounded-lg shadow">🔄 Neues Spiel</button>
         </div>
@@ -437,7 +438,7 @@ const detailedWoodInfo = {
     "Kastanie": `<p class="mb-2">Wetterbeständig, warm getönt; ringporig mit klarer Jahresringzeichnung.</p><p class="mb-2"><strong>Verwendung:</strong> Außenbau, Möbel, Balken, Gartenholz.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Oft Alternative zur Eiche im Außenbereich.</p>`,
     "Robinie": `<p class="mb-2">Eines der härtesten europäischen Hölzer; sehr dauerhaft im Freien; ringporig.</p><p class="mb-2"><strong>Verwendung:</strong> Terrassen, Zäune, Spielplätze, Außenkonstruktionen.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> „Europäisches Teak“ wegen seiner Dauerhaftigkeit.</p>`,
     "Hemlock": `<p class="mb-2">Weiches, gleichmäßiges Nadelholz; feine Struktur, dezente Ringe.</p><p class="mb-2"><strong>Verwendung:</strong> Innenausbau, Paneele, Leichtbau, Möbel.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Gutes Verhältnis von Gewicht zu Stabilität.</p>`,
-    "Erle": `<p class="mb-2">Rötlich-weißes Holz, das an der Luft schnell nachdunkelt. Weich, aber zäh. Unter Wasser extrem dauerhaft (Venedig-Pfähle).</p><p class="mb-2"><strong>Verwendung:</strong> Möbel, Drechslerei, Modellbau, Blindholz, Wasserbau (historisch).</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Wird oft als Imitat für Kirschbaum oder Mahagoni verwendet.</p>`,
+    "Zypresse": `<p class="mb-2">Duftend, natürlich resistent; fein und gleichmäßig.</p><p class="mb-2"><strong>Verwendung:</strong> Außen- und Gartenholz, Fassaden, Möbel.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Traditionelles Bauholz im mediterranen Raum.</p>`,
     "Redwood": `<p class="mb-2">Leicht, relativ dauerhaft; fein zerstreutporig, dekorative Farbe.</p><p class="mb-2"><strong>Verwendung:</strong> Außenholz, Zäune, Gartenkonstruktionen.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Stammt vom Küstenmammutbaum – einer der höchsten Baumarten.</p>`,
     "Hickory": `<p class="mb-2">Sehr zäh und hart; ringporig mit ausgeprägten Poren.</p><p class="mb-2"><strong>Verwendung:</strong> Werkzeugstiele, Sportgeräte, stark beanspruchte Möbel.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Klassisches Holz für Peitschen- und Geräteschäfte.</p>`,
     "Wenge": `<p class="mb-2">Dunkel, sehr hart; zerstreutporig, charakteristische Streifenzeichnung.</p><p class="mb-2"><strong>Verwendung:</strong> Luxusmöbel, Parkett, Furniere.</p><p class="italic text-gray-600"><strong>Zusatz:</strong> Wirkt in Kontrastkombinationen mit hellen Hölzern besonders.</p>`,
@@ -954,7 +955,38 @@ window.showFinalWinScreen = () => {
     // Leaderboard Update
     const name = gameMode==='ai' ? aiGame.playerName : localGameState.players[localPlayerId].name;
     saveToLeaderboard(name);
+
+    // Confetti Effect for Winner
+    triggerConfetti();
 };
+
+function triggerConfetti() {
+    var duration = 3000;
+    var end = Date.now() + duration;
+
+    (function frame() {
+        // launch a few confetti from the left edge
+        confetti({
+            particleCount: 7,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0 },
+            colors: ['#d97706', '#fbbf24', '#ffffff'] // Orange/Wood tones
+        });
+        // and launch a few from the right edge
+        confetti({
+            particleCount: 7,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1 },
+            colors: ['#d97706', '#fbbf24', '#ffffff']
+        });
+
+        if (Date.now() < end) {
+            requestAnimationFrame(frame);
+        }
+    }());
+}
 
 window.showNamePrompt = (mode) => {
     document.getElementById('setupModal').classList.add('hidden');
@@ -1135,7 +1167,7 @@ window.setNavState = (state) => {
     } else {
         // Show Fingerprint -> Link to Launcher
         btn.innerHTML = svgs.fingerprint;
-        btn.href = LAUNCHER_URL;
+        btn.href = 'https://aufdemholzweg.github.io/Splashscreen-Holztechnik/';
         btn.onclick = null; 
         btn.setAttribute('aria-label', 'Zurück zum Launcher');
     }
