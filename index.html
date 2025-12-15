@@ -67,7 +67,7 @@
     <div class="max-w-[600px] mx-auto px-4 py-3 relative flex justify-between items-center">
         
         <!-- DYNAMIC NAV BUTTON (Wird per JS gesteuert) -->
-        <a id="navButton" href="index.html" class="relative z-10 w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center text-white shadow-sm hover:bg-white/30 transition-all border border-white/30" aria-label="Zurück zur Startseite">
+        <a id="navButton" href="https://aufdemholzweg.github.io/Splashscreen-Holztechnik/" class="relative z-10 w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center text-white shadow-sm hover:bg-white/30 transition-all border border-white/30" aria-label="Zurück zur Startseite">
              <!-- Default: Fingerabdruck -->
              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M5 20 C 10 18, 10 6, 14 4" opacity="0.5" />
@@ -170,10 +170,9 @@
 <div id="setupModal" class="fixed inset-0 dimmer flex items-center justify-center z-50 p-4">
     <div class="bg-white rounded-2xl shadow-2xl overflow-hidden max-w-sm w-full relative">
         
-        <!-- NEUER HOME BUTTON für den Setup Screen (Oben Links, über dem Dimmer/Overlay) -->
-        <!-- Da wir hier im Modal sind, positionieren wir ihn absolut zur Ecke des Modals oder fixiert zur Ecke des Screens.
-             User Wunsch: "außerhalb des aktiven fensters" -> also fixed top left -->
-        <a href="index.html" class="fixed top-4 left-4 z-[60] w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center text-white shadow-2xl hover:scale-105 transition-transform border-2 border-white/30" aria-label="Zurück zum Launcher">
+        <!-- NEUER HOME BUTTON für den Setup Screen (Oben Links) -->
+        <!-- Link zum Launcher, Position: oben links -->
+        <a href="https://aufdemholzweg.github.io/Splashscreen-Holztechnik/" class="absolute left-4 top-4 z-[60] w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center text-white shadow-2xl hover:scale-105 transition-transform border-2 border-white/30" aria-label="Zurück zum Launcher">
              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M5 20 C 10 18, 10 6, 14 4" opacity="0.5" />
                 <path d="M9 21 C 14 19, 14 5, 18 3" opacity="0.7" />
@@ -281,6 +280,7 @@ import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gsta
 import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, deleteDoc, collection, query, orderBy, limit, getDocs, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const apiKey = ""; // Environment provided
+const LAUNCHER_URL = "https://aufdemholzweg.github.io/Splashscreen-Holztechnik/";
 
 // === USER PROVIDED FIREBASE CONFIG ===
 const firebaseConfig = {
@@ -333,9 +333,9 @@ window.setNavState = (state) => {
         };
         btn.setAttribute('aria-label', 'Zurück zur Holzen! Startseite');
     } else {
-        // Show Fingerprint -> Link to Index (Launcher)
+        // Show Fingerprint -> Link to Launcher
         btn.innerHTML = NAV_ICONS.fingerprint;
-        btn.href = 'https://aufdemholzweg.github.io/Splashscreen-Holztechnik/';
+        btn.href = LAUNCHER_URL;
         btn.onclick = null; 
         btn.setAttribute('aria-label', 'Zurück zum Launcher');
     }
@@ -1100,41 +1100,6 @@ if(p.get('game')){
     gameId=p.get('game'); 
     window.showNamePrompt('join'); 
 }
-
-// === SVG ICONS DATA ===
-const svgs = {
-    fingerprint: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 20 C 10 18, 10 6, 14 4" opacity="0.5" />
-                <path d="M9 21 C 14 19, 14 5, 18 3" opacity="0.7" />
-                <path d="M13 22 C 18 20, 18 4, 22 2" opacity="0.9" />
-                <path d="M2 15 C 6 13, 6 9, 10 7" opacity="0.3" />
-                <path d="M15 22 C 19 20, 19 12, 22 10" opacity="0.5" />
-             </svg>`,
-    house: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                <polyline points="9 22 9 12 15 12 15 22" />
-            </svg>`
-};
-
-// --- HELPER TO SWITCH NAV BUTTON ---
-window.setNavState = (state) => {
-    const btn = document.getElementById('navButton');
-    if(!btn) return;
-    
-    if(state === 'game') {
-        // Show House -> Reload
-        btn.innerHTML = svgs.house;
-        btn.removeAttribute('href'); // remove link
-        btn.onclick = () => window.location.reload();
-        btn.setAttribute('aria-label', 'Zurück zur Holzen! Startseite');
-    } else {
-        // Show Fingerprint -> Link to Index
-        btn.innerHTML = svgs.fingerprint;
-        btn.href = 'https://aufdemholzweg.github.io/Splashscreen-Holztechnik/';
-        btn.onclick = null; // remove custom click
-        btn.setAttribute('aria-label', 'Zurück zum Launcher');
-    }
-};
 
 </script>
 </body>
