@@ -168,22 +168,23 @@
 
 <!-- Setup Modal (Startbildschirm) - JETZT SICHTBAR PER DEFAULT (Kein "hidden") -->
 <div id="setupModal" class="fixed inset-0 dimmer flex items-center justify-center z-50 p-4">
-    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden max-w-sm w-full">
-        <!-- Header des Startbildschirms: Button hinzugefügt und 'relative' Klasse ergänzt -->
-        <div class="bg-amber-500 p-5 text-white text-center font-bold text-lg sm:text-xl tracking-wide shadow-md relative">
+    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden max-w-sm w-full relative">
+        
+        <!-- NEUER HOME BUTTON für den Setup Screen (Oben Links, über dem Dimmer/Overlay) -->
+        <!-- Da wir hier im Modal sind, positionieren wir ihn absolut zur Ecke des Modals oder fixiert zur Ecke des Screens.
+             User Wunsch: "außerhalb des aktiven fensters" -> also fixed top left -->
+        <a href="index.html" class="fixed top-4 left-4 z-[60] w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center text-white shadow-2xl hover:scale-105 transition-transform border-2 border-white/30" aria-label="Zurück zum Launcher">
+             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 20 C 10 18, 10 6, 14 4" opacity="0.5" />
+                <path d="M9 21 C 14 19, 14 5, 18 3" opacity="0.7" />
+                <path d="M13 22 C 18 20, 18 4, 22 2" opacity="0.9" />
+                <path d="M2 15 C 6 13, 6 9, 10 7" opacity="0.3" />
+                <path d="M15 22 C 19 20, 19 12, 22 10" opacity="0.5" />
+             </svg>
+        </a>
+
+        <div class="bg-amber-500 p-5 text-white text-center font-bold text-lg sm:text-xl tracking-wide shadow-md">
             HOLZEN!<br><span class="text-sm font-normal opacity-90">Spielmodus wählen</span>
-            
-            <!-- NEUER BUTTON OBEN RECHTS (Holztechnik-Logo) -->
-            <!-- Hier kannst du später das href="..." anpassen -->
-            <a href="index.html" class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center text-white shadow-sm hover:bg-white/30 transition-all border border-white/30" aria-label="Zum Launcher">
-                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M5 20 C 10 18, 10 6, 14 4" opacity="0.5" />
-                    <path d="M9 21 C 14 19, 14 5, 18 3" opacity="0.7" />
-                    <path d="M13 22 C 18 20, 18 4, 22 2" opacity="0.9" />
-                    <path d="M2 15 C 6 13, 6 9, 10 7" opacity="0.3" />
-                    <path d="M15 22 C 19 20, 19 12, 22 10" opacity="0.5" />
-                 </svg>
-            </a>
         </div>
         <div class="p-6 space-y-5">
             <button onclick="window.showNamePrompt('ai')" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold py-4 rounded-xl shadow-lg flex items-center justify-center gap-3 active:scale-95 transition-transform">
