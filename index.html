@@ -3,37 +3,54 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <!-- HIER KÖNNEN SIE DEN TITEL IM BROWSER-TAB ÄNDERN -->
     <title>Holz-Quartett: Gamifizierung in der Berufsbildung</title>
+    
+    <!-- Diese Skripte laden notwendige Werkzeuge aus dem Internet (nicht löschen!) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- HIER BEGINNT DAS DESIGN (CSS) -->
+    <!-- Wenn Sie Farben oder Abstände ändern wollen, geschieht das hier -->
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #fdfbf7; touch-action: manipulation; overflow-x: hidden; min-height: 100dvh; }
+        
+        /* Karten-Design */
         .perspective-1000 { perspective: 1000px; }
         .card-3d { transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
         .card-flipped { transform: rotateY(180deg); }
         .card-front, .card-back { backface-visibility: hidden; position: absolute; width: 100%; height: 100%; top: 0; left: 0; border-radius: 1rem; overflow: hidden; box-sizing: border-box; }
+        
+        /* Hintergrundbild der Karten-Rückseite */
         .card-back { 
             transform: rotateY(180deg); 
             background-color: #2c3e50;
+            /* ÄNDERUNG: Hier können Sie den Link zum Bild der Kartenrückseite austauschen */
             background-image: url('https://github.com/aufdemholzweg/holzquartett/blob/b9d51d5b5d930f643a3f3861262361b97c0beb7c/images/background_card.jpg?raw=true'); 
             background-size: cover; 
             background-position: center; 
             border: 4px solid white; 
         }
+        
         .card-front-bg { background-color: #fffbeb; background-image: linear-gradient(to bottom right, #fffbeb, #fef3c7); }
         .hover-lift:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
+        
+        /* Animationen */
         .animate-pulse-glow { animation: pulse-glow 2s infinite; }
         @keyframes pulse-glow { 0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); transform: translate(-50%, -50%) scale(1); } 50% { box-shadow: 0 0 15px 5px rgba(34, 197, 94, 0.4); transform: translate(-50%, -50%) scale(1.1); } 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); transform: translate(-50%, -50%) scale(1); } }
         .animate-worm { animation: worm-pop-up 3.5s ease-in-out forwards; }
         @keyframes worm-pop-up { 0% { transform: translateY(100%) rotate(0deg); opacity: 0; } 20% { transform: translateY(-20%) rotate(-10deg); opacity: 1; } 40% { transform: translateY(-20%) rotate(10deg); } 50% { transform: translateY(-30%) rotate(0deg) scale(1.1); } 60% { transform: translateY(-20%) rotate(-10deg) scale(1); } 80% { transform: translateY(-20%) rotate(0deg); opacity: 1; } 100% { transform: translateY(100%) rotate(0deg); opacity: 0; } }
+        
+        /* Hilfsklassen */
         .opponent-back-name { position: absolute; top: 15%; width: 100%; text-align: center; color: rgba(255,255,255,0.95); font-weight: 700; font-size: 1.1rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5); pointer-events: none; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .dimmer { background: rgba(0,0,0,0.4); backdrop-filter: blur(2px); }
+        
+        /* Design für die Eigenschafts-Zeilen auf der Karte */
         .attr-box { background-color: #fff7ed; border: 1px solid #fbbf24; transition: all 0.2s; }
         .attr-box.flash-active { background-color: #f97316 !important; border-color: #ea580c !important; color: white !important; }
         .attr-box.flash-active span { color: white !important; }
@@ -41,6 +58,7 @@
         .attr-box.highlight-compare span { color: #000000 !important; }
         .ai-chat-bubble { position: relative; background: #f8fafc; border-radius: 8px; padding: 12px; margin-top: 10px; font-size: 0.9rem; line-height: 1.5; border-left: 4px solid #d97706; }
         
+        /* Schalter-Design */
         .toggle-checkbox:checked { right: 0; border-color: #68D391; }
         .toggle-checkbox:checked + .toggle-label { background-color: #68D391; }
         .attr-toggle-btn { transition: all 0.2s; border: 2px solid transparent; }
@@ -50,10 +68,12 @@
 </head>
 <body class="flex flex-col relative text-gray-800">
 
-<!-- Header Area -->
+<!-- HIER BEGINNT DER SICHTBARE BEREICH DER APP -->
+
+<!-- Kopfzeile (Header) -->
 <header class="bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-md z-20 flex-shrink-0">
     <div class="max-w-[600px] mx-auto px-4 py-3 relative flex justify-between items-center">
-        <!-- DYNAMIC NAV BUTTON -->
+        <!-- Button oben links: Verlinkung zum Launcher -->
         <a id="navButton" href="https://aufdemholzweg.github.io/Splashscreen-Holztechnik/" class="relative z-10 w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center text-white shadow-sm hover:bg-white/30 transition-all border border-white/30" aria-label="Zurück zur Startseite">
              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M5 20 C 10 18, 10 6, 14 4" opacity="0.5" />
@@ -63,18 +83,20 @@
                 <path d="M15 22 C 19 20, 19 12, 22 10" opacity="0.5" />
              </svg>
         </a>
+        <!-- Spiel-Titel -->
         <h1 class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-lg sm:text-2xl font-black tracking-wider uppercase drop-shadow-sm whitespace-nowrap pointer-events-none">🌲 HOLZEN! 🌲</h1>
+        <!-- Info-Button (?) -->
         <button onclick="window.showGameInfo()" class="text-white hover:text-amber-100 p-2 rounded-full transition-colors active:scale-90 relative z-10" aria-label="Spielregeln">
              <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
         </button>
     </div>
 </header>
 
-<!-- === GAME AREA === -->
+<!-- Spielfeld (wird erst sichtbar, wenn das Spiel startet) -->
 <div id="gameContainer" class="hidden flex-grow flex flex-col items-center w-full max-w-[600px] mx-auto relative p-2 overflow-hidden">
     <div id="animationContainer" class="absolute inset-0 pointer-events-none z-50 overflow-hidden"></div>
     <div class="flex justify-center items-start gap-2 sm:gap-4 w-full flex-grow relative pb-2 mt-2"> 
-        <!-- SPALTE SPIELER -->
+        <!-- Bereich: Spieler -->
         <div class="flex flex-col w-[48%] max-w-[280px] gap-2 z-10">
             <div class="bg-white w-full rounded-2xl shadow-sm border border-orange-100 p-2 sm:p-3 text-center">
                 <div id="playerNameDisplay" class="text-base sm:text-lg font-bold text-amber-700 leading-tight truncate">Spieler</div>
@@ -82,7 +104,7 @@
             </div>
             <div class="w-full aspect-[20/46] perspective-1000 relative" id="playerCardContainer"><div id="playerCard" class="w-full h-full relative"></div></div>
         </div>
-        <!-- SPALTE GEGNER -->
+        <!-- Bereich: Computer/Gegner -->
         <div class="flex flex-col w-[48%] max-w-[280px] gap-2 z-10">
             <div class="bg-white w-full rounded-2xl shadow-sm border border-orange-100 p-2 sm:p-3 text-center">
                 <div id="opponentNameDisplay" class="text-base sm:text-lg font-bold text-gray-600 leading-tight truncate">COMPUTER</div>
@@ -91,7 +113,7 @@
             <div class="w-full aspect-[20/46] perspective-1000 relative" id="aiCardContainer"><div id="aiCard" class="w-full h-full relative"></div></div>
         </div>
     </div>
-    <!-- Statusbalken -->
+    <!-- Statusbalken unten -->
     <div class="w-full mt-4 mb-24"> 
         <div class="flex justify-between text-[9px] sm:text-[10px] font-bold text-gray-400 mb-1 px-1"><span>Dein Stapel</span><span>Gegenspieler</span></div>
         <div class="h-4 w-full bg-gray-200 rounded-full shadow-inner relative">
@@ -101,12 +123,12 @@
     </div>
 </div>
 
-<!-- === FEEDBACK === -->
+<!-- Holzwurm Feedback (Animation unten rechts) -->
 <div id="happyWorm" class="fixed bottom-0 right-4 translate-y-full z-50 pointer-events-none transform transition-transform hidden">
     <div class="relative"><div id="wormSpeech" class="absolute -top-10 -left-10 bg-white px-3 py-1.5 rounded-xl shadow-md border-2 border-amber-200 text-xs font-bold text-amber-800 whitespace-nowrap animate-bounce" style="animation-duration: 2s;">Stark! 🪵</div><div class="text-6xl filter drop-shadow-xl cursor-default select-none">🐛</div></div>
 </div>
 
-<!-- === BOTTOM SHEET === -->
+<!-- Ergebnisanzeige (Bottom Sheet) -->
 <div id="bottomSheetBackdrop" class="hidden fixed inset-0 bg-black/20 z-30 transition-opacity"></div>
 <div id="bottomSheet" class="hidden fixed left-0 right-0 bottom-0 z-40 flex justify-center px-2 pb-6 transition-transform transform translate-y-full duration-300">
     <div class="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-200 w-full max-w-md p-5 flex flex-col items-center">
@@ -120,9 +142,9 @@
     </div>
 </div>
 
-<!-- === MODALS === -->
+<!-- === MENÜS UND FENSTER (MODALS) === -->
 
-<!-- Info Modal -->
+<!-- Info Fenster (Spielregeln) -->
 <div id="gameInfoModal" class="fixed inset-0 dimmer flex items-center justify-center z-50 p-4 hidden">
     <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-[400px] max-h-[90vh] flex flex-col">
         <div class="bg-amber-500 p-4 flex justify-between items-center text-white shrink-0 shadow-md">
@@ -131,22 +153,40 @@
         </div>
         <div class="p-5 overflow-y-auto hide-scrollbar space-y-5">
             <h4 class="font-bold text-gray-700 text-md">Regeln (Quartett-Prinzip)</h4>
-            <p class="text-sm text-gray-600 leading-relaxed">Die aktive Person wählt auf ihrer Karte die Eigenschaft, die den größtmöglichen Vorteil verspricht.</p>
+            <p class="text-sm text-gray-600 leading-relaxed">Die aktive Person wählt auf ihrer Karte die Eigenschaft, die den größtmöglichen Vorteil verspricht. Je nach Kategorie zählt der höchste oder der niedrigste Wert (siehe die Beschreibung der Eigenschaften). Gewinnt sie den Spielzug, erhält sie beide Karten, legt sie unter den eigenen Stapel und bleibt am Zug. Bei Gleichstand behalten beide ihre Karten. Das Zugrecht bleibt unverändert.</p>
             <div id="infoCategoryList" class="space-y-3 pt-3"></div>
         </div>
     </div>
 </div>
 
-<!-- Attribute Configuration Modal -->
+<!-- Einstellungen & Eigenschaften Auswahl -->
 <div id="attrConfigModal" class="fixed inset-0 dimmer flex items-center justify-center z-[60] p-4 hidden">
     <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-sm flex flex-col max-h-[85vh]">
         <div class="bg-amber-600 p-4 flex justify-between items-center text-white shrink-0">
-            <h3 class="font-bold">Eigenschaften wählen</h3>
+            <h3 class="font-bold">Spieloptionen</h3>
             <button onclick="document.getElementById('attrConfigModal').classList.add('hidden')" class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
         </div>
         <div class="p-4 overflow-y-auto">
-            <p class="text-xs text-gray-500 mb-3">Wähle mindestens 3 Eigenschaften für das Spiel.</p>
-            <div id="attrConfigList" class="space-y-2"></div>
+            <!-- Allgemeine Einstellungen (Nach oben verschoben) -->
+            <div class="mb-5 space-y-3">
+                <div class="flex justify-between items-center bg-gray-50 p-3 rounded-lg border border-gray-100">
+                     <span class="font-bold text-gray-700 text-sm flex items-center gap-2">🔊 Ton an</span>
+                     <input type="checkbox" id="soundToggle" class="accent-green-500 w-5 h-5">
+                </div>
+                <div class="flex justify-between items-center bg-gray-50 p-3 rounded-lg border border-gray-100">
+                     <span class="font-bold text-gray-700 text-sm flex items-center gap-2">👀 Gegner-Karte sichtbar</span>
+                     <input type="checkbox" id="revealBackToggle" class="accent-green-500 w-5 h-5">
+                </div>
+            </div>
+
+            <hr class="border-gray-200 mb-4 border-t-2 border-dashed">
+
+            <!-- Eigenschafts-Auswahl -->
+            <h4 class="font-bold text-gray-800 mb-1 text-sm">Eigenschaften wählen</h4>
+            <p class="text-xs text-gray-500 mb-3">Wähle mindestens 3 Kategorien für das Spiel.</p>
+            <div id="attrConfigList" class="space-y-2">
+                <!-- Wird per Javascript gefüllt -->
+            </div>
         </div>
         <div class="p-4 bg-gray-50 border-t">
              <button onclick="document.getElementById('attrConfigModal').classList.add('hidden')" class="w-full bg-amber-500 text-white font-bold py-2 rounded-lg shadow">Fertig</button>
@@ -154,9 +194,10 @@
     </div>
 </div>
 
-<!-- Setup Modal (Startbildschirm) -->
+<!-- Startbildschirm (Setup) -->
 <div id="setupModal" class="fixed inset-0 dimmer flex items-center justify-center z-50 p-4">
     <div class="bg-white rounded-2xl shadow-2xl overflow-hidden max-w-sm w-full relative">
+        <!-- Button oben links auf Startseite -->
         <a href="https://aufdemholzweg.github.io/Splashscreen-Holztechnik/" class="absolute left-4 top-4 z-[60] w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center text-white shadow-2xl hover:scale-105 transition-transform border-2 border-white/30" aria-label="Zurück zum Launcher">
              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M5 20 C 10 18, 10 6, 14 4" opacity="0.5" />
@@ -171,17 +212,14 @@
             <button onclick="window.showNamePrompt('ai')" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold py-4 rounded-xl shadow-lg flex items-center justify-center gap-3 active:scale-95 transition-transform"><span class="text-2xl">🤖</span> Gegen Computer</button>
             <button onclick="window.showNamePrompt('multiplayer')" class="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg flex items-center justify-center gap-3 active:scale-95 transition-transform"><span class="text-2xl">🌍</span> Online gegen Freunde</button>
             
-            <button onclick="window.openAttrConfig()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 rounded-xl border border-gray-200 flex items-center justify-center gap-2 text-sm">
-                <span>⚙️</span> Eigenschaften wählen <span id="attrCountBadge" class="bg-amber-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">5</span>
+            <button onclick="window.openAttrConfig()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 rounded-xl border border-gray-200 flex items-center justify-center gap-2 text-sm mt-2">
+                <span>⚙️</span> Spieloptionen <span id="attrCountBadge" class="bg-amber-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">5</span>
             </button>
-
-            <div class="pt-2 border-t border-gray-100 flex justify-between items-center"><span class="text-sm font-bold text-gray-700">🔊 Ton an</span><input type="checkbox" id="soundToggle" class="accent-green-500 w-5 h-5"></div>
-            <div class="flex justify-between items-center"><span class="text-sm font-bold text-gray-700">👀 Gegner-Karte sichtbar</span><input type="checkbox" id="revealBackToggle" class="accent-green-500 w-5 h-5"></div>
         </div>
     </div>
 </div>
 
-<!-- Name Modal -->
+<!-- Namens-Eingabe -->
 <div id="nameModal" class="hidden fixed inset-0 dimmer flex items-center justify-center z-50 p-4">
     <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-xs w-full text-center">
         <h2 class="text-xl font-bold text-gray-800 mb-6">Dein Name</h2>
@@ -204,7 +242,7 @@
     </div>
 </div>
 
-<!-- Game Over Modal -->
+<!-- Spielende Fenster -->
 <div id="gameOverModal" class="hidden fixed inset-0 dimmer flex items-center justify-center z-50 p-4">
     <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full text-center">
         <h2 id="gameOverTitle" class="text-3xl font-black mb-2 text-gray-800">SPIELENDE</h2>
@@ -216,7 +254,7 @@
     </div>
 </div>
 
-<!-- Reflection Modal -->
+<!-- Reflexions-Fenster -->
 <div id="reflectionModal" class="hidden fixed inset-0 dimmer flex items-center justify-center z-50 p-4">
     <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full">
         <h2 class="text-xl font-bold text-amber-800 mb-4">🎉 Super gespielt!</h2>
@@ -226,7 +264,7 @@
     </div>
 </div>
 
-<!-- Leaderboard Modal -->
+<!-- Bestenliste Fenster -->
 <div id="leaderboardModal" class="hidden fixed inset-0 dimmer flex items-center justify-center z-50 p-4">
     <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full flex flex-col max-h-[80vh]">
         <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">🏆 Bestenliste</h2>
@@ -235,7 +273,7 @@
     </div>
 </div>
 
-<!-- JAVASCRIPT LOGIC -->
+<!-- HIER BEGINNT DIE LOGIK (JAVASCRIPT) -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -299,6 +337,8 @@ let roundSoundPlayed=false;
 let lastRoundWinningWoodName = null;
 let aiGame={playerName:'',playerCards:[],aiCards:[],currentPlayerCard:null,currentAiCard:null,roundInProgress:false,turn:'player'};
 
+// EIGENSCHAFTEN (ATTRIBUTES)
+// Hier werden die Eigenschaften definiert, die auf den Karten stehen
 let activeAttributeKeys = ['dk', 'haerte', 'quellenSchwindenRadial', 'dichte', 'gewicht'];
 
 const attributeInfo={
@@ -323,6 +363,7 @@ function playSound(a){ if(!isMuted && a){ a.currentTime=0; a.play().catch(()=>{}
 function isOpponentNameBackVisible(){ return localStorage.getItem('holzquartett_showOpponentNameOnBack')==='true'; }
 function setOpponentNameBackVisible(v){ localStorage.setItem('holzquartett_showOpponentNameOnBack', v?'true':'false'); }
 
+// BILDER & DATEN
 const IMG_BASE = "https://github.com/aufdemholzweg/holzquartett/blob/b9d51d5b5d930f643a3f3861262361b97c0beb7c/images";
 const IMG_SUFFIX = "?raw=true";
 
@@ -408,6 +449,20 @@ window.openAttrConfig = () => {
     const list = document.getElementById('attrConfigList');
     list.innerHTML = '';
     
+    // DETAILIERTE BESCHREIBUNGEN für das Info-Fenster (Wiederhergestellt)
+    // Diese Beschreibungen werden im "Spielregeln" Fenster angezeigt
+    const descriptions = {
+        dk: "Maß für die natürliche Widerstandsfähigkeit des Holzes gegen Pilze und Insekten (DK 1 = sehr dauerhaft, DK 5 = wenig dauerhaft). Im Spiel gewinnt der niedrigere DK-Wert.",
+        haerte: "Widerstand des Holzes gegen zusammendrückende Lasten; hohe Werte bedeuten hohe Belastbarkeit. Im Spiel gewinnt der höchste Wert.",
+        quellenSchwindenRadial: "Maß für Dimensionsänderungen bei Feuchtewechsel; kleine Werte bedeuten höhere Formstabilität. Im Spiel gewinnt der niedrigste Wert.",
+        dichte: "Masse pro Volumen; höhere Dichte geht oft mit größerer Härte und Tragfähigkeit einher. Im Spiel gewinnt der höchste Wert.",
+        gewicht: "Elastizitätsmodul als Maß für Steifigkeit; hohe Werte bedeuten geringere Durchbiegung. Im Spiel gewinnt der höchste Wert.",
+        growth: "Durchschnittlicher Zuwachs pro Jahr. Schnelleres Wachstum bedeutet oft weicheres Holz. Im Spiel gewinnt der höhere Wert.",
+        price: "Ungefährer Marktpreis für Schnittholz. Im Spiel gewinnt der höhere Wert.",
+        brennwert: "Energiegehalt pro Gewichtseinheit. Wichtig für die thermische Nutzung. Im Spiel gewinnt der höhere Wert."
+    };
+
+    // Erzeuge die Liste der Eigenschaften im Konfigurations-Fenster
     Object.keys(attributeInfo).forEach(key => {
         const info = attributeInfo[key];
         const isSelected = activeAttributeKeys.includes(key);
@@ -430,6 +485,13 @@ window.openAttrConfig = () => {
         list.appendChild(div);
     });
     
+    // Checkboxen initialisieren (Status aus Variablen lesen)
+    const sToggle = document.getElementById('soundToggle');
+    if(sToggle) sToggle.checked = !isMuted;
+    
+    const rToggle = document.getElementById('revealBackToggle');
+    if(rToggle) rToggle.checked = isOpponentNameBackVisible();
+
     document.getElementById('attrConfigModal').classList.remove('hidden');
 };
 
@@ -448,7 +510,8 @@ function toggleAttribute(key, el) {
     el.querySelector('.w-6').innerHTML = isSelected ? '✓' : '';
     
     // Update badge on start screen
-    document.getElementById('attrCountBadge').innerText = activeAttributeKeys.length;
+    const badge = document.getElementById('attrCountBadge');
+    if(badge) badge.innerText = activeAttributeKeys.length;
 }
 
 
@@ -791,15 +854,31 @@ window.showNamePrompt = (mode) => {
 };
 window.copyShareLink = () => { const l=document.getElementById('shareLink'); l.select(); try { document.execCommand('copy'); } catch(e){} };
 window.showGameInfo = () => {
+    // UPDATED: Show dynamic descriptions based on full descriptions map
     const list = document.getElementById('infoCategoryList');
     if (!list) return;
+
+    // Wiederhergestellte Beschreibungen
+    const descriptions = {
+        dk: "Maß für die natürliche Widerstandsfähigkeit des Holzes gegen Pilze und Insekten (DK 1 = sehr dauerhaft, DK 5 = wenig dauerhaft). Im Spiel gewinnt der niedrigere DK-Wert.",
+        haerte: "Widerstand des Holzes gegen zusammendrückende Lasten; hohe Werte bedeuten hohe Belastbarkeit. Im Spiel gewinnt der höchste Wert.",
+        quellenSchwindenRadial: "Maß für Dimensionsänderungen bei Feuchtewechsel; kleine Werte bedeuten höhere Formstabilität. Im Spiel gewinnt der niedrigste Wert.",
+        dichte: "Masse pro Volumen; höhere Dichte geht oft mit größerer Härte und Tragfähigkeit einher. Im Spiel gewinnt der höchste Wert.",
+        gewicht: "Elastizitätsmodul als Maß für Steifigkeit; hohe Werte bedeuten geringere Durchbiegung. Im Spiel gewinnt der höchste Wert.",
+        growth: "Durchschnittlicher Zuwachs pro Jahr. Schnelleres Wachstum bedeutet oft weicheres Holz. Im Spiel gewinnt der höhere Wert.",
+        price: "Ungefährer Marktpreis für Schnittholz. Im Spiel gewinnt der höhere Wert.",
+        brennwert: "Energiegehalt pro Gewichtseinheit. Wichtig für die thermische Nutzung. Im Spiel gewinnt der höhere Wert."
+    };
+
     let html = '';
     // Show info for ALL attributes, not just selected
     for (const key in attributeInfo) {
         const info = attributeInfo[key];
         const isBetter = info.logic === 'Hoch gewinnt';
+        const desc = descriptions[key] || '';
         html += `<div class="p-3 rounded-xl border-2 ${isBetter ? 'border-green-400 bg-green-50' : 'border-blue-400/80 bg-blue-50/50'} mb-2">
                     <div class="flex justify-between items-center mb-1"><span class="text-lg font-bold text-gray-800">${info.icon} ${info.name}</span><span class="text-sm font-semibold ${isBetter ? 'text-green-700' : 'text-blue-700'}">${isBetter ? '⬆ Hoch' : '⬇ Niedrig'}</span></div>
+                    <p class="text-xs text-gray-600 mt-1 leading-relaxed">${desc}</p>
                  </div>`;
     }
     list.innerHTML = html;
