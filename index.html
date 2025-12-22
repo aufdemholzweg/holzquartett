@@ -301,8 +301,6 @@ import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken }
 import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, deleteDoc, collection, query, orderBy, limit, getDocs, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
 // === FIREBASE CONFIGURATION (FIXED FOR GITHUB DEPLOYMENT) ===
-// Diese Konfiguration ist notwendig, damit die App auch außerhalb des Editors (z.B. auf GitHub) läuft.
-// Trage hier deinen Gemini API Key ein, wenn du die KI-Funktionen nutzen möchtest.
 const apiKey = ""; // <-- Hier deinen Gemini API Key einfügen für KI-Features
 
 const firebaseConfig = {
@@ -315,11 +313,9 @@ const firebaseConfig = {
   measurementId: "G-HKLWFJE83K"
 };
 
-// Falls die Umgebungsvariable existiert (hier im Editor), nutze diese, sonst die feste Config (für GitHub)
 const activeConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : firebaseConfig;
-const appId = typeof __app_id !== 'undefined' ? __app_id : 'holzquartett-3a177'; // Fallback App ID
+const appId = typeof __app_id !== 'undefined' ? __app_id : 'holzquartett-3a177';
 
-// Initialize Firebase
 let app, db, auth;
 try {
     app = initializeApp(activeConfig);
@@ -330,7 +326,6 @@ try {
     alert("Fehler beim Laden der Datenbank-Konfiguration.");
 }
 
-// Robust Auth with Fallback
 const initAuth = async () => {
     try {
         if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
@@ -344,16 +339,11 @@ const initAuth = async () => {
 };
 initAuth();
 
-// === HELPER FOR STRICT PATHS (Canvas vs GitHub Compat) ===
 const getPublicDataRef = (coll, docId) => {
-    // Wenn wir im Editor sind (appId ist gesetzt), nutzen wir den Editor-Pfad.
-    // Wenn wir auf GitHub sind, nutzen wir einen normalen Root-Pfad, um Permission-Probleme zu umgehen,
-    // falls die Rules dort anders sind (Standardmäßig 'artifacts' Struktur beibehalten).
     if(docId) return doc(db, 'artifacts', appId, 'public', 'data', coll, docId);
     return collection(db, 'artifacts', appId, 'public', 'data', coll);
 };
 
-// LOGGING FUNCTION
 async function trackEvent(type) {
     if (!auth || !auth.currentUser) return;
     const ref = getPublicDataRef("statistics", "usage"); 
@@ -902,6 +892,20 @@ onAuthStateChanged(auth, (user) => {
     if (user) updateMainMenuStats(user);
 });
 
+async function updateLeaderboard(name) {
+    if (!auth.currentUser) return;
+    const ref = getPublicDataRef("leaderboard", auth.currentUser.uid);
+    try {
+        await setDoc(ref, {
+            name: name,
+            wins: increment(1),
+            last_win: serverTimestamp()
+        }, { merge: true });
+    } catch (e) {
+        console.error("Leaderboard update failed", e);
+    }
+}
+
 // New End Game Function
 window.endGame = async (winnerName) => {
     document.getElementById('gameContainer').classList.add('hidden');
@@ -930,9 +934,15 @@ window.endGame = async (winnerName) => {
         } catch (e) {
             console.error("Stats update failed", e);
         }
+
+        // 2. Update Leaderboard (only on win)
+        if (isWin) {
+            const playerName = gameMode === 'ai' ? aiGame.playerName : localGameState.players[localPlayerId].name;
+            await updateLeaderboard(playerName);
+        }
     }
 
-    // 2. Update UI
+    // 3. Update UI
     const title = document.getElementById('gameOverTitle');
     const text = document.getElementById('gameOverText');
     
