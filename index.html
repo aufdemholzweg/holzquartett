@@ -375,6 +375,10 @@ const NAV_ICONS = {
     house: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>`
 };
 
+function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 window.setNavState = (state) => {
     const btn = document.getElementById('navButton');
     if(!btn) return;
@@ -667,6 +671,7 @@ function listenToGameChanges(){
         if(gd.status==='playing'||gd.status==='finished'){
             document.getElementById('multiplayerLobbyModal').classList.add('hidden');
             document.getElementById('gameContainer').classList.remove('hidden');
+            scrollToTop(); // Scroll to top on game update
             
             const oppId=gd.playerIds.find(id=>id!==localPlayerId);
             document.getElementById('playerNameDisplay').innerText = gd.players[localPlayerId]?.name || 'DU';
@@ -764,7 +769,7 @@ window.startGameAI = (name) => {
     aiGame.playerCards=sh.slice(0,15); aiGame.aiCards=sh.slice(15,30);
     aiGame.currentPlayerCard=aiGame.playerCards[0]; aiGame.currentAiCard=aiGame.aiCards[0];
     document.getElementById('gameContainer').classList.remove('hidden');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    scrollToTop(); // Scroll to top when game starts
     updateDisplayAI();
 };
 
@@ -813,7 +818,7 @@ window.joinGame = async (id, playerName) => {
             turn:p1, currentCards:{[p1]:sh.slice(0,15)[0],[localPlayerId]:sh.slice(15,30)[0]},
             lastResult:null
         });
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        scrollToTop(); // Scroll to top when joining
         window.setNavState('game');
         listenToGameChanges();
     } else {
@@ -823,7 +828,7 @@ window.joinGame = async (id, playerName) => {
 };
 
 window.nextRound = async () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    scrollToTop(); // Scroll to top for next round
     if(gameMode==='ai'){
         aiGame.currentPlayerCard=aiGame.playerCards[0];
         aiGame.currentAiCard=aiGame.aiCards[0];
