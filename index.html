@@ -300,15 +300,35 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebas
 import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, deleteDoc, collection, query, orderBy, limit, getDocs, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-// === FIREBASE INIT (ADAPTED FOR CANVAS) ===
-const apiKey = ""; 
-// Use environment config if available, otherwise fallback (won't persist correctly without env)
-const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-const appId = typeof __app_id !== 'undefined' ? __app_id : 'holzquartett-dev';
+// === FIREBASE CONFIGURATION (FIXED FOR GITHUB DEPLOYMENT) ===
+// Diese Konfiguration ist notwendig, damit die App auch außerhalb des Editors (z.B. auf GitHub) läuft.
+// Trage hier deinen Gemini API Key ein, wenn du die KI-Funktionen nutzen möchtest.
+const apiKey = ""; // <-- Hier deinen Gemini API Key einfügen für KI-Features
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
+const firebaseConfig = {
+  apiKey: "AIzaSyCyRXl8-JPr1xTXPDi1VG-eQk6fOnTpqUI",
+  authDomain: "holzquartett-3a177.firebaseapp.com",
+  projectId: "holzquartett-3a177",
+  storageBucket: "holzquartett-3a177.appspot.com",
+  messagingSenderId: "1081595025073",
+  appId: "1:1081595025073:web:bc571fffb6e4f20b27f490",
+  measurementId: "G-HKLWFJE83K"
+};
+
+// Falls die Umgebungsvariable existiert (hier im Editor), nutze diese, sonst die feste Config (für GitHub)
+const activeConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : firebaseConfig;
+const appId = typeof __app_id !== 'undefined' ? __app_id : 'holzquartett-3a177'; // Fallback App ID
+
+// Initialize Firebase
+let app, db, auth;
+try {
+    app = initializeApp(activeConfig);
+    db = getFirestore(app);
+    auth = getAuth(app);
+} catch (e) {
+    console.error("Firebase Init Error:", e);
+    alert("Fehler beim Laden der Datenbank-Konfiguration.");
+}
 
 // Robust Auth with Fallback
 const initAuth = async () => {
@@ -324,16 +344,18 @@ const initAuth = async () => {
 };
 initAuth();
 
-// === HELPER FOR STRICT PATHS ===
+// === HELPER FOR STRICT PATHS (Canvas vs GitHub Compat) ===
 const getPublicDataRef = (coll, docId) => {
+    // Wenn wir im Editor sind (appId ist gesetzt), nutzen wir den Editor-Pfad.
+    // Wenn wir auf GitHub sind, nutzen wir einen normalen Root-Pfad, um Permission-Probleme zu umgehen,
+    // falls die Rules dort anders sind (Standardmäßig 'artifacts' Struktur beibehalten).
     if(docId) return doc(db, 'artifacts', appId, 'public', 'data', coll, docId);
     return collection(db, 'artifacts', appId, 'public', 'data', coll);
 };
 
 // LOGGING FUNCTION
 async function trackEvent(type) {
-    if (!auth.currentUser) return;
-    // Updated Path: artifacts/{appId}/public/data/statistics/usage
+    if (!auth || !auth.currentUser) return;
     const ref = getPublicDataRef("statistics", "usage"); 
     try {
         await setDoc(ref, {
@@ -359,7 +381,7 @@ window.setNavState = (state) => {
         btn.onclick = (e) => { e.preventDefault(); if(confirm('Spiel abbrechen und zum Startbildschirm zurückkehren?')) { window.location.reload(); } };
         btn.setAttribute('aria-label', 'Zurück zur Holzen! Startseite');
     } else {
-        btn.innerHTML = NAV_ICONS.house; // Using house icon for generic home here
+        btn.innerHTML = NAV_ICONS.house; 
         btn.href = '#';
         btn.onclick = (e) => { e.preventDefault(); location.reload(); }; 
         btn.setAttribute('aria-label', 'Startseite');
@@ -745,7 +767,7 @@ window.startGameAI = (name) => {
 
 let authRetries = 0;
 window.createGame = async (playerName) => {
-    if (!auth.currentUser) { 
+    if (!auth || !auth.currentUser) { 
         if(authRetries > 10) { alert("Verbindungsfehler"); return; }
         authRetries++; setTimeout(() => window.createGame(playerName), 500); return; 
     }
@@ -770,7 +792,7 @@ window.createGame = async (playerName) => {
 };
 
 window.joinGame = async (id, playerName) => {
-    if (!auth.currentUser) { setTimeout(()=>window.joinGame(id,playerName), 500); return; }
+    if (!auth || !auth.currentUser) { setTimeout(()=>window.joinGame(id,playerName), 500); return; }
     localPlayerId = auth.currentUser.uid;
     gameMode='multiplayer'; gameId = id;
     const ref = getPublicDataRef("games", id);
