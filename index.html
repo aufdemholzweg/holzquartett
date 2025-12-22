@@ -404,14 +404,70 @@ let aiGame={playerName:'',playerCards:[],aiCards:[],currentPlayerCard:null,curre
 let activeAttributeKeys = ['dk', 'haerte', 'quellenSchwindenRadial', 'dichte', 'gewicht'];
 
 const attributeInfo={
- dk:{icon:'🛡️',name:'Dauerhaftigkeit',unit:'(DK)', logic: 'Niedrig gewinnt', default: true},
- haerte:{icon:'💎',name:'Druckfestigkeit',unit:'(N/mm²)', logic: 'Hoch gewinnt', default: true},
- quellenSchwindenRadial:{icon:'↔️',name:'Quellen/Schw.',unit:'(%)', logic: 'Niedrig gewinnt', default: true},
- dichte:{icon:'⚖️',name:'Rohdichte',unit:'(kg/m³)', logic: 'Hoch gewinnt', default: true},
- gewicht:{icon:'🏋️',name:'E-Modul',unit:'(N/mm²)', logic: 'Hoch gewinnt', default: true},
- growth:{icon:'🌱',name:'Wachstum',unit:'(cm/Jahr)', logic: 'Hoch gewinnt', default: false},
- price:{icon:'💰',name:'Preis',unit:'(€/m³)', logic: 'Hoch gewinnt', default: false},
- brennwert:{icon:'🔥',name:'Brennwert',unit:'(kWh/kg)', logic: 'Hoch gewinnt', default: false}
+ dk:{
+     icon:'🛡️',
+     name:'Dauerhaftigkeit',
+     unit:'(DK)', 
+     logic: 'Niedrig gewinnt', 
+     default: true,
+     description: 'Gibt an, wie widerstandsfähig das Kernholz gegen holzzerstörende Pilze und Insekten ist (Klasse 1 = sehr dauerhaft bis Klasse 5 = nicht dauerhaft).'
+ },
+ haerte:{
+     icon:'💎',
+     name:'Druckfestigkeit',
+     unit:'(N/mm²)', 
+     logic: 'Hoch gewinnt', 
+     default: true,
+     description: 'Maximale Belastung, die das Holz aushält, bevor es bricht. Wichtig für tragende Konstruktionen.'
+ },
+ quellenSchwindenRadial:{
+     icon:'↔️',
+     name:'Quellen/Schw.',
+     unit:'(%)', 
+     logic: 'Niedrig gewinnt', 
+     default: true,
+     description: 'Maßänderung des Holzes bei Feuchtigkeitsänderung in radialer Richtung (Markstrahlrichtung). Je niedriger, desto formstabiler.'
+ },
+ dichte:{
+     icon:'⚖️',
+     name:'Rohdichte',
+     unit:'(kg/m³)', 
+     logic: 'Hoch gewinnt', 
+     default: true,
+     description: 'Verhältnis von Masse zu Volumen bei bestimmter Holzfeuchte. Indikator für Festigkeit und Härte.'
+ },
+ gewicht:{
+     icon:'🏋️',
+     name:'E-Modul',
+     unit:'(N/mm²)', 
+     logic: 'Hoch gewinnt', 
+     default: true,
+     description: 'Maß für die Steifigkeit des Holzes. Je höher, desto weniger biegt es sich unter Last durch.'
+ },
+ growth:{
+     icon:'🌱',
+     name:'Wachstum',
+     unit:'(cm/Jahr)', 
+     logic: 'Hoch gewinnt', 
+     default: false,
+     description: 'Durchschnittlicher Höhenzuwachs pro Jahr. Schnellwachsende Hölzer sind oft weicher.'
+ },
+ price:{
+     icon:'💰',
+     name:'Preis',
+     unit:'(€/m³)', 
+     logic: 'Hoch gewinnt', 
+     default: false,
+     description: 'Durchschnittlicher Marktpreis für Schnittholz pro Kubikmeter.'
+ },
+ brennwert:{
+     icon:'🔥',
+     name:'Brennwert',
+     unit:'(kWh/kg)', 
+     logic: 'Hoch gewinnt', 
+     default: false,
+     description: 'Energiemenge, die bei der Verbrennung pro Kilogramm Holz freigesetzt wird.'
+ }
 };
 
 const sounds={
@@ -1023,7 +1079,11 @@ window.showGameInfo = () => {
         const info = attributeInfo[key];
         const isBetter = info.logic === 'Hoch gewinnt';
         html += `<div class="p-3 rounded-xl border-2 ${isBetter ? 'border-green-400 bg-green-50' : 'border-blue-400/80 bg-blue-50/50'} mb-2">
-                    <div class="flex justify-between items-center mb-1"><span class="text-lg font-bold text-gray-800">${info.icon} ${info.name}</span><span class="text-sm font-semibold ${isBetter ? 'text-green-700' : 'text-blue-700'}">${isBetter ? '⬆ Hoch' : '⬇ Niedrig'}</span></div>
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-lg font-bold text-gray-800">${info.icon} ${info.name}</span>
+                        <span class="text-sm font-semibold ${isBetter ? 'text-green-700' : 'text-blue-700'}">${isBetter ? '⬆ Hoch' : '⬇ Niedrig'}</span>
+                    </div>
+                    <p class="text-xs text-gray-700 leading-snug">${info.description || ''}</p>
                  </div>`;
     }
     list.innerHTML = html;
