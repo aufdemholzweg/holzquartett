@@ -36,6 +36,10 @@
         /* Quiz Timer Animation */
         #quizTimerBar { transition: width 1s linear; }
         
+        /* Animation Correction for Quiz Modal */
+        @keyframes pop-in { 0% { opacity: 0; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1); } }
+        .animate-pop-in { animation: pop-in 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards; }
+        
         .falling-star { position: absolute; font-size: 7rem; z-index: 100; animation: fall-and-fade 1.2s ease-in forwards; }
         @keyframes fall-and-fade { 0% { transform: translateY(-30px) scale(1.5); opacity: 0; } 30% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(var(--end-y)) scale(0.3); opacity: 0; } }
         
@@ -46,7 +50,6 @@
     </style>
 </head>
 <body class="flex flex-col relative text-gray-800">
-
 <header class="bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-md z-20">
     <div class="max-w-[600px] mx-auto px-4 py-3 flex justify-between items-center relative">
         <button onclick="location.reload()" class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center border border-white/30">
@@ -58,7 +61,6 @@
         </button>
     </div>
 </header>
-
 <div id="gameContainer" class="hidden flex-grow flex flex-col items-center w-full max-w-[600px] mx-auto p-2 relative">
     <div id="animationContainer" class="absolute inset-0 pointer-events-none z-50 overflow-hidden"></div>
     
@@ -78,7 +80,6 @@
             <div class="w-full aspect-[20/42] perspective-1000" id="aiCard"></div>
         </div>
     </div>
-
     <div class="w-full mt-6 px-4">
         <div class="h-3 w-full bg-gray-200 rounded-full overflow-hidden shadow-inner relative">
             <div id="statusBar" class="h-full bg-amber-500 transition-all duration-500" style="width: 50%;"></div>
@@ -121,7 +122,6 @@
                 <span class="text-2xl">🌍</span> Online-Duell
             </button>
         </div>
-
         <div class="mt-8 flex items-center justify-center space-x-2">
             <span class="text-gray-400 text-xs">Ton Aus</span>
             <label for="soundToggle" class="relative inline-flex items-center cursor-pointer">
@@ -132,7 +132,6 @@
         </div>
     </div>
 </div>
-
 <div id="nameModal" class="hidden fixed inset-0 dimmer flex items-center justify-center z-50 p-4">
     <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-xs w-full text-center">
         <h2 class="text-xl font-bold text-gray-800 mb-6">Dein Name</h2>
@@ -140,7 +139,6 @@
         <button id="nameSubmitButton" class="w-full bg-amber-500 text-white font-bold py-3 rounded-lg shadow-lg hover:bg-amber-600">Starten</button>
     </div>
 </div>
-
 <div id="multiplayerLobbyModal" class="hidden fixed inset-0 dimmer flex items-center justify-center z-50 p-4">
     <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full text-center">
         <h2 id="lobbyTitle" class="text-xl font-bold text-amber-800 mb-2">Lobby</h2>
@@ -153,7 +151,6 @@
         <p class="text-sm text-green-600 font-bold animate-pulse">Warte auf Mitspieler...</p>
     </div>
 </div>
-
 <div id="bottomSheetBackdrop" class="hidden fixed inset-0 bg-black/40 z-30 transition-opacity"></div>
 <div id="bottomSheet" class="hidden fixed left-0 right-0 bottom-0 z-40 flex justify-center px-2 pb-8 transition-transform transform translate-y-full duration-300">
     <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 flex flex-col items-center border-t-4 border-amber-500 text-center">
@@ -165,7 +162,6 @@
         </div>
     </div>
 </div>
-
 <div id="gameOverModal" class="hidden fixed inset-0 dimmer flex items-center justify-center z-50 p-4">
     <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-sm w-full text-center">
         <h2 id="gameOverTitle" class="text-4xl font-black mb-4 tracking-tighter italic">SPIELENDE</h2>
@@ -176,7 +172,6 @@
         </div>
     </div>
 </div>
-
 <div id="leaderboardModal" class="hidden fixed inset-0 dimmer flex items-center justify-center z-50 p-4">
     <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full flex flex-col max-h-[80vh]">
         <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">🏆 Bestenliste</h2>
@@ -184,7 +179,6 @@
         <button onclick="window.closeLeaderboard()" class="w-full bg-gray-200 hover:bg-gray-300 font-bold py-2 rounded-lg text-gray-700">Schließen</button>
     </div>
 </div>
-
 <div id="gameInfoModal" class="fixed inset-0 dimmer flex items-center justify-center z-50 p-4 hidden">
     <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-[400px] max-h-[80vh] flex flex-col">
         <div class="bg-amber-500 p-4 text-white font-bold flex justify-between">
@@ -202,7 +196,6 @@
         </div>
     </div>
 </div>
-
 <div id="infoModal" class="fixed inset-0 dimmer flex items-center justify-center z-50 p-4 hidden">
     <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-md max-h-[90vh] flex flex-col">
         <div class="bg-amber-600 p-4 flex justify-between items-center text-white shrink-0">
@@ -218,7 +211,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, deleteDoc, collection, query, orderBy, limit, getDocs, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
 // === FIREBASE CONFIGURATION ===
 const firebaseConfig = {
   apiKey: "AIzaSyCyRXl8-JPr1xTXPDi1VG-eQk6fOnTpqUI",
@@ -229,7 +221,6 @@ const firebaseConfig = {
   appId: "1:1081595025073:web:bc571fffb6e4f20b27f490",
   measurementId: "G-HKLWFJE83K"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
@@ -238,27 +229,24 @@ const appId = firebaseConfig.projectId;
 // === SOUNDS ===
 const sounds = {
     flip: new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_139083c224.mp3'),
-    winRound: new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c744c8.mp3'), // Klingen
-    starWin: new Audio('https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3'), // Stern
-    loseRound: new Audio('https://cdn.pixabay.com/audio/2022/03/10/audio_941650c1f5.mp3'), // Dumpf
-    winGame: new Audio('https://github.com/aufdemholzweg/holzquartett/blob/894e048eea71ba49921abfe6827bd8dc723f8c2d/gewonnen.mp3?raw=true') // Fanfare
+    winRound: new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c744c8.mp3'),
+    starWin: new Audio('https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3'),
+    loseRound: new Audio('https://cdn.pixabay.com/audio/2022/03/10/audio_941650c1f5.mp3'),
+    winGame: new Audio('https://github.com/aufdemholzweg/holzquartett/blob/894e048eea71ba49921abfe6827bd8dc723f8c2d/gewonnen.mp3?raw=true')
 };
 sounds.flip.volume = 0.5;
 sounds.winRound.volume = 0.6;
 sounds.starWin.volume = 0.6;
 sounds.loseRound.volume = 0.5;
 sounds.winGame.volume = 0.4;
-
 // Preload Sounds
 Object.values(sounds).forEach(s => { s.preload = 'auto'; s.load(); });
-
 function playSoundSecure(soundKey) {
     if(isMuted || !sounds[soundKey]) return;
     Object.values(sounds).forEach(s => { if(!s.paused) { s.pause(); s.currentTime = 0; } });
     sounds[soundKey].currentTime = 0;
     sounds[soundKey].play().catch(e => console.log("Audio Error", e));
 }
-
 // Global Vars
 let gameMode=null, gameId=null, localPlayerId=null, unsubscribeGame=null, localGameState={}, hasCopiedShareLink=false;
 let isMuted=false; // Default off
@@ -267,7 +255,6 @@ let lastRoundWinningWoodName = null;
 let aiGame={playerName:'',playerCards:[],aiCards:[],currentPlayerCard:null,currentAiCard:null,roundInProgress:false,turn:'player'};
 let quizActive = false, quizTimer = null;
 let activeAttributeKeys = ['dk', 'haerte', 'quellenSchwindenRadial', 'dichte', 'gewicht'];
-
 // === DATA ===
 const attributeInfo={
  dk:{icon:'🛡️',name:'Dauerhaftigkeit',unit:'(DK)',logic:'Niedrig gewinnt',default:true,description:'Widerstandsfähigkeit gegen Pilze/Insekten (Kl. 1 = sehr gut).'},
@@ -279,10 +266,8 @@ const attributeInfo={
  price:{icon:'💰',name:'Preis',unit:'(€/m³)',logic:'Hoch gewinnt',default:false,description:'Durchschnittspreis.'},
  brennwert:{icon:'🔥',name:'Brennwert',unit:'(kWh/kg)',logic:'Hoch gewinnt',default:false,description:'Energie pro kg.'}
 };
-
 const IMG_BASE = "https://github.com/aufdemholzweg/holzquartett/blob/b9d51d5b5d930f643a3f3861262361b97c0beb7c/images";
 const IMG_SUFFIX = "?raw=true";
-
 const woodCards=[
  {name:"Eiche",dk:2,haerte:85,quellenSchwindenRadial:4.0,dichte:650,gewicht:12000, growth:30, price:1200, brennwert:4.2, imgTree:`${IMG_BASE}/eiche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/eiche_2.jpeg${IMG_SUFFIX}`},
  {name:"Buche",dk:5,haerte:80,quellenSchwindenRadial:5.8,dichte:720,gewicht:14000, growth:40, price:800, brennwert:4.0, imgTree:`${IMG_BASE}/buche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/buche_2.jpeg${IMG_SUFFIX}`},
@@ -401,7 +386,6 @@ window.openAttrConfig = () => {
  });
  document.getElementById('attrConfigModal').classList.remove('hidden');
 };
-
 function toggleAttribute(key, el) {
  const idx = activeAttributeKeys.indexOf(key);
  if (idx > -1) {
@@ -420,10 +404,9 @@ function toggleAttribute(key, el) {
 // === CORE UI FUNCTIONS ===
 function updateStatusBar(p, o){
  const total=p+o; const pct=(total===0)?50:(p/total)*100;
- const bar=document.getElementById('statusBar'); const ball=document.getElementById('statusBall');
- bar.style.width=`${pct}%`; ball.style.left=`${pct}%`;
+ const bar=document.getElementById('statusBar');
+ bar.style.width=`${pct}%`;
 }
-
 function isOpponentNameBackVisible(){ return localStorage.getItem('holzquartett_showOpponentNameOnBack')==='true'; }
 function setOpponentNameBackVisible(v){ localStorage.setItem('holzquartett_showOpponentNameOnBack', v?'true':'false'); }
 
@@ -432,7 +415,6 @@ function createCard(data, isRevealed, isPlayer, isActive, highlightAttr){
  card.className = `card-3d w-full h-full relative ${isPlayer?'cursor-pointer hover-lift':''}`;
  if(!isRevealed) card.classList.add('card-flipped');
  if(isPlayer) { card.setAttribute('role', 'button'); card.setAttribute('tabindex', '0'); }
-
  const canSelect = isPlayer && ((gameMode==='ai' && aiGame.turn==='player' && !aiGame.roundInProgress) || (gameMode==='multiplayer' && localGameState.turn===localPlayerId && !localGameState.lastResult));
  
  const front = document.createElement('div');
@@ -455,7 +437,6 @@ function createCard(data, isRevealed, isPlayer, isActive, highlightAttr){
  }
  html += '</div>';
  front.innerHTML = html;
-
  const back = document.createElement('div');
  back.className = `card-back rounded-2xl shadow-lg relative ${isActive ? 'border-orange-500' : 'border-white'}`;
  if(!isPlayer && isOpponentNameBackVisible()){
@@ -484,7 +465,6 @@ function evaluateRoundAI(attr){
  const logic = attributeInfo[attr].logic;
  let pWins = (logic === 'Niedrig gewinnt') ? (pv < av) : (pv > av);
  if(pv === av) pWins = 'tie';
-
  const resText = pWins===true ? 'Du gewinnst!' : (pWins===false ? 'Computer gewinnt!' : 'Unentschieden');
  const resColor = pWins===true ? 'text-green-600' : (pWins===false ? 'text-red-600' : 'text-gray-600');
  
@@ -504,8 +484,7 @@ function evaluateRoundAI(attr){
  } 
  else { 
      // TIE -> STECHFRAGE
-     aiGame.playerCards.unshift(aiGame.playerCards.shift()); 
-     aiGame.aiCards.unshift(aiGame.aiCards.shift()); 
+     // Hier nicht sofort Karten verschieben! Erst Quiz abwarten.
      closeBottomSheet();
      triggerTieQuiz(); 
      return;
@@ -515,8 +494,7 @@ function evaluateRoundAI(attr){
  const pC=aiGame.playerCards.shift(); const aC=aiGame.aiCards.shift();
  if(pWins===true){ aiGame.playerCards.push(pC, aC); aiGame.turn='player'; }
  else if(pWins===false){ aiGame.aiCards.push(aC, pC); aiGame.turn='ai'; }
- else { aiGame.playerCards.push(pC); aiGame.aiCards.push(aC); } 
-
+ 
  if(aiGame.playerCards.length===0) window.endGame("Computer");
  if(aiGame.aiCards.length===0) window.endGame(aiGame.playerName);
 }
@@ -569,7 +547,6 @@ function triggerTieQuiz() {
             if(quizActive) submitQuizAnswer(null, q.a, 'ai');
         }
     }, 1000);
-
     // AI Simulation
     if(gameMode === 'ai') {
         const aiTime = 3000 + Math.random() * 5000;
@@ -587,6 +564,9 @@ function submitQuizAnswer(given, correct, who) {
     quizActive = false;
     clearInterval(quizTimer);
     document.getElementById('quizModal').classList.add('hidden');
+    
+    // FIX: SPIELSTATUS WIEDER FREIGEBEN!
+    aiGame.roundInProgress = false; 
     
     let winner = 'ai';
     let msg = "";
@@ -614,7 +594,6 @@ function submitQuizAnswer(given, correct, who) {
     
     let title = "";
     let color = "";
-
     if(winner === 'player') {
         title = "Du gewinnst das Quiz!";
         color = "text-green-600";
@@ -633,7 +612,6 @@ function submitQuizAnswer(given, correct, who) {
     
     aiGame.currentPlayerCard = aiGame.playerCards[0] || null;
     aiGame.currentAiCard = aiGame.aiCards[0] || null;
-
     document.getElementById('resultText').innerText = title;
     document.getElementById('resultText').className = `text-2xl font-black uppercase mb-1 ${color}`;
     document.getElementById('resultDetails').innerText = msg + ` (Lösung: ${correct})`;
@@ -641,10 +619,8 @@ function submitQuizAnswer(given, correct, who) {
     document.getElementById('bottomSheet').classList.remove('translate-y-full');
     document.getElementById('bottomSheet').classList.remove('hidden');
     document.getElementById('bottomSheetBackdrop').classList.remove('hidden');
-
     if(aiGame.playerCards.length===0) window.endGame("Computer");
     if(aiGame.aiCards.length===0) window.endGame(aiGame.playerName);
-
     updateDisplayAI();
 }
 
@@ -669,7 +645,6 @@ function listenToGameChanges(){
          updateStatusBar(pCount, oCount);
          
          const highlightAttr = gd.lastResult ? gd.lastResult.attribute : null;
-
          const pc = document.getElementById('playerCard'); const ac = document.getElementById('aiCard');
          pc.innerHTML=''; ac.innerHTML='';
          const isPlayerTurn = gd.turn === localPlayerId;
@@ -695,7 +670,6 @@ function listenToGameChanges(){
               } else if (gd.currentCards[wId]) {
                   lastRoundWinningWoodName = gd.currentCards[wId].name;
               }
-
               if(!roundSoundPlayed) {
                   if(iWin) { playSoundSecure('winRound'); triggerStarAnimation(); }
                   else if(wId !== 'tie') playSoundSecure('loseRound');
@@ -720,7 +694,6 @@ function listenToGameChanges(){
      }
  });
 }
-
 window.selectAttribute = async (attr) => {
  if(gameMode==='ai') {
      if(aiGame.roundInProgress) return;
@@ -747,7 +720,6 @@ window.selectAttribute = async (attr) => {
      });
  }
 };
-
 window.startGameAI = (name) => {
     trackEvent('games_ai');
     gameMode='ai'; aiGame.playerName=name;
@@ -760,7 +732,6 @@ window.startGameAI = (name) => {
     scrollToTop(); 
     updateDisplayAI();
 };
-
 let authRetries = 0;
 window.createGame = async (playerName) => {
     if (!auth || !auth.currentUser) { 
@@ -785,7 +756,6 @@ window.createGame = async (playerName) => {
     });
     listenToGameChanges();
 };
-
 window.joinGame = async (id, playerName) => {
     if (!auth || !auth.currentUser) { setTimeout(()=>window.joinGame(id,playerName), 500); return; }
     localPlayerId = auth.currentUser.uid;
@@ -813,7 +783,6 @@ window.joinGame = async (id, playerName) => {
         window.location.href = window.location.href.split('?')[0];
     }
 };
-
 window.nextRound = async () => {
     scrollToTop(); 
     if(gameMode==='ai'){
@@ -843,11 +812,9 @@ window.nextRound = async () => {
         });
     }
 };
-
 window.showFinalWinScreen = () => {
     document.getElementById('reflectionModal').classList.add('hidden');
 };
-
 const calculateRank = (count) => {
     if (count >= 100) return { title: "Leim-Legende", stars: 6 };
     if (count >= 50) return { title: "Astloch-Philosoph", stars: 5 };
@@ -856,7 +823,6 @@ const calculateRank = (count) => {
     if (count >= 10) return { title: "Schleifklotz-Schwinger", stars: 2 };
     return { title: "Werkstatt-Neuling", stars: 1 };
 };
-
 async function updateMainMenuStats(user) {
     if (!user) return;
     const statsRef = doc(db, 'artifacts', appId, 'users', user.uid, 'gamification', 'stats');
@@ -884,21 +850,17 @@ async function updateMainMenuStats(user) {
         }
     } catch (e) { console.error("Stats load error", e); }
 }
-
 onAuthStateChanged(auth, (user) => { if (user) updateMainMenuStats(user); });
-
 async function updateLeaderboard(name) {
     if (!auth.currentUser) return;
     const ref = getPublicDataRef("leaderboard", auth.currentUser.uid);
     try { await setDoc(ref, { name: name, wins: increment(1), last_win: serverTimestamp() }, { merge: true }); } catch (e) { console.error(e); }
 }
-
 window.endGame = async (winnerName) => {
     document.getElementById('gameContainer').classList.add('hidden');
     document.getElementById('bottomSheet').classList.add('hidden');
     document.getElementById('bottomSheetBackdrop').classList.add('hidden');
     document.getElementById('reflectionModal').classList.add('hidden'); // Ensure hidden
-
     const isWin = (winnerName === (gameMode === 'ai' ? aiGame.playerName : localGameState.players[localPlayerId].name));
     
     let newGamesCount = 0;
@@ -917,7 +879,6 @@ window.endGame = async (winnerName) => {
             await updateLeaderboard(playerName);
         }
     }
-
     const title = document.getElementById('gameOverTitle');
     const text = document.getElementById('gameOverText');
     
@@ -944,7 +905,6 @@ window.endGame = async (winnerName) => {
     
     document.getElementById('gameOverModal').classList.remove('hidden');
 };
-
 window.showLeaderboard = async () => { 
     const list=document.getElementById('leaderboardList');
     list.innerHTML='<div class="text-center py-4 text-gray-500">Lade...</div>';
@@ -957,7 +917,6 @@ window.showLeaderboard = async () => {
         list.innerHTML = snap.docs.map((d,i)=>`<div class="flex justify-between p-3 rounded-lg ${i%2===0?'bg-gray-50':'bg-white'} border border-gray-100"><span class="font-bold text-gray-700">${i+1}. ${d.data().name}</span><span class="font-bold text-amber-600">${d.data().wins} 🏆</span></div>`).join('');
     } catch(e){ list.innerHTML='<div class="text-center text-red-400 text-sm">Fehler beim Laden</div>'; console.error(e); }
 };
-
 window.showNamePrompt = (mode) => {
     document.getElementById('setupModal').classList.add('hidden');
     document.getElementById('nameModal').classList.remove('hidden');
@@ -994,12 +953,9 @@ window.showGameInfo = () => {
 window.closeInfoModal = () => document.getElementById('infoModal').classList.add('hidden');
 window.closeLeaderboard = () => { document.getElementById('leaderboardModal').classList.add('hidden'); document.getElementById('gameOverModal').classList.remove('hidden'); };
 window.resetGame = () => location.reload();
-
 function closeBottomSheet(){ const bs=document.getElementById('bottomSheet'); const bd=document.getElementById('bottomSheetBackdrop'); bs.classList.add('translate-y-full'); bd.classList.add('opacity-0'); setTimeout(()=>{bs.classList.add('hidden');bd.classList.add('hidden');},300); }
 function openBottomSheet(title){ if(title)document.getElementById('resultText').innerText=title; const bs=document.getElementById('bottomSheet'); const bd=document.getElementById('bottomSheetBackdrop'); bd.classList.remove('hidden'); bs.classList.remove('hidden'); setTimeout(()=>{bd.classList.remove('opacity-0'); bs.classList.remove('translate-y-full');},10); }
-
 document.getElementById('bsNextBtn').addEventListener('click',()=> { closeBottomSheet(); window.nextRound(); });
-
 // Settings Listeners
 const soundToggle = document.getElementById('soundToggle');
 if(soundToggle) { 
@@ -1022,9 +978,14 @@ if(soundToggle) {
 }
 const revealToggle = document.getElementById('revealBackToggle');
 if(revealToggle) { revealToggle.checked = isOpponentNameBackVisible(); revealToggle.addEventListener('change', function() { setOpponentNameBackVisible(this.checked); if(gameMode === 'ai' && !document.getElementById('gameContainer').classList.contains('hidden')) updateDisplayAI(); }); }
+
 document.getElementById('bsInfoBtn').addEventListener('click', ()=>{ 
     const wood = lastRoundWinningWoodName || (aiGame.currentPlayerCard ? aiGame.currentPlayerCard.name : "Eiche");
-    const content = detailedWoodInfo[wood] || `<p>Keine Detailinfo zu ${wood}</p>`;
+    
+    // FIX: Korrekter Zugriff auf woodInfo
+    const woodData = woodInfo[wood];
+    const content = (woodData && woodData.info) ? woodData.info : `<p>Keine Detailinfo zu ${wood}</p>`;
+    
     const modalContent = document.getElementById('infoModalContent');
     modalContent.innerHTML = `<h4 class="font-bold text-xl mb-2">${wood}</h4>` + content;
     
@@ -1045,7 +1006,6 @@ document.getElementById('bsInfoBtn').addEventListener('click', ()=>{
                 </div>
             </div>`;
     }
-
     const aiSection = document.createElement('div');
     aiSection.className = "mt-6 p-4 bg-amber-50 border border-amber-200 rounded-xl";
     aiSection.innerHTML = `
@@ -1069,14 +1029,12 @@ document.getElementById('bsInfoBtn').addEventListener('click', ()=>{
     
     document.getElementById('infoModal').classList.remove('hidden');
 });
-
 // Helper for AI Buttons
 window.triggerAiQuestion = (wood, q) => askGemini(wood, q);
 window.triggerAiCustom = (wood) => {
     const val = document.getElementById('aiInput').value.trim();
     if(val) askGemini(wood, val);
 };
-
 // Check URL for join (Multiplayer Deep Link)
 const p=new URLSearchParams(window.location.search);
 if(p.get('game')){ 
@@ -1084,7 +1042,6 @@ if(p.get('game')){
     gameId=p.get('game'); 
     window.showNamePrompt('join'); 
 }
-
 function showHappyWorm() {
  const worm = document.getElementById('happyWorm');
  if(!worm) return;
@@ -1092,7 +1049,6 @@ function showHappyWorm() {
  void worm.offsetWidth; worm.classList.add('animate-worm');
  setTimeout(() => worm.classList.add('hidden'), 3500);
 }
-
 function triggerConfetti() {
  var duration = 3000; var end = Date.now() + duration;
  (function frame() {
@@ -1101,7 +1057,6 @@ function triggerConfetti() {
      if (Date.now() < end) requestAnimationFrame(frame);
  }());
 }
-
 function triggerStarAnimation() {
     const animContainer = document.getElementById('animationContainer');
     const star = document.createElement('div');
@@ -1114,7 +1069,6 @@ function triggerStarAnimation() {
     playSoundSecure('starWin'); 
     setTimeout(() => star.remove(), 1200);
 }
-
 </script>
 </body>
 </html>
