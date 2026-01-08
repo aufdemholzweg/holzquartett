@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Holz-Quartett: Gamifizierung in der Berufsbildung</title>
+    <title>Holz-Quartett: Gamifizierung</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -28,20 +28,12 @@
         }
         .card-front-bg { background-color: #fffbeb; background-image: linear-gradient(to bottom right, #fffbeb, #fef3c7); }
         .hover-lift:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
-        .animate-pulse-glow { animation: pulse-glow 2s infinite; }
-        @keyframes pulse-glow { 0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); transform: translate(-50%, -50%) scale(1); } 50% { box-shadow: 0 0 15px 5px rgba(34, 197, 94, 0.4); transform: translate(-50%, -50%) scale(1.1); } 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); transform: translate(-50%, -50%) scale(1); } }
-        .animate-worm { animation: worm-pop-up 3.5s ease-in-out forwards; }
-        @keyframes worm-pop-up { 0% { transform: translateY(100%) rotate(0deg); opacity: 0; } 20% { transform: translateY(-20%) rotate(-10deg); opacity: 1; } 40% { transform: translateY(-20%) rotate(10deg); } 50% { transform: translateY(-30%) rotate(0deg) scale(1.1); } 60% { transform: translateY(-20%) rotate(-10deg) scale(1); } 80% { transform: translateY(-20%) rotate(0deg); opacity: 1; } 100% { transform: translateY(100%) rotate(0deg); opacity: 0; } }
-        .opponent-back-name { position: absolute; top: 15%; width: 100%; text-align: center; color: rgba(255,255,255,0.95); font-weight: 700; font-size: 1.1rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5); pointer-events: none; }
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .dimmer { background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); }
         .attr-box { background-color: #fff7ed; border: 1px solid #fbbf24; transition: all 0.2s; }
         .attr-box.flash-active { background-color: #f97316 !important; border-color: #ea580c !important; color: white !important; }
         .attr-box.flash-active span { color: white !important; }
         .attr-box.highlight-compare { background-color: #e5e7eb !important; border-color: #9ca3af !important; color: #111827 !important; }
         .attr-box.highlight-compare span { color: #000000 !important; }
-        .ai-chat-bubble { position: relative; background: #f8fafc; border-radius: 8px; padding: 12px; margin-top: 10px; font-size: 0.9rem; line-height: 1.5; border-left: 4px solid #d97706; }
         
         .toggle-checkbox:checked { right: 0; border-color: #68D391; }
         .toggle-checkbox:checked + .toggle-label { background-color: #68D391; }
@@ -49,7 +41,6 @@
         .attr-toggle-btn.selected { background-color: #fef3c7; border-color: #f59e0b; color: #92400e; }
         .attr-toggle-btn:not(.selected) { background-color: #f3f4f6; color: #9ca3af; border-color: transparent; }
 
-        /* QUIZ TIMER */
         #quizTimerBar { transition: width 1s linear; }
         
         .falling-star { position: absolute; font-size: 7rem; z-index: 100; animation: fall-and-fade 1.2s ease-in forwards; }
@@ -109,10 +100,6 @@
     </div>
 </div>
 
-<div id="happyWorm" class="fixed bottom-0 right-4 translate-y-full z-50 pointer-events-none transform transition-transform hidden">
-    <div class="relative"><div id="wormSpeech" class="absolute -top-10 -left-10 bg-white px-3 py-1.5 rounded-xl shadow-md border-2 border-amber-200 text-xs font-bold text-amber-800 whitespace-nowrap animate-bounce" style="animation-duration: 2s;">Stark! 🪵</div><div class="text-6xl filter drop-shadow-xl cursor-default select-none">🐛</div></div>
-</div>
-
 <div id="bottomSheetBackdrop" class="hidden fixed inset-0 bg-black/20 z-30 transition-opacity"></div>
 <div id="bottomSheet" class="hidden fixed left-0 right-0 bottom-0 z-40 flex justify-center px-2 pb-6 transition-transform transform translate-y-full duration-300">
     <div class="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-200 w-full max-w-md p-5 flex flex-col items-center">
@@ -150,10 +137,10 @@
         </div>
         <div class="p-5 overflow-y-auto hide-scrollbar space-y-5">
             <h4 class="font-bold text-gray-700 text-md">Regeln (Quartett-Prinzip)</h4>
-            <p class="text-sm text-gray-600 leading-relaxed">Die aktive Person wählt auf ihrer Karte die Eigenschaft, die den größtmöglichen Vorteil verspricht. Je nach Kategorie zählt der höchste oder der niedrigste Wert (siehe die Beschreibung der Eigenschaften). Gewinnt sie den Spielzug, erhält sie beide Karten, legt sie unter den eigenen Stapel und bleibt am Zug. Bei Gleichstand behalten beide ihre Karten. Das Zugrecht bleibt unverändert.</p>
+            <p class="text-sm text-gray-600 leading-relaxed">Die aktive Person wählt auf ihrer Karte die Eigenschaft, die den größtmöglichen Vorteil verspricht. Je nach Kategorie zählt der höchste oder der niedrigste Wert.</p>
             <div class="bg-orange-50 border-l-4 border-orange-500 p-3 rounded-r-lg">
-                <h5 class="font-bold text-orange-800 text-sm">⚡ Stechfrage bei Gleichstand</h5>
-                <p class="text-xs text-orange-700 mt-1">Haben beide Karten denselben Wert, startet ein Blitz-Quiz. Wer innerhalb von 10 Sekunden zuerst die richtige Antwort wählt, gewinnt die Runde!</p>
+                <h5 class="font-bold text-orange-800 text-sm">⚡ Stechfrage</h5>
+                <p class="text-xs text-orange-700 mt-1">Bei Unentschieden erscheint ein Blitz-Quiz. Wer zuerst richtig antwortet, gewinnt!</p>
             </div>
             <div id="infoCategoryList" class="space-y-3 pt-3"></div>
         </div>
@@ -183,16 +170,8 @@
                 <p>Christopher Lehr<br>Musterstraße 1<br>12345 Musterstadt</p>
             </div>
             <div>
-                <h4 class="font-bold text-gray-900 mb-1">Kontakt</h4>
-                <p>E-Mail: muster@student.uni-bremen.de</p>
-            </div>
-            <div>
                 <h4 class="font-bold text-gray-900 mb-1">Kontext</h4>
                 <p>Dieses Lernspiel entstand im Rahmen einer Masterarbeit im Studiengang Lehramt an Berufsschulen (Holztechnik) an der Universität Bremen.</p>
-            </div>
-            <div>
-                <h4 class="font-bold text-gray-900 mb-1">Haftungsausschluss</h4>
-                <p class="text-xs text-gray-500">Die Inhalte dieses Spiels wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir jedoch keine Gewähr übernehmen.</p>
             </div>
         </div>
     </div>
@@ -215,13 +194,9 @@
                      <input type="checkbox" id="revealBackToggle" class="accent-green-500 w-5 h-5">
                 </div>
             </div>
-
             <hr class="border-gray-200 mb-4 border-t-2 border-dashed">
-
             <h4 class="font-bold text-gray-800 mb-1 text-sm">Eigenschaften wählen</h4>
-            <p class="text-xs text-gray-500 mb-3">Wähle mindestens 3 Kategorien für das Spiel.</p>
-            <div id="attrConfigList" class="space-y-2">
-                </div>
+            <div id="attrConfigList" class="space-y-2"></div>
         </div>
         <div class="p-4 bg-gray-50 border-t">
              <button onclick="document.getElementById('attrConfigModal').classList.add('hidden')" class="w-full bg-amber-500 text-white font-bold py-2 rounded-lg shadow">Fertig</button>
@@ -231,32 +206,20 @@
 
 <div id="setupModal" class="fixed inset-0 dimmer flex flex-col items-center justify-center z-50 p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl shadow-2xl overflow-hidden max-w-sm w-full relative mb-6">
-        
         <a href="https://aufdemholzweg.github.io/Splashscreen-Holztechnik/" class="absolute left-4 top-4 z-[60] w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center text-white shadow-sm hover:bg-white/30 transition-all border border-white/30" aria-label="Zurück zum Launcher">
-             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M4 22c0-8 3-14 8-20" opacity="0.9" />
-                <path d="M2 16c2-4 4-8 5-14" opacity="0.6" />
-                <path d="M8 22c1-6 2-10 6-12 3-1.5 6 0 8 4" opacity="0.8" />
-                <path d="M13 22c1-4 3-8 7-8" opacity="0.7" />
-                <path d="M18 22c1-3 2-6 4-6" opacity="0.5" />
-                <path d="M16 2c2 1 4 4 6 7" opacity="0.6" />
-             </svg>
+             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22c0-8 3-14 8-20" opacity="0.9" /><path d="M2 16c2-4 4-8 5-14" opacity="0.6" /><path d="M8 22c1-6 2-10 6-12 3-1.5 6 0 8 4" opacity="0.8" /><path d="M13 22c1-4 3-8 7-8" opacity="0.7" /><path d="M18 22c1-3 2-6 4-6" opacity="0.5" /><path d="M16 2c2 1 4 4 6 7" opacity="0.6" /></svg>
         </a>
 
         <div class="bg-amber-500 p-5 text-white text-center font-bold text-lg sm:text-xl tracking-wide shadow-md">HOLZEN!<br><span class="text-sm font-normal opacity-90">Spielmodus wählen</span></div>
         <div class="p-6 space-y-4">
             <button onclick="window.showNamePrompt('ai')" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold py-4 rounded-xl shadow-lg flex items-center justify-center gap-3 active:scale-95 transition-transform"><span class="text-2xl">🤖</span> Gegen Computer</button>
             <button onclick="window.showNamePrompt('multiplayer')" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold py-4 rounded-xl shadow-lg flex items-center justify-center gap-3 active:scale-95 transition-transform"><span class="text-2xl">🌍</span> Online gegen Freunde</button>
-            
             <button onclick="window.openAttrConfig()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 rounded-xl border border-gray-200 flex items-center justify-center gap-2 text-sm mt-2">
                 <span>⚙️</span> Spieloptionen <span id="attrCountBadge" class="bg-amber-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">5</span>
             </button>
         </div>
     </div>
-
-    <div id="mainMenuStats" class="text-center hidden mb-8">
-        </div>
-
+    <div id="mainMenuStats" class="text-center hidden mb-8"></div>
     <div class="mt-auto pt-4">
         <button onclick="document.getElementById('impressumModal').classList.remove('hidden')" class="text-white/70 text-xs font-medium hover:text-white underline transition-colors">Impressum</button>
     </div>
@@ -303,13 +266,12 @@
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, deleteDoc, collection, query, orderBy, limit, getDocs, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, deleteDoc, collection, query, orderBy, limit, getDocs, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 // === FIREBASE CONFIGURATION ===
-const apiKey = ""; // API Key 
-
+const apiKey = ""; // API Key if needed
 const firebaseConfig = {
   apiKey: "AIzaSyCyRXl8-JPr1xTXPDi1VG-eQk6fOnTpqUI",
   authDomain: "holzquartett-3a177.firebaseapp.com",
@@ -351,32 +313,40 @@ const getPublicDataRef = (coll, docId) => {
     return collection(db, 'artifacts', appId, 'public', 'data', coll);
 };
 
-// === SOUNDS (ALLE WIEDER DA) ===
+// === SOUNDS (FIXED RE-IMPLEMENTATION) ===
 const sounds = {
     flip: new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_139083c224.mp3'),
-    winRound: new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c744c8.mp3'), // Klingen
-    starWin: new Audio('https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3'), // Stern
-    loseRound: new Audio('https://cdn.pixabay.com/audio/2022/03/10/audio_941650c1f5.mp3'), // Dumpfer Plop
-    winGame: new Audio('https://github.com/aufdemholzweg/holzquartett/blob/894e048eea71ba49921abfe6827bd8dc723f8c2d/gewonnen.mp3?raw=true') // Fanfare
+    winRound: new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c744c8.mp3'),
+    starWin: new Audio('https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3'),
+    loseRound: new Audio('https://cdn.pixabay.com/audio/2022/03/10/audio_941650c1f5.mp3'),
+    winGame: new Audio('https://github.com/aufdemholzweg/holzquartett/blob/894e048eea71ba49921abfe6827bd8dc723f8c2d/gewonnen.mp3?raw=true')
 };
-// Lautstärken anpassen
+// Sound Settings
 sounds.flip.volume = 0.5;
 sounds.winRound.volume = 0.6;
 sounds.starWin.volume = 0.6;
-sounds.loseRound.volume = 0.5;
+sounds.loseRound.volume = 0.6;
 sounds.winGame.volume = 0.4;
 
-// Preload Sounds
+// Preload
 Object.values(sounds).forEach(s => { s.preload = 'auto'; s.load(); });
+
+function playSoundSecure(soundKey) {
+    if(isMuted || !sounds[soundKey]) return;
+    // Stop others
+    Object.values(sounds).forEach(s => { if(!s.paused) { s.pause(); s.currentTime = 0; } });
+    
+    sounds[soundKey].currentTime = 0;
+    sounds[soundKey].play().catch(e => console.log("Audio Error", e));
+}
 
 // Global Vars
 let gameMode=null, gameId=null, localPlayerId=null, unsubscribeGame=null, localGameState={}, hasCopiedShareLink=false;
-let isMuted=false;
+let isMuted=false; // Default off
 let roundSoundPlayed=false;
 let lastRoundWinningWoodName = null;
 let aiGame={playerName:'',playerCards:[],aiCards:[],currentPlayerCard:null,currentAiCard:null,roundInProgress:false,turn:'player'};
 let quizActive = false, quizTimer = null;
-
 let activeAttributeKeys = ['dk', 'haerte', 'quellenSchwindenRadial', 'dichte', 'gewicht'];
 
 // === DATA ===
@@ -455,17 +425,6 @@ const specialQuestions = [
     { q: "Was ist der Hauptbestandteil von Holz?", a: "Zellulose", w: ["Kalk", "Metall", "Stickstoff"] }
 ];
 
-function playSoundSecure(soundKey) {
-    if(!isMuted && sounds[soundKey]) {
-        // Stop all others
-        Object.values(sounds).forEach(s => {
-            if(!s.paused) { s.pause(); s.currentTime = 0; }
-        });
-        sounds[soundKey].currentTime = 0;
-        sounds[soundKey].play().catch(e => console.log(e));
-    }
-}
-
 function shuffleArray(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
 
 // === AI FUNCTION ===
@@ -502,6 +461,19 @@ function triggerConfetti() {
      confetti({ particleCount: 7, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#d97706', '#fbbf24', '#ffffff'] });
      if (Date.now() < end) requestAnimationFrame(frame);
  }());
+}
+
+function triggerStarAnimation() {
+    const animContainer = document.getElementById('animationContainer');
+    const star = document.createElement('div');
+    star.innerText = "⭐";
+    star.className = "falling-star";
+    star.style.left = "50%";
+    star.style.top = "40%";
+    star.style.setProperty('--end-y', '150px');
+    animContainer.appendChild(star);
+    playSoundSecure('starWin'); 
+    setTimeout(() => star.remove(), 1200);
 }
 
 // === ATTRIBUTE CONFIG FUNCTIONS ===
@@ -552,6 +524,9 @@ function updateStatusBar(p, o){
  const bar=document.getElementById('statusBar'); const ball=document.getElementById('statusBall');
  bar.style.width=`${pct}%`; ball.style.left=`${pct}%`;
 }
+
+function isOpponentNameBackVisible(){ return localStorage.getItem('holzquartett_showOpponentNameOnBack')==='true'; }
+function setOpponentNameBackVisible(v){ localStorage.setItem('holzquartett_showOpponentNameOnBack', v?'true':'false'); }
 
 function createCard(data, isRevealed, isPlayer, isActive, highlightAttr){
  const card = document.createElement('div');
@@ -620,7 +595,7 @@ function evaluateRoundAI(attr){
  
  if(pWins===true) { 
      playSoundSecure('winRound'); 
-     playSoundSecure('starWin');
+     triggerStarAnimation();
      showHappyWorm(); 
      lastRoundWinningWoodName = aiGame.currentPlayerCard.name; 
  } 
@@ -630,8 +605,10 @@ function evaluateRoundAI(attr){
  } 
  else { 
      // TIE -> STECHFRAGE
-     aiGame.playerCards.unshift(aiGame.playerCards.shift()); // put card back for quiz
+     // Put current cards aside to be won by quiz winner
+     aiGame.playerCards.unshift(aiGame.playerCards.shift()); 
      aiGame.aiCards.unshift(aiGame.aiCards.shift()); 
+     
      closeBottomSheet();
      triggerTieQuiz(); 
      return;
@@ -641,7 +618,7 @@ function evaluateRoundAI(attr){
  const pC=aiGame.playerCards.shift(); const aC=aiGame.aiCards.shift();
  if(pWins===true){ aiGame.playerCards.push(pC, aC); aiGame.turn='player'; }
  else if(pWins===false){ aiGame.aiCards.push(aC, pC); aiGame.turn='ai'; }
- else { aiGame.playerCards.push(pC); aiGame.aiCards.push(aC); } // Should not happen due to quiz
+ else { aiGame.playerCards.push(pC); aiGame.aiCards.push(aC); } 
 
  if(aiGame.playerCards.length===0) window.endGame("Computer");
  if(aiGame.aiCards.length===0) window.endGame(aiGame.playerName);
@@ -687,21 +664,23 @@ function triggerTieQuiz() {
     const bar = document.getElementById('quizTimerBar');
     bar.style.width = "100%";
     
+    // Timer Loop
     quizTimer = setInterval(() => {
         timeLeft--;
         bar.style.width = (timeLeft * 10) + "%";
         if(timeLeft <= 0) {
             clearInterval(quizTimer);
-            if(quizActive) submitQuizAnswer(null, q.a, 'ai');
+            if(quizActive) submitQuizAnswer(null, q.a, 'ai'); // Zeit um = Gegner gewinnt
         }
     }, 1000);
 
-    // AI Simulation
+    // AI Simulation (antwortet nach 3-8 Sek)
     if(gameMode === 'ai') {
         const aiTime = 3000 + Math.random() * 5000;
         setTimeout(() => {
             if(quizActive) {
-                const aiCorrect = Math.random() > 0.3; // 70% chance correct
+                // KI hat 70% Chance auf richtige Antwort
+                const aiCorrect = Math.random() > 0.3;
                 submitQuizAnswer(aiCorrect ? q.a : "Falsch", q.a, 'ai');
             }
         }, aiTime);
@@ -718,30 +697,60 @@ function submitQuizAnswer(given, correct, who) {
     let msg = "";
     
     if(who === 'player') {
-        if(given === correct) { winner = 'player'; msg = "Richtig! Karte gewonnen."; }
-        else { winner = 'ai'; msg = "Falsch! Karte verloren."; }
-    } else {
-        if(given === correct) { winner = 'ai'; msg = "Computer war schneller."; }
-        else { winner = 'player'; msg = "Computer lag falsch! Du gewinnst."; }
+        if(given === correct) {
+            winner = 'player';
+            msg = "Blitzschnell & Richtig! Du gewinnst die Karten.";
+        } else {
+            winner = 'ai';
+            msg = "Leider falsch! Die Karten gehen an den Gegner.";
+        }
+    } else { // AI
+        if(given === correct) {
+            winner = 'ai';
+            msg = "Der Computer war schneller!";
+        } else {
+            winner = 'player';
+            msg = "Der Computer lag falsch! Du gewinnst.";
+        }
     }
     
     // Resolve Tie Round manually
     const pCard = aiGame.playerCards.shift();
     const aCard = aiGame.aiCards.shift();
     
+    let title = "";
+    let color = "";
+
     if(winner === 'player') {
+        title = "Du gewinnst das Quiz!";
+        color = "text-green-600";
         aiGame.playerCards.push(pCard, aCard);
         aiGame.turn = 'player';
         playSoundSecure('winRound');
+        triggerStarAnimation();
         showHappyWorm();
     } else {
+        title = "Computer gewinnt Quiz!";
+        color = "text-red-600";
         aiGame.aiCards.push(aCard, pCard);
         aiGame.turn = 'ai';
         playSoundSecure('loseRound');
     }
     
-    openBottomSheet(winner === 'player' ? "Du gewinnst das Quiz!" : "Computer gewinnt Quiz!");
+    aiGame.currentPlayerCard = aiGame.playerCards[0] || null;
+    aiGame.currentAiCard = aiGame.aiCards[0] || null;
+
+    document.getElementById('resultText').innerText = title;
+    document.getElementById('resultText').className = `text-2xl font-black uppercase mb-1 ${color}`;
     document.getElementById('resultDetails').innerText = msg + ` (Lösung: ${correct})`;
+    
+    document.getElementById('bottomSheet').classList.remove('translate-y-full');
+    document.getElementById('bottomSheet').classList.remove('hidden');
+    document.getElementById('bottomSheetBackdrop').classList.remove('hidden');
+
+    if(aiGame.playerCards.length===0) window.endGame("Computer");
+    if(aiGame.aiCards.length===0) window.endGame(aiGame.playerName);
+
     updateDisplayAI();
 }
 
@@ -787,14 +796,14 @@ function listenToGameChanges(){
               const iWin = wId===localPlayerId;
               
               if(wId === 'tie') {
-                  // Multiplayer Tie Logic would go here (complex to sync quiz), treating as tie for now
                   lastRoundWinningWoodName = gd.currentCards[localPlayerId].name;
+                  // Multiplayer Quiz Sync is complex, keeping simple tie behavior for MP to avoid desync
               } else if (gd.currentCards[wId]) {
                   lastRoundWinningWoodName = gd.currentCards[wId].name;
               }
 
               if(!roundSoundPlayed) {
-                  if(iWin) { playSoundSecure('winRound'); playSoundSecure('starWin'); }
+                  if(iWin) { playSoundSecure('winRound'); triggerStarAnimation(); }
                   else if(wId !== 'tie') playSoundSecure('loseRound');
               }
               roundSoundPlayed=true;
