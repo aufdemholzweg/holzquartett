@@ -532,7 +532,7 @@ function toggleAttribute(key, el) {
         if(activeAttributeKeys.length <= 3) { alert("Mindestens 3 Eigenschaften müssen aktiv sein!"); return; }
         activeAttributeKeys.splice(idx, 1);
     } else {
-        if(activeAttributeKeys.length >= 5) { alert("Maximal 5 Eigenschaften dürfen aktiv sein!"); return; }
+        if(activeAttributeKeys.length >= 5) { return; } // Einfach abbrechen ohne Alert
         activeAttributeKeys.push(key);
     }
     // Re-render UI state locally without closing
@@ -967,7 +967,7 @@ window.endGame = async (winnerName) => {
     } else {
         title.innerText = "VERLOREN";
         title.className = "text-3xl font-black mb-2 text-gray-600";
-        text.innerHTML = `Schade, ${winnerName} hat gewonnen.<br>Dranbleiben lohnt sich!.<br><br>
+        text.innerHTML = `Schade, ${winnerName} hat gewonnen.<br>Dranbleiben lohnt sich!<br><br>
                           <div class="flex items-center justify-center gap-2 text-amber-600 font-bold bg-amber-50 p-2 rounded-lg">
                             <span class="text-2xl">🔥</span> ${newGamesCount} Flammen gesammelt
                           </div>
