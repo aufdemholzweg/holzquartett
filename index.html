@@ -861,3 +861,218 @@ const calculateRank = (count) => {
     if (count >= 50) return { title: "Astloch-Philosoph", stars: 5 };
     if (count >= 30) return { title: "Brett-Bezwinger", stars: 4 };
     if (count >= 20) return { title: "Hobel-Held", stars: 3 };
+    if (count >= 10) return { title: "Schleifklotz-Schwinger", stars: 2 };
+    return { title: "Werkstatt-Neuling", stars: 1 };
+};
+
+// NEW: Update Main Menu Stats
+async function updateMainMenuStats(user) {
+    if (!user) return;
+    const statsRef = doc(db, 'artifacts', appId, 'users', user.uid, 'gamification', 'stats');
+    try {
+        const snap = await getDoc(statsRef);
+        const count = snap.exists() ? (snap.data().gamesPlayed || 0) : 0;
+        const rank = calculateRank(count);
+        
+        const container = document.getElementById('mainMenuStats');
+        if(container) {
+            container.innerHTML = `
+                <div class="flex flex-col items-center gap-1">
+                    <div class="text-xs text-white/80 font-bold uppercase tracking-wider">Dein Rang</div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xl font-bold text-white drop-shadow-md">${rank.title}</span>
+                        <div class="flex text-amber-400 text-sm drop-shadow-sm">${Array(rank.stars).fill('★').join('')}</div>
+                    </div>
+                    <div class="flex items-center gap-2 mt-1">
+                        <span class="text-lg filter drop-shadow">🔥</span>
+                        <span class="font-bold text-white text-lg drop-shadow-md">${count} Spiele</span>
+                    </div>
+                </div>
+            `;
+            container.classList.remove('hidden');
+        }
+    } catch (e) {
+        console.error("Stats load error", e);
+    }
+}
+
+// Global Auth Listener for Stats
+onAuthStateChanged(auth, (user) => {
+    if (user) updateMainMenuStats(user);
+});
+
+async function updateLeaderboard(name) {
+    if (!auth.currentUser) return;
+    const ref = getPublicDataRef("leaderboard", auth.currentUser.uid);
+    try {
+        await setDoc(ref, {
+            name: name,
+            wins: increment(1),
+            last_win: serverTimestamp()
+        }, { merge: true });
+    } catch (e) {
+        console.error("Leaderboard update failed", e);
+    }
+}
+
+// New End Game Function
+window.endGame = async (winnerName) => {
+    document.getElementById('gameContainer').classList.add('hidden');
+    document.getElementById('bottomSheet').classList.add('hidden');
+    document.getElementById('bottomSheetBackdrop').classList.add('hidden');
+
+    const isWin = (winnerName === (gameMode === 'ai' ? aiGame.playerName : localGameState.players[localPlayerId].name));
+    
+    // 1. Update Stats in Firebase
+    let newGamesCount = 0;
+    let rankData = null;
+    
+    if (auth.currentUser) {
+        // Path: artifacts/{appId}/users/{uid}/gamification/stats
+        const statsRef = doc(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'gamification', 'stats');
+        try {
+            await setDoc(statsRef, {
+                gamesPlayed: increment(1),
+                lastPlayed: serverTimestamp()
+            }, { merge: true });
+            
+            // Fetch updated count for display
+            const snap = await getDoc(statsRef);
+            newGamesCount = snap.data().gamesPlayed || 0;
+            rankData = calculateRank(newGamesCount);
+        } catch (e) {
+            console.error("Stats update failed", e);
+        }
+
+        // 2. Update Leaderboard (only on win)
+        if (isWin) {
+            const playerName = gameMode === 'ai' ? aiGame.playerName : localGameState.players[localPlayerId].name;
+            await updateLeaderboard(playerName);
+        }
+    }
+
+    // 3. Update UI
+    const title = document.getElementById('gameOverTitle');
+    const text = document.getElementById('gameOverText');
+    
+    if (isWin) {
+        title.innerText = "GEWONNEN!";
+        title.className = "text-3xl font-black mb-2 text-green-600";
+        text.innerHTML = `Herzlichen Glückwunsch! Du hast gewonnen.<br><br>
+                          <div class="flex items-center justify-center gap-2 text-amber-600 font-bold bg-amber-50 p-2 rounded-lg">
+                            <span class="text-2xl">🔥</span> ${newGamesCount} Flammen gesammelt
+                          </div>
+                          <div class="mt-2 text-sm text-gray-500">${rankData ? 'Rang: ' + rankData.title : ''}</div>`;
+        triggerConfetti();
+    } else {
+        title.innerText = "VERLOREN";
+        title.className = "text-3xl font-black mb-2 text-gray-600";
+        text.innerHTML = `Schade, ${winnerName} hat gewonnen.<br>Dranbleiben lohnt sich!.<br><br>
+                          <div class="flex items-center justify-center gap-2 text-amber-600 font-bold bg-amber-50 p-2 rounded-lg">
+                            <span class="text-2xl">🔥</span> ${newGamesCount} Flammen gesammelt
+                          </div>
+                          <div class="mt-2 text-sm text-gray-500">${rankData ? 'Rang: ' + rankData.title : ''}</div>`;
+    }
+    
+    document.getElementById('gameOverModal').classList.remove('hidden');
+};
+
+window.showLeaderboard = async () => { 
+    const list=document.getElementById('leaderboardList');
+    list.innerHTML='<div class="text-center py-4 text-gray-500">Lade...</div>';
+    document.getElementById('gameOverModal').classList.add('hidden');
+    document.getElementById('leaderboardModal').classList.remove('hidden');
+    try {
+        // Updated Path: artifacts/{appId}/public/data/leaderboard
+        const q=query(getPublicDataRef("leaderboard"), orderBy("wins","desc"), limit(10));
+        const snap=await getDocs(q);
+        if(snap.empty){ list.innerHTML='<div class="text-center py-4 text-gray-400">Keine Einträge</div>'; return; }
+        list.innerHTML = snap.docs.map((d,i)=>`<div class="flex justify-between p-3 rounded-lg ${i%2===0?'bg-gray-50':'bg-white'} border border-gray-100"><span class="font-bold text-gray-700">${i+1}. ${d.data().name}</span><span class="font-bold text-amber-600">${d.data().wins} 🏆</span></div>`).join('');
+    } catch(e){ list.innerHTML='<div class="text-center text-red-400 text-sm">Fehler beim Laden</div>'; console.error(e); }
+};
+
+window.showNamePrompt = (mode) => {
+    document.getElementById('setupModal').classList.add('hidden');
+    document.getElementById('nameModal').classList.remove('hidden');
+    const btn=document.getElementById('nameSubmitButton');
+    const clone=btn.cloneNode(true);
+    btn.parentNode.replaceChild(clone,btn);
+    clone.addEventListener('click',()=>{
+        const n=document.getElementById('playerName').value.trim();
+        if(!n)return;
+        document.getElementById('nameModal').classList.add('hidden');
+        if(mode==='ai') window.startGameAI(n);
+        else if(mode==='multiplayer') window.createGame(n); 
+    });
+};
+window.copyShareLink = () => { const l=document.getElementById('shareLink'); l.select(); try { document.execCommand('copy'); } catch(e){} };
+window.showGameInfo = () => {
+    const list = document.getElementById('infoCategoryList');
+    if (!list) return;
+    let html = '';
+    for (const key in attributeInfo) {
+        const info = attributeInfo[key];
+        const isBetter = info.logic === 'Hoch gewinnt';
+        html += `<div class="p-3 rounded-xl border-2 ${isBetter ? 'border-green-400 bg-green-50' : 'border-blue-400/80 bg-blue-50/50'} mb-2">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-lg font-bold text-gray-800">${info.icon} ${info.name}</span>
+                        <span class="text-sm font-semibold ${isBetter ? 'text-green-700' : 'text-blue-700'}">${isBetter ? '⬆ Hoch' : '⬇ Niedrig'}</span>
+                    </div>
+                    <p class="text-xs text-gray-700 leading-snug">${info.description || ''}</p>
+                 </div>`;
+    }
+    list.innerHTML = html;
+    document.getElementById('gameInfoModal').classList.remove('hidden');
+}
+window.closeInfoModal = () => document.getElementById('infoModal').classList.add('hidden');
+window.closeLeaderboard = () => { document.getElementById('leaderboardModal').classList.add('hidden'); document.getElementById('gameOverModal').classList.remove('hidden'); };
+window.resetGame = () => location.reload();
+
+function closeBottomSheet(){ const bs=document.getElementById('bottomSheet'); const bd=document.getElementById('bottomSheetBackdrop'); bs.classList.add('translate-y-full'); bd.classList.add('opacity-0'); setTimeout(()=>{bs.classList.add('hidden');bd.classList.add('hidden');},300); }
+function openBottomSheet(title){ if(title)document.getElementById('resultText').innerText=title; const bs=document.getElementById('bottomSheet'); const bd=document.getElementById('bottomSheetBackdrop'); bd.classList.remove('hidden'); bs.classList.remove('hidden'); setTimeout(()=>{bd.classList.remove('opacity-0'); bs.classList.remove('translate-y-full');},10); }
+
+document.getElementById('bsNextBtn').addEventListener('click',()=> { closeBottomSheet(); window.nextRound(); });
+
+// Settings Listeners
+const soundToggle = document.getElementById('soundToggle');
+if(soundToggle) { soundToggle.checked = !isMuted; soundToggle.addEventListener('change', function() { isMuted = !this.checked; }); }
+const revealToggle = document.getElementById('revealBackToggle');
+if(revealToggle) { revealToggle.checked = isOpponentNameBackVisible(); revealToggle.addEventListener('change', function() { setOpponentNameBackVisible(this.checked); if(gameMode === 'ai' && !document.getElementById('gameContainer').classList.contains('hidden')) updateDisplayAI(); }); }
+document.getElementById('bsInfoBtn').addEventListener('click', ()=>{ 
+    const wood = lastRoundWinningWoodName || (aiGame.currentPlayerCard ? aiGame.currentPlayerCard.name : "Eiche");
+    const content = detailedWoodInfo[wood] || `<p>Keine Detailinfo zu ${wood}</p>`;
+    const modalContent = document.getElementById('infoModalContent');
+    modalContent.innerHTML = `<h4 class="font-bold text-xl mb-2">${wood}</h4>` + content;
+    
+    const cardData = woodCards.find(c=>c.name===wood);
+    if(cardData) {
+        const img1 = cardData.imgTree || 'https://placehold.co/400x300?text=Bild+fehlt';
+        const img2 = cardData.imgCross || 'https://placehold.co/400x300?text=Detail+fehlt';
+        
+        modalContent.innerHTML += `
+            <div class="grid grid-cols-2 gap-3 mt-4">
+                <div>
+                    <p class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Maserung</p>
+                    <img src="${img1}" class="w-full h-32 object-cover rounded-lg border border-gray-200 shadow-sm cursor-pointer hover:opacity-90 transition" onclick="window.open(this.src, '_blank')">
+                </div>
+                <div>
+                    <p class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Detailansicht</p>
+                    <img src="${img2}" class="w-full h-32 object-cover rounded-lg border border-gray-200 shadow-sm cursor-pointer hover:opacity-90 transition" onclick="window.open(this.src, '_blank')">
+                </div>
+            </div>`;
+    }
+    
+    document.getElementById('infoModal').classList.remove('hidden');
+});
+
+// Check URL for join (Multiplayer Deep Link)
+const p=new URLSearchParams(window.location.search);
+if(p.get('game')){ 
+    document.getElementById('setupModal').classList.add('hidden');
+    gameId=p.get('game'); 
+    window.showNamePrompt('join'); 
+}
+
+</script>
+</body>
+</html>
