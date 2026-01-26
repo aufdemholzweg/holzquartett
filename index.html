@@ -1193,7 +1193,8 @@ window.showNamePrompt = (mode) => {
         if(!n)return;
         document.getElementById('nameModal').classList.add('hidden');
         if(mode==='ai') window.startGameAI(n);
-        else if(mode==='multiplayer') window.createGame(n); 
+        else if(mode==='multiplayer') window.createGame(n);
+        else if(mode==='join') window.joinGame(gameId, n); // FIX: JOIN-MODE HINZUGEFÜGT
     });
 };
 window.copyShareLink = () => { const l=document.getElementById('shareLink'); l.select(); try { document.execCommand('copy'); } catch(e){} };
