@@ -28,10 +28,18 @@
         }
         .card-front-bg { background-color: #fffbeb; background-image: linear-gradient(to bottom right, #fffbeb, #fef3c7); }
         .hover-lift:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
+        
+        /* Status-Ball Animation */
         .animate-pulse-glow { animation: pulse-glow 2s infinite; }
         @keyframes pulse-glow { 0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); transform: translate(-50%, -50%) scale(1); } 50% { box-shadow: 0 0 15px 5px rgba(34, 197, 94, 0.4); transform: translate(-50%, -50%) scale(1.1); } 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); transform: translate(-50%, -50%) scale(1); } }
+        
+        /* Pop-In Animation für Fenster */
+        .animate-pop-in { animation: pop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes pop-in { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
         .animate-worm { animation: worm-pop-up 3.5s ease-in-out forwards; }
         @keyframes worm-pop-up { 0% { transform: translateY(100%) rotate(0deg); opacity: 0; } 20% { transform: translateY(-20%) rotate(-10deg); opacity: 1; } 40% { transform: translateY(-20%) rotate(10deg); } 50% { transform: translateY(-30%) rotate(0deg) scale(1.1); } 60% { transform: translateY(-20%) rotate(-10deg) scale(1); } 80% { transform: translateY(-20%) rotate(0deg); opacity: 1; } 100% { transform: translateY(100%) rotate(0deg); opacity: 0; } }
+        
         .opponent-back-name { position: absolute; top: 15%; width: 100%; text-align: center; color: rgba(255,255,255,0.95); font-weight: 700; font-size: 1.1rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5); pointer-events: none; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -48,7 +56,12 @@
         .attr-toggle-btn.selected { background-color: #fef3c7; border-color: #f59e0b; color: #92400e; }
         .attr-toggle-btn:not(.selected) { background-color: #f3f4f6; color: #9ca3af; border-color: transparent; }
 
-        /* Animation für den Timer-Balken - 10 SEKUNDEN */
+        /* NEUE ANIMATIONEN FÜR DEN BALKEN */
+        /* 1. Aufladen (1.5s) */
+        @keyframes chargeWidth { from { width: 0%; } to { width: 100%; } }
+        .animate-charge { animation: chargeWidth 1.5s linear forwards; }
+        
+        /* 2. Entladen (10s) */
         @keyframes shrinkWidth { from { width: 100%; } to { width: 0%; } }
         .animate-shrink { animation: shrinkWidth 10s linear forwards; }
     </style>
@@ -98,13 +111,15 @@
 </div>
 
 <div id="quizModal" class="fixed inset-0 dimmer flex items-center justify-center z-[80] p-4 hidden">
-    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-sm flex flex-col relative animate-pulse-glow">
+    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-sm flex flex-col relative animate-pop-in">
         <div class="h-2 w-full bg-gray-200">
-            <div id="quizTimerBar" class="h-full bg-red-500 w-full"></div>
+            <div id="quizTimerBar" class="h-full w-0 bg-amber-500"></div>
         </div>
         
         <div class="p-6 text-center">
-            <div class="inline-block bg-amber-100 text-amber-800 text-xs font-bold px-2 py-1 rounded-full mb-3">⚡ STECHEN! 10 Sekunden Zeit</div>
+            <div id="quizStatusText" class="inline-block bg-amber-100 text-amber-800 text-xs font-bold px-2 py-1 rounded-full mb-3">
+                ⚠️ Gleichstand! Quiz lädt...
+            </div>
             <h3 id="quizQuestion" class="text-lg font-bold text-gray-800 mb-6 leading-tight min-h-[3rem] flex items-center justify-center">
                 Frage wird geladen...
             </h3>
@@ -693,63 +708,87 @@ function startTieBreakerQuiz(qIndex, callback) {
     const timerBar = document.getElementById('quizTimerBar');
     const qText = document.getElementById('quizQuestion');
     const qOptions = document.getElementById('quizOptions');
+    const statusText = document.getElementById('quizStatusText');
     
     const question = quizQuestions[qIndex];
     
     qText.innerText = question.q;
     qOptions.innerHTML = '';
+    statusText.innerText = "⚠️ Gleichstand! Quiz lädt...";
     
-    // Timer Reset
-    timerBar.classList.remove('animate-shrink');
-    void timerBar.offsetWidth; // Trigger Reflow
-    timerBar.classList.add('animate-shrink');
+    // 1. Reset Bar (Start state)
+    timerBar.className = "h-full w-0 bg-amber-500"; 
+    timerBar.style.width = "0%";
     
-    playSound(sounds.quizTick); // Sound starten
-    
-    let answered = false;
-    
-    // Antwort-Buttons erstellen
+    // Buttons erstellen (aber deaktiviert)
+    let buttons = [];
     question.o.forEach((opt, idx) => {
         const btn = document.createElement('button');
-        btn.className = "w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 px-4 rounded-lg border-2 border-gray-200 transition active:scale-95";
+        btn.className = "w-full bg-gray-100 text-gray-400 font-semibold py-3 px-4 rounded-lg border-2 border-gray-200 cursor-not-allowed";
         btn.innerText = opt;
-        btn.onclick = () => {
-            if(answered) return;
-            answered = true;
-            clearTimeout(quizTimeout);
-            sounds.quizTick.pause(); sounds.quizTick.currentTime = 0; // Sound stop
-            
-            if(idx === question.c) {
-                // RICHTIG
-                btn.className = "w-full bg-green-500 text-white font-bold py-3 px-4 rounded-lg border-2 border-green-600 shadow-lg scale-105";
-                playSound(sounds.win);
-                setTimeout(() => {
-                    modal.classList.add('hidden');
-                    callback(true); // True = Ich habe gewonnen (richtig geantwortet)
-                }, 500);
-            } else {
-                // FALSCH
-                btn.className = "w-full bg-red-500 text-white font-bold py-3 px-4 rounded-lg border-2 border-red-600";
-                setTimeout(() => {
-                    modal.classList.add('hidden');
-                    callback(false); // False = Ich habe verloren (falsch geantwortet)
-                }, 500);
-            }
-        };
+        btn.disabled = true; 
+        buttons.push({btn, idx});
         qOptions.appendChild(btn);
     });
     
     modal.classList.remove('hidden');
     
-    // 10 Sekunden Timer Logic
-    const quizTimeout = setTimeout(() => {
-        if(!answered) {
-            answered = true;
-            sounds.quizTick.pause(); sounds.quizTick.currentTime = 0; // Sound stop
-            modal.classList.add('hidden');
-            callback(false); // Zeit abgelaufen = Verloren
-        }
-    }, 10000);
+    // 2. Start Charging Animation (1.5s)
+    // Force Reflow
+    void timerBar.offsetWidth;
+    timerBar.classList.add('animate-charge');
+    
+    // 3. Nach 1.5s: Quiz Start
+    setTimeout(() => {
+        statusText.innerText = "⚡ STECHEN! 10 Sekunden Zeit";
+        
+        // Bar auf "Voll & Rot" setzen für Entladung
+        timerBar.classList.remove('animate-charge');
+        timerBar.className = "h-full w-full bg-red-500 animate-shrink"; // Start discharging
+        
+        playSound(sounds.quizTick);
+        
+        // Buttons aktivieren
+        let answered = false;
+        buttons.forEach(obj => {
+            const {btn, idx} = obj;
+            btn.className = "w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 px-4 rounded-lg border-2 border-gray-200 transition active:scale-95 cursor-pointer";
+            btn.disabled = false;
+            
+            btn.onclick = () => {
+                if(answered) return;
+                answered = true;
+                clearTimeout(quizTimeout);
+                sounds.quizTick.pause(); sounds.quizTick.currentTime = 0;
+                
+                if(idx === question.c) {
+                    btn.className = "w-full bg-green-500 text-white font-bold py-3 px-4 rounded-lg border-2 border-green-600 shadow-lg scale-105";
+                    playSound(sounds.win);
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                        callback(true);
+                    }, 500);
+                } else {
+                    btn.className = "w-full bg-red-500 text-white font-bold py-3 px-4 rounded-lg border-2 border-red-600";
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                        callback(false);
+                    }, 500);
+                }
+            };
+        });
+        
+        // 10 Sekunden Timer (Discharging)
+        const quizTimeout = setTimeout(() => {
+            if(!answered) {
+                answered = true;
+                sounds.quizTick.pause(); sounds.quizTick.currentTime = 0;
+                modal.classList.add('hidden');
+                callback(false);
+            }
+        }, 10000);
+        
+    }, 1500);
 }
 
 function evaluateRoundAI(attr){
@@ -765,12 +804,10 @@ function evaluateRoundAI(attr){
     if(pv === av) {
         // Starte Quiz
         const qIdx = Math.floor(Math.random() * quizQuestions.length);
-        setTimeout(() => {
-            // Im Singleplayer spielt nur der Mensch
-            startTieBreakerQuiz(qIdx, (playerWon) => {
-                finishRoundAI(attr, rawPv, rawAv, playerWon ? true : false);
-            });
-        }, 1500);
+        // Direkt aufrufen, da das "Aufladen" jetzt IN der Funktion passiert
+        startTieBreakerQuiz(qIdx, (playerWon) => {
+            finishRoundAI(attr, rawPv, rawAv, playerWon ? true : false);
+        });
         return;
     }
     
@@ -1203,7 +1240,7 @@ window.showNamePrompt = (mode) => {
         document.getElementById('nameModal').classList.add('hidden');
         if(mode==='ai') window.startGameAI(n);
         else if(mode==='multiplayer') window.createGame(n);
-        else if(mode==='join') window.joinGame(gameId, n); // FIX HIER
+        else if(mode==='join') window.joinGame(gameId, n); 
     });
 };
 window.copyShareLink = () => { const l=document.getElementById('shareLink'); l.select(); try { document.execCommand('copy'); } catch(e){} };
