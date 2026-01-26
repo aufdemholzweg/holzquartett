@@ -36,10 +36,6 @@
         /* Pop-In Animation für Fenster */
         .animate-pop-in { animation: pop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         @keyframes pop-in { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        
-        /* Bounce Animation für Gleichstand */
-        .animate-bounce-slam { animation: bounce-slam 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite; }
-        @keyframes bounce-slam { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
 
         .animate-worm { animation: worm-pop-up 3.5s ease-in-out forwards; }
         @keyframes worm-pop-up { 0% { transform: translateY(100%) rotate(0deg); opacity: 0; } 20% { transform: translateY(-20%) rotate(-10deg); opacity: 1; } 40% { transform: translateY(-20%) rotate(10deg); } 50% { transform: translateY(-30%) rotate(0deg) scale(1.1); } 60% { transform: translateY(-20%) rotate(-10deg) scale(1); } 80% { transform: translateY(-20%) rotate(0deg); opacity: 1; } 100% { transform: translateY(100%) rotate(0deg); opacity: 0; } }
@@ -60,15 +56,7 @@
         .attr-toggle-btn.selected { background-color: #fef3c7; border-color: #f59e0b; color: #92400e; }
         .attr-toggle-btn:not(.selected) { background-color: #f3f4f6; color: #9ca3af; border-color: transparent; }
 
-        /* ANIMATIONEN FÜR DEN BALKEN & PUNKT */
-        
-        /* Pulsierender Punkt */
-        @keyframes pulse-dot { 
-            0%, 100% { transform: translate(50%, -50%) scale(1); } 
-            50% { transform: translate(50%, -50%) scale(1.3); } 
-        }
-        .animate-pulse-dot { animation: pulse-dot 1s infinite; }
-
+        /* NEUE ANIMATIONEN FÜR DEN BALKEN */
         /* 1. Aufladen (1.5s) */
         @keyframes chargeWidth { from { width: 0%; } to { width: 100%; } }
         .animate-charge { animation: chargeWidth 1.5s linear forwards; }
@@ -122,22 +110,10 @@
     </div>
 </div>
 
-<div id="tieOverlay" class="fixed inset-0 z-[90] flex items-center justify-center dimmer hidden">
-    <div class="bg-white/10 backdrop-blur-sm p-8 rounded-3xl animate-bounce-slam text-center">
-        <div class="text-6xl mb-2">💥</div>
-        <h2 class="text-4xl sm:text-5xl font-black text-white uppercase tracking-wider drop-shadow-[0_5px_5px_rgba(0,0,0,0.8)] border-text">
-            GLEICHSTAND!
-        </h2>
-        <p class="text-white font-bold text-lg mt-2 drop-shadow-md">Das Quiz entscheidet...</p>
-    </div>
-</div>
-
 <div id="quizModal" class="fixed inset-0 dimmer flex items-center justify-center z-[80] p-4 hidden">
-    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-sm flex flex-col relative animate-pop-in border-4 border-amber-500">
-        
-        <div class="h-4 w-full bg-gray-200 relative overflow-visible">
-            <div id="quizTimerBar" class="h-full w-0 bg-amber-500 rounded-r-sm relative"> <div class="absolute right-0 top-1/2 -translate-y-1/2 w-5 h-5 bg-white border-4 border-amber-600 rounded-full shadow-sm animate-pulse-dot z-10 transform translate-x-1/2"></div>
-            </div>
+    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-sm flex flex-col relative animate-pop-in">
+        <div class="h-2 w-full bg-gray-200">
+            <div id="quizTimerBar" class="h-full w-0 bg-amber-500"></div>
         </div>
         
         <div class="p-6 text-center">
@@ -741,14 +717,13 @@ function startTieBreakerQuiz(qIndex, callback) {
     statusText.innerText = "⚠️ Gleichstand! Quiz lädt...";
     
     // 1. Reset Bar (Start state)
-    timerBar.className = "h-full w-0 bg-amber-500 rounded-r-sm relative"; 
+    timerBar.className = "h-full w-0 bg-amber-500"; 
     timerBar.style.width = "0%";
     
     // Buttons erstellen (aber deaktiviert)
     let buttons = [];
     question.o.forEach((opt, idx) => {
         const btn = document.createElement('button');
-        // Initial state: Disabled, but maintaining border
         btn.className = "w-full bg-gray-100 text-gray-400 font-semibold py-3 px-4 rounded-lg border-2 border-gray-200 cursor-not-allowed";
         btn.innerText = opt;
         btn.disabled = true; 
@@ -769,7 +744,7 @@ function startTieBreakerQuiz(qIndex, callback) {
         
         // Bar auf "Voll & Rot" setzen für Entladung
         timerBar.classList.remove('animate-charge');
-        timerBar.className = "h-full w-full bg-red-500 rounded-r-sm relative animate-shrink"; // Start discharging
+        timerBar.className = "h-full w-full bg-red-500 animate-shrink"; // Start discharging
         
         playSound(sounds.quizTick);
         
@@ -777,7 +752,6 @@ function startTieBreakerQuiz(qIndex, callback) {
         let answered = false;
         buttons.forEach(obj => {
             const {btn, idx} = obj;
-            // Active state: Enabled, maintaining border and adding hover effects
             btn.className = "w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 px-4 rounded-lg border-2 border-gray-200 transition active:scale-95 cursor-pointer";
             btn.disabled = false;
             
@@ -817,17 +791,6 @@ function startTieBreakerQuiz(qIndex, callback) {
     }, 1500);
 }
 
-// Zeigt das "GLEICHSTAND" Overlay für 2 Sekunden
-function showTieOverlay(callback) {
-    const overlay = document.getElementById('tieOverlay');
-    overlay.classList.remove('hidden');
-    playSound(sounds.chime); // Optional: Soundeffekt für Gleichstand
-    setTimeout(() => {
-        overlay.classList.add('hidden');
-        if(callback) callback();
-    }, 2000);
-}
-
 function evaluateRoundAI(attr){
     const rawPv = aiGame.currentPlayerCard[attr];
     const rawAv = aiGame.currentAiCard[attr];
@@ -839,13 +802,11 @@ function evaluateRoundAI(attr){
     
     // STECHEN IM SINGLEPLAYER
     if(pv === av) {
-        showTieOverlay(() => {
-            // Starte Quiz NACH dem Overlay
-            const qIdx = Math.floor(Math.random() * quizQuestions.length);
-            // Direkt aufrufen, da das "Aufladen" jetzt IN der Funktion passiert
-            startTieBreakerQuiz(qIdx, (playerWon) => {
-                finishRoundAI(attr, rawPv, rawAv, playerWon ? true : false);
-            });
+        // Starte Quiz
+        const qIdx = Math.floor(Math.random() * quizQuestions.length);
+        // Direkt aufrufen, da das "Aufladen" jetzt IN der Funktion passiert
+        startTieBreakerQuiz(qIdx, (playerWon) => {
+            finishRoundAI(attr, rawPv, rawAv, playerWon ? true : false);
         });
         return;
     }
@@ -901,25 +862,23 @@ function listenToGameChanges(){
         // Wenn ein Quiz getriggert wurde und wir es noch nicht gemacht haben
         if(gd.quizTrigger && gd.quizTrigger.active && !document.getElementById('quizModal').dataset.active) {
              document.getElementById('quizModal').dataset.active = "true"; // Mark as open
-             
-             // ZEIGE ERST GLEICHSTAND OVERLAY, DANN QUIZ
-             showTieOverlay(() => {
-                 // Starte Quiz für BEIDE Spieler
-                 startTieBreakerQuiz(gd.quizTrigger.qIndex, async (iWon) => {
-                     document.getElementById('quizModal').dataset.active = ""; // Reset
-                     
-                     const opp = localGameState.playerIds.find(id=>id!==localPlayerId);
-                     const winner = iWon ? localPlayerId : opp;
-                     
-                     // Hole aktuelle Werte für Resultat
-                     const rawPv = localGameState.currentCards[localPlayerId][gd.quizTrigger.attr];
-                     const rawOv = localGameState.currentCards[opp][gd.quizTrigger.attr];
-                     
-                     // Schreibe Resultat in DB (der Schnellste gewinnt den Write)
-                     await updateDoc(getPublicDataRef("games", gameId),{
-                        quizTrigger: null, // Quiz beenden
-                        lastResult: {winnerId:winner, attribute:gd.quizTrigger.attr, values:{[localPlayerId]:rawPv, [opp]:rawOv}}
-                     });
+             // Starte Quiz für BEIDE Spieler
+             startTieBreakerQuiz(gd.quizTrigger.qIndex, async (iWon) => {
+                 document.getElementById('quizModal').dataset.active = ""; // Reset
+                 // Wenn ich gewonnen habe (richtig geklickt) -> Ich schreibe Sieg in DB
+                 // Wenn ich verloren habe (falsch geklickt) -> Ich schreibe Niederlage in DB
+                 
+                 const opp = localGameState.playerIds.find(id=>id!==localPlayerId);
+                 const winner = iWon ? localPlayerId : opp;
+                 
+                 // Hole aktuelle Werte für Resultat
+                 const rawPv = localGameState.currentCards[localPlayerId][gd.quizTrigger.attr];
+                 const rawOv = localGameState.currentCards[opp][gd.quizTrigger.attr];
+                 
+                 // Schreibe Resultat in DB (der Schnellste gewinnt den Write)
+                 await updateDoc(getPublicDataRef("games", gameId),{
+                    quizTrigger: null, // Quiz beenden
+                    lastResult: {winnerId:winner, attribute:gd.quizTrigger.attr, values:{[localPlayerId]:rawPv, [opp]:rawOv}}
                  });
              });
         }
