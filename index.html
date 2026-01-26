@@ -899,6 +899,12 @@ function listenToGameChanges(){
     unsubscribeGame=onSnapshot(getPublicDataRef("games", gameId),(ds)=>{
         if(!ds.exists()) { window.resetGame(); return; }
         const gd=ds.data(); localGameState=gd;
+
+        // --- NEW: SYNC ACTIVE ATTRIBUTES FROM HOST ---
+        if(gd.activeAttributes) {
+            activeAttributeKeys = gd.activeAttributes;
+        }
+        // ---------------------------------------------
         
         // CHECK FÜR MULTIPLAYER QUIZ
         // Wenn ein Quiz getriggert wurde und wir es noch nicht gemacht haben
@@ -1076,9 +1082,11 @@ window.createGame = async (playerName) => {
     document.getElementById('qrcode').innerHTML = "";
     new QRCode(document.getElementById('qrcode'), {text: joinUrl, width: 128, height: 128});
     
+    // --- CHANGE: SAVE activeAttributes to Firestore ---
     await setDoc(getPublicDataRef("games", gameId),{
         gameId, status:'waiting', playerIds:[localPlayerId],
         players:{[localPlayerId]:{name:playerName,cards:[],status:'online'}},
+        activeAttributes: activeAttributeKeys, // SAVE CONFIG HERE
         createdAt:serverTimestamp()
     });
     listenToGameChanges();
