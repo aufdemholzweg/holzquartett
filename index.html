@@ -487,7 +487,8 @@ const sounds={
  win:new Audio('https://github.com/aufdemholzweg/holzquartett/blob/894e048eea71ba49921abfe6827bd8dc723f8c2d/gewonnen.mp3?raw=true'),
  chime:new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c744c8.mp3'),
  starWin:new Audio('https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3'),
- quizTick: new Audio('https://github.com/aufdemholzweg/holzquartett/blob/126b00ae749a371741a460d73cdb0f730d94bc81/Sounds/ticken_bei_quizfrage.mp3?raw=true')
+ tieAlert: new Audio('https://github.com/aufdemholzweg/holzquartett/blob/main/Sounds/Quiztime.mp3?raw=true'),
+ quizTick: new Audio('https://github.com/aufdemholzweg/holzquartett/blob/main/Sounds/ticken_bei_quizfrage.mp3?raw=true')
 };
 function playSound(a){ if(!isMuted && a){ a.currentTime=0; a.play().catch(()=>{}); } }
 
@@ -824,7 +825,7 @@ function startTieBreakerQuiz(qIndex, callback) {
 function showTieOverlay(callback) {
     const overlay = document.getElementById('tieOverlay');
     overlay.classList.remove('hidden');
-    playSound(sounds.chime); // Optional: Soundeffekt für Gleichstand
+    playSound(sounds.tieAlert); // Changed from chime
     setTimeout(() => {
         overlay.classList.add('hidden');
         if(callback) callback();
