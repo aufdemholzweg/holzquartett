@@ -12,6 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     
     <style>
+        /* HIER WERDEN FARBEN UND ANIMATIONEN DEFINIERT */
         body { font-family: 'Inter', sans-serif; background-color: #fdfbf7; touch-action: manipulation; overflow-x: hidden; min-height: 100dvh; }
         .perspective-1000 { perspective: 1000px; }
         .card-3d { transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -226,8 +227,7 @@
         </div>
     </div>
 
-    <div id="mainMenuStats" class="text-center hidden mb-8">
-        </div>
+    <div id="mainMenuStats" class="text-center hidden mb-8"></div>
 
     <div class="mt-auto pt-4">
         <button onclick="document.getElementById('impressumModal').classList.remove('hidden')" class="text-white/70 text-xs font-medium hover:text-white underline transition-colors">Impressum</button>
@@ -284,11 +284,12 @@
 </div>
 
 <script type="module">
+// 3. DATENBANK-VERBINDUNG (FIREBASE)
+// HIER NICHTS ÄNDERN, DAMIT DAS ONLINE-SPIEL FUNKTIONIERT
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, deleteDoc, collection, query, orderBy, limit, getDocs, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-// === FIREBASE CONFIGURATION (FIXED FOR GITHUB DEPLOYMENT) ===
 const firebaseConfig = {
   apiKey: "AIzaSyCyRXl8-JPr1xTXPDi1VG-eQk6fOnTpqUI",
   authDomain: "holzquartett-3a177.firebaseapp.com",
@@ -376,6 +377,8 @@ let aiGame={playerName:'',playerCards:[],aiCards:[],currentPlayerCard:null,curre
 
 let activeAttributeKeys = ['dk', 'druckfestigkeit', 'quellen', 'rohdichte', 'emodul'];
 
+// 4. SPIEL-KATEGORIEN (ATTRIBUTE)
+// HIER LEGST DU FEST, WELCHE EIGENSCHAFTEN (Z.B. PREIS) ES GIBT UND WER GEWINNT (HOCH/NIEDRIG)
 const attributeInfo={
  dk:{
      icon:'🛡️',
@@ -438,7 +441,10 @@ function playSound(a){ if(!isMuted && a){ a.currentTime=0; a.play().catch(()=>{}
 function isOpponentNameBackVisible(){ return localStorage.getItem('holzquartett_showOpponentNameOnBack')==='true'; }
 function setOpponentNameBackVisible(v){ localStorage.setItem('holzquartett_showOpponentNameOnBack', v?'true':'false'); }
 
-const IMG_BASE = "https://github.com/aufdemholzweg/holzquartett/blob/326bdfd40ff4d97de5c70dc584fe767aba056135/images";
+// 5. DIE SPIELKARTEN (DATENBANK)
+// HIER KANNST DU HOLZARTEN, WERTE UND BILDER HINZUFÜGEN ODER ÄNDERN
+// WICHTIG: BEI 'DK' WERTE WIE "1-2" IN ANFÜHRUNGSZEICHEN SETZEN!
+const IMG_BASE = "https://github.com/aufdemholzweg/holzquartett/blob/b99750068a9e30c4926fdc02aa37af15a763dbc2/images";
 const IMG_SUFFIX = "?raw=true";
 
 const woodCards=[
@@ -476,6 +482,8 @@ const woodCards=[
  {name:"Ahorn", dk:5, druckfestigkeit:62, quellen:11.5, rohdichte:630, emodul:9400, preis:950, imgTree:`${IMG_BASE}/ahorn_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/ahorn_2.jpeg${IMG_SUFFIX}`}
 ];
 
+// 6. ZUSATZWISSEN UND FRAGEN
+// HIER KANNST DU DIE TEXTE FÜR DIE WISSENSKARTE UND DIE FRAGEN AM ENDE ÄNDERN
 const detailedWoodInfo = {
     "Erle": `<p class="mb-2">Rötlich-weißes Holz, das an der Luft schnell nachdunkelt. Weich, aber zäh. Unter Wasser extrem dauerhaft (Venedig-Pfähle).</p><p class="mb-2"><strong>Verwendung:</strong> Möbel, Drechslerei, Modellbau, Blindholz, Wasserbau (historisch).</p>`,
     "Eiche": `<p class="mb-2">Der Klassiker im deutschen Möbelbau. Hart, schwer und sehr witterungsbeständig.</p><p class="mb-2"><strong>Verwendung:</strong> Massivholzmöbel, Parkett, Fenster, Fässer.</p>`,
@@ -505,7 +513,8 @@ function triggerConfetti() {
     }());
 }
 
-// === ATTRIBUTE CONFIG FUNCTIONS ===
+// 7. SPIEL-LOGIK UND STEUERUNG
+// HIER PASSIERT DAS EIGENTLICHE SPIEL (NICHT ÄNDERN, WENN DU DICH NICHT AUSKENNST)
 window.openAttrConfig = () => {
     const list = document.getElementById('attrConfigList');
     list.innerHTML = '';
@@ -544,18 +553,14 @@ function toggleAttribute(key, el) {
         if(activeAttributeKeys.length >= 5) { return; } // Einfach abbrechen ohne Alert
         activeAttributeKeys.push(key);
     }
-    // Re-render UI state locally without closing
     const isSelected = activeAttributeKeys.includes(key);
     el.className = `attr-toggle-btn w-full p-3 rounded-lg flex items-center justify-between cursor-pointer ${isSelected ? 'selected' : ''}`;
     el.querySelector('.w-6').className = `w-6 h-6 rounded-full border-2 flex items-center justify-center ${isSelected ? 'border-amber-500 bg-amber-500 text-white' : 'border-gray-300 bg-white'}`;
     el.querySelector('.w-6').innerHTML = isSelected ? '✓' : '';
     
-    // Update badge on start screen
     document.getElementById('attrCountBadge').innerText = activeAttributeKeys.length;
 }
 
-
-// === CORE UI FUNCTIONS ===
 function updateStatusBar(p, o){
     const total=p+o; const pct=(total===0)?50:(p/total)*100;
     const bar=document.getElementById('statusBar'); const ball=document.getElementById('statusBall');
@@ -579,7 +584,6 @@ function createCard(data, isRevealed, isPlayer, isActive, highlightAttr){
                 </div>
                 <div class="flex-grow flex flex-col justify-start gap-1 sm:gap-2 px-2 pb-2 overflow-y-auto hide-scrollbar">`;
     
-    // ITERATE ONLY OVER ACTIVE ATTRIBUTES
     for(const k of activeAttributeKeys){
         const info = attributeInfo[k];
         let flashClass = '';
@@ -601,7 +605,6 @@ function createCard(data, isRevealed, isPlayer, isActive, highlightAttr){
     return card;
 }
 
-// AI Function: updateDisplayAI (Restored)
 function updateDisplayAI(){
     const pc=aiGame.playerCards.length; const ac=aiGame.aiCards.length;
     document.getElementById('playerCards').innerText=pc; document.getElementById('aiCards').innerText=ac;
@@ -616,21 +619,17 @@ function updateDisplayAI(){
     if(aiGame.turn==='ai' && !aiGame.roundInProgress) setTimeout(aiTurn, 1000);
 }
 
-// HELPER FUNCTION: Handle "1-2" -> 1.5 logic
+// HILFSFUNKTION: BERECHNET DEN WERT BEI BEREICHEN (Z.B. "1-2" -> 1.5)
 function getNumericValue(val, attr) {
-    // Only apply special logic for 'dk' (Dauerhaftigkeitsklasse)
     if (attr === 'dk') {
-        // If it's a string containing "-", calculate average
         if (typeof val === 'string' && val.includes('-')) {
             const parts = val.split('-');
             const v1 = parseFloat(parts[0]);
             const v2 = parseFloat(parts[1]);
             return (v1 + v2) / 2;
         }
-        // If strict number or string number
         return parseFloat(val);
     }
-    // For all other attributes, just return the number
     return parseFloat(val);
 }
 
@@ -668,8 +667,7 @@ function evaluateRoundAI(attr){
 
 function aiTurn(){
     if(aiGame.roundInProgress) return;
-    scrollToTop(); // <--- SCROLL TO TOP BEFORE AI MOVE
-    // Choose random attribute from ACTIVE keys
+    scrollToTop(); // HOCHSCROLLEN VOR COMPUTERZUG
     const k=activeAttributeKeys[Math.floor(Math.random()*activeAttributeKeys.length)];
     aiGame.roundInProgress = true;
     const aiCardEl = document.getElementById('aiCard');
@@ -685,17 +683,15 @@ function aiTurn(){
     }, 500);
 }
 
-// Multiplayer Functions - RESTORED
 function listenToGameChanges(){
     if(!gameId) return;
-    // Updated Path: artifacts/{appId}/public/data/games/{gameId}
     unsubscribeGame=onSnapshot(getPublicDataRef("games", gameId),(ds)=>{
         if(!ds.exists()) { window.resetGame(); return; }
         const gd=ds.data(); localGameState=gd;
         if(gd.status==='playing'||gd.status==='finished'){
             document.getElementById('multiplayerLobbyModal').classList.add('hidden');
             document.getElementById('gameContainer').classList.remove('hidden');
-            scrollToTop(); // Scroll to top on game update
+            scrollToTop(); // HOCHSCROLLEN BEI NEUEM ZUG
             
             const oppId=gd.playerIds.find(id=>id!==localPlayerId);
             document.getElementById('playerNameDisplay').innerText = gd.players[localPlayerId]?.name || 'DU';
@@ -755,11 +751,10 @@ function listenToGameChanges(){
     });
 }
 
-// Window Exports
 window.selectAttribute = async (attr) => {
     if(gameMode==='ai') {
         if(aiGame.roundInProgress) return;
-        scrollToTop(); // <--- SCROLL TO TOP ON PLAYER CLICK
+        scrollToTop(); // HOCHSCROLLEN BEI KLICK
         aiGame.roundInProgress = true;
         const btn = document.querySelector(`div[data-attr-btn="${attr}"]`); if(btn) btn.classList.add('flash-active');
         setTimeout(() => {
@@ -771,7 +766,7 @@ window.selectAttribute = async (attr) => {
         }, 500);
     } else {
         if(!localGameState || localGameState.turn!==localPlayerId) return;
-        scrollToTop(); // <--- SCROLL TO TOP ON MULTIPLAYER CLICK
+        scrollToTop(); // HOCHSCROLLEN BEI KLICK (MULTIPLAYER)
         const opp = localGameState.playerIds.find(id=>id!==localPlayerId);
         
         const rawPv = localGameState.currentCards[localPlayerId][attr];
@@ -800,7 +795,7 @@ window.startGameAI = (name) => {
     aiGame.playerCards=sh.slice(0,15); aiGame.aiCards=sh.slice(15,30);
     aiGame.currentPlayerCard=aiGame.playerCards[0]; aiGame.currentAiCard=aiGame.aiCards[0];
     document.getElementById('gameContainer').classList.remove('hidden');
-    scrollToTop(); // Scroll to top when game starts
+    scrollToTop(); // HOCHSCROLLEN BEI START
     updateDisplayAI();
 };
 
@@ -849,7 +844,7 @@ window.joinGame = async (id, playerName) => {
             turn:p1, currentCards:{[p1]:sh.slice(0,15)[0],[localPlayerId]:sh.slice(15,30)[0]},
             lastResult:null
         });
-        scrollToTop(); // Scroll to top when joining
+        scrollToTop(); // HOCHSCROLLEN BEI BEITRITT
         window.setNavState('game');
         listenToGameChanges();
     } else {
@@ -859,7 +854,7 @@ window.joinGame = async (id, playerName) => {
 };
 
 window.nextRound = async () => {
-    scrollToTop(); // Scroll to top for next round
+    scrollToTop(); // HOCHSCROLLEN BEI NÄCHSTER RUNDE
     if(gameMode==='ai'){
         aiGame.currentPlayerCard=aiGame.playerCards[0];
         aiGame.currentAiCard=aiGame.aiCards[0];
@@ -890,12 +885,8 @@ window.nextRound = async () => {
 
 window.showFinalWinScreen = () => {
     document.getElementById('reflectionModal').classList.add('hidden');
-    // NOTE: This call is now redundant as endGame handles display, 
-    // but kept as transition for Reflection Modal 'Weiter' button
-    // It should ideally call window.endGame directly with stored winner name if needed
 };
 
-// === GAMIFICATION LOGIC ===
 const calculateRank = (count) => {
     if (count >= 100) return { title: "Leim-Legende", stars: 6 };
     if (count >= 50) return { title: "Astloch-Philosoph", stars: 5 };
@@ -905,7 +896,6 @@ const calculateRank = (count) => {
     return { title: "Werkstatt-Neuling", stars: 1 };
 };
 
-// NEW: Update Main Menu Stats
 async function updateMainMenuStats(user) {
     if (!user) return;
     const statsRef = doc(db, 'artifacts', appId, 'users', user.uid, 'gamification', 'stats');
@@ -936,7 +926,6 @@ async function updateMainMenuStats(user) {
     }
 }
 
-// Global Auth Listener for Stats
 onAuthStateChanged(auth, (user) => {
     if (user) updateMainMenuStats(user);
 });
@@ -955,7 +944,6 @@ async function updateLeaderboard(name) {
     }
 }
 
-// New End Game Function
 window.endGame = async (winnerName) => {
     document.getElementById('gameContainer').classList.add('hidden');
     document.getElementById('bottomSheet').classList.add('hidden');
@@ -963,12 +951,10 @@ window.endGame = async (winnerName) => {
 
     const isWin = (winnerName === (gameMode === 'ai' ? aiGame.playerName : localGameState.players[localPlayerId].name));
     
-    // 1. Update Stats in Firebase
     let newGamesCount = 0;
     let rankData = null;
     
     if (auth.currentUser) {
-        // Path: artifacts/{appId}/users/{uid}/gamification/stats
         const statsRef = doc(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'gamification', 'stats');
         try {
             await setDoc(statsRef, {
@@ -976,7 +962,6 @@ window.endGame = async (winnerName) => {
                 lastPlayed: serverTimestamp()
             }, { merge: true });
             
-            // Fetch updated count for display
             const snap = await getDoc(statsRef);
             newGamesCount = snap.data().gamesPlayed || 0;
             rankData = calculateRank(newGamesCount);
@@ -984,14 +969,12 @@ window.endGame = async (winnerName) => {
             console.error("Stats update failed", e);
         }
 
-        // 2. Update Leaderboard (only on win)
         if (isWin) {
             const playerName = gameMode === 'ai' ? aiGame.playerName : localGameState.players[localPlayerId].name;
             await updateLeaderboard(playerName);
         }
     }
 
-    // 3. Update UI
     const title = document.getElementById('gameOverTitle');
     const text = document.getElementById('gameOverText');
     
@@ -1023,7 +1006,6 @@ window.showLeaderboard = async () => {
     document.getElementById('gameOverModal').classList.add('hidden');
     document.getElementById('leaderboardModal').classList.remove('hidden');
     try {
-        // Updated Path: artifacts/{appId}/public/data/leaderboard
         const q=query(getPublicDataRef("leaderboard"), orderBy("wins","desc"), limit(10));
         const snap=await getDocs(q);
         if(snap.empty){ list.innerHTML='<div class="text-center py-4 text-gray-400">Keine Einträge</div>'; return; }
@@ -1105,7 +1087,6 @@ document.getElementById('bsInfoBtn').addEventListener('click', ()=>{
     document.getElementById('infoModal').classList.remove('hidden');
 });
 
-// Check URL for join (Multiplayer Deep Link)
 const p=new URLSearchParams(window.location.search);
 if(p.get('game')){ 
     document.getElementById('setupModal').classList.add('hidden');
