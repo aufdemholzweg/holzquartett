@@ -145,7 +145,7 @@
         
         <div class="p-6 text-center">
             <div id="quizStatusText" class="inline-block bg-amber-100 text-amber-800 text-xs font-bold px-2 py-1 rounded-full mb-3">
-                💥 Gleichstand! Quiz lädt...
+                ⚠️ Gleichstand! Quiz lädt...
             </div>
             <h3 id="quizQuestion" class="text-lg font-bold text-gray-800 mb-6 leading-tight min-h-[3rem] flex items-center justify-center">
                 Frage wird geladen...
@@ -206,28 +206,34 @@
         <div class="p-6 overflow-y-auto text-sm text-gray-700 space-y-4">
             <div>
                 <h4 class="font-bold text-gray-900 mb-1">Angaben gemäß § 5 TMG</h4>
-                <p>Christopher Lehr<br>Musterstraße 1<br>12345 Musterstadt</p>
+                <p>Christopher Lehr<br>Waterloostraße 49<br>28201 Bremen</p>
             </div>
             <div>
                 <h4 class="font-bold text-gray-900 mb-1">Kontakt</h4>
-                <p>E-Mail: muster@student.uni-bremen.de</p>
+                <p>E-Mail: christopher_lehr@web.de</p>
             </div>
             <div>
                 <h4 class="font-bold text-gray-900 mb-1">Kontext</h4>
-                <p>Dieses Lernspiel entstand im Rahmen einer Masterarbeit im Studiengang Lehramt an Berufsschulen (Holztechnik) an der Universität Bremen.</p>
+                <p>Dieses interaktive Lernspiel entstand im Rahmen meiner Masterarbeit des Studiengang Lehramt an Berufsbildenden Schulen, Fachrichtung Holztechnik an der Leibnizuniversität Hannover. Es dient ausschließlich nicht-kommerziellen Bildungs- und Forschungszwecken.</p>
             </div>
             <div>
-                <h4 class="font-bold text-gray-900 mb-1">Bildnachweise</h4>
-                <p class="text-xs text-gray-500 mb-2">Die verwendeten Grafiken und Soundeffekte wurden von folgenden Webseiten entnommen:</p>
+                <h4 class="font-bold text-gray-900 mb-1">Haftung für Inhalte</h4>
+                <p class="mb-2">Die Inhalte dieser Web-App wurden mit größter Sorgfalt und nach bestem Wissen und Gewissen erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte kann jedoch keine Gewähr übernommen werden.</p>
+                <p class="mb-2"><strong>Hinweise zu fachlichen Daten:</strong> Die im Spiel verwendeten Daten (z. B. Rohdichte, E-Modul, Preise) dienen primär der Spielmechanik und der didaktischen Vereinfachung. Sie stellen Durchschnittswerte oder Richtwerte dar.</p>
+            </div>
+            <div>
+                <h4 class="font-bold text-gray-900 mb-1">Haftung für Links</h4>
+                <p>Diese Webseite enthält Links zu externen Webseiten Dritter (z. B. GitHub), auf deren Inhalte wir keinen Einfluss haben. Deshalb können wir für diese fremden Inhalte auch keine Gewähr übernehmen. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber der Seiten verantwortlich.</p>
+            </div>
+            <div>
+                <h4 class="font-bold text-gray-900 mb-1">Urheberrecht & Bildnachweise</h4>
+                <p class="mb-2">Die durch den Betreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers.</p>
+                <p class="text-xs text-gray-500 mb-1">Verwendete Bild- und Tonquellen:</p>
                 <ul class="list-disc pl-4 text-xs text-gray-600 space-y-1">
-                    <li><strong>Quelle 1:</strong> https://holzvomfach.de/</li>
-                    <li><strong>Quelle 2:</strong> https://www.schreiner-seiten.de/index.php</li>
-                    <li><strong>Soundeffekte:</strong> https://pixabay.com/de/</li>
+                    <li><strong>Holzbilder:</strong> <a href="https://holzvomfach.de/" target="_blank" class="underline text-blue-600">holzvomfach.de</a> und <a href="https://www.schreiner-seiten.de/index.php" target="_blank" class="underline text-blue-600">schreiner-seiten.de</a></li>
+                    <li><strong>Icons/Grafiken:</strong> <a href="https://www.whatsapp.com/" target="_blank" class="underline text-blue-600">WhatsApp</a></li>
+                    <li><strong>Sounds:</strong> <a href="https://pixabay.com/de/" target="_blank" class="underline text-blue-600">Pixabay</a></li>
                 </ul>
-            </div>
-            <div>
-                <h4 class="font-bold text-gray-900 mb-1">Haftungsausschluss</h4>
-                <p class="text-xs text-gray-500">Die Inhalte dieses Spiels wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte kann ich jedoch kein Gewähr übernehmen.</p>
             </div>
         </div>
     </div>
@@ -487,8 +493,8 @@ const sounds={
  win:new Audio('https://github.com/aufdemholzweg/holzquartett/blob/894e048eea71ba49921abfe6827bd8dc723f8c2d/gewonnen.mp3?raw=true'),
  chime:new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c744c8.mp3'),
  starWin:new Audio('https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3'),
- tieAlert: new Audio('https://github.com/aufdemholzweg/holzquartett/blob/main/Sounds/Quiztime.mp3?raw=true'),
- quizTick: new Audio('https://github.com/aufdemholzweg/holzquartett/blob/main/Sounds/ticken_bei_quizfrage.mp3?raw=true')
+ quizTick: new Audio('https://github.com/aufdemholzweg/holzquartett/blob/126b00ae749a371741a460d73cdb0f730d94bc81/Sounds/ticken_bei_quizfrage.mp3?raw=true'),
+ tieAlert: new Audio('https://github.com/aufdemholzweg/holzquartett/blob/main/Sounds/Quiztime.mp3?raw=true')
 };
 function playSound(a){ if(!isMuted && a){ a.currentTime=0; a.play().catch(()=>{}); } }
 
