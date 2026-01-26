@@ -139,7 +139,7 @@
         </div>
         <div class="p-5 overflow-y-auto hide-scrollbar space-y-5">
             <h4 class="font-bold text-gray-700 text-md">Regeln (Quartett-Prinzip)</h4>
-            <p class="text-sm text-gray-600 leading-relaxed">Die aktive Person wählt auf ihrer Karte die Eigenschaft, die den größtmöglichen Vorteil verspricht. Je nach Kategorie zählt der höchste oder der niedrigste Wert (siehe die Beschreibung der Eigenschaften).<br><br><strong>NEU: Das Stechen</strong><br>Haben beide Karten den gleichen Wert, startet ein Blitz-Quiz! Wer die Fachfrage in 8 Sekunden richtig beantwortet, gewinnt die Karte. Ist die Antwort falsch oder die Zeit um, gewinnt der Gegner.</p>
+            <p class="text-sm text-gray-600 leading-relaxed">Die aktive Person wählt auf ihrer Karte die Eigenschaft, die den größtmöglichen Vorteil verspricht. Je nach Kategorie zählt der höchste oder der niedrigste Wert (siehe die Beschreibung der Eigenschaften).<br><br><strong>NEU: Das Stechen</strong><br>Haben beide Karten den gleichen Wert, startet für BEIDE Spieler ein Blitz-Quiz! Wer die Fachfrage in 8 Sekunden am schnellsten richtig beantwortet, gewinnt die Karte. Ist die Antwort falsch oder die Zeit um, gewinnt der Gegner.</p>
             <div id="infoCategoryList" class="space-y-3 pt-3"></div>
         </div>
     </div>
@@ -451,7 +451,7 @@ function playSound(a){ if(!isMuted && a){ a.currentTime=0; a.play().catch(()=>{}
 function isOpponentNameBackVisible(){ return localStorage.getItem('holzquartett_showOpponentNameOnBack')==='true'; }
 function setOpponentNameBackVisible(v){ localStorage.setItem('holzquartett_showOpponentNameOnBack', v?'true':'false'); }
 
-const IMG_BASE = "https://github.com/aufdemholzweg/holzquartett/blob/326bdfd40ff4d97de5c70dc584fe767aba056135/images";
+const IMG_BASE = "https://github.com/aufdemholzweg/holzquartett/blob/b99750068a9e30c4926fdc02aa37af15a763dbc2/images";
 const IMG_SUFFIX = "?raw=true";
 
 // 6. KARTEN DATEN
@@ -685,16 +685,15 @@ function getNumericValue(val, attr) {
     return parseFloat(val);
 }
 
-// 8. NEUE FUNKTION: DAS QUIZ STARTEN
+// 8. NEUE FUNKTION: DAS QUIZ STARTEN (FÜR BEIDE SPIELER)
 let quizTimerInterval;
-function startTieBreakerQuiz(callback) {
+function startTieBreakerQuiz(qIndex, callback) {
     const modal = document.getElementById('quizModal');
     const timerBar = document.getElementById('quizTimerBar');
     const qText = document.getElementById('quizQuestion');
     const qOptions = document.getElementById('quizOptions');
     
-    // Zufallsfrage wählen
-    const question = quizQuestions[Math.floor(Math.random() * quizQuestions.length)];
+    const question = quizQuestions[qIndex];
     
     qText.innerText = question.q;
     qOptions.innerHTML = '';
@@ -722,15 +721,15 @@ function startTieBreakerQuiz(callback) {
                 playSound(sounds.win);
                 setTimeout(() => {
                     modal.classList.add('hidden');
-                    callback(true); // True = Spieler hat gewonnen
-                }, 1000);
+                    callback(true); // True = Ich habe gewonnen (richtig geantwortet)
+                }, 500);
             } else {
                 // FALSCH
                 btn.className = "w-full bg-red-500 text-white font-bold py-3 px-4 rounded-lg border-2 border-red-600";
                 setTimeout(() => {
                     modal.classList.add('hidden');
-                    callback(false); // False = Spieler hat verloren
-                }, 1000);
+                    callback(false); // False = Ich habe verloren (falsch geantwortet)
+                }, 500);
             }
         };
         qOptions.appendChild(btn);
@@ -760,8 +759,10 @@ function evaluateRoundAI(attr){
     // STECHEN IM SINGLEPLAYER
     if(pv === av) {
         // Starte Quiz
+        const qIdx = Math.floor(Math.random() * quizQuestions.length);
         setTimeout(() => {
-            startTieBreakerQuiz((playerWon) => {
+            // Im Singleplayer spielt nur der Mensch
+            startTieBreakerQuiz(qIdx, (playerWon) => {
                 finishRoundAI(attr, rawPv, rawAv, playerWon ? true : false);
             });
         }, 1000);
@@ -814,10 +815,42 @@ function listenToGameChanges(){
     unsubscribeGame=onSnapshot(getPublicDataRef("games", gameId),(ds)=>{
         if(!ds.exists()) { window.resetGame(); return; }
         const gd=ds.data(); localGameState=gd;
+        
+        // CHECK FÜR MULTIPLAYER QUIZ
+        // Wenn ein Quiz getriggert wurde und wir es noch nicht gemacht haben
+        if(gd.quizTrigger && gd.quizTrigger.active && !document.getElementById('quizModal').dataset.active) {
+             document.getElementById('quizModal').dataset.active = "true"; // Mark as open
+             // Starte Quiz für BEIDE Spieler
+             startTieBreakerQuiz(gd.quizTrigger.qIndex, async (iWon) => {
+                 document.getElementById('quizModal').dataset.active = ""; // Reset
+                 // Wenn ich gewonnen habe (richtig geklickt) -> Ich schreibe Sieg in DB
+                 // Wenn ich verloren habe (falsch geklickt) -> Ich schreibe Niederlage in DB
+                 
+                 const opp = localGameState.playerIds.find(id=>id!==localPlayerId);
+                 const winner = iWon ? localPlayerId : opp;
+                 
+                 // Hole aktuelle Werte für Resultat
+                 const rawPv = localGameState.currentCards[localPlayerId][gd.quizTrigger.attr];
+                 const rawOv = localGameState.currentCards[opp][gd.quizTrigger.attr];
+                 
+                 // Schreibe Resultat in DB (der Schnellste gewinnt den Write)
+                 await updateDoc(getPublicDataRef("games", gameId),{
+                    quizTrigger: null, // Quiz beenden
+                    lastResult: {winnerId:winner, attribute:gd.quizTrigger.attr, values:{[localPlayerId]:rawPv, [opp]:rawOv}}
+                 });
+             });
+        }
+        
+        // Wenn das Quiz vorbei ist (durch DB Update), Fenster schließen falls noch offen
+        if((!gd.quizTrigger || !gd.quizTrigger.active) && document.getElementById('quizModal').classList.contains('hidden') === false) {
+             document.getElementById('quizModal').classList.add('hidden');
+             document.getElementById('quizModal').dataset.active = "";
+        }
+
         if(gd.status==='playing'||gd.status==='finished'){
             document.getElementById('multiplayerLobbyModal').classList.add('hidden');
             document.getElementById('gameContainer').classList.remove('hidden');
-            scrollToTop();
+            if(!gd.quizTrigger) scrollToTop(); // Nur scrollen wenn kein Quiz läuft
             
             const oppId=gd.playerIds.find(id=>id!==localPlayerId);
             document.getElementById('playerNameDisplay').innerText = gd.players[localPlayerId]?.name || 'DU';
@@ -849,11 +882,7 @@ function listenToGameChanges(){
                  const wId = gd.lastResult.winnerId;
                  const iWin = wId===localPlayerId;
                  
-                 if(wId === 'tie') {
-                     // Hier wird eigentlich nie 'tie' ankommen, da das Quiz das vorher löst
-                     // Falls doch (altes Spiel), fallback:
-                     lastRoundWinningWoodName = gd.currentCards[localPlayerId].name;
-                 } else if (gd.currentCards[wId]) {
+                 if(gd.currentCards[wId]) {
                      lastRoundWinningWoodName = gd.currentCards[wId].name;
                  }
 
@@ -907,14 +936,15 @@ window.selectAttribute = async (attr) => {
         
         // STECHEN IM MULTIPLAYER
         if(pv === ov) {
-            // Starte Quiz lokal für den aktiven Spieler
-            startTieBreakerQuiz(async (quizSuccess) => {
-                // Wenn Quiz gewonnen -> Ich gewinne die Runde
-                // Wenn Quiz verloren -> Gegner gewinnt die Runde
-                const winner = quizSuccess ? localPlayerId : opp;
-                await updateDoc(getPublicDataRef("games", gameId),{
-                    lastResult: {winnerId:winner, attribute:attr, values:{[localPlayerId]:rawPv, [opp]:rawOv}}
-                });
+            // Starte Quiz für BEIDE Spieler durch Datenbank-Eintrag
+            const qIdx = Math.floor(Math.random() * quizQuestions.length);
+            await updateDoc(getPublicDataRef("games", gameId),{
+                quizTrigger: {
+                    active: true,
+                    attr: attr,
+                    qIndex: qIdx,
+                    timestamp: Date.now() // Erzwingt Update
+                }
             });
             return; 
         }
