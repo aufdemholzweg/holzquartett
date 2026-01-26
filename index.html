@@ -438,7 +438,7 @@ function playSound(a){ if(!isMuted && a){ a.currentTime=0; a.play().catch(()=>{}
 function isOpponentNameBackVisible(){ return localStorage.getItem('holzquartett_showOpponentNameOnBack')==='true'; }
 function setOpponentNameBackVisible(v){ localStorage.setItem('holzquartett_showOpponentNameOnBack', v?'true':'false'); }
 
-const IMG_BASE = "https://github.com/aufdemholzweg/holzquartett/blob/5b03df6c64b9c77afadb508160b60ecfc2212aaa/images";
+const IMG_BASE = "https://github.com/aufdemholzweg/holzquartett/blob/326bdfd40ff4d97de5c70dc584fe767aba056135/images";
 const IMG_SUFFIX = "?raw=true";
 
 const woodCards=[
@@ -668,6 +668,7 @@ function evaluateRoundAI(attr){
 
 function aiTurn(){
     if(aiGame.roundInProgress) return;
+    scrollToTop(); // <--- SCROLL TO TOP BEFORE AI MOVE
     // Choose random attribute from ACTIVE keys
     const k=activeAttributeKeys[Math.floor(Math.random()*activeAttributeKeys.length)];
     aiGame.roundInProgress = true;
@@ -758,6 +759,7 @@ function listenToGameChanges(){
 window.selectAttribute = async (attr) => {
     if(gameMode==='ai') {
         if(aiGame.roundInProgress) return;
+        scrollToTop(); // <--- SCROLL TO TOP ON PLAYER CLICK
         aiGame.roundInProgress = true;
         const btn = document.querySelector(`div[data-attr-btn="${attr}"]`); if(btn) btn.classList.add('flash-active');
         setTimeout(() => {
@@ -769,6 +771,7 @@ window.selectAttribute = async (attr) => {
         }, 500);
     } else {
         if(!localGameState || localGameState.turn!==localPlayerId) return;
+        scrollToTop(); // <--- SCROLL TO TOP ON MULTIPLAYER CLICK
         const opp = localGameState.playerIds.find(id=>id!==localPlayerId);
         
         const rawPv = localGameState.currentCards[localPlayerId][attr];
