@@ -29,26 +29,15 @@
         .card-front-bg { background-color: #fffbeb; background-image: linear-gradient(to bottom right, #fffbeb, #fef3c7); }
         .hover-lift:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
         
-        .opponent-back-name { position: absolute; top: 15%; width: 100%; text-align: center; color: rgba(255,255,255,0.95); font-weight: 700; font-size: 1.1rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5); pointer-events: none; }
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .dimmer { background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); }
-        .attr-box { background-color: #fff7ed; border: 1px solid #fbbf24; transition: all 0.2s; }
-        .attr-box.flash-active { background-color: #f97316 !important; border-color: #ea580c !important; color: white !important; }
-        .attr-box.flash-active span { color: white !important; }
-        .attr-box.highlight-compare { background-color: #e5e7eb !important; border-color: #9ca3af !important; color: #111827 !important; }
-        .attr-box.highlight-compare span { color: #000000 !important; }
+        /* Status-Ball Animation */
+        .animate-pulse-glow { animation: pulse-glow 2s infinite; }
+        @keyframes pulse-glow { 0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); transform: translate(-50%, -50%) scale(1); } 50% { box-shadow: 0 0 15px 5px rgba(34, 197, 94, 0.4); transform: translate(-50%, -50%) scale(1.1); } 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); transform: translate(-50%, -50%) scale(1); } }
         
-        .toggle-checkbox:checked { right: 0; border-color: #68D391; }
-        .toggle-checkbox:checked + .toggle-label { background-color: #68D391; }
-        .attr-toggle-btn { transition: all 0.2s; border: 2px solid transparent; }
-        .attr-toggle-btn.selected { background-color: #fef3c7; border-color: #f59e0b; color: #92400e; }
-        .attr-toggle-btn:not(.selected) { background-color: #f3f4f6; color: #9ca3af; border-color: transparent; }
-
-        /* Animationen */
+        /* Pop-In Animation für Fenster */
         .animate-pop-in { animation: pop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         @keyframes pop-in { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         
+        /* Bounce Animation für Gleichstand */
         .animate-bounce-slam { animation: bounce-slam 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite; }
         @keyframes bounce-slam { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
 
@@ -66,20 +55,25 @@
         
         .saw-blade {
             position: absolute;
-            right: -15px; /* Sägeblatt sitzt am rechten Ende des Balkens */
+            right: -20px; /* Sägeblatt sitzt am rechten Ende */
             top: 50%;
             transform: translateY(-50%);
-            width: 35px;
-            height: 35px;
+            width: 45px; /* Etwas größer für das Bild */
+            height: 45px;
             z-index: 10;
-            filter: drop-shadow(0 4px 2px rgba(0,0,0,0.3));
+            /* Kein Drop-Shadow Filter mehr nötig, wenn das Bild gut ist, sonst hier wieder einfügen */
         }
         
         /* Die Säge dreht sich */
-        .animate-spin-fast { animation: spin 0.5s linear infinite; }
+        .animate-spin-fast { animation: spin 0.1s linear infinite; }
         @keyframes spin { from { transform: translateY(-50%) rotate(0deg); } to { transform: translateY(-50%) rotate(360deg); } }
 
-        /* Der Balken wird kürzer (10s) */
+        /* ANIMATIONEN FÜR DEN BALKEN */
+        /* 1. Aufladen (1.5s) */
+        @keyframes chargeWidth { from { width: 0%; } to { width: 100%; } }
+        .animate-charge { animation: chargeWidth 1.5s linear forwards; }
+        
+        /* 2. Entladen (10s) */
         @keyframes shrinkWidth { from { width: 100%; } to { width: 0%; } }
         .animate-shrink { animation: shrinkWidth 10s linear forwards; }
     </style>
@@ -134,7 +128,7 @@
         <h2 class="text-4xl sm:text-5xl font-black text-white uppercase tracking-wider drop-shadow-[0_5px_5px_rgba(0,0,0,0.8)] border-text">
             GLEICHSTAND!
         </h2>
-        <p class="text-white font-bold text-lg mt-2 drop-shadow-md">Das Quiz entscheidet</p>
+        <p class="text-white font-bold text-lg mt-2 drop-shadow-md">Das Quiz entscheidet...</p>
     </div>
 </div>
 
@@ -142,17 +136,16 @@
     <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-sm flex flex-col relative animate-pop-in border-4 border-amber-500">
         
         <div class="h-6 w-full bg-gray-300 relative overflow-visible">
-            <div id="quizTimerBar" class="h-full w-full wood-texture">
-                <div class="saw-blade animate-spin-fast">
-                    <svg viewBox="0 0 24 24" fill="#525252" stroke="none">
-                        <path d="M12,2C6.48,2 2,6.48 2,12C2,17.52 6.48,22 12,22C17.52,22 22,17.52 22,12C22,6.48 17.52,2 12,2M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,7L10,11H7L11,14L9,18L13,15L17,18L15,14L19,11H16L14,7L12,7Z" />
-                    </svg>
+            <div id="quizTimerBar" class="h-full w-0 bg-amber-500 wood-texture"> <div class="saw-blade animate-spin-fast">
+                    <img src="https://github.com/aufdemholzweg/holzquartett/blob/main/images/saegeblatt.png?raw=true" alt="Säge" class="w-full h-full object-contain">
                 </div>
             </div>
         </div>
         
         <div class="p-6 text-center">
-            <div class="inline-block bg-amber-100 text-amber-800 text-xs font-bold px-2 py-1 rounded-full mb-3">⚡ Schnell antworten!</div>
+            <div id="quizStatusText" class="inline-block bg-amber-100 text-amber-800 text-xs font-bold px-2 py-1 rounded-full mb-3">
+                ⚠️ Gleichstand! Quiz lädt...
+            </div>
             <h3 id="quizQuestion" class="text-lg font-bold text-gray-800 mb-6 leading-tight min-h-[3rem] flex items-center justify-center">
                 Frage wird geladen...
             </h3>
@@ -187,7 +180,7 @@
         </div>
         <div class="p-5 overflow-y-auto hide-scrollbar space-y-5">
             <h4 class="font-bold text-gray-700 text-md">Regeln (Quartett-Prinzip)</h4>
-            <p class="text-sm text-gray-600 leading-relaxed">Die aktive Person wählt auf ihrer Karte die Eigenschaft, die den größtmöglichen Vorteil verspricht. Je nach Kategorie zählt der höchste oder der niedrigste Wert.<br><br><strong>NEU: Das Stechen</strong><br>Haben beide Karten den gleichen Wert, startet für BEIDE Spieler ein Blitz-Quiz! Wer die Fachfrage in 10 Sekunden am schnellsten richtig beantwortet, gewinnt die Karte.</p>
+            <p class="text-sm text-gray-600 leading-relaxed">Die aktive Person wählt auf ihrer Karte die Eigenschaft, die den größtmöglichen Vorteil verspricht. Je nach Kategorie zählt der höchste oder der niedrigste Wert (siehe die Beschreibung der Eigenschaften).<br><br><strong>NEU: Das Stechen</strong><br>Haben beide Karten den gleichen Wert, startet für BEIDE Spieler ein Blitz-Quiz! Wer die Fachfrage in 10 Sekunden am schnellsten richtig beantwortet, gewinnt die Karte.</p>
             <div id="infoCategoryList" class="space-y-3 pt-3"></div>
         </div>
     </div>
@@ -741,65 +734,87 @@ function startTieBreakerQuiz(qIndex, callback) {
     const timerBar = document.getElementById('quizTimerBar');
     const qText = document.getElementById('quizQuestion');
     const qOptions = document.getElementById('quizOptions');
+    const statusText = document.getElementById('quizStatusText');
     
     const question = quizQuestions[qIndex];
     
     qText.innerText = question.q;
     qOptions.innerHTML = '';
+    statusText.innerText = "⚠️ Gleichstand! Quiz lädt...";
     
-    // Timer Reset (Säge-Balken voll)
-    timerBar.classList.remove('animate-shrink');
-    timerBar.style.width = '100%';
-    void timerBar.offsetWidth; // Trigger Reflow
+    // 1. Reset Bar (Start state)
+    timerBar.className = "h-full w-0 bg-amber-500 wood-texture"; 
+    timerBar.style.width = "0%";
     
-    let answered = false;
-    
-    // Antwort-Buttons erstellen
+    // Buttons erstellen (aber deaktiviert)
+    let buttons = [];
     question.o.forEach((opt, idx) => {
         const btn = document.createElement('button');
-        btn.className = "w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 px-4 rounded-lg border-2 border-gray-200 transition active:scale-95";
+        btn.className = "w-full bg-gray-100 text-gray-400 font-semibold py-3 px-4 rounded-lg border-2 border-gray-200 cursor-not-allowed";
         btn.innerText = opt;
-        btn.onclick = () => {
-            if(answered) return;
-            answered = true;
-            clearTimeout(quizTimeout);
-            sounds.quizTick.pause(); sounds.quizTick.currentTime = 0; // Sound stop
-            
-            if(idx === question.c) {
-                // RICHTIG
-                btn.className = "w-full bg-green-500 text-white font-bold py-3 px-4 rounded-lg border-2 border-green-600 shadow-lg scale-105";
-                playSound(sounds.win);
-                setTimeout(() => {
-                    modal.classList.add('hidden');
-                    callback(true); // True = Ich habe gewonnen (richtig geantwortet)
-                }, 500);
-            } else {
-                // FALSCH
-                btn.className = "w-full bg-red-500 text-white font-bold py-3 px-4 rounded-lg border-2 border-red-600";
-                setTimeout(() => {
-                    modal.classList.add('hidden');
-                    callback(false); // False = Ich habe verloren (falsch geantwortet)
-                }, 500);
-            }
-        };
+        btn.disabled = true; 
+        buttons.push({btn, idx});
         qOptions.appendChild(btn);
     });
     
     modal.classList.remove('hidden');
-    playSound(sounds.quizTick);
     
-    // Animation starten (Sägen)
-    timerBar.classList.add('animate-shrink');
+    // 2. Start Charging Animation (1.5s)
+    // Force Reflow
+    void timerBar.offsetWidth;
+    timerBar.classList.add('animate-charge');
     
-    // 10 Sekunden Timer Logic
-    const quizTimeout = setTimeout(() => {
-        if(!answered) {
-            answered = true;
-            sounds.quizTick.pause(); sounds.quizTick.currentTime = 0; // Sound stop
-            modal.classList.add('hidden');
-            callback(false); // Zeit abgelaufen = Verloren
-        }
-    }, 10000);
+    // 3. Nach 1.5s: Quiz Start
+    setTimeout(() => {
+        statusText.innerText = "⚡ STECHEN! 10 Sekunden Zeit";
+        
+        // Bar auf "Voll & Rot" setzen für Entladung
+        timerBar.classList.remove('animate-charge');
+        timerBar.className = "h-full w-full bg-red-500 wood-texture animate-shrink"; // Start discharging
+        
+        playSound(sounds.quizTick);
+        
+        // Buttons aktivieren
+        let answered = false;
+        buttons.forEach(obj => {
+            const {btn, idx} = obj;
+            btn.className = "w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 px-4 rounded-lg border-2 border-gray-200 transition active:scale-95 cursor-pointer";
+            btn.disabled = false;
+            
+            btn.onclick = () => {
+                if(answered) return;
+                answered = true;
+                clearTimeout(quizTimeout);
+                sounds.quizTick.pause(); sounds.quizTick.currentTime = 0;
+                
+                if(idx === question.c) {
+                    btn.className = "w-full bg-green-500 text-white font-bold py-3 px-4 rounded-lg border-2 border-green-600 shadow-lg scale-105";
+                    playSound(sounds.win);
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                        callback(true);
+                    }, 500);
+                } else {
+                    btn.className = "w-full bg-red-500 text-white font-bold py-3 px-4 rounded-lg border-2 border-red-600";
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                        callback(false);
+                    }, 500);
+                }
+            };
+        });
+        
+        // 10 Sekunden Timer (Discharging)
+        const quizTimeout = setTimeout(() => {
+            if(!answered) {
+                answered = true;
+                sounds.quizTick.pause(); sounds.quizTick.currentTime = 0;
+                modal.classList.add('hidden');
+                callback(false);
+            }
+        }, 10000);
+        
+    }, 1500);
 }
 
 // Zeigt das "GLEICHSTAND" Overlay für 2 Sekunden
@@ -827,6 +842,7 @@ function evaluateRoundAI(attr){
         showTieOverlay(() => {
             // Starte Quiz NACH dem Overlay
             const qIdx = Math.floor(Math.random() * quizQuestions.length);
+            // Direkt aufrufen, da das "Aufladen" jetzt IN der Funktion passiert
             startTieBreakerQuiz(qIdx, (playerWon) => {
                 finishRoundAI(attr, rawPv, rawAv, playerWon ? true : false);
             });
