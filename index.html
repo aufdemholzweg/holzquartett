@@ -145,7 +145,7 @@
         
         <div class="p-6 text-center">
             <div id="quizStatusText" class="inline-block bg-amber-100 text-amber-800 text-xs font-bold px-2 py-1 rounded-full mb-3">
-                💥 Gleichstand! Quiz lädt...
+                ⚠️ Gleichstand! Quiz lädt...
             </div>
             <h3 id="quizQuestion" class="text-lg font-bold text-gray-800 mb-6 leading-tight min-h-[3rem] flex items-center justify-center">
                 Frage wird geladen...
@@ -214,25 +214,49 @@
             </div>
             <div>
                 <h4 class="font-bold text-gray-900 mb-1">Kontext</h4>
-                <p>Dieses interaktive Lernspiel entstand im Rahmen meiner Masterarbeit des Studiengang Lehramt an Berufsbildenden Schulen, Fachrichtung Holztechnik an der Leibnizuniversität Hannover. Es dient ausschließlich nicht-kommerziellen Bildungs- und Forschungszwecken.</p>
+                <p>Dieses interaktive Lernspiel entstand im Rahmen meiner Masterarbeit des Studiengang Lehramt an Berufsbildenden Schulen, Fachrichtung Holztechnik an der <strong>Leibniz Universität Hannover</strong>. Es dient ausschließlich nicht-kommerziellen Bildungs- und Forschungszwecken.</p>
             </div>
             <div>
-                <h4 class="font-bold text-gray-900 mb-1">Haftung für Inhalte</h4>
+                <h4 class="font-bold text-gray-900 mb-1">Haftung für Inhalte & Daten</h4>
                 <p class="mb-2">Die Inhalte dieser Web-App wurden mit größter Sorgfalt und nach bestem Wissen und Gewissen erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte kann jedoch keine Gewähr übernommen werden.</p>
-                <p class="mb-2"><strong>Hinweise zu fachlichen Daten:</strong> Die im Spiel verwendeten Daten (z. B. Rohdichte, E-Modul, Preise) dienen primär der Spielmechanik und der didaktischen Vereinfachung. Sie stellen Durchschnittswerte oder Richtwerte dar.</p>
+                <p class="mb-2"><strong>Besonderer Hinweis zu fachlichen Daten:</strong> Die im Spiel verwendeten Daten (z. B. Rohdichte, E-Modul, Preise) dienen primär der Spielmechanik und der didaktischen Vereinfachung. Sie stellen Durchschnittswerte oder Richtwerte dar und ersetzen keine fachgerechte Planung nach DIN/EN-Normen.</p>
             </div>
             <div>
                 <h4 class="font-bold text-gray-900 mb-1">Haftung für Links</h4>
                 <p>Diese Webseite enthält Links zu externen Webseiten Dritter (z. B. GitHub), auf deren Inhalte wir keinen Einfluss haben. Deshalb können wir für diese fremden Inhalte auch keine Gewähr übernehmen. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber der Seiten verantwortlich.</p>
             </div>
             <div>
-                <h4 class="font-bold text-gray-900 mb-1">Urheberrecht & Bildnachweise</h4>
+                <h4 class="font-bold text-gray-900 mb-1">Urheberrecht</h4>
                 <p class="mb-2">Die durch den Betreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers.</p>
-                <p class="text-xs text-gray-500 mb-1">Verwendete Bild- und Tonquellen:</p>
+            </div>
+            <div>
+                <h4 class="font-bold text-gray-900 mb-1">Bild- und Tonquellen</h4>
                 <ul class="list-disc pl-4 text-xs text-gray-600 space-y-1">
                     <li><strong>Holzbilder:</strong> <a href="https://holzvomfach.de/" target="_blank" class="underline text-blue-600">holzvomfach.de</a> und <a href="https://www.schreiner-seiten.de/index.php" target="_blank" class="underline text-blue-600">schreiner-seiten.de</a></li>
-                    <li><strong>Icons/Grafiken:</strong> <a href="https://www.whatsapp.com/" target="_blank" class="underline text-blue-600">WhatsApp</a></li>
-                    <li><strong>Sounds:</strong> <a href="https://pixabay.com/de/" target="_blank" class="underline text-blue-600">Pixabay</a></li>
+                    <li><strong>Sounds:</strong> <a href="https://pixabay.com/de/" target="_blank" class="underline text-blue-600">Pixabay.com</a></li>
+                    <li><strong>Emojis/Icons:</strong> Systemstandard (Unicode)</li>
+                </ul>
+            </div>
+            
+            <hr class="my-4 border-gray-300">
+            
+            <div>
+                <h4 class="font-bold text-gray-900 mb-1">Datenschutz & Technik</h4>
+                <p class="mb-2">Da dies ein reines Forschungsprojekt ist, werden so wenige Daten wie möglich gespeichert. Dennoch kommen externe Dienstleister zum Einsatz, um die technische Funktion zu gewährleisten:</p>
+                
+                <ul class="list-disc pl-4 text-xs text-gray-600 space-y-2">
+                    <li>
+                        <strong>Hosting (GitHub Pages):</strong><br>
+                        Diese Webseite wird auf Servern von GitHub Inc. (USA) gehostet. Beim Aufruf der Seite werden technisch bedingt Verbindungsdaten (z. B. IP-Adresse) an GitHub übertragen, um die Inhalte auszuliefern.
+                    </li>
+                    <li>
+                        <strong>Datenbank & Backend (Google Firebase):</strong><br>
+                        Für die Multiplayer-Funktion (Spielstände, Synchronisation) nutzen wir Google Firebase (Google Ireland Limited). Die Spieldaten werden temporär auf deren Servern gespeichert. Wir verwenden die "Anonyme Anmeldung", sodass keine Klarnamen oder E-Mail-Adressen von Nutzern gespeichert werden, sofern diese nicht freiwillig eingegeben werden.
+                    </li>
+                    <li>
+                        <strong>Cookies / LocalStorage:</strong><br>
+                        Das Spiel speichert lediglich technische Einstellungen (z. B. Sound an/aus) lokal auf Ihrem Gerät ("LocalStorage"). Es werden keine Tracking- oder Werbe-Cookies eingesetzt.
+                    </li>
                 </ul>
             </div>
         </div>
@@ -493,7 +517,7 @@ const sounds={
  win:new Audio('https://github.com/aufdemholzweg/holzquartett/blob/894e048eea71ba49921abfe6827bd8dc723f8c2d/gewonnen.mp3?raw=true'),
  chime:new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c744c8.mp3'),
  starWin:new Audio('https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3'),
- quizTick: new Audio('https://github.com/aufdemholzweg/holzquartett/blob/126b00ae749a371741a460d73cdb0f730d94bc81/Sounds/ticken_bei_quizfrage.mp3?raw=true'),
+ quizTick: new Audio('https://github.com/aufdemholzweg/holzquartett/blob/main/Sounds/ticken_bei_quizfrage.mp3?raw=true'),
  tieAlert: new Audio('https://github.com/aufdemholzweg/holzquartett/blob/main/Sounds/Quiztime.mp3?raw=true')
 };
 function playSound(a){ if(!isMuted && a){ a.currentTime=0; a.play().catch(()=>{}); } }
@@ -538,70 +562,6 @@ const woodCards=[
  {name:"Zeder", dk:"1-2", druckfestigkeit:43, quellen:11.2, rohdichte:545, emodul:7000, preis:5780, imgTree:`${IMG_BASE}/zeder_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/zeder_2.jpeg${IMG_SUFFIX}`},
  {name:"Birke", dk:5, druckfestigkeit:51, quellen:11.4, rohdichte:650, emodul:14500, preis:750, imgTree:`${IMG_BASE}/birke_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/birke_2.jpeg${IMG_SUFFIX}`},
  {name:"Ahorn", dk:5, druckfestigkeit:62, quellen:11.5, rohdichte:630, emodul:9400, preis:950, imgTree:`${IMG_BASE}/ahorn_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/ahorn_2.jpeg${IMG_SUFFIX}`}
-];
-
-const detailedWoodInfo = {
-    "Erle": `<p class="mb-2">Rötlich-weißes Holz, das an der Luft schnell nachdunkelt. Weich, aber zäh. Unter Wasser extrem dauerhaft (Venedig-Pfähle).</p><p class="mb-2"><strong>Verwendung:</strong> Möbel, Drechslerei, Modellbau, Blindholz, Wasserbau (historisch).</p>`,
-    "Eiche": `<p class="mb-2">Der Klassiker im deutschen Möbelbau. Hart, schwer und sehr witterungsbeständig.</p><p class="mb-2"><strong>Verwendung:</strong> Massivholzmöbel, Parkett, Fenster, Fässer.</p>`,
-    "Teak": `<p class="mb-2">Sehr ölhaltiges Holz, das von Natur aus wasserabweisend ist.</p><p class="mb-2"><strong>Verwendung:</strong> Schiffsbau, Gartenmöbel, Terrassen.</p>`,
-    "Birke": `<p class="mb-2">Helles, gelblich-weißes Holz mit feiner Maserung. Es ist elastisch und zäh, aber nicht witterungsbeständig.</p><p class="mb-2"><strong>Verwendung:</strong> Sperrholz, Möbelbau, Drechselarbeiten.</p>`,
-    "Ahorn": `<p class="mb-2">Eines der wertvollsten heimischen Edellaubhölzer. Sehr hell, feinporig und dekorativ.</p><p class="mb-2"><strong>Verwendung:</strong> Tischplatten, Musikinstrumente, Küchengeräte, Furniere.</p>`
-};
-
-const reflectionQuestions=[ "Welches Holz würdest du für Gartenmöbel wählen und warum?", "Eine Küchenarbeitsplatte muss schnittfest sein. Welches Holz eignet sich?", "Für einen Dielenboden: Hartes oder weiches Holz?", "Warum ist Teak im Schiffbau so beliebt?" ];
-
-// 7. QUIZ FRAGEN (FÜR DAS STECHEN)
-const quizQuestions = [
-    {q:"Welche Holzart ist ein Nadelholz?", o:["Buche","Eiche","Fichte","Esche"], c:2},
-    {q:"Welches Holz ist besonders leicht?", o:["Pappel","Eiche","Robinie","Buche"], c:0},
-    {q:"Welche Holzart ist für hohe natürliche Dauerhaftigkeit bekannt?", o:["Fichte","Robinie","Birke","Ahorn"], c:1},
-    {q:"Welche Holzart wird häufig im Außenbereich verwendet?", o:["Buche","Teak","Pappel","Linde"], c:1},
-    {q:"Welches Holz wird oft für Dachstühle verwendet?", o:["Fichte","Nussbaum","Kirschbaum","Mahagoni"], c:0},
-    {q:"Welche Holzart hat typischerweise eine rötliche Farbe?", o:["Ahorn","Kirsche","Fichte","Birke"], c:1},
-    {q:"Welches Holz ist besonders hart?", o:["Balsa","Pappel","Eiche","Linde"], c:2},
-    {q:"Welche Holzart ist ein typisches Möbelholz?", o:["Buche","Weide","Tanne","Pappel"], c:0},
-    {q:"Welche Holzart wächst besonders schnell?", o:["Eiche","Buche","Pappel","Nussbaum"], c:2},
-    {q:"Welches Holz ist typisch für den Instrumentenbau (Gitarrenhälse)?", o:["Ahorn","Fichte","Pappel","Weide"], c:0},
-    {q:"Welche Holzart ist ein Laubholz?", o:["Kiefer","Lärche","Buche","Fichte"], c:2},
-    {q:"Welches Holz ist besonders witterungsbeständig?", o:["Fichte","Teak","Birke","Ahorn"], c:1},
-    {q:"Welche Holzart hat oft eine helle, fast weiße Farbe?", o:["Linde","Ahorn","Kirsche","Nussbaum"], c:1},
-    {q:"Welche Holzart wird oft für Parkett verwendet?", o:["Eiche","Pappel","Fichte","Tanne"], c:0},
-    {q:"Welche Holzart gehört zu den Tropenhölzern?", o:["Buche","Teak","Eiche","Lärche"], c:1},
-    {q:"Welches Holz ist sehr elastisch und für Sportgeräte geeignet?", o:["Esche","Fichte","Birke","Linde"], c:0},
-    {q:"Welche Holzart wird oft für Sperrholz verwendet?", o:["Pappel","Robinie","Eiche","Wenge"], c:0},
-    {q:"Welches Holz hat eine sehr dunkle Farbe?", o:["Ahorn","Ebenholz","Birke","Fichte"], c:1},
-    {q:"Welche Holzart ist typisch für Saunabau?", o:["Fichte","Zeder","Eiche","Buche"], c:1},
-    {q:"Welche Holzart ist besonders formstabil im Innenbereich?", o:["Buche","Eiche","Pappel","Weide"], c:1},
-    {q:"Welches Holz ist ein typisches Konstruktionsholz?", o:["Fichte","Mahagoni","Kirschbaum","Nussbaum"], c:0},
-    {q:"Welche Holzart hat oft eine ausgeprägte Maserung?", o:["Linde","Wenge","Pappel","Birke"], c:1},
-    {q:"Welches Holz wird häufig für Schnitzarbeiten genutzt?", o:["Linde","Eiche","Buche","Robinie"], c:0},
-    {q:"Welche Holzart hat Harzkanäle?", o:["Buche","Fichte","Kiefer","Ahorn"], c:2},
-    {q:"Welches Holz ist besonders schwer?", o:["Balsa","Pappel","Robinie","Linde"], c:2},
-    {q:"Was beschreibt die Rohdichte von Holz?", o:["Härte","Gewicht pro Volumen","Wasseraufnahme","Elastizität"], c:1},
-    {q:"Welche Richtung schwindet Holz am stärksten?", o:["Längs","Radial","Tangential","Gleichmäßig"], c:2},
-    {q:"Was bedeutet Dauerhaftigkeitsklasse 1?", o:["Nicht dauerhaft","Sehr dauerhaft","Schwer entflammbar","Besonders elastisch"], c:1},
-    {q:"Welches Holz arbeitet stark (Quellen/Schwinden)?", o:["Teak","Buche","Robinie","Mahagoni"], c:1},
-    {q:"Was ist Splintholz?", o:["Ältester Teil des Stammes","Innerer Kern","Äußerer, jüngerer Bereich","Rinde"], c:2},
-    {q:"Welches Holz hat eine hohe natürliche Resistenz gegen Pilze?", o:["Fichte","Robinie","Birke","Ahorn"], c:1},
-    {q:"Wofür steht das „E-Modul“ bei Holz?", o:["Dichte","Elastizitätsmodul","Energiegehalt","Emissionswert"], c:1},
-    {q:"Welche Holzart ist ringporig?", o:["Buche","Ahorn","Eiche","Birke"], c:2},
-    {q:"Was sind Jahrringe?", o:["Wurzelreste","Jahreszuwächse des Baumes","Harzadern","Pilzspuren"], c:1},
-    {q:"Welcher Faktor beeinflusst Holzschwinden am stärksten?", o:["Temperatur","Luftfeuchte","UV-Strahlung","Wind"], c:1},
-    {q:"Welche Holzart ist zerstreutporig?", o:["Esche","Eiche","Buche","Ulme"], c:2},
-    {q:"Was erhöht die Dauerhaftigkeit von Holz im Außenbereich am meisten?", o:["Lackieren","Imprägnieren","Hobeln","Schleifen"], c:1},
-    {q:"Welche Eigenschaft beschreibt die Biegefestigkeit?", o:["Widerstand gegen Druck","Widerstand gegen Zug","Widerstand gegen Biegung","Widerstand gegen Feuchte"], c:2},
-    {q:"Was ist Kernholz?", o:["Jüngstes Holz","Äußerstes Holz","Inneres, älteres Holz","Wurzelholz"], c:2},
-    {q:"Welche Holzart ist besonders resistent gegen Insekten?", o:["Pappel","Robinie","Birke","Fichte"], c:1},
-    {q:"Welche Richtung weist die höchste Festigkeit auf?", o:["Tangential","Radial","Längs zur Faser","Gleich in alle Richtungen"], c:2},
-    {q:"Warum ist stehendes Wasser für Holz gefährlich?", o:["Es kühlt das Holz","Es erhöht die Dichte","Es fördert Pilzbefall","Es härtet das Holz"], c:2},
-    {q:"Was ist der Hauptgrund für Holzverzug?", o:["UV-Strahlung","Ungleichmäßiges Schwinden","Hohe Dichte","Druckbelastung"], c:1},
-    {q:"Welche Eigenschaft macht Teak besonders dauerhaft?", o:["Hohe Dichte","Hoher Harzanteil","Ölige Inhaltsstoffe","Große Poren"], c:2},
-    {q:"Was beschreibt die tangentiale Richtung?", o:["Entlang der Fasern","Vom Kern nach außen","Entlang der Jahrringe","Quer zur Stammachse"], c:2},
-    {q:"Welche Holzart hat besonders ausgeprägte Früh- und Spätholzzonen?", o:["Ahorn","Fichte","Kiefer","Birke"], c:2},
-    {q:"Warum ist Kernholz oft dauerhafter als Splintholz?", o:["Es ist feuchter","Es enthält mehr Nährstoffe","Es enthält schützende Inhaltsstoffe","Es ist heller"], c:2},
-    {q:"Welcher Organismus zerstört Holz am schnellsten bei Feuchte?", o:["Bakterien","Algen","Pilze","Moose"], c:2},
-    {q:"Welche Holzart hat sehr hohe natürliche Dauerhaftigkeit und wird im Außenbau geschätzt?", o:["Buche","Robinie","Fichte","Birke"], c:1},
-    {q:"Welche Eigenschaft ist für tragende Bauteile besonders wichtig?", o:["Farbe","Maserung","Festigkeit","Geruch"], c:2}
 ];
 
 function shuffleArray(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
