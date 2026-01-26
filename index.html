@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        /* HIER WERDEN FARBEN UND ANIMATIONEN DEFINIERT */
+        /* DESIGN DEFINITIONEN */
         body { font-family: 'Inter', sans-serif; background-color: #fdfbf7; touch-action: manipulation; overflow-x: hidden; min-height: 100dvh; }
         .perspective-1000 { perspective: 1000px; }
         .card-3d { transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -47,6 +47,10 @@
         .attr-toggle-btn { transition: all 0.2s; border: 2px solid transparent; }
         .attr-toggle-btn.selected { background-color: #fef3c7; border-color: #f59e0b; color: #92400e; }
         .attr-toggle-btn:not(.selected) { background-color: #f3f4f6; color: #9ca3af; border-color: transparent; }
+
+        /* Animation für den Timer-Balken */
+        @keyframes shrinkWidth { from { width: 100%; } to { width: 0%; } }
+        .animate-shrink { animation: shrinkWidth 8s linear forwards; }
     </style>
 </head>
 <body class="flex flex-col relative text-gray-800">
@@ -93,6 +97,23 @@
     </div>
 </div>
 
+<div id="quizModal" class="fixed inset-0 dimmer flex items-center justify-center z-[80] p-4 hidden">
+    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-sm flex flex-col relative animate-pulse-glow">
+        <div class="h-2 w-full bg-gray-200">
+            <div id="quizTimerBar" class="h-full bg-red-500 w-full"></div>
+        </div>
+        
+        <div class="p-6 text-center">
+            <div class="inline-block bg-amber-100 text-amber-800 text-xs font-bold px-2 py-1 rounded-full mb-3">⚡ STECHEN! 8 Sekunden Zeit</div>
+            <h3 id="quizQuestion" class="text-lg font-bold text-gray-800 mb-6 leading-tight min-h-[3rem] flex items-center justify-center">
+                Frage wird geladen...
+            </h3>
+            <div id="quizOptions" class="grid grid-cols-1 gap-3">
+                </div>
+        </div>
+    </div>
+</div>
+
 <div id="happyWorm" class="fixed bottom-0 right-4 translate-y-full z-50 pointer-events-none transform transition-transform hidden">
     <div class="relative"><div id="wormSpeech" class="absolute -top-10 -left-10 bg-white px-3 py-1.5 rounded-xl shadow-md border-2 border-amber-200 text-xs font-bold text-amber-800 whitespace-nowrap animate-bounce" style="animation-duration: 2s;">Stark! 🪵</div><div class="text-6xl filter drop-shadow-xl cursor-default select-none">🐛</div></div>
 </div>
@@ -118,7 +139,7 @@
         </div>
         <div class="p-5 overflow-y-auto hide-scrollbar space-y-5">
             <h4 class="font-bold text-gray-700 text-md">Regeln (Quartett-Prinzip)</h4>
-            <p class="text-sm text-gray-600 leading-relaxed">Die aktive Person wählt auf ihrer Karte die Eigenschaft, die den größtmöglichen Vorteil verspricht. Je nach Kategorie zählt der höchste oder der niedrigste Wert (siehe die Beschreibung der Eigenschaften). Gewinnt sie den Spielzug, erhält sie beide Karten, legt sie unter den eigenen Stapel und bleibt am Zug. Bei Gleichstand behalten beide ihre Karten. Das Zugrecht bleibt unverändert.</p>
+            <p class="text-sm text-gray-600 leading-relaxed">Die aktive Person wählt auf ihrer Karte die Eigenschaft, die den größtmöglichen Vorteil verspricht. Je nach Kategorie zählt der höchste oder der niedrigste Wert (siehe die Beschreibung der Eigenschaften).<br><br><strong>NEU: Das Stechen</strong><br>Haben beide Karten den gleichen Wert, startet ein Blitz-Quiz! Wer die Fachfrage in 8 Sekunden richtig beantwortet, gewinnt die Karte. Ist die Antwort falsch oder die Zeit um, gewinnt der Gegner.</p>
             <div id="infoCategoryList" class="space-y-3 pt-3"></div>
         </div>
     </div>
@@ -130,8 +151,7 @@
             <h3 class="font-bold">Wissenskarte</h3>
             <button onclick="document.getElementById('infoModal').classList.add('hidden')" class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
         </div>
-        <div id="infoModalContent" class="p-5 overflow-y-auto">
-            </div>
+        <div id="infoModalContent" class="p-5 overflow-y-auto"></div>
     </div>
 </div>
 
@@ -188,13 +208,10 @@
                      <input type="checkbox" id="revealBackToggle" class="accent-green-500 w-5 h-5">
                 </div>
             </div>
-
             <hr class="border-gray-200 mb-4 border-t-2 border-dashed">
-
             <h4 class="font-bold text-gray-800 mb-1 text-sm">Eigenschaften wählen</h4>
             <p class="text-xs text-gray-500 mb-3">Wähle mindestens 3 und maximal 5 Kategorien.</p>
-            <div id="attrConfigList" class="space-y-2">
-                </div>
+            <div id="attrConfigList" class="space-y-2"></div>
         </div>
         <div class="p-4 bg-gray-50 border-t">
              <button onclick="document.getElementById('attrConfigModal').classList.add('hidden')" class="w-full bg-amber-500 text-white font-bold py-2 rounded-lg shadow">Fertig</button>
@@ -204,7 +221,6 @@
 
 <div id="setupModal" class="fixed inset-0 dimmer flex flex-col items-center justify-center z-50 p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl shadow-2xl overflow-hidden max-w-sm w-full relative mb-6">
-        
         <a href="https://aufdemholzweg.github.io/Splashscreen-Holztechnik/" class="absolute left-4 top-4 z-[60] w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center text-white shadow-sm hover:bg-white/30 transition-all border border-white/30" aria-label="Zurück zum Launcher">
              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M4 22c0-8 3-14 8-20" opacity="0.9" />
@@ -215,20 +231,16 @@
                 <path d="M16 2c2 1 4 4 6 7" opacity="0.6" />
              </svg>
         </a>
-
         <div class="bg-amber-500 p-5 text-white text-center font-bold text-lg sm:text-xl tracking-wide shadow-md">HOLZEN!<br><span class="text-sm font-normal opacity-90">Spielmodus wählen</span></div>
         <div class="p-6 space-y-4">
             <button onclick="window.showNamePrompt('ai')" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold py-4 rounded-xl shadow-lg flex items-center justify-center gap-3 active:scale-95 transition-transform"><span class="text-2xl">🤖</span> Gegen Computer</button>
             <button onclick="window.showNamePrompt('multiplayer')" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold py-4 rounded-xl shadow-lg flex items-center justify-center gap-3 active:scale-95 transition-transform"><span class="text-2xl">🌍</span> Online gegen Freunde</button>
-            
             <button onclick="window.openAttrConfig()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 rounded-xl border border-gray-200 flex items-center justify-center gap-2 text-sm mt-2">
                 <span>⚙️</span> Spieloptionen <span id="attrCountBadge" class="bg-amber-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">5</span>
             </button>
         </div>
     </div>
-
     <div id="mainMenuStats" class="text-center hidden mb-8"></div>
-
     <div class="mt-auto pt-4">
         <button onclick="document.getElementById('impressumModal').classList.remove('hidden')" class="text-white/70 text-xs font-medium hover:text-white underline transition-colors">Impressum</button>
     </div>
@@ -284,8 +296,7 @@
 </div>
 
 <script type="module">
-// 3. DATENBANK-VERBINDUNG (FIREBASE)
-// HIER NICHTS ÄNDERN, DAMIT DAS ONLINE-SPIEL FUNKTIONIERT
+// 4. DATENBANK & LOGIK (JAVASCRIPT)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, deleteDoc, collection, query, orderBy, limit, getDocs, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
@@ -377,8 +388,7 @@ let aiGame={playerName:'',playerCards:[],aiCards:[],currentPlayerCard:null,curre
 
 let activeAttributeKeys = ['dk', 'druckfestigkeit', 'quellen', 'rohdichte', 'emodul'];
 
-// 4. SPIEL-KATEGORIEN (ATTRIBUTE)
-// HIER LEGST DU FEST, WELCHE EIGENSCHAFTEN (Z.B. PREIS) ES GIBT UND WER GEWINNT (HOCH/NIEDRIG)
+// 5. ATTRIBUTE & EIGENSCHAFTEN
 const attributeInfo={
  dk:{
      icon:'🛡️',
@@ -441,12 +451,10 @@ function playSound(a){ if(!isMuted && a){ a.currentTime=0; a.play().catch(()=>{}
 function isOpponentNameBackVisible(){ return localStorage.getItem('holzquartett_showOpponentNameOnBack')==='true'; }
 function setOpponentNameBackVisible(v){ localStorage.setItem('holzquartett_showOpponentNameOnBack', v?'true':'false'); }
 
-// 5. DIE SPIELKARTEN (DATENBANK)
-// HIER KANNST DU HOLZARTEN, WERTE UND BILDER HINZUFÜGEN ODER ÄNDERN
-// WICHTIG: BEI 'DK' WERTE WIE "1-2" IN ANFÜHRUNGSZEICHEN SETZEN!
-const IMG_BASE = "https://github.com/aufdemholzweg/holzquartett/blob/b99750068a9e30c4926fdc02aa37af15a763dbc2/images";
+const IMG_BASE = "https://github.com/aufdemholzweg/holzquartett/blob/326bdfd40ff4d97de5c70dc584fe767aba056135/images";
 const IMG_SUFFIX = "?raw=true";
 
+// 6. KARTEN DATEN
 const woodCards=[
  {name:"Douglasie", dk:5, druckfestigkeit:68, quellen:7.7, rohdichte:510, emodul:13000, preis:3450, imgTree:`${IMG_BASE}/douglasie_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/douglasie_2.jpeg${IMG_SUFFIX}`},
  {name:"Ebenholz, Afrikanisches", dk:"1-2", druckfestigkeit:70, quellen:12.8, rohdichte:1200, emodul:13400, preis:58000, imgTree:`${IMG_BASE}/ebenholz_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/ebenholz_2.jpeg${IMG_SUFFIX}`},
@@ -482,8 +490,6 @@ const woodCards=[
  {name:"Ahorn", dk:5, druckfestigkeit:62, quellen:11.5, rohdichte:630, emodul:9400, preis:950, imgTree:`${IMG_BASE}/ahorn_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/ahorn_2.jpeg${IMG_SUFFIX}`}
 ];
 
-// 6. ZUSATZWISSEN UND FRAGEN
-// HIER KANNST DU DIE TEXTE FÜR DIE WISSENSKARTE UND DIE FRAGEN AM ENDE ÄNDERN
 const detailedWoodInfo = {
     "Erle": `<p class="mb-2">Rötlich-weißes Holz, das an der Luft schnell nachdunkelt. Weich, aber zäh. Unter Wasser extrem dauerhaft (Venedig-Pfähle).</p><p class="mb-2"><strong>Verwendung:</strong> Möbel, Drechslerei, Modellbau, Blindholz, Wasserbau (historisch).</p>`,
     "Eiche": `<p class="mb-2">Der Klassiker im deutschen Möbelbau. Hart, schwer und sehr witterungsbeständig.</p><p class="mb-2"><strong>Verwendung:</strong> Massivholzmöbel, Parkett, Fenster, Fässer.</p>`,
@@ -493,6 +499,60 @@ const detailedWoodInfo = {
 };
 
 const reflectionQuestions=[ "Welches Holz würdest du für Gartenmöbel wählen und warum?", "Eine Küchenarbeitsplatte muss schnittfest sein. Welches Holz eignet sich?", "Für einen Dielenboden: Hartes oder weiches Holz?", "Warum ist Teak im Schiffbau so beliebt?" ];
+
+// 7. QUIZ FRAGEN (FÜR DAS STECHEN)
+const quizQuestions = [
+    {q:"Welche Holzart ist ein Nadelholz?", o:["Buche","Eiche","Fichte","Esche"], c:2},
+    {q:"Welches Holz ist besonders leicht?", o:["Pappel","Eiche","Robinie","Buche"], c:0},
+    {q:"Welche Holzart ist für hohe natürliche Dauerhaftigkeit bekannt?", o:["Fichte","Robinie","Birke","Ahorn"], c:1},
+    {q:"Welche Holzart wird häufig im Außenbereich verwendet?", o:["Buche","Teak","Pappel","Linde"], c:1},
+    {q:"Welches Holz wird oft für Dachstühle verwendet?", o:["Fichte","Nussbaum","Kirschbaum","Mahagoni"], c:0},
+    {q:"Welche Holzart hat typischerweise eine rötliche Farbe?", o:["Ahorn","Kirsche","Fichte","Birke"], c:1},
+    {q:"Welches Holz ist besonders hart?", o:["Balsa","Pappel","Eiche","Linde"], c:2},
+    {q:"Welche Holzart ist ein typisches Möbelholz?", o:["Buche","Weide","Tanne","Pappel"], c:0},
+    {q:"Welche Holzart wächst besonders schnell?", o:["Eiche","Buche","Pappel","Nussbaum"], c:2},
+    {q:"Welches Holz ist typisch für den Instrumentenbau (Gitarrenhälse)?", o:["Ahorn","Fichte","Pappel","Weide"], c:0},
+    {q:"Welche Holzart ist ein Laubholz?", o:["Kiefer","Lärche","Buche","Fichte"], c:2},
+    {q:"Welches Holz ist besonders witterungsbeständig?", o:["Fichte","Teak","Birke","Ahorn"], c:1},
+    {q:"Welche Holzart hat oft eine helle, fast weiße Farbe?", o:["Linde","Ahorn","Kirsche","Nussbaum"], c:1},
+    {q:"Welche Holzart wird oft für Parkett verwendet?", o:["Eiche","Pappel","Fichte","Tanne"], c:0},
+    {q:"Welche Holzart gehört zu den Tropenhölzern?", o:["Buche","Teak","Eiche","Lärche"], c:1},
+    {q:"Welches Holz ist sehr elastisch und für Sportgeräte geeignet?", o:["Esche","Fichte","Birke","Linde"], c:0},
+    {q:"Welche Holzart wird oft für Sperrholz verwendet?", o:["Pappel","Robinie","Eiche","Wenge"], c:0},
+    {q:"Welches Holz hat eine sehr dunkle Farbe?", o:["Ahorn","Ebenholz","Birke","Fichte"], c:1},
+    {q:"Welche Holzart ist typisch für Saunabau?", o:["Fichte","Zeder","Eiche","Buche"], c:1},
+    {q:"Welche Holzart ist besonders formstabil im Innenbereich?", o:["Buche","Eiche","Pappel","Weide"], c:1},
+    {q:"Welches Holz ist ein typisches Konstruktionsholz?", o:["Fichte","Mahagoni","Kirschbaum","Nussbaum"], c:0},
+    {q:"Welche Holzart hat oft eine ausgeprägte Maserung?", o:["Linde","Wenge","Pappel","Birke"], c:1},
+    {q:"Welches Holz wird häufig für Schnitzarbeiten genutzt?", o:["Linde","Eiche","Buche","Robinie"], c:0},
+    {q:"Welche Holzart hat Harzkanäle?", o:["Buche","Fichte","Kiefer","Ahorn"], c:2},
+    {q:"Welches Holz ist besonders schwer?", o:["Balsa","Pappel","Robinie","Linde"], c:2},
+    {q:"Was beschreibt die Rohdichte von Holz?", o:["Härte","Gewicht pro Volumen","Wasseraufnahme","Elastizität"], c:1},
+    {q:"Welche Richtung schwindet Holz am stärksten?", o:["Längs","Radial","Tangential","Gleichmäßig"], c:2},
+    {q:"Was bedeutet Dauerhaftigkeitsklasse 1?", o:["Nicht dauerhaft","Sehr dauerhaft","Schwer entflammbar","Besonders elastisch"], c:1},
+    {q:"Welches Holz arbeitet stark (Quellen/Schwinden)?", o:["Teak","Buche","Robinie","Mahagoni"], c:1},
+    {q:"Was ist Splintholz?", o:["Ältester Teil des Stammes","Innerer Kern","Äußerer, jüngerer Bereich","Rinde"], c:2},
+    {q:"Welches Holz hat eine hohe natürliche Resistenz gegen Pilze?", o:["Fichte","Robinie","Birke","Ahorn"], c:1},
+    {q:"Wofür steht das „E-Modul“ bei Holz?", o:["Dichte","Elastizitätsmodul","Energiegehalt","Emissionswert"], c:1},
+    {q:"Welche Holzart ist ringporig?", o:["Buche","Ahorn","Eiche","Birke"], c:2},
+    {q:"Was sind Jahrringe?", o:["Wurzelreste","Jahreszuwächse des Baumes","Harzadern","Pilzspuren"], c:1},
+    {q:"Welcher Faktor beeinflusst Holzschwinden am stärksten?", o:["Temperatur","Luftfeuchte","UV-Strahlung","Wind"], c:1},
+    {q:"Welche Holzart ist zerstreutporig?", o:["Esche","Eiche","Buche","Ulme"], c:2},
+    {q:"Was erhöht die Dauerhaftigkeit von Holz im Außenbereich am meisten?", o:["Lackieren","Imprägnieren","Hobeln","Schleifen"], c:1},
+    {q:"Welche Eigenschaft beschreibt die Biegefestigkeit?", o:["Widerstand gegen Druck","Widerstand gegen Zug","Widerstand gegen Biegung","Widerstand gegen Feuchte"], c:2},
+    {q:"Was ist Kernholz?", o:["Jüngstes Holz","Äußerstes Holz","Inneres, älteres Holz","Wurzelholz"], c:2},
+    {q:"Welche Holzart ist besonders resistent gegen Insekten?", o:["Pappel","Robinie","Birke","Fichte"], c:1},
+    {q:"Welche Richtung weist die höchste Festigkeit auf?", o:["Tangential","Radial","Längs zur Faser","Gleich in alle Richtungen"], c:2},
+    {q:"Warum ist stehendes Wasser für Holz gefährlich?", o:["Es kühlt das Holz","Es erhöht die Dichte","Es fördert Pilzbefall","Es härtet das Holz"], c:2},
+    {q:"Was ist der Hauptgrund für Holzverzug?", o:["UV-Strahlung","Ungleichmäßiges Schwinden","Hohe Dichte","Druckbelastung"], c:1},
+    {q:"Welche Eigenschaft macht Teak besonders dauerhaft?", o:["Hohe Dichte","Hoher Harzanteil","Ölige Inhaltsstoffe","Große Poren"], c:2},
+    {q:"Was beschreibt die tangentiale Richtung?", o:["Entlang der Fasern","Vom Kern nach außen","Entlang der Jahrringe","Quer zur Stammachse"], c:2},
+    {q:"Welche Holzart hat besonders ausgeprägte Früh- und Spätholzzonen?", o:["Ahorn","Fichte","Kiefer","Birke"], c:2},
+    {q:"Warum ist Kernholz oft dauerhafter als Splintholz?", o:["Es ist feuchter","Es enthält mehr Nährstoffe","Es enthält schützende Inhaltsstoffe","Es ist heller"], c:2},
+    {q:"Welcher Organismus zerstört Holz am schnellsten bei Feuchte?", o:["Bakterien","Algen","Pilze","Moose"], c:2},
+    {q:"Welche Holzart hat sehr hohe natürliche Dauerhaftigkeit und wird im Außenbau geschätzt?", o:["Buche","Robinie","Fichte","Birke"], c:1},
+    {q:"Welche Eigenschaft ist für tragende Bauteile besonders wichtig?", o:["Farbe","Maserung","Festigkeit","Geruch"], c:2}
+];
 
 function shuffleArray(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
 
@@ -513,16 +573,12 @@ function triggerConfetti() {
     }());
 }
 
-// 7. SPIEL-LOGIK UND STEUERUNG
-// HIER PASSIERT DAS EIGENTLICHE SPIEL (NICHT ÄNDERN, WENN DU DICH NICHT AUSKENNST)
 window.openAttrConfig = () => {
     const list = document.getElementById('attrConfigList');
     list.innerHTML = '';
-    
     Object.keys(attributeInfo).forEach(key => {
         const info = attributeInfo[key];
         const isSelected = activeAttributeKeys.includes(key);
-        
         const div = document.createElement('div');
         div.className = `attr-toggle-btn w-full p-3 rounded-lg flex items-center justify-between cursor-pointer ${isSelected ? 'selected' : ''}`;
         div.onclick = () => toggleAttribute(key, div);
@@ -536,11 +592,9 @@ window.openAttrConfig = () => {
             </div>
             <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center ${isSelected ? 'border-amber-500 bg-amber-500 text-white' : 'border-gray-300 bg-white'}">
                 ${isSelected ? '✓' : ''}
-            </div>
-        `;
+            </div>`;
         list.appendChild(div);
     });
-    
     document.getElementById('attrConfigModal').classList.remove('hidden');
 };
 
@@ -550,14 +604,13 @@ function toggleAttribute(key, el) {
         if(activeAttributeKeys.length <= 3) { alert("Mindestens 3 Eigenschaften müssen aktiv sein!"); return; }
         activeAttributeKeys.splice(idx, 1);
     } else {
-        if(activeAttributeKeys.length >= 5) { return; } // Einfach abbrechen ohne Alert
+        if(activeAttributeKeys.length >= 5) { return; } 
         activeAttributeKeys.push(key);
     }
     const isSelected = activeAttributeKeys.includes(key);
     el.className = `attr-toggle-btn w-full p-3 rounded-lg flex items-center justify-between cursor-pointer ${isSelected ? 'selected' : ''}`;
     el.querySelector('.w-6').className = `w-6 h-6 rounded-full border-2 flex items-center justify-center ${isSelected ? 'border-amber-500 bg-amber-500 text-white' : 'border-gray-300 bg-white'}`;
     el.querySelector('.w-6').innerHTML = isSelected ? '✓' : '';
-    
     document.getElementById('attrCountBadge').innerText = activeAttributeKeys.length;
 }
 
@@ -619,7 +672,6 @@ function updateDisplayAI(){
     if(aiGame.turn==='ai' && !aiGame.roundInProgress) setTimeout(aiTurn, 1000);
 }
 
-// HILFSFUNKTION: BERECHNET DEN WERT BEI BEREICHEN (Z.B. "1-2" -> 1.5)
 function getNumericValue(val, attr) {
     if (attr === 'dk') {
         if (typeof val === 'string' && val.includes('-')) {
@@ -633,33 +685,107 @@ function getNumericValue(val, attr) {
     return parseFloat(val);
 }
 
+// 8. NEUE FUNKTION: DAS QUIZ STARTEN
+let quizTimerInterval;
+function startTieBreakerQuiz(callback) {
+    const modal = document.getElementById('quizModal');
+    const timerBar = document.getElementById('quizTimerBar');
+    const qText = document.getElementById('quizQuestion');
+    const qOptions = document.getElementById('quizOptions');
+    
+    // Zufallsfrage wählen
+    const question = quizQuestions[Math.floor(Math.random() * quizQuestions.length)];
+    
+    qText.innerText = question.q;
+    qOptions.innerHTML = '';
+    
+    // Timer Reset
+    timerBar.classList.remove('animate-shrink');
+    void timerBar.offsetWidth; // Trigger Reflow
+    timerBar.classList.add('animate-shrink');
+    
+    let answered = false;
+    
+    // Antwort-Buttons erstellen
+    question.o.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = "w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 px-4 rounded-lg border-2 border-gray-200 transition active:scale-95";
+        btn.innerText = opt;
+        btn.onclick = () => {
+            if(answered) return;
+            answered = true;
+            clearTimeout(quizTimeout);
+            
+            if(idx === question.c) {
+                // RICHTIG
+                btn.className = "w-full bg-green-500 text-white font-bold py-3 px-4 rounded-lg border-2 border-green-600 shadow-lg scale-105";
+                playSound(sounds.win);
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    callback(true); // True = Spieler hat gewonnen
+                }, 1000);
+            } else {
+                // FALSCH
+                btn.className = "w-full bg-red-500 text-white font-bold py-3 px-4 rounded-lg border-2 border-red-600";
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    callback(false); // False = Spieler hat verloren
+                }, 1000);
+            }
+        };
+        qOptions.appendChild(btn);
+    });
+    
+    modal.classList.remove('hidden');
+    
+    // 8 Sekunden Timer Logic
+    const quizTimeout = setTimeout(() => {
+        if(!answered) {
+            answered = true;
+            modal.classList.add('hidden');
+            callback(false); // Zeit abgelaufen = Verloren
+        }
+    }, 8000);
+}
+
 function evaluateRoundAI(attr){
     const rawPv = aiGame.currentPlayerCard[attr];
     const rawAv = aiGame.currentAiCard[attr];
-    
     const pv = getNumericValue(rawPv, attr);
     const av = getNumericValue(rawAv, attr);
-    
     const logic = attributeInfo[attr].logic;
+    
     let pWins = (logic === 'Niedrig gewinnt') ? (pv < av) : (pv > av);
-    if(pv === av) pWins = 'tie';
+    
+    // STECHEN IM SINGLEPLAYER
+    if(pv === av) {
+        // Starte Quiz
+        setTimeout(() => {
+            startTieBreakerQuiz((playerWon) => {
+                finishRoundAI(attr, rawPv, rawAv, playerWon ? true : false);
+            });
+        }, 1000);
+        return;
+    }
+    
+    finishRoundAI(attr, rawPv, rawAv, pWins);
+}
 
-    const resText = pWins===true ? 'Du gewinnst!' : (pWins===false ? 'Computer gewinnt!' : 'Unentschieden');
-    const resColor = pWins===true ? 'text-green-600' : (pWins===false ? 'text-red-600' : 'text-gray-600');
+function finishRoundAI(attr, rawPv, rawAv, pWins) {
+    const resText = pWins===true ? 'Du gewinnst!' : 'Computer gewinnt!';
+    const resColor = pWins===true ? 'text-green-600' : 'text-red-600';
     
     document.getElementById('resultText').innerText = resText;
     document.getElementById('resultText').className = `text-2xl font-black uppercase tracking-wide mb-2 ${resColor}`;
     document.getElementById('resultDetails').innerText = `${attributeInfo[attr].name}: ${rawPv} vs ${rawAv}`;
     
     if(pWins===true) { playSound(sounds.win); showHappyWorm(); lastRoundWinningWoodName = aiGame.currentPlayerCard.name; } 
-    else if (pWins===false) { lastRoundWinningWoodName = aiGame.currentAiCard.name; } 
-    else { lastRoundWinningWoodName = aiGame.currentPlayerCard.name; }
+    else { lastRoundWinningWoodName = aiGame.currentAiCard.name; }
     
     openBottomSheet(resText);
     const pC=aiGame.playerCards.shift(); const aC=aiGame.aiCards.shift();
     if(pWins===true){ aiGame.playerCards.push(pC, aC); aiGame.turn='player'; }
-    else if(pWins===false){ aiGame.aiCards.push(aC, pC); aiGame.turn='ai'; }
-    else { aiGame.playerCards.push(pC); aiGame.aiCards.push(aC); }
+    else { aiGame.aiCards.push(aC, pC); aiGame.turn='ai'; }
 
     if(aiGame.playerCards.length===0) window.endGame("Computer");
     if(aiGame.aiCards.length===0) window.endGame(aiGame.playerName);
@@ -667,7 +793,7 @@ function evaluateRoundAI(attr){
 
 function aiTurn(){
     if(aiGame.roundInProgress) return;
-    scrollToTop(); // HOCHSCROLLEN VOR COMPUTERZUG
+    scrollToTop();
     const k=activeAttributeKeys[Math.floor(Math.random()*activeAttributeKeys.length)];
     aiGame.roundInProgress = true;
     const aiCardEl = document.getElementById('aiCard');
@@ -691,7 +817,7 @@ function listenToGameChanges(){
         if(gd.status==='playing'||gd.status==='finished'){
             document.getElementById('multiplayerLobbyModal').classList.add('hidden');
             document.getElementById('gameContainer').classList.remove('hidden');
-            scrollToTop(); // HOCHSCROLLEN BEI NEUEM ZUG
+            scrollToTop();
             
             const oppId=gd.playerIds.find(id=>id!==localPlayerId);
             document.getElementById('playerNameDisplay').innerText = gd.players[localPlayerId]?.name || 'DU';
@@ -724,6 +850,8 @@ function listenToGameChanges(){
                  const iWin = wId===localPlayerId;
                  
                  if(wId === 'tie') {
+                     // Hier wird eigentlich nie 'tie' ankommen, da das Quiz das vorher löst
+                     // Falls doch (altes Spiel), fallback:
                      lastRoundWinningWoodName = gd.currentCards[localPlayerId].name;
                  } else if (gd.currentCards[wId]) {
                      lastRoundWinningWoodName = gd.currentCards[wId].name;
@@ -754,7 +882,7 @@ function listenToGameChanges(){
 window.selectAttribute = async (attr) => {
     if(gameMode==='ai') {
         if(aiGame.roundInProgress) return;
-        scrollToTop(); // HOCHSCROLLEN BEI KLICK
+        scrollToTop();
         aiGame.roundInProgress = true;
         const btn = document.querySelector(`div[data-attr-btn="${attr}"]`); if(btn) btn.classList.add('flash-active');
         setTimeout(() => {
@@ -766,20 +894,32 @@ window.selectAttribute = async (attr) => {
         }, 500);
     } else {
         if(!localGameState || localGameState.turn!==localPlayerId) return;
-        scrollToTop(); // HOCHSCROLLEN BEI KLICK (MULTIPLAYER)
+        scrollToTop();
         const opp = localGameState.playerIds.find(id=>id!==localPlayerId);
         
         const rawPv = localGameState.currentCards[localPlayerId][attr];
         const rawOv = localGameState.currentCards[opp][attr];
-        
         const pv = getNumericValue(rawPv, attr);
         const ov = getNumericValue(rawOv, attr);
         
         const logic = attributeInfo[attr].logic;
         let pWins = (logic === 'Niedrig gewinnt') ? (pv < ov) : (pv > ov);
-        if(pv === ov) pWins = 'tie';
-        const winner = pWins==='tie' ? 'tie' : (pWins ? localPlayerId : opp);
-        // Update Game Doc
+        
+        // STECHEN IM MULTIPLAYER
+        if(pv === ov) {
+            // Starte Quiz lokal für den aktiven Spieler
+            startTieBreakerQuiz(async (quizSuccess) => {
+                // Wenn Quiz gewonnen -> Ich gewinne die Runde
+                // Wenn Quiz verloren -> Gegner gewinnt die Runde
+                const winner = quizSuccess ? localPlayerId : opp;
+                await updateDoc(getPublicDataRef("games", gameId),{
+                    lastResult: {winnerId:winner, attribute:attr, values:{[localPlayerId]:rawPv, [opp]:rawOv}}
+                });
+            });
+            return; 
+        }
+        
+        const winner = pWins ? localPlayerId : opp;
         await updateDoc(getPublicDataRef("games", gameId),{
             lastResult: {winnerId:winner, attribute:attr, values:{[localPlayerId]:rawPv, [opp]:rawOv}}
         });
@@ -795,7 +935,7 @@ window.startGameAI = (name) => {
     aiGame.playerCards=sh.slice(0,15); aiGame.aiCards=sh.slice(15,30);
     aiGame.currentPlayerCard=aiGame.playerCards[0]; aiGame.currentAiCard=aiGame.aiCards[0];
     document.getElementById('gameContainer').classList.remove('hidden');
-    scrollToTop(); // HOCHSCROLLEN BEI START
+    scrollToTop();
     updateDisplayAI();
 };
 
@@ -816,7 +956,6 @@ window.createGame = async (playerName) => {
     document.getElementById('qrcode').innerHTML = "";
     new QRCode(document.getElementById('qrcode'), {text: joinUrl, width: 128, height: 128});
     
-    // Create new game in correct path
     await setDoc(getPublicDataRef("games", gameId),{
         gameId, status:'waiting', playerIds:[localPlayerId],
         players:{[localPlayerId]:{name:playerName,cards:[],status:'online'}},
@@ -844,7 +983,7 @@ window.joinGame = async (id, playerName) => {
             turn:p1, currentCards:{[p1]:sh.slice(0,15)[0],[localPlayerId]:sh.slice(15,30)[0]},
             lastResult:null
         });
-        scrollToTop(); // HOCHSCROLLEN BEI BEITRITT
+        scrollToTop();
         window.setNavState('game');
         listenToGameChanges();
     } else {
@@ -854,7 +993,7 @@ window.joinGame = async (id, playerName) => {
 };
 
 window.nextRound = async () => {
-    scrollToTop(); // HOCHSCROLLEN BEI NÄCHSTER RUNDE
+    scrollToTop();
     if(gameMode==='ai'){
         aiGame.currentPlayerCard=aiGame.playerCards[0];
         aiGame.currentAiCard=aiGame.aiCards[0];
