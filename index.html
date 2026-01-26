@@ -48,7 +48,7 @@
         .attr-toggle-btn.selected { background-color: #fef3c7; border-color: #f59e0b; color: #92400e; }
         .attr-toggle-btn:not(.selected) { background-color: #f3f4f6; color: #9ca3af; border-color: transparent; }
 
-        /* Animation für den Timer-Balken - JETZT 10 SEKUNDEN */
+        /* Animation für den Timer-Balken - 10 SEKUNDEN */
         @keyframes shrinkWidth { from { width: 100%; } to { width: 0%; } }
         .animate-shrink { animation: shrinkWidth 10s linear forwards; }
     </style>
@@ -97,8 +97,8 @@
     </div>
 </div>
 
-<div id="quizModal" class="fixed inset-0 dimmer flex justify-center items-start pt-12 z-[80] p-4 hidden">
-    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-sm flex flex-col relative animate-pulse-glow mt-4">
+<div id="quizModal" class="fixed inset-0 dimmer flex items-center justify-center z-[80] p-4 hidden">
+    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-sm flex flex-col relative animate-pulse-glow">
         <div class="h-2 w-full bg-gray-200">
             <div id="quizTimerBar" class="h-full bg-red-500 w-full"></div>
         </div>
@@ -770,7 +770,7 @@ function evaluateRoundAI(attr){
             startTieBreakerQuiz(qIdx, (playerWon) => {
                 finishRoundAI(attr, rawPv, rawAv, playerWon ? true : false);
             });
-        }, 3000);
+        }, 1500);
         return;
     }
     
@@ -943,7 +943,7 @@ window.selectAttribute = async (attr) => {
         // STECHEN IM MULTIPLAYER
         if(pv === ov) {
             // Starte Quiz für BEIDE Spieler durch Datenbank-Eintrag
-            // Warte 3 Sekunden bevor DB Trigger gesetzt wird
+            // Warte 1.5 Sekunden bevor DB Trigger gesetzt wird
             setTimeout(async () => {
                 const qIdx = Math.floor(Math.random() * quizQuestions.length);
                 await updateDoc(getPublicDataRef("games", gameId),{
@@ -954,7 +954,7 @@ window.selectAttribute = async (attr) => {
                         timestamp: Date.now() // Erzwingt Update
                     }
                 });
-            }, 3000);
+            }, 1500);
             return; 
         }
         
