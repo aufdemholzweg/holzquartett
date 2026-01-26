@@ -48,9 +48,9 @@
         .attr-toggle-btn.selected { background-color: #fef3c7; border-color: #f59e0b; color: #92400e; }
         .attr-toggle-btn:not(.selected) { background-color: #f3f4f6; color: #9ca3af; border-color: transparent; }
 
-        /* Animation für den Timer-Balken */
+        /* Animation für den Timer-Balken - JETZT 10 SEKUNDEN */
         @keyframes shrinkWidth { from { width: 100%; } to { width: 0%; } }
-        .animate-shrink { animation: shrinkWidth 8s linear forwards; }
+        .animate-shrink { animation: shrinkWidth 10s linear forwards; }
     </style>
 </head>
 <body class="flex flex-col relative text-gray-800">
@@ -97,14 +97,14 @@
     </div>
 </div>
 
-<div id="quizModal" class="fixed inset-0 dimmer flex items-center justify-center z-[80] p-4 hidden">
-    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-sm flex flex-col relative animate-pulse-glow">
+<div id="quizModal" class="fixed inset-0 dimmer flex justify-center items-start pt-12 z-[80] p-4 hidden">
+    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-sm flex flex-col relative animate-pulse-glow mt-4">
         <div class="h-2 w-full bg-gray-200">
             <div id="quizTimerBar" class="h-full bg-red-500 w-full"></div>
         </div>
         
         <div class="p-6 text-center">
-            <div class="inline-block bg-amber-100 text-amber-800 text-xs font-bold px-2 py-1 rounded-full mb-3">⚡ STECHEN! 8 Sekunden Zeit</div>
+            <div class="inline-block bg-amber-100 text-amber-800 text-xs font-bold px-2 py-1 rounded-full mb-3">⚡ STECHEN! 10 Sekunden Zeit</div>
             <h3 id="quizQuestion" class="text-lg font-bold text-gray-800 mb-6 leading-tight min-h-[3rem] flex items-center justify-center">
                 Frage wird geladen...
             </h3>
@@ -139,7 +139,7 @@
         </div>
         <div class="p-5 overflow-y-auto hide-scrollbar space-y-5">
             <h4 class="font-bold text-gray-700 text-md">Regeln (Quartett-Prinzip)</h4>
-            <p class="text-sm text-gray-600 leading-relaxed">Die aktive Person wählt auf ihrer Karte die Eigenschaft, die den größtmöglichen Vorteil verspricht. Je nach Kategorie zählt der höchste oder der niedrigste Wert (siehe die Beschreibung der Eigenschaften).<br><br><strong>NEU: Das Stechen</strong><br>Haben beide Karten den gleichen Wert, startet für BEIDE Spieler ein Blitz-Quiz! Wer die Fachfrage in 8 Sekunden am schnellsten richtig beantwortet, gewinnt die Karte. Ist die Antwort falsch oder die Zeit um, gewinnt der Gegner.</p>
+            <p class="text-sm text-gray-600 leading-relaxed">Die aktive Person wählt auf ihrer Karte die Eigenschaft, die den größtmöglichen Vorteil verspricht. Je nach Kategorie zählt der höchste oder der niedrigste Wert (siehe die Beschreibung der Eigenschaften).<br><br><strong>NEU: Das Stechen</strong><br>Haben beide Karten den gleichen Wert, startet für BEIDE Spieler ein Blitz-Quiz! Wer die Fachfrage in 10 Sekunden am schnellsten richtig beantwortet, gewinnt die Karte.</p>
             <div id="infoCategoryList" class="space-y-3 pt-3"></div>
         </div>
     </div>
@@ -444,14 +444,15 @@ const sounds={
  flip:new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_139083c224.mp3'),
  win:new Audio('https://github.com/aufdemholzweg/holzquartett/blob/894e048eea71ba49921abfe6827bd8dc723f8c2d/gewonnen.mp3?raw=true'),
  chime:new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c744c8.mp3'),
- starWin:new Audio('https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3')
+ starWin:new Audio('https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3'),
+ quizTick: new Audio('https://github.com/aufdemholzweg/holzquartett/blob/126b00ae749a371741a460d73cdb0f730d94bc81/Sounds/ticken_bei_quizfrage.mp3?raw=true')
 };
 function playSound(a){ if(!isMuted && a){ a.currentTime=0; a.play().catch(()=>{}); } }
 
 function isOpponentNameBackVisible(){ return localStorage.getItem('holzquartett_showOpponentNameOnBack')==='true'; }
 function setOpponentNameBackVisible(v){ localStorage.setItem('holzquartett_showOpponentNameOnBack', v?'true':'false'); }
 
-const IMG_BASE = "https://github.com/aufdemholzweg/holzquartett/blob/b99750068a9e30c4926fdc02aa37af15a763dbc2/images";
+const IMG_BASE = "https://github.com/aufdemholzweg/holzquartett/blob/326bdfd40ff4d97de5c70dc584fe767aba056135/images";
 const IMG_SUFFIX = "?raw=true";
 
 // 6. KARTEN DATEN
@@ -703,6 +704,8 @@ function startTieBreakerQuiz(qIndex, callback) {
     void timerBar.offsetWidth; // Trigger Reflow
     timerBar.classList.add('animate-shrink');
     
+    playSound(sounds.quizTick); // Sound starten
+    
     let answered = false;
     
     // Antwort-Buttons erstellen
@@ -714,6 +717,7 @@ function startTieBreakerQuiz(qIndex, callback) {
             if(answered) return;
             answered = true;
             clearTimeout(quizTimeout);
+            sounds.quizTick.pause(); sounds.quizTick.currentTime = 0; // Sound stop
             
             if(idx === question.c) {
                 // RICHTIG
@@ -737,14 +741,15 @@ function startTieBreakerQuiz(qIndex, callback) {
     
     modal.classList.remove('hidden');
     
-    // 8 Sekunden Timer Logic
+    // 10 Sekunden Timer Logic
     const quizTimeout = setTimeout(() => {
         if(!answered) {
             answered = true;
+            sounds.quizTick.pause(); sounds.quizTick.currentTime = 0; // Sound stop
             modal.classList.add('hidden');
             callback(false); // Zeit abgelaufen = Verloren
         }
-    }, 8000);
+    }, 10000);
 }
 
 function evaluateRoundAI(attr){
@@ -765,7 +770,7 @@ function evaluateRoundAI(attr){
             startTieBreakerQuiz(qIdx, (playerWon) => {
                 finishRoundAI(attr, rawPv, rawAv, playerWon ? true : false);
             });
-        }, 1000);
+        }, 3000);
         return;
     }
     
@@ -845,6 +850,7 @@ function listenToGameChanges(){
         if((!gd.quizTrigger || !gd.quizTrigger.active) && document.getElementById('quizModal').classList.contains('hidden') === false) {
              document.getElementById('quizModal').classList.add('hidden');
              document.getElementById('quizModal').dataset.active = "";
+             sounds.quizTick.pause(); sounds.quizTick.currentTime = 0; // Sound sicherheitshalber stoppen
         }
 
         if(gd.status==='playing'||gd.status==='finished'){
@@ -937,15 +943,18 @@ window.selectAttribute = async (attr) => {
         // STECHEN IM MULTIPLAYER
         if(pv === ov) {
             // Starte Quiz für BEIDE Spieler durch Datenbank-Eintrag
-            const qIdx = Math.floor(Math.random() * quizQuestions.length);
-            await updateDoc(getPublicDataRef("games", gameId),{
-                quizTrigger: {
-                    active: true,
-                    attr: attr,
-                    qIndex: qIdx,
-                    timestamp: Date.now() // Erzwingt Update
-                }
-            });
+            // Warte 3 Sekunden bevor DB Trigger gesetzt wird
+            setTimeout(async () => {
+                const qIdx = Math.floor(Math.random() * quizQuestions.length);
+                await updateDoc(getPublicDataRef("games", gameId),{
+                    quizTrigger: {
+                        active: true,
+                        attr: attr,
+                        qIndex: qIdx,
+                        timestamp: Date.now() // Erzwingt Update
+                    }
+                });
+            }, 3000);
             return; 
         }
         
@@ -1194,7 +1203,7 @@ window.showNamePrompt = (mode) => {
         document.getElementById('nameModal').classList.add('hidden');
         if(mode==='ai') window.startGameAI(n);
         else if(mode==='multiplayer') window.createGame(n);
-        else if(mode==='join') window.joinGame(gameId, n); // FIX: JOIN-MODE HINZUGEFÜGT
+        else if(mode==='join') window.joinGame(gameId, n); // FIX HIER
     });
 };
 window.copyShareLink = () => { const l=document.getElementById('shareLink'); l.select(); try { document.execCommand('copy'); } catch(e){} };
