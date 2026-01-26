@@ -36,39 +36,27 @@
         /* Pop-In Animation für Fenster */
         .animate-pop-in { animation: pop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         @keyframes pop-in { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        
-        /* Bounce Animation für Gleichstand */
-        .animate-bounce-slam { animation: bounce-slam 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite; }
-        @keyframes bounce-slam { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
 
         .animate-worm { animation: worm-pop-up 3.5s ease-in-out forwards; }
         @keyframes worm-pop-up { 0% { transform: translateY(100%) rotate(0deg); opacity: 0; } 20% { transform: translateY(-20%) rotate(-10deg); opacity: 1; } 40% { transform: translateY(-20%) rotate(10deg); } 50% { transform: translateY(-30%) rotate(0deg) scale(1.1); } 60% { transform: translateY(-20%) rotate(-10deg) scale(1); } 80% { transform: translateY(-20%) rotate(0deg); opacity: 1; } 100% { transform: translateY(100%) rotate(0deg); opacity: 0; } }
-
-        /* SÄGE-EFFEKT CSS */
-        .wood-texture {
-            background-color: #d97706;
-            background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0,0,0,0.1) 10px, rgba(0,0,0,0.1) 20px);
-            border-radius: 4px;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
-            position: relative;
-        }
         
-        .saw-blade {
-            position: absolute;
-            right: -20px; /* Sägeblatt sitzt am rechten Ende */
-            top: 50%;
-            transform: translateY(-50%);
-            width: 45px; /* Etwas größer für das Bild */
-            height: 45px;
-            z-index: 10;
-            /* Kein Drop-Shadow Filter mehr nötig, wenn das Bild gut ist, sonst hier wieder einfügen */
-        }
+        .opponent-back-name { position: absolute; top: 15%; width: 100%; text-align: center; color: rgba(255,255,255,0.95); font-weight: 700; font-size: 1.1rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5); pointer-events: none; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .dimmer { background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); }
+        .attr-box { background-color: #fff7ed; border: 1px solid #fbbf24; transition: all 0.2s; }
+        .attr-box.flash-active { background-color: #f97316 !important; border-color: #ea580c !important; color: white !important; }
+        .attr-box.flash-active span { color: white !important; }
+        .attr-box.highlight-compare { background-color: #e5e7eb !important; border-color: #9ca3af !important; color: #111827 !important; }
+        .attr-box.highlight-compare span { color: #000000 !important; }
         
-        /* Die Säge dreht sich */
-        .animate-spin-fast { animation: spin 0.1s linear infinite; }
-        @keyframes spin { from { transform: translateY(-50%) rotate(0deg); } to { transform: translateY(-50%) rotate(360deg); } }
+        .toggle-checkbox:checked { right: 0; border-color: #68D391; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #68D391; }
+        .attr-toggle-btn { transition: all 0.2s; border: 2px solid transparent; }
+        .attr-toggle-btn.selected { background-color: #fef3c7; border-color: #f59e0b; color: #92400e; }
+        .attr-toggle-btn:not(.selected) { background-color: #f3f4f6; color: #9ca3af; border-color: transparent; }
 
-        /* ANIMATIONEN FÜR DEN BALKEN */
+        /* NEUE ANIMATIONEN FÜR DEN BALKEN */
         /* 1. Aufladen (1.5s) */
         @keyframes chargeWidth { from { width: 0%; } to { width: 100%; } }
         .animate-charge { animation: chargeWidth 1.5s linear forwards; }
@@ -122,24 +110,10 @@
     </div>
 </div>
 
-<div id="tieOverlay" class="fixed inset-0 z-[90] flex items-center justify-center dimmer hidden">
-    <div class="bg-white/10 backdrop-blur-sm p-8 rounded-3xl animate-bounce-slam text-center">
-        <div class="text-6xl mb-2">💥</div>
-        <h2 class="text-4xl sm:text-5xl font-black text-white uppercase tracking-wider drop-shadow-[0_5px_5px_rgba(0,0,0,0.8)] border-text">
-            GLEICHSTAND!
-        </h2>
-        <p class="text-white font-bold text-lg mt-2 drop-shadow-md">Das Quiz entscheidet...</p>
-    </div>
-</div>
-
 <div id="quizModal" class="fixed inset-0 dimmer flex items-center justify-center z-[80] p-4 hidden">
-    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-sm flex flex-col relative animate-pop-in border-4 border-amber-500">
-        
-        <div class="h-6 w-full bg-gray-300 relative overflow-visible">
-            <div id="quizTimerBar" class="h-full w-0 bg-amber-500 wood-texture"> <div class="saw-blade animate-spin-fast">
-                    <img src="https://github.com/aufdemholzweg/holzquartett/blob/main/images/saegeblatt.png?raw=true" alt="Säge" class="w-full h-full object-contain">
-                </div>
-            </div>
+    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-sm flex flex-col relative animate-pop-in">
+        <div class="h-2 w-full bg-gray-200">
+            <div id="quizTimerBar" class="h-full w-0 bg-amber-500"></div>
         </div>
         
         <div class="p-6 text-center">
@@ -743,7 +717,7 @@ function startTieBreakerQuiz(qIndex, callback) {
     statusText.innerText = "⚠️ Gleichstand! Quiz lädt...";
     
     // 1. Reset Bar (Start state)
-    timerBar.className = "h-full w-0 bg-amber-500 wood-texture"; 
+    timerBar.className = "h-full w-0 bg-amber-500"; 
     timerBar.style.width = "0%";
     
     // Buttons erstellen (aber deaktiviert)
@@ -770,7 +744,7 @@ function startTieBreakerQuiz(qIndex, callback) {
         
         // Bar auf "Voll & Rot" setzen für Entladung
         timerBar.classList.remove('animate-charge');
-        timerBar.className = "h-full w-full bg-red-500 wood-texture animate-shrink"; // Start discharging
+        timerBar.className = "h-full w-full bg-red-500 animate-shrink"; // Start discharging
         
         playSound(sounds.quizTick);
         
@@ -817,17 +791,6 @@ function startTieBreakerQuiz(qIndex, callback) {
     }, 1500);
 }
 
-// Zeigt das "GLEICHSTAND" Overlay für 2 Sekunden
-function showTieOverlay(callback) {
-    const overlay = document.getElementById('tieOverlay');
-    overlay.classList.remove('hidden');
-    playSound(sounds.chime); // Optional: Soundeffekt für Gleichstand
-    setTimeout(() => {
-        overlay.classList.add('hidden');
-        if(callback) callback();
-    }, 2000);
-}
-
 function evaluateRoundAI(attr){
     const rawPv = aiGame.currentPlayerCard[attr];
     const rawAv = aiGame.currentAiCard[attr];
@@ -839,13 +802,11 @@ function evaluateRoundAI(attr){
     
     // STECHEN IM SINGLEPLAYER
     if(pv === av) {
-        showTieOverlay(() => {
-            // Starte Quiz NACH dem Overlay
-            const qIdx = Math.floor(Math.random() * quizQuestions.length);
-            // Direkt aufrufen, da das "Aufladen" jetzt IN der Funktion passiert
-            startTieBreakerQuiz(qIdx, (playerWon) => {
-                finishRoundAI(attr, rawPv, rawAv, playerWon ? true : false);
-            });
+        // Starte Quiz
+        const qIdx = Math.floor(Math.random() * quizQuestions.length);
+        // Direkt aufrufen, da das "Aufladen" jetzt IN der Funktion passiert
+        startTieBreakerQuiz(qIdx, (playerWon) => {
+            finishRoundAI(attr, rawPv, rawAv, playerWon ? true : false);
         });
         return;
     }
@@ -901,25 +862,23 @@ function listenToGameChanges(){
         // Wenn ein Quiz getriggert wurde und wir es noch nicht gemacht haben
         if(gd.quizTrigger && gd.quizTrigger.active && !document.getElementById('quizModal').dataset.active) {
              document.getElementById('quizModal').dataset.active = "true"; // Mark as open
-             
-             // ZEIGE ERST GLEICHSTAND OVERLAY, DANN QUIZ
-             showTieOverlay(() => {
-                 // Starte Quiz für BEIDE Spieler
-                 startTieBreakerQuiz(gd.quizTrigger.qIndex, async (iWon) => {
-                     document.getElementById('quizModal').dataset.active = ""; // Reset
-                     
-                     const opp = localGameState.playerIds.find(id=>id!==localPlayerId);
-                     const winner = iWon ? localPlayerId : opp;
-                     
-                     // Hole aktuelle Werte für Resultat
-                     const rawPv = localGameState.currentCards[localPlayerId][gd.quizTrigger.attr];
-                     const rawOv = localGameState.currentCards[opp][gd.quizTrigger.attr];
-                     
-                     // Schreibe Resultat in DB (der Schnellste gewinnt den Write)
-                     await updateDoc(getPublicDataRef("games", gameId),{
-                        quizTrigger: null, // Quiz beenden
-                        lastResult: {winnerId:winner, attribute:gd.quizTrigger.attr, values:{[localPlayerId]:rawPv, [opp]:rawOv}}
-                     });
+             // Starte Quiz für BEIDE Spieler
+             startTieBreakerQuiz(gd.quizTrigger.qIndex, async (iWon) => {
+                 document.getElementById('quizModal').dataset.active = ""; // Reset
+                 // Wenn ich gewonnen habe (richtig geklickt) -> Ich schreibe Sieg in DB
+                 // Wenn ich verloren habe (falsch geklickt) -> Ich schreibe Niederlage in DB
+                 
+                 const opp = localGameState.playerIds.find(id=>id!==localPlayerId);
+                 const winner = iWon ? localPlayerId : opp;
+                 
+                 // Hole aktuelle Werte für Resultat
+                 const rawPv = localGameState.currentCards[localPlayerId][gd.quizTrigger.attr];
+                 const rawOv = localGameState.currentCards[opp][gd.quizTrigger.attr];
+                 
+                 // Schreibe Resultat in DB (der Schnellste gewinnt den Write)
+                 await updateDoc(getPublicDataRef("games", gameId),{
+                    quizTrigger: null, // Quiz beenden
+                    lastResult: {winnerId:winner, attribute:gd.quizTrigger.attr, values:{[localPlayerId]:rawPv, [opp]:rawOv}}
                  });
              });
         }
