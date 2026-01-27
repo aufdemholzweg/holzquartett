@@ -71,27 +71,25 @@
         }
         .animate-pulse-dot { animation: pulse-dot-anim 1s infinite ease-in-out; }
 
-        /* 1. Aufladen (1.5s) */
         @keyframes chargeWidth { from { width: 0%; } to { width: 100%; } }
         .animate-charge { animation: chargeWidth 1.5s linear forwards; }
         
-        /* 2. Entladen (10s) */
         @keyframes shrinkWidth { from { width: 100%; } to { width: 0%; } }
         .animate-shrink { animation: shrinkWidth 10s linear forwards; }
     </style>
 </head>
 <body class="flex flex-col relative text-gray-800">
 
-<header class="bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-md z-20 flex-shrink-0">
+<header class="bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-md z-[100] flex-shrink-0 relative">
     <div class="max-w-[600px] mx-auto px-4 py-3 relative flex justify-between items-center">
-        <a id="navButton" href="#" class="relative z-10 w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center text-white shadow-sm hover:bg-white/30 transition-all border border-white/30" aria-label="Zurück zur Startseite">
+        <a id="navButton" href="#" class="relative z-[101] w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center text-white shadow-sm hover:bg-white/30 transition-all border border-white/30" aria-label="Zurück zur Startseite">
              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
                 <polyline points="9 22 9 12 15 12 15 22" />
              </svg>
         </a>
         <h1 class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-lg sm:text-2xl font-black tracking-wider uppercase drop-shadow-sm whitespace-nowrap pointer-events-none">🌲 HOLZEN! 🌲</h1>
-        <button onclick="window.showGameInfo()" class="text-white hover:text-amber-100 p-2 rounded-full transition-colors active:scale-90 relative z-10" aria-label="Spielregeln">
+        <button onclick="window.showGameInfo()" class="text-white hover:text-amber-100 p-2 rounded-full transition-colors active:scale-90 relative z-[101]" aria-label="Spielregeln">
              <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
         </button>
     </div>
@@ -144,7 +142,7 @@
         
         <div class="p-6 text-center">
             <div id="quizStatusText" class="inline-block bg-amber-100 text-amber-800 text-xs font-bold px-2 py-1 rounded-full mb-3">
-                💥 Gleichstand! Quiz lädt...
+                ⚠️ Gleichstand! Quiz lädt...
             </div>
             <h3 id="quizQuestion" class="text-lg font-bold text-gray-800 mb-6 leading-tight min-h-[3rem] flex items-center justify-center">
                 Frage wird geladen...
@@ -179,8 +177,12 @@
             <button onclick="document.getElementById('gameInfoModal').classList.add('hidden')" class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
         </div>
         <div class="p-5 overflow-y-auto hide-scrollbar space-y-5">
-            <h4 class="font-bold text-gray-700 text-md">Regeln</h4>
-            <p class="text-sm text-gray-600 leading-relaxed">Die aktive Person wählt auf ihrer Karte die Eigenschaft, die den größtmöglichen Vorteil verspricht. Je nach Kategorie zählt der höhere oder der niedrigere Wert (siehe die Beschreibung der Eigenschaften).<br><br><strong>Bei Gleichstand:</strong><br>Haben beide Karten den gleichen Wert, startet für BEIDE Spieler ein Quiz! Wer die Frage innerhalb von 10 Sekunden am schnellsten richtig beantwortet, gewinnt die Karte und ist als nächstes am Zug. Wird die Frage falsch beantwortet, gewinnt dein Gegenspieler. Wird die Frage von beiden Spielern innerhalb der Zeit NICHT beantwortet, bekommen beide keinen Punkt und jeder behält seine Karte.</p>
+            <h4 class="font-bold text-gray-700 text-md">Regeln:</h4>
+            <p class="text-sm text-gray-600 leading-relaxed">Die aktive Person wählt auf ihrer Karte die Eigenschaft, die den größtmöglichen Vorteil verspricht. Je nach Kategorie zählt der höhere oder der niedrigere Wert (siehe die Beschreibung der Eigenschaften).</p>
+            
+            <h4 class="font-bold text-gray-700 text-md mt-4">Bei Gleichstand:</h4>
+            <p class="text-sm text-gray-600 leading-relaxed">Haben beide Karten den gleichen Wert, startet für BEIDE Spieler ein Quiz! Wer die Frage innerhalb von 10 Sekunden am schnellsten richtig beantwortet, gewinnt die Karte und ist als nächstes am Zug. Wird die Frage falsch beantwortet, gewinnt dein Gegenspieler. Wird die Frage von beiden Spielern innerhalb der Zeit NICHT beantwortet, bekommen beide keinen Punkt und jeder behält seine Karte.</p>
+            
             <div id="infoCategoryList" class="space-y-3 pt-3"></div>
         </div>
     </div>
@@ -455,7 +457,13 @@ window.setNavState = (state) => {
     if(state === 'game') {
         btn.innerHTML = NAV_ICONS.house;
         btn.removeAttribute('href'); 
-        btn.onclick = (e) => { e.preventDefault(); if(confirm('Spiel abbrechen und zum Startbildschirm zurückkehren?')) { window.location.reload(); } };
+        btn.onclick = (e) => { 
+            e.preventDefault(); 
+            if(confirm('Spiel abbrechen und zum Startbildschirm zurückkehren?')) { 
+                if(typeof unsubscribeGame === 'function') unsubscribeGame();
+                window.location.href = window.location.origin + window.location.pathname; // Hard reset to menu
+            } 
+        };
         btn.setAttribute('aria-label', 'Zurück zur Holzen! Startseite');
     } else {
         btn.innerHTML = NAV_ICONS.house; 
@@ -513,7 +521,7 @@ const attributeInfo={
      unit:'(N/mm²)', 
      logic: 'Hoch gewinnt', 
      default: true,
-     description: 'Elastizitätsmodul. Ein Maß für die Steifigkeit des Holzes und ist eine Materialkonstante. Sie beschreibt in N/mm²  die Kraft die benötigt wird, um einen Stab, mit einem Querschnitt von 1 mm² auf seine doppelte Länge zu dehnen. Je größer das E-Modul desto „steifer“ ein Material, d.h. desto mehr Widerstand leistet es bei seiner Verformung.'
+     description: 'Elastizitätsmodul. Ein Maß für die Steifigkeit des Holzes und ist eine Materialkonstante. Sie beschreibt in N/mm² die Kraft die benötigt wird, um einen Stab, mit einem Querschnitt von 1 mm² auf seine doppelte Länge zu dehnen. Je größer das E-Modul desto „steifer“ ein Material, d.h. desto mehr Widerstand leistet es bei seiner Verformung.'
  },
  preis:{
      icon:'💰',
@@ -538,7 +546,7 @@ function playSound(a){ if(!isMuted && a){ a.currentTime=0; a.play().catch(()=>{}
 function isOpponentNameBackVisible(){ return localStorage.getItem('holzquartett_showOpponentNameOnBack')==='true'; }
 function setOpponentNameBackVisible(v){ localStorage.setItem('holzquartett_showOpponentNameOnBack', v?'true':'false'); }
 
-const IMG_BASE = "https://raw.githubusercontent.com/aufdemholzweg/holzquartett/refs/heads/main/images";
+const IMG_BASE = "https://github.com/aufdemholzweg/holzquartett/blob/326bdfd40ff4d97de5c70dc584fe767aba056135/images";
 const IMG_SUFFIX = "?raw=true";
 
 // 6. KARTEN DATEN
@@ -844,13 +852,13 @@ function startTieBreakerQuiz(qIndex, callback) {
                     playSound(sounds.win);
                     setTimeout(() => {
                         modal.classList.add('hidden');
-                        callback(true);
+                        callback('correct');
                     }, 500);
                 } else {
                     btn.className = "w-full bg-red-500 text-white font-bold py-3 px-4 rounded-lg border-2 border-red-600";
                     setTimeout(() => {
                         modal.classList.add('hidden');
-                        callback(false);
+                        callback('wrong');
                     }, 500);
                 }
             };
@@ -862,7 +870,7 @@ function startTieBreakerQuiz(qIndex, callback) {
                 answered = true;
                 sounds.quizTick.pause(); sounds.quizTick.currentTime = 0;
                 modal.classList.add('hidden');
-                callback(false);
+                callback('timeout');
             }
         }, 10000);
         
@@ -894,8 +902,11 @@ function evaluateRoundAI(attr){
         showTieOverlay(() => {
             // Starte Quiz NACH dem Overlay
             const qIdx = Math.floor(Math.random() * quizQuestions.length);
-            startTieBreakerQuiz(qIdx, (playerWon) => {
-                finishRoundAI(attr, rawPv, rawAv, playerWon ? true : false);
+            startTieBreakerQuiz(qIdx, (result) => {
+                let roundWinner = false;
+                if(result === 'correct') roundWinner = true;
+                // If wrong or timeout -> PC wins (in Singleplayer logic)
+                finishRoundAI(attr, rawPv, rawAv, roundWinner);
             });
         });
         return;
@@ -961,12 +972,19 @@ function listenToGameChanges(){
              // ZEIGE ERST GLEICHSTAND OVERLAY, DANN QUIZ
              showTieOverlay(() => {
                  // Starte Quiz für BEIDE Spieler
-                 startTieBreakerQuiz(gd.quizTrigger.qIndex, async (iWon) => {
+                 startTieBreakerQuiz(gd.quizTrigger.qIndex, async (result) => {
                      document.getElementById('quizModal').dataset.active = ""; // Reset
                      
                      const opp = localGameState.playerIds.find(id=>id!==localPlayerId);
-                     const winner = iWon ? localPlayerId : opp;
-                     
+                     let winner = 'tie'; // Default to tie (timeout)
+
+                     if (result === 'correct') {
+                         winner = localPlayerId;
+                     } else if (result === 'wrong') {
+                         winner = opp;
+                     } 
+                     // if result === 'timeout', winner remains 'tie'
+
                      // Hole aktuelle Werte für Resultat
                      const rawPv = localGameState.currentCards[localPlayerId][gd.quizTrigger.attr];
                      const rawOv = localGameState.currentCards[opp][gd.quizTrigger.attr];
@@ -1127,6 +1145,7 @@ window.createGame = async (playerName) => {
     document.getElementById('qrcode').innerHTML = "";
     new QRCode(document.getElementById('qrcode'), {text: joinUrl, width: 128, height: 128});
     
+    // --- CHANGE: SAVE activeAttributes to Firestore ---
     await setDoc(getPublicDataRef("games", gameId),{
         gameId, status:'waiting', playerIds:[localPlayerId],
         players:{[localPlayerId]:{name:playerName,cards:[],status:'online'}},
