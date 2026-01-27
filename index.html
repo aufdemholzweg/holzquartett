@@ -538,7 +538,7 @@ function playSound(a){ if(!isMuted && a){ a.currentTime=0; a.play().catch(()=>{}
 function isOpponentNameBackVisible(){ return localStorage.getItem('holzquartett_showOpponentNameOnBack')==='true'; }
 function setOpponentNameBackVisible(v){ localStorage.setItem('holzquartett_showOpponentNameOnBack', v?'true':'false'); }
 
-const IMG_BASE = "https://github.com/aufdemholzweg/holzquartett/blob/326bdfd40ff4d97de5c70dc584fe767aba056135/images";
+const IMG_BASE = "https://raw.githubusercontent.com/aufdemholzweg/holzquartett/refs/heads/main/images";
 const IMG_SUFFIX = "?raw=true";
 
 // 6. KARTEN DATEN
