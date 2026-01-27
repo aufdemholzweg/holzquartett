@@ -179,8 +179,8 @@
             <button onclick="document.getElementById('gameInfoModal').classList.add('hidden')" class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
         </div>
         <div class="p-5 overflow-y-auto hide-scrollbar space-y-5">
-            <h4 class="font-bold text-gray-700 text-md">Regeln (Quartett-Prinzip)</h4>
-            <p class="text-sm text-gray-600 leading-relaxed">Die aktive Person wählt auf ihrer Karte die Eigenschaft, die den größtmöglichen Vorteil verspricht. Je nach Kategorie zählt der höchste oder der niedrigste Wert (siehe die Beschreibung der Eigenschaften).<br><br><strong>NEU: Das Stechen</strong><br>Haben beide Karten den gleichen Wert, startet für BEIDE Spieler ein Blitz-Quiz! Wer die Fachfrage in 10 Sekunden am schnellsten richtig beantwortet, gewinnt die Karte. Antworte richtig, um an der Reihe zu bleiben!</p>
+            <h4 class="font-bold text-gray-700 text-md">Regeln</h4>
+            <p class="text-sm text-gray-600 leading-relaxed">Die aktive Person wählt auf ihrer Karte die Eigenschaft, die den größtmöglichen Vorteil verspricht. Je nach Kategorie zählt der höhere oder der niedrigere Wert (siehe die Beschreibung der Eigenschaften).<br><br><strong>Bei Gleichstand:</strong><br>Haben beide Karten den gleichen Wert, startet für BEIDE Spieler ein Quiz! Wer die Frage innerhalb von 10 Sekunden am schnellsten richtig beantwortet, gewinnt die Karte und ist als nächstes am Zug. Wird die Frage falsch beantwortet, gewinnt dein Gegenspieler. Wird die Frage von beiden Spielern innerhalb der Zeit NICHT beantwortet, bekommen beide keinen Punkt und jeder behält seine Karte.</p>
             <div id="infoCategoryList" class="space-y-3 pt-3"></div>
         </div>
     </div>
@@ -489,7 +489,7 @@ const attributeInfo={
      unit:'(N/mm²)', 
      logic: 'Hoch gewinnt', 
      default: true,
-     description: 'Widerstand gegen Druckkraft parallel zur Faser.'
+     description: 'Die Druckfestigkeit von Holz ist die maximale Druckspannung, die ein Holzwerkstoff unter axialer Belastung parallel zur Faser bis zum Versagen (Bruch) aufnehmen kann. Sie wird nach DIN EN 408 ermittelt und in N/mm² angegeben.'
  },
  quellen:{
      icon:'↔️',
@@ -497,7 +497,7 @@ const attributeInfo={
      unit:'(%)', 
      logic: 'Niedrig gewinnt', 
      default: true,
-     description: 'Größenänderung von Dartrocken bis zur Fasersättigung des Holzes. Maximales Schwindsatz tangential'
+     description: 'Sie beschreibt die maximale Maßänderung (in %) eines Holzprüfkörpers in tangentialer Richtung (entlang der Jahrringe) zwischen darrtrockenem Zustand und Fasersättigung. Diese Kenngröße ist entscheidend für das Verformungsverhalten von Holz bei Feuchteänderungen.'
  },
  rohdichte:{
      icon:'⚖️',
@@ -505,7 +505,7 @@ const attributeInfo={
      unit:'(kg/m³)', 
      logic: 'Hoch gewinnt', 
      default: true,
-     description: 'Masse pro Volumes des Holzes bei 12-15% Holzfeuchte bei 20°C relative Luftfeuchte nach DIN 50 014)'
+     description: 'Die Rohdichte ist das Verhältnis von Masse zu Volumen einer Holzprobe bei einer festgelegten Holzfeuchte von 12 %. Masse und Volumen werden dabei im gleichen Feuchtezustand bestimmt. Die Einheit ist kg/m³.'
  },
  emodul:{
      icon:'📐',
@@ -521,7 +521,7 @@ const attributeInfo={
      unit:'(€/m³)', 
      logic: 'Niedrig gewinnt', 
      default: true,
-     description: 'Um eine einfache Vergleichbarkeit der Materialien zu gewährleisten, beziehen sich alle Preisangaben auf das Volumen von einem Kubikmeter (m3) Massivholz. Da reale Marktpreise je nach Region und Zeitpunkt schwanken, sind alle Hölzer in fünf feste Preisstufen unterteilt. (0€-699€= 1; 700€-1199€= 2; 1200€-1999€= 3; 2000€-3999€=4; >4000€=5'
+     description: 'Um eine einfache Vergleichbarkeit der Materialien zu gewährleisten, beziehen sich alle Preisangaben auf das Volumen von einem Kubikmeter (€/m³) Massivholz. Da reale Marktpreise je nach Region und Zeitpunkt schwanken, sind alle Hölzer in fünf feste Preisstufen unterteilt. (0€-699€= 1; 700€-1199€= 2; 1200€-1999€= 3; 2000€-3999€=4; >4000€=5'
  }
 };
 
