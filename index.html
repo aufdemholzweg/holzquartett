@@ -306,7 +306,7 @@
     </div>
 </div>
 
-<div id="setupModal" class="fixed inset-0 z-[110] flex items-center justify-center p-4 dimmer overflow-y-auto h-screen">
+<div id="setupModal" class="fixed inset-0 z-[110] flex flex-col items-center justify-center p-4 dimmer overflow-y-auto h-screen">
     <a href="https://aufdemholzweg.github.io/Splashscreen-Holztechnik/" class="absolute left-4 top-4 w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center text-white shadow-sm hover:bg-white/30 transition-all border border-white/30" aria-label="Zurück zum Launcher">
          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M4 22c0-8 3-14 8-20" opacity="0.9" />
@@ -337,11 +337,8 @@
 </div>
 
 <div id="nameModal" class="hidden fixed inset-0 dimmer flex items-center justify-center z-50 p-4">
-    <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-xs w-full text-center relative">
-        <a href="#" onclick="event.preventDefault(); document.getElementById('nameModal').classList.add('hidden'); document.getElementById('setupModal').classList.remove('hidden');" class="absolute left-4 top-4 w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-all" aria-label="Zurück">
-             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-        </a>
-        <h2 class="text-xl font-bold text-gray-800 mb-6 mt-2">Dein Name</h2>
+    <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-xs w-full text-center">
+        <h2 class="text-xl font-bold text-gray-800 mb-6">Dein Name</h2>
         <input type="text" id="playerName" class="w-full p-3 border-2 border-gray-200 rounded-lg mb-6 text-center font-bold text-lg" placeholder="Name eingeben" maxlength="12">
         <button id="nameSubmitButton" class="w-full bg-amber-500 text-white font-bold py-3 rounded-lg shadow-lg hover:bg-amber-600">Starten</button>
     </div>
@@ -485,9 +482,7 @@ let roundSoundPlayed=false;
 let lastRoundWinningWoodName = null;
 let aiGame={playerName:'',playerCards:[],aiCards:[],currentPlayerCard:null,currentAiCard:null,roundInProgress:false,turn:'player'};
 
-let activeAttributeKeys = ['dk', 'druckfestigkeit', 'quellen', 'rohdichte', 'emodul'];
-
-// 5. ATTRIBUTE & EIGENSCHAFTEN
+// ATTRIBUTE & EIGENSCHAFTEN (Updated)
 const attributeInfo={
  dk:{
      icon:'🛡️',
@@ -531,13 +526,26 @@ const attributeInfo={
  },
  preis:{
      icon:'💰',
-     name:'Preis/ Preisstufen',
+     name:'Preisstufe',
      unit:'(Stufe)', 
      logic: 'Hoch gewinnt', 
      default: true,
      description: 'Um eine einfache Vergleichbarkeit der Materialien zu gewährleisten, beziehen sich alle Preisangaben auf das Volumen von einem Kubikmeter (€/m³) Massivholz. Da reale Marktpreise je nach Region und Zeitpunkt schwanken, sind alle Hölzer in fünf feste Preisstufen unterteilt. (0€-699€= 1; 700€-1199€= 2; 1200€-1999€= 3; 2000€-3999€=4; >4000€=5'
  }
 };
+
+// RANDOM DEFAULT ATTRIBUTES
+function getRandomDefaultAttributes() {
+    const keys = Object.keys(attributeInfo);
+    // Simple shuffle
+    for (let i = keys.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [keys[i], keys[j]] = [keys[j], keys[i]];
+    }
+    return keys.slice(0, 5);
+}
+
+let activeAttributeKeys = getRandomDefaultAttributes();
 
 const sounds={
  flip:new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_139083c224.mp3'),
@@ -552,7 +560,6 @@ function playSound(a){ if(!isMuted && a){ a.currentTime=0; a.play().catch(()=>{}
 function isOpponentNameBackVisible(){ return localStorage.getItem('holzquartett_showOpponentNameOnBack')==='true'; }
 function setOpponentNameBackVisible(v){ localStorage.setItem('holzquartett_showOpponentNameOnBack', v?'true':'false'); }
 
-// NEU: Zeigt auf den MAIN-Branch
 const IMG_BASE = "https://github.com/aufdemholzweg/holzquartett/blob/main/images";
 const IMG_SUFFIX = "?raw=true";
 
@@ -600,7 +607,6 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Der <em>Seidenglanz</em>! Ahorn schimmert im Licht. Die Poren sind mit bloßem Auge kaum zu sehen (zerstreutporig), die Markstrahlen sind fein, aber als dunkle Linien erkennbar.
         </div>`,
-
     "Birke": `
         <p class="mb-2">Helles, gelblich-weißes bis rötliches Holz. Es ist zäh und elastisch, aber nicht witterungsfest.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Sperrholz (Multiplex), Möbelbau, Drechselarbeiten, Kaminholz.</p>
@@ -608,7 +614,6 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Die <em>Poren sind breiter als die Markstrahlen</em>. Im Querschnitt sieht man die Poren als weiße Punkte, die Markstrahlen sind kaum sichtbar. Oft "geflammte" Maserung.
         </div>`,
-
     "Douglasie": `
         <p class="mb-2">Ein festes Nadelholz mit rötlichem Kern. Witterungsbeständiger als Fichte.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Terrassendielen, Dachstühle, Fenster, Fassaden.</p>
@@ -616,7 +621,6 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Der <em>abrupte Übergang</em> von Früh- zu Spätholz und die Harzkanäle. Frisch bearbeitet riecht es oft leicht nach Zitrus.
         </div>`,
-
     "Ebenholz, Afrikanisches": `
         <p class="mb-2">Extrem hartes, schweres und dichtes Edelholz. Das Kernholz ist tiefschwarz.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Musikinstrumente (Klaviertasten, Griffbretter), Einlegearbeiten, Luxusobjekte.</p>
@@ -624,7 +628,6 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Die <em>Farbe und Dichte</em>. Es ist so feinporig und schwarz, dass man kaum Struktur erkennt. Es sinkt im Wasser.
         </div>`,
-
     "Edelkastanie": `
         <p class="mb-2">Erinnert stark an Eiche, ist aber etwas leichter und weicher. Enthält viel Gerbsäure.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Fassholz, Pfähle, Möbel, im Außenbereich (sehr dauerhaft).</p>
@@ -632,7 +635,6 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Wie Eiche (ringporig), aber <em>OHNE breite Markstrahlen</em> (keine Spiegel). Das unterscheidet sie sicher von der Eiche.
         </div>`,
-
     "Eibe": `
         <p class="mb-2">Das härteste heimische Nadelholz. Sehr elastisch und giftig. Der Kern ist violett-braun.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Bogenbau (historisch), Drechslerei, Kunsthandwerk.</p>
@@ -640,7 +642,6 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Nadelholz <em>OHNE Harzkanäle</em>. Der Kern ist auffällig dunkel/rötlich-braun, die Jahrringe sind oft extrem eng und wellig.
         </div>`,
-
     "Eiche": `
         <p class="mb-2">Der Klassiker: Hart, schwer und witterungsbeständig. Grau-gelb bis gelb-braun.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Massivholzmöbel, Parkett, Fenster, Fässer, Bauholz.</p>
@@ -648,7 +649,6 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             <em>Ringporig mit Spiegeln</em>. Man sieht riesige Frühholzporen im Kreis und sehr breite Markstrahlen, die im Radialschnitt als glänzende "Spiegel" sichtbar sind.
         </div>`,
-
     "Erle": `
         <p class="mb-2">Rötlich-weißes Holz, das an der Luft schnell orange-rot nachdunkelt. Weich, aber zäh.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Möbel, Modellbau, Blindholz. Unter Wasser extrem dauerhaft (Venedig!).</p>
@@ -656,7 +656,6 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Die <em>scheinbaren Markstrahlen</em>. Oft bilden Markstrahlenbündel breite, dunkle Streifen, obwohl die einzelnen Strahlen fein sind.
         </div>`,
-
     "Esche": `
         <p class="mb-2">Zähes, elastisches Hartholz mit markanter Fladerung. Helles Splint- und Kernholz (außer beim Braunkern).</p>
         <p class="mb-2"><strong>Verwendung:</strong> Werkzeugstiele (Hammer, Axt), Sportgeräte, Möbel, Treppen.</p>
@@ -664,7 +663,6 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             <em>Ringporig, aber keine Spiegel</em>. Im Gegensatz zur Eiche hat die Esche keine breiten Markstrahlen. Sehr deutliche Porenringe im Hirnholz.
         </div>`,
-
     "Fichte": `
         <p class="mb-2">Das wichtigste Bauholz Europas. Hell, weich und elastisch. Reifes Holz (kein Farbkern).</p>
         <p class="mb-2"><strong>Verwendung:</strong> Dachstühle, Leimholz, Papier, Möbel, Instrumentendecken.</p>
@@ -672,7 +670,6 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Helles Holz mit <em>kleinen Harzkanälen</em>. Im Gegensatz zur Tanne hat sie Harzkanäle; im Gegensatz zur Kiefer ist der Kern nicht rötlich abgesetzt.
         </div>`,
-
     "Hemlock": `
         <p class="mb-2">Nadelholz aus Nordamerika. Harzfrei und nagelfest.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Saunabau (da harzfrei), Innenausbau, Profilbretter.</p>
@@ -680,7 +677,6 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             <em>Harzfrei und grau-braun</em>. Es sieht aus wie eine sehr dunkle, graue Fichte, hat aber absolut keine Harzkanäle.
         </div>`,
-
     "Hickory": `
         <p class="mb-2">Verwandt mit dem Walnussbaum. Das Holz ist extrem schlagfest und zäh.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Hochwertige Werkzeugstiele, Drumsticks, Sportbögen.</p>
@@ -688,7 +684,6 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             <em>Feine Querlinien im Spätholz</em>. Im Tangentialschnitt sieht man unter der Lupe feine, leiterförmige Parenchymbänder zwischen den Poren.
         </div>`,
-
     "Kiefer": `
         <p class="mb-2">Kernholzbaum mit deutlichem Unterschied zwischen gelblichem Splint und rötlichem Kern.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Fenster, Türen, Möbel, Konstruktionsholz, Dielen.</p>
@@ -696,7 +691,6 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             <em>Große Harzkanäle</em>. Man kann die Harzkanäle oft mit bloßem Auge als helle Punkte im Querschnitt sehen. Sehr harziger Geruch.
         </div>`,
-
     "Kirschbaum": `
         <p class="mb-2">Edles, rötliches Hartholz. Es dunkelt unter Licht stark nach (wird rot-braun).</p>
         <p class="mb-2"><strong>Verwendung:</strong> Stilmöbel, Innenausbau, Furniere, Drechseln.</p>
@@ -704,7 +698,6 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Die <em>scharfen Markstrahlen</em>. Im Querschnitt leuchten die Markstrahlen hell und deutlich abgesetzt auf dem rötlichen Grund.
         </div>`,
-
     "Lärche": `
         <p class="mb-2">Das schwerste und härteste heimische Nadelholz. Sehr witterungsbeständig.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Außenfassaden, Fenster, Dielen, Brückenbau.</p>
@@ -712,7 +705,6 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Der krasse <em>Kontrast</em> im Jahrring. Das dunkle, harte Spätholz grenzt messerscharf an das helle Frühholz. Rötlich-brauner Kern.
         </div>`,
-
     "Linde": `
         <p class="mb-2">Weiches, homogenes Laubholz. Lässt sich exzellent in alle Richtungen schnitzen.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Bildhauerei, Schnitzerei, Kuckucksuhren, Gussmodelle.</p>
@@ -720,7 +712,6 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Die <em>Strukturlosigkeit</em>. Zerstreutporig, kaum sichtbare Jahrringe, gelblich-weiß. Es wirkt fast wie eine homogene Masse.
         </div>`,
-
     "Mahagoni Amerikanisch": `
         <p class="mb-2">Echtes Mahagoni. Rotbraun, goldglänzend, gut zu bearbeiten und witterungsfest.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Bootsbau, Luxusmöbel, Instrumentenbau.</p>
@@ -728,7 +719,6 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Der <em>Wechseldrehwuchs</em>. Auf der Fläche entstehen dadurch helle und dunkle Streifen, die je nach Lichteinfall wechseln (Glanzstreifen).
         </div>`,
-
     "Meranti (DR)": `
         <p class="mb-2">Tropisches Laubholz, oft als "Dark Red Meranti" gehandelt. Offenporig.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Fensterbau (Standardholz in den 80/90ern), Türen.</p>
@@ -736,7 +726,6 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Große, grobe Poren und <em>weiße Harzlinien</em>. Im Querschnitt sieht man oft feine weiße Linien (Gummiadern) tangential verlaufen.
         </div>`,
-
     "Nussbaum (EU)": `
         <p class="mb-2">Eines der wertvollsten heimischen Möbelhölzer. Grau-braun bis schwarz-braun, lebhafte Maserung.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Exklusive Möbel, Furniere, Gewehrschäfte, Klavierbau.</p>
@@ -744,7 +733,6 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             <em>Halbringporig</em>. Die Poren sind im Frühholz größer, nehmen aber zum Spätholz hin nur langsam ab. Dunkle Farbe mit fast schwarzem Kern.
         </div>`,
-
     "Palisander": `
         <p class="mb-2">Sehr hartes, schweres Tropenholz. Farben von violett bis dunkelbraun gestreift.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Musikinstrumente (Marimba, Griffbretter), Furniere, Drechseln.</p>
@@ -752,7 +740,6 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Die <em>schwarzen Streifen</em> und der Geruch. Es riecht beim Bearbeiten oft süßlich-blumig (daher engl. "Rosewood").
         </div>`,
-
     "Pappel": `
         <p class="mb-2">Sehr weiches, leichtes Laubholz. Wächst extrem schnell.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Sperrholz, Zündhölzer, Paletten, Prothesen, Saunabänke (leitet Hitze schlecht).</p>
@@ -760,7 +747,6 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             <em>Wollige Oberfläche</em>. Das Holz ist so weich, dass es beim Sägen und Schleifen oft faserig/wollig bleibt. Grau-weiß.
         </div>`,
-
     "Platane": `
         <p class="mb-2">Rötlich-braunes Holz mit sehr dekorativer Optik (Perlholz).</p>
         <p class="mb-2"><strong>Verwendung:</strong> Innenausbau, Furniere, Drechselarbeiten.</p>
@@ -768,7 +754,6 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Die <em>vielen, breiten Markstrahlen</em>. Im Spiegelschnitt sieht es aus wie ein Leopardenfell ("Perlholz"). Ähnlich wie Buche, aber deutlichere Spiegel.
         </div>`,
-
     "Redwood": `
         <p class="mb-2">Holz der Mammutbäume. Sehr leicht, weich, aber extrem dauerhaft gegen Fäule.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Außenfassaden, Gartenmöbel, Schindeln.</p>
@@ -776,7 +761,6 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             <em>Kein Harz, rotbraun</em>. Es ist sehr grobfaserig und spröde. Erinnert an Zeder, riecht aber nicht so aromatisch.
         </div>`,
-
     "Robinie": `
         <p class="mb-2">Das einzige europäische Holz der Dauerhaftigkeitsklasse 1-2. Zäh, hart und giftig.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Spielplatzgeräte, Gartenmöbel, Pfähle (Ersatz für Tropenholz).</p>
@@ -784,7 +768,6 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             <em>Verthyllte Poren</em>. Die großen Frühholzporen sind mit glitzernden Blasen (Thyllen) verstopft. Die Farbe ist oft grünlich-gelb.
         </div>`,
-
     "Rosskastanie": `
         <p class="mb-2">Weiches, gelblich-weißes Holz. Oft welliger Faserverlauf.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Blindholz, Schnitzerei, Kisten.</p>
@@ -792,7 +775,6 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Sehr <em>feine, stockwerkartige Markstrahlen</em>. Man sieht auf der Tangentialfläche (Fladerung) feine "Rippeln" (Ripple marks), wenn man genau hinsieht.
         </div>`,
-
     "Rotbuche": `
         <p class="mb-2">Das "Brotbaum"-Holz der deutschen Forstwirtschaft. Hart, abriebfest, dämpfbar (Bugholz).</p>
         <p class="mb-2"><strong>Verwendung:</strong> Stühle, Möbelgestelle, Spielzeug, Werkbankplatten, Parkett.</p>
@@ -800,7 +782,6 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Die <em>"Reiskerne"</em>. Auf der Tangentialfläche sieht man die breiten Markstrahlen als dunkle Spindeln. Im Querschnitt sind die Markstrahlen breit und zum Jahrring hin breiter werdend.
         </div>`,
-
     "Rüster": `
         <p class="mb-2">Das Holz der Ulme. Sehr dekorativ, zäh und stoßfest. Schöne braune Färbung.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Möbel, Furniere, Treppen, Sportgeräte.</p>
@@ -808,7 +789,6 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Die <em>Zick-Zack-Linien</em>. Im Spätholz sind die kleinen Poren zu wellenförmigen, tangentialen Bändern angeordnet (Ulmen-Wellen).
         </div>`,
-
     "Tanne": `
         <p class="mb-2">Reifholzbaum, ähnlich der Fichte, aber ohne Harzkanäle. Grau-weiß.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Konstruktionsholz, Fenster, Innenausbau (dunkelt weniger nach als Fichte).</p>
@@ -816,7 +796,6 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             <em>Harzfrei und "Katzenpisse"</em>. Im Gegensatz zur Fichte hat sie keine Harzkanäle. Frisches Tannenholz (Nasskern) riecht oft unangenehm säuerlich.
         </div>`,
-
     "Teak": `
         <p class="mb-2">Goldbraunes Tropenholz. Fühlt sich fettig an ("Wax-Feel"). Extrem witterungsbeständig.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Schiffsdecks, hochwertige Gartenmöbel, Furniere.</p>
@@ -824,7 +803,6 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Der <em>Ledergeruch und Fettgriff</em>. Es riecht deutlich nach altem Leder und fühlt sich wachsig an. Ringporig.
         </div>`,
-
     "Wengé": `
         <p class="mb-2">Afrikanisches Holz, kaffeebraun bis schwarz, mit hellen Streifen. Sehr hart und splitterig.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Exklusive Böden, Möbel, Intarsien.</p>
@@ -832,7 +810,6 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             <em>Rebhuhnhuhn-Muster</em>. Auf der Tangentialfläche bilden helle Parenchymbänder (Speichergewebe) auf dunklem Grund ein markantes Zick-Zack-Muster.
         </div>`,
-
     "Zebrano": `
         <p class="mb-2">Westafrikanisches Holz. Grundfarbe grau-gelb mit dunkelbraunen Streifen.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Furniere, Armaturenbretter (Auto), Ziergegenstände.</p>
@@ -840,7 +817,6 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Der <em>Zebra-Look</em>. Die dunklen Streifen verlaufen fast parallel auf hellem Grund. Unverwechselbar.
         </div>`,
-
     "Zeder": `
         <p class="mb-2">Sammelbegriff für diverse Nadelhölzer (z.B. Western Red Cedar). Leicht, weich, aromatisch.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Zigarrenkisten, Mottenkugeln, Fassaden, Schindeln.</p>
