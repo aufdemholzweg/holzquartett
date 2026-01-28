@@ -80,22 +80,22 @@
 </head>
 <body class="flex flex-col relative text-gray-800">
 
-<header class="bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-md z-[100] flex-shrink-0 relative">
+<header class="fixed top-0 left-0 w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-md z-[120]">
     <div class="max-w-[600px] mx-auto px-4 py-3 relative flex justify-between items-center">
-        <a id="navButton" href="#" class="relative z-[101] w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center text-white shadow-sm hover:bg-white/30 transition-all border border-white/30" aria-label="Zurück zur Startseite">
+        <a id="navButton" href="#" class="relative z-[121] w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center text-white shadow-sm hover:bg-white/30 transition-all border border-white/30" aria-label="Zurück zur Startseite">
              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
                 <polyline points="9 22 9 12 15 12 15 22" />
              </svg>
         </a>
         <h1 class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-lg sm:text-2xl font-black tracking-wider uppercase drop-shadow-sm whitespace-nowrap pointer-events-none">🌲 HOLZEN! 🌲</h1>
-        <button id="ruleButton" onclick="window.showGameInfo()" class="text-white hover:text-amber-100 p-2 rounded-full transition-colors active:scale-90 relative z-[101] hidden" aria-label="Spielregeln">
+        <button id="ruleButton" onclick="window.showGameInfo()" class="text-white hover:text-amber-100 p-2 rounded-full transition-colors active:scale-90 relative z-[121] hidden" aria-label="Spielregeln">
              <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
         </button>
     </div>
 </header>
 
-<div id="gameContainer" class="hidden flex-grow flex flex-col items-center w-full max-w-[600px] mx-auto relative p-2 overflow-hidden">
+<div id="gameContainer" class="hidden flex-grow flex flex-col items-center w-full max-w-[600px] mx-auto relative p-2 pt-20 overflow-hidden">
     <div id="animationContainer" class="absolute inset-0 pointer-events-none z-50 overflow-hidden"></div>
     <div class="flex justify-center items-start gap-2 sm:gap-4 w-full flex-grow relative pb-2 mt-2"> 
         <div class="flex flex-col w-[48%] max-w-[280px] gap-2 z-10">
@@ -122,7 +122,7 @@
     </div>
 </div>
 
-<div id="tieOverlay" class="fixed inset-0 z-[90] flex items-center justify-center dimmer hidden">
+<div id="tieOverlay" class="fixed inset-0 z-[90] flex items-center justify-center dimmer hidden pt-20">
     <div class="bg-white/10 backdrop-blur-md p-8 rounded-3xl animate-bounce-slam text-center border border-white/20 shadow-2xl">
         <div class="text-7xl mb-4 filter drop-shadow-lg">💥</div>
         <h2 class="text-4xl sm:text-5xl font-black text-white uppercase tracking-wider drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)]">
@@ -132,7 +132,7 @@
     </div>
 </div>
 
-<div id="quizModal" class="fixed inset-0 dimmer flex items-center justify-center z-[80] p-4 hidden">
+<div id="quizModal" class="fixed inset-0 dimmer flex items-center justify-center z-[80] p-4 hidden pt-20">
     <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-sm flex flex-col relative animate-pop-in border-4 border-amber-500">
         
         <div class="h-4 w-full bg-gray-200 relative overflow-visible">
@@ -170,8 +170,8 @@
     </div>
 </div>
 
-<div id="gameInfoModal" class="fixed inset-0 dimmer flex items-center justify-center z-50 p-4 hidden">
-    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-[400px] max-h-[90vh] flex flex-col">
+<div id="gameInfoModal" class="fixed inset-0 dimmer flex items-center justify-center z-50 p-4 hidden pt-20">
+    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-[400px] max-h-[85vh] flex flex-col">
         <div class="bg-amber-500 p-4 flex justify-between items-center text-white shrink-0 shadow-md">
             <h3 class="font-bold text-lg">Spielregeln & Eigenschaften</h3>
             <button onclick="document.getElementById('gameInfoModal').classList.add('hidden')" class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
@@ -188,8 +188,8 @@
     </div>
 </div>
 
-<div id="infoModal" class="fixed inset-0 dimmer flex items-center justify-center z-50 p-4 hidden">
-    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-md max-h-[90vh] flex flex-col">
+<div id="infoModal" class="fixed inset-0 dimmer flex items-center justify-center z-50 p-4 hidden pt-20">
+    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-md max-h-[85vh] flex flex-col">
         <div class="bg-amber-600 p-4 flex justify-between items-center text-white shrink-0">
             <h3 class="font-bold">Wissenskarte</h3>
             <button onclick="document.getElementById('infoModal').classList.add('hidden')" class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
@@ -198,7 +198,7 @@
     </div>
 </div>
 
-<div id="impressumModal" class="fixed inset-0 dimmer flex items-center justify-center z-[70] p-4 hidden">
+<div id="impressumModal" class="fixed inset-0 dimmer flex items-center justify-center z-[70] p-4 hidden pt-20">
     <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-sm flex flex-col max-h-[85vh]">
         <div class="bg-slate-700 p-4 flex justify-between items-center text-white shrink-0">
             <h3 class="font-bold">Impressum</h3>
@@ -278,7 +278,7 @@
     </div>
 </div>
 
-<div id="attrConfigModal" class="fixed inset-0 z-[120] flex items-center justify-center p-4 dimmer hidden">
+<div id="attrConfigModal" class="fixed inset-0 z-[120] flex items-center justify-center p-4 dimmer hidden pt-20">
     <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-sm flex flex-col max-h-[85vh]">
         <div class="bg-amber-600 p-4 flex justify-between items-center text-white shrink-0">
             <h3 class="font-bold">Spieloptionen</h3>
@@ -336,15 +336,15 @@
     </div>
 </div>
 
-<div id="nameModal" class="hidden fixed inset-0 dimmer flex items-center justify-center z-50 p-4">
-    <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-xs w-full text-center">
-        <h2 class="text-xl font-bold text-gray-800 mb-6">Dein Name</h2>
+<div id="nameModal" class="hidden fixed inset-0 dimmer flex items-center justify-center z-50 p-4 pt-20">
+    <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-xs w-full text-center relative">
+        <h2 class="text-xl font-bold text-gray-800 mb-6 mt-2">Dein Name</h2>
         <input type="text" id="playerName" class="w-full p-3 border-2 border-gray-200 rounded-lg mb-6 text-center font-bold text-lg" placeholder="Name eingeben" maxlength="12">
         <button id="nameSubmitButton" class="w-full bg-amber-500 text-white font-bold py-3 rounded-lg shadow-lg hover:bg-amber-600">Starten</button>
     </div>
 </div>
 
-<div id="multiplayerLobbyModal" class="hidden fixed inset-0 dimmer flex items-center justify-center z-50 p-4">
+<div id="multiplayerLobbyModal" class="hidden fixed inset-0 dimmer flex items-center justify-center z-50 p-4 pt-20">
     <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full text-center">
         <h2 id="lobbyTitle" class="text-xl font-bold text-amber-800 mb-2">Lobby</h2>
         <p id="lobbyText" class="text-sm text-gray-600 mb-4">Lass deinen Freund scannen:</p>
@@ -357,7 +357,7 @@
     </div>
 </div>
 
-<div id="gameOverModal" class="hidden fixed inset-0 dimmer flex items-center justify-center z-50 p-4">
+<div id="gameOverModal" class="hidden fixed inset-0 dimmer flex items-center justify-center z-50 p-4 pt-20">
     <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full text-center">
         <h2 id="gameOverTitle" class="text-3xl font-black mb-2 text-gray-800">SPIELENDE</h2>
         <p id="gameOverText" class="text-gray-600 mb-6"></p>
@@ -368,7 +368,7 @@
     </div>
 </div>
 
-<div id="reflectionModal" class="hidden fixed inset-0 dimmer flex items-center justify-center z-50 p-4">
+<div id="reflectionModal" class="hidden fixed inset-0 dimmer flex items-center justify-center z-50 p-4 pt-20">
     <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full">
         <h2 class="text-xl font-bold text-amber-800 mb-4">🎉 Super gespielt!</h2>
         <p id="reflectionQuestion" class="text-gray-700 mb-4 font-medium"></p>
@@ -377,7 +377,7 @@
     </div>
 </div>
 
-<div id="leaderboardModal" class="hidden fixed inset-0 dimmer flex items-center justify-center z-50 p-4">
+<div id="leaderboardModal" class="hidden fixed inset-0 dimmer flex items-center justify-center z-50 p-4 pt-20">
     <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full flex flex-col max-h-[80vh]">
         <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">🏆 Bestenliste</h2>
         <div id="leaderboardList" class="overflow-y-auto flex-grow space-y-2 mb-4"></div>
@@ -457,6 +457,10 @@ function scrollToTop() {
 window.setNavState = (state) => {
     const btn = document.getElementById('navButton');
     if(!btn) return;
+    
+    // REMOVE OLD HANDLERS (Clean Navigation)
+    btn.onclick = null;
+    
     if(state === 'game') {
         btn.innerHTML = NAV_ICONS.house;
         btn.removeAttribute('href'); 
@@ -464,11 +468,25 @@ window.setNavState = (state) => {
             e.preventDefault(); 
             if(confirm('Spiel abbrechen und zum Startbildschirm zurückkehren?')) { 
                 if(typeof unsubscribeGame === 'function') unsubscribeGame();
-                window.location.href = window.location.origin + window.location.pathname; // Hard reset to menu
+                window.location.href = window.location.origin + window.location.pathname; 
             } 
         };
         btn.setAttribute('aria-label', 'Zurück zur Holzen! Startseite');
+        
+    } else if (state === 'name_input') {
+        // Navigation im Namens-Fenster -> Zurück zum Hauptmenü
+        btn.innerHTML = NAV_ICONS.house;
+        btn.href = "#";
+        btn.onclick = (e) => {
+            e.preventDefault();
+            document.getElementById('nameModal').classList.add('hidden');
+            document.getElementById('setupModal').classList.remove('hidden');
+            window.setNavState('menu'); // Reset to default menu behavior
+        };
+        btn.setAttribute('aria-label', 'Zurück zum Hauptmenü');
+        
     } else {
+        // Default: Startseite
         btn.innerHTML = NAV_ICONS.house; 
         btn.href = '#';
         btn.onclick = (e) => { e.preventDefault(); location.reload(); }; 
@@ -482,7 +500,7 @@ let roundSoundPlayed=false;
 let lastRoundWinningWoodName = null;
 let aiGame={playerName:'',playerCards:[],aiCards:[],currentPlayerCard:null,currentAiCard:null,roundInProgress:false,turn:'player'};
 
-// ATTRIBUTE & EIGENSCHAFTEN (Updated)
+// 5. ATTRIBUTE & EIGENSCHAFTEN (Updated)
 const attributeInfo={
  dk:{
      icon:'🛡️',
@@ -560,6 +578,7 @@ function playSound(a){ if(!isMuted && a){ a.currentTime=0; a.play().catch(()=>{}
 function isOpponentNameBackVisible(){ return localStorage.getItem('holzquartett_showOpponentNameOnBack')==='true'; }
 function setOpponentNameBackVisible(v){ localStorage.setItem('holzquartett_showOpponentNameOnBack', v?'true':'false'); }
 
+// NEU: Zeigt auf den MAIN-Branch
 const IMG_BASE = "https://github.com/aufdemholzweg/holzquartett/blob/main/images";
 const IMG_SUFFIX = "?raw=true";
 
