@@ -89,7 +89,8 @@
              </svg>
         </a>
         <h1 class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-lg sm:text-2xl font-black tracking-wider uppercase drop-shadow-sm whitespace-nowrap pointer-events-none">🌲 HOLZEN! 🌲</h1>
-        <button onclick="window.showGameInfo()" class="text-white hover:text-amber-100 p-2 rounded-full transition-colors active:scale-90 relative z-[101]" aria-label="Spielregeln">
+        
+        <button id="ruleButton" onclick="window.showGameInfo()" class="text-white hover:text-amber-100 p-2 rounded-full transition-colors active:scale-90 relative z-[101] hidden" aria-label="Spielregeln">
              <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
         </button>
     </div>
@@ -306,29 +307,32 @@
     </div>
 </div>
 
-<div id="setupModal" class="fixed inset-0 dimmer flex flex-col items-center justify-center z-50 p-4 overflow-y-auto min-h-[100dvh]">
-    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden max-w-sm w-full relative mb-6">
-        <a href="https://aufdemholzweg.github.io/Splashscreen-Holztechnik/" class="absolute left-4 top-4 z-[60] w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center text-white shadow-sm hover:bg-white/30 transition-all border border-white/30" aria-label="Zurück zum Launcher">
-             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M4 22c0-8 3-14 8-20" opacity="0.9" />
-                <path d="M2 16c2-4 4-8 5-14" opacity="0.6" />
-                <path d="M8 22c1-6 2-10 6-12 3-1.5 6 0 8 4" opacity="0.8" />
-                <path d="M13 22c1-4 3-8 7-8" opacity="0.7" />
-                <path d="M18 22c1-3 2-6 4-6" opacity="0.5" />
-                <path d="M16 2c2 1 4 4 6 7" opacity="0.6" />
-             </svg>
-        </a>
-        <div class="bg-amber-500 p-5 text-white text-center font-bold text-lg sm:text-xl tracking-wide shadow-md">HOLZEN!<br><span class="text-sm font-normal opacity-90">Spielmodus wählen</span></div>
-        <div class="p-6 space-y-4">
-            <button onclick="window.showNamePrompt('ai')" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold py-4 rounded-xl shadow-lg flex items-center justify-center gap-3 active:scale-95 transition-transform"><span class="text-2xl">🤖</span> Gegen Computer</button>
-            <button onclick="window.showNamePrompt('multiplayer')" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold py-4 rounded-xl shadow-lg flex items-center justify-center gap-3 active:scale-95 transition-transform"><span class="text-2xl">🌍</span> Online gegen Freunde</button>
-            <button onclick="window.openAttrConfig()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 rounded-xl border border-gray-200 flex items-center justify-center gap-2 text-sm mt-2">
-                <span>⚙️</span> Spieloptionen <span id="attrCountBadge" class="bg-amber-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">5</span>
-            </button>
+<div id="setupModal" class="fixed inset-0 z-[110] flex items-center justify-center p-4 dimmer overflow-y-auto h-screen">
+    <a href="https://aufdemholzweg.github.io/Splashscreen-Holztechnik/" class="absolute left-4 top-4 w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center text-white shadow-sm hover:bg-white/30 transition-all border border-white/30" aria-label="Zurück zum Launcher">
+         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 22c0-8 3-14 8-20" opacity="0.9" />
+            <path d="M2 16c2-4 4-8 5-14" opacity="0.6" />
+            <path d="M8 22c1-6 2-10 6-12 3-1.5 6 0 8 4" opacity="0.8" />
+            <path d="M13 22c1-4 3-8 7-8" opacity="0.7" />
+            <path d="M18 22c1-3 2-6 4-6" opacity="0.5" />
+            <path d="M16 2c2 1 4 4 6 7" opacity="0.6" />
+         </svg>
+    </a>
+    
+    <div class="flex flex-col items-center justify-center w-full max-w-sm gap-4">
+        <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full relative">
+            <div class="bg-amber-500 p-5 text-white text-center font-bold text-lg sm:text-xl tracking-wide shadow-md">HOLZEN!<br><span class="text-sm font-normal opacity-90">Spielmodus wählen</span></div>
+            <div class="p-6 space-y-4">
+                <button onclick="window.showNamePrompt('ai')" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold py-4 rounded-xl shadow-lg flex items-center justify-center gap-3 active:scale-95 transition-transform"><span class="text-2xl">🤖</span> Gegen Computer</button>
+                <button onclick="window.showNamePrompt('multiplayer')" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold py-4 rounded-xl shadow-lg flex items-center justify-center gap-3 active:scale-95 transition-transform"><span class="text-2xl">🌍</span> Online gegen Freunde</button>
+                <button onclick="window.openAttrConfig()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 rounded-xl border border-gray-200 flex items-center justify-center gap-2 text-sm mt-2">
+                    <span>⚙️</span> Spieloptionen <span id="attrCountBadge" class="bg-amber-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">5</span>
+                </button>
+            </div>
         </div>
-    </div>
-    <div id="mainMenuStats" class="text-center hidden mb-8"></div>
-    <div class="mt-auto pt-4">
+        
+        <div id="mainMenuStats" class="text-center hidden"></div>
+        
         <button onclick="document.getElementById('impressumModal').classList.remove('hidden')" class="text-white/70 text-xs font-medium hover:text-white underline transition-colors">Impressum</button>
     </div>
 </div>
@@ -1265,6 +1269,10 @@ function listenToGameChanges(){
         if(gd.status==='playing'||gd.status==='finished'){
             document.getElementById('multiplayerLobbyModal').classList.add('hidden');
             document.getElementById('gameContainer').classList.remove('hidden');
+            // Remove hidden from Rule Button when game starts
+            const ruleBtn = document.getElementById('ruleButton');
+            if(ruleBtn) ruleBtn.classList.remove('hidden');
+
             if(!gd.quizTrigger) scrollToTop(); // Nur scrollen wenn kein Quiz läuft
             
             const oppId=gd.playerIds.find(id=>id!==localPlayerId);
@@ -1376,6 +1384,8 @@ window.startGameAI = (name) => {
     trackEvent('games_ai');
     gameMode='ai'; aiGame.playerName=name;
     window.setNavState('game');
+    // Show rule button in AI mode
+    document.getElementById('ruleButton').classList.remove('hidden');
     document.getElementById('playerNameDisplay').innerText=name;
     const sh=shuffleArray([...woodCards]);
     aiGame.playerCards=sh.slice(0,15); aiGame.aiCards=sh.slice(15,30);
