@@ -33,11 +33,11 @@
         .animate-pulse-glow { animation: pulse-glow 2s infinite; }
         @keyframes pulse-glow { 0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); transform: translate(-50%, -50%) scale(1); } 50% { box-shadow: 0 0 15px 5px rgba(34, 197, 94, 0.4); transform: translate(-50%, -50%) scale(1.1); } 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); transform: translate(-50%, -50%) scale(1); } }
         
-        /* Pop-In Animation für Fenster */
+        /* Pop-In Animation */
         .animate-pop-in { animation: pop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         @keyframes pop-in { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         
-        /* Bounce Animation für Gleichstand */
+        /* Bounce Animation */
         .animate-bounce-slam { animation: bounce-slam 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         @keyframes bounce-slam { 
             0% { transform: scale(0); opacity: 0; } 
@@ -45,8 +45,12 @@
             100% { transform: scale(1); opacity: 1; } 
         }
 
-        .animate-worm { animation: worm-pop-up 3.5s ease-in-out forwards; }
-        @keyframes worm-pop-up { 0% { transform: translateY(100%) rotate(0deg); opacity: 0; } 20% { transform: translateY(-20%) rotate(-10deg); opacity: 1; } 40% { transform: translateY(-20%) rotate(10deg); } 50% { transform: translateY(-30%) rotate(0deg) scale(1.1); } 60% { transform: translateY(-20%) rotate(-10deg) scale(1); } 80% { transform: translateY(-20%) rotate(0deg); opacity: 1; } 100% { transform: translateY(100%) rotate(0deg); opacity: 0; } }
+        /* WILLI ANIMATIONEN */
+        @keyframes worm-bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        @keyframes worm-wiggle { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-5deg); } 75% { transform: rotate(5deg); } }
+        
+        .willi-container { position: relative; display: inline-block; }
+        .willi-anim { animation: worm-bounce 2s infinite ease-in-out; }
         
         .opponent-back-name { position: absolute; top: 15%; width: 100%; text-align: center; color: rgba(255,255,255,0.95); font-weight: 700; font-size: 1.1rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5); pointer-events: none; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
@@ -118,6 +122,18 @@
     </div>
 </div>
 
+<div id="gameMascot" class="fixed bottom-4 right-4 z-[100] transition-transform duration-500 transform translate-y-0 hidden">
+    <div id="mascotBubble" class="absolute -top-16 -left-20 bg-white px-4 py-2 rounded-2xl shadow-lg border-2 border-amber-400 text-sm font-bold text-amber-900 whitespace-nowrap opacity-0 transition-opacity duration-300 scale-95 origin-bottom-right">
+        Hallo! 👋
+    </div>
+    <div class="relative cursor-pointer hover:scale-110 transition-transform willi-anim" onclick="window.mascotInteract()">
+        <div class="absolute top-3 left-1 text-2xl z-20 opacity-90 transform -rotate-6">👓</div>
+        <div class="text-7xl filter drop-shadow-xl z-10" id="mascotIcon">🐛</div>
+        <div class="absolute top-0 right-2 text-xl z-0 transform rotate-45">✏️</div>
+    </div>
+</div>
+
+
 <div id="tieOverlay" class="fixed inset-0 z-[90] flex items-center justify-center dimmer hidden pt-20">
     <div class="bg-white/10 backdrop-blur-md p-8 rounded-3xl animate-bounce-slam text-center border border-white/20 shadow-2xl">
         <div class="text-7xl mb-4 filter drop-shadow-lg">💥</div>
@@ -147,10 +163,6 @@
                 </div>
         </div>
     </div>
-</div>
-
-<div id="happyWorm" class="fixed bottom-0 right-4 translate-y-full z-50 pointer-events-none transform transition-transform hidden">
-    <div class="relative"><div id="wormSpeech" class="absolute -top-10 -left-10 bg-white px-3 py-1.5 rounded-xl shadow-md border-2 border-amber-200 text-xs font-bold text-amber-800 whitespace-nowrap animate-bounce" style="animation-duration: 2s;">Stark! 🪵</div><div class="text-6xl filter drop-shadow-xl cursor-default select-none">🐛</div></div>
 </div>
 
 <div id="bottomSheetBackdrop" class="hidden fixed inset-0 bg-black/20 z-30 transition-opacity"></div>
@@ -194,7 +206,7 @@
     </div>
 </div>
 
-<div id="impressumModal" class="fixed inset-0 z-[140] flex items-center justify-center p-4 dimmer hidden">
+<div id="impressumModal" class="fixed inset-0 z-[140] flex items-center justify-center p-4 dimmer hidden pt-20">
     <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-sm flex flex-col max-h-[85vh]">
         <div class="bg-slate-700 p-4 flex justify-between items-center text-white shrink-0">
             <h3 class="font-bold">Impressum</h3>
@@ -305,9 +317,18 @@
 <div id="setupModal" class="fixed inset-0 z-[110] flex flex-col items-center justify-center p-4 dimmer overflow-y-auto h-screen">
     <div class="w-10 h-10 absolute left-4 top-4"></div>
     
-    <div class="flex flex-col items-center justify-center w-full max-w-sm gap-4 pt-20">
-        <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full relative">
-            <div class="bg-amber-500 p-5 text-white text-center font-bold text-lg sm:text-xl tracking-wide shadow-md">Wähle deinen Spielmodus<br><span class="text-sm font-normal opacity-90">Multiplayer</span></div>
+    <div class="relative w-full max-w-sm">
+        <div class="absolute -top-16 -right-4 z-20 willi-anim hidden sm:block">
+            <div class="bg-white px-3 py-1 rounded-xl shadow-md border border-amber-200 text-xs font-bold text-amber-800 mb-1 whitespace-nowrap">Wähle weise!</div>
+            <div class="relative inline-block">
+                 <div class="absolute top-3 left-1 text-2xl z-20 opacity-90 transform -rotate-6">👓</div>
+                 <div class="text-6xl filter drop-shadow-xl z-10">🐛</div>
+                 <div class="absolute top-0 right-2 text-xl z-0 transform rotate-45">✏️</div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full relative mb-6">
+            <div class="bg-amber-500 p-5 text-white text-center font-bold text-lg sm:text-xl tracking-wide shadow-md">HOLZEN!<br><span class="text-sm font-normal opacity-90">Spielmodus wählen</span></div>
             <div class="p-6 space-y-4">
                 <button onclick="window.showNamePrompt('ai')" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold py-4 rounded-xl shadow-lg flex items-center justify-center gap-3 active:scale-95 transition-transform"><span class="text-2xl">🤖</span> Gegen Computer</button>
                 <button onclick="window.showNamePrompt('multiplayer')" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold py-4 rounded-xl shadow-lg flex items-center justify-center gap-3 active:scale-95 transition-transform"><span class="text-2xl">🌍</span> Online gegen Freunde</button>
@@ -316,16 +337,25 @@
                 </button>
             </div>
         </div>
-        
-        <div id="mainMenuStats" class="text-center hidden"></div>
-        
-        <button onclick="document.getElementById('impressumModal').classList.remove('hidden')" class="text-white/70 text-xs font-medium hover:text-white underline transition-colors">Impressum</button>
+        <div id="mainMenuStats" class="text-center hidden mb-8"></div>
+        <div class="mt-auto pt-4 text-center">
+            <button onclick="document.getElementById('impressumModal').classList.remove('hidden')" class="text-white/70 text-xs font-medium hover:text-white underline transition-colors">Impressum</button>
+        </div>
     </div>
 </div>
 
 <div id="nameModal" class="hidden fixed inset-0 dimmer flex items-center justify-center z-50 p-4 pt-20">
-    <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-xs w-full text-center relative">
-        <h2 class="text-xl font-bold text-gray-800 mb-6 mt-2">Dein Name</h2>
+    <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-xs w-full text-center relative overflow-visible">
+        
+        <div class="absolute -top-12 left-1/2 -translate-x-1/2 willi-anim">
+            <div class="relative inline-block">
+                 <div class="absolute top-3 left-1 text-2xl z-20 opacity-90 transform -rotate-6">👓</div>
+                 <div class="text-6xl filter drop-shadow-xl z-10">🐛</div>
+                 <div class="absolute top-0 right-2 text-xl z-0 transform rotate-45">✏️</div>
+            </div>
+        </div>
+        
+        <h2 class="text-xl font-bold text-gray-800 mb-6 mt-4">Dein Name</h2>
         <input type="text" id="playerName" class="w-full p-3 border-2 border-gray-200 rounded-lg mb-6 text-center font-bold text-lg" placeholder="Name eingeben" maxlength="12">
         <button id="nameSubmitButton" class="w-full bg-amber-500 text-white font-bold py-3 rounded-lg shadow-lg hover:bg-amber-600">Starten</button>
     </div>
@@ -445,7 +475,6 @@ window.setNavState = (state) => {
     const btn = document.getElementById('navButton');
     if(!btn) return;
     
-    // REMOVE OLD HANDLERS (Clean Navigation)
     btn.onclick = null;
     
     if(state === 'game') {
@@ -458,30 +487,27 @@ window.setNavState = (state) => {
                 window.location.href = window.location.origin + window.location.pathname; 
             } 
         };
-        btn.setAttribute('aria-label', 'Zurück zur 🌲 HOLZEN! 🌲 Startseite');
+        btn.setAttribute('aria-label', 'Zurück zur Holzen! Startseite');
         
     } else if (state === 'name_input') {
-        // Navigation im Namens-Fenster -> Zurück zum Hauptmenü
         btn.innerHTML = NAV_ICONS.house;
         btn.href = "#";
         btn.onclick = (e) => {
             e.preventDefault();
             document.getElementById('nameModal').classList.add('hidden');
             document.getElementById('setupModal').classList.remove('hidden');
-            window.setNavState('menu'); // Reset to default menu behavior
+            window.setNavState('menu'); 
         };
         btn.setAttribute('aria-label', 'Zurück zum Hauptmenü');
         
     } else {
-        // Default: Startseite (Splashscreen)
         btn.innerHTML = NAV_ICONS.fingerprint; 
         btn.href = 'https://aufdemholzweg.github.io/Splashscreen-Holztechnik/';
-        btn.onclick = null; // Standard link behavior
+        btn.onclick = null; 
         btn.setAttribute('aria-label', 'Zum Splashscreen');
     }
 };
 
-// Initial Call
 window.setNavState('menu');
 
 let gameMode=null, gameId=null, localPlayerId=null, unsubscribeGame=null, localGameState={}, hasCopiedShareLink=false;
@@ -542,10 +568,8 @@ const attributeInfo={
  }
 };
 
-// RANDOM DEFAULT ATTRIBUTES
 function getRandomDefaultAttributes() {
     const keys = Object.keys(attributeInfo);
-    // Simple shuffle
     for (let i = keys.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [keys[i], keys[j]] = [keys[j], keys[i]];
@@ -615,6 +639,7 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Der <em>Seidenglanz</em>! Ahorn schimmert im Licht. Die Poren sind mit bloßem Auge kaum zu sehen (zerstreutporig), die Markstrahlen sind fein, aber als dunkle Linien erkennbar.
         </div>`,
+
     "Birke": `
         <p class="mb-2">Helles, gelblich-weißes bis rötliches Holz. Es ist zäh und elastisch, aber nicht witterungsfest.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Sperrholz (Multiplex), Möbelbau, Drechselarbeiten, Kaminholz.</p>
@@ -622,6 +647,7 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Die <em>Poren sind breiter als die Markstrahlen</em>. Im Querschnitt sieht man die Poren als weiße Punkte, die Markstrahlen sind kaum sichtbar. Oft "geflammte" Maserung.
         </div>`,
+
     "Douglasie": `
         <p class="mb-2">Ein festes Nadelholz mit rötlichem Kern. Witterungsbeständiger als Fichte.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Terrassendielen, Dachstühle, Fenster, Fassaden.</p>
@@ -629,6 +655,7 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Der <em>abrupte Übergang</em> von Früh- zu Spätholz und die Harzkanäle. Frisch bearbeitet riecht es oft leicht nach Zitrus.
         </div>`,
+
     "Ebenholz, Afrikanisches": `
         <p class="mb-2">Extrem hartes, schweres und dichtes Edelholz. Das Kernholz ist tiefschwarz.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Musikinstrumente (Klaviertasten, Griffbretter), Einlegearbeiten, Luxusobjekte.</p>
@@ -636,6 +663,7 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Die <em>Farbe und Dichte</em>. Es ist so feinporig und schwarz, dass man kaum Struktur erkennt. Es sinkt im Wasser.
         </div>`,
+
     "Edelkastanie": `
         <p class="mb-2">Erinnert stark an Eiche, ist aber etwas leichter und weicher. Enthält viel Gerbsäure.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Fassholz, Pfähle, Möbel, im Außenbereich (sehr dauerhaft).</p>
@@ -643,6 +671,7 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Wie Eiche (ringporig), aber <em>OHNE breite Markstrahlen</em> (keine Spiegel). Das unterscheidet sie sicher von der Eiche.
         </div>`,
+
     "Eibe": `
         <p class="mb-2">Das härteste heimische Nadelholz. Sehr elastisch und giftig. Der Kern ist violett-braun.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Bogenbau (historisch), Drechslerei, Kunsthandwerk.</p>
@@ -650,6 +679,7 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Nadelholz <em>OHNE Harzkanäle</em>. Der Kern ist auffällig dunkel/rötlich-braun, die Jahrringe sind oft extrem eng und wellig.
         </div>`,
+
     "Eiche": `
         <p class="mb-2">Der Klassiker: Hart, schwer und witterungsbeständig. Grau-gelb bis gelb-braun.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Massivholzmöbel, Parkett, Fenster, Fässer, Bauholz.</p>
@@ -657,6 +687,7 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             <em>Ringporig mit Spiegeln</em>. Man sieht riesige Frühholzporen im Kreis und sehr breite Markstrahlen, die im Radialschnitt als glänzende "Spiegel" sichtbar sind.
         </div>`,
+
     "Erle": `
         <p class="mb-2">Rötlich-weißes Holz, das an der Luft schnell orange-rot nachdunkelt. Weich, aber zäh.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Möbel, Modellbau, Blindholz. Unter Wasser extrem dauerhaft (Venedig!).</p>
@@ -664,6 +695,7 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Die <em>scheinbaren Markstrahlen</em>. Oft bilden Markstrahlenbündel breite, dunkle Streifen, obwohl die einzelnen Strahlen fein sind.
         </div>`,
+
     "Esche": `
         <p class="mb-2">Zähes, elastisches Hartholz mit markanter Fladerung. Helles Splint- und Kernholz (außer beim Braunkern).</p>
         <p class="mb-2"><strong>Verwendung:</strong> Werkzeugstiele (Hammer, Axt), Sportgeräte, Möbel, Treppen.</p>
@@ -671,6 +703,7 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             <em>Ringporig, aber keine Spiegel</em>. Im Gegensatz zur Eiche hat die Esche keine breiten Markstrahlen. Sehr deutliche Porenringe im Hirnholz.
         </div>`,
+
     "Fichte": `
         <p class="mb-2">Das wichtigste Bauholz Europas. Hell, weich und elastisch. Reifes Holz (kein Farbkern).</p>
         <p class="mb-2"><strong>Verwendung:</strong> Dachstühle, Leimholz, Papier, Möbel, Instrumentendecken.</p>
@@ -678,6 +711,7 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Helles Holz mit <em>kleinen Harzkanälen</em>. Im Gegensatz zur Tanne hat sie Harzkanäle; im Gegensatz zur Kiefer ist der Kern nicht rötlich abgesetzt.
         </div>`,
+
     "Hemlock": `
         <p class="mb-2">Nadelholz aus Nordamerika. Harzfrei und nagelfest.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Saunabau (da harzfrei), Innenausbau, Profilbretter.</p>
@@ -685,6 +719,7 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             <em>Harzfrei und grau-braun</em>. Es sieht aus wie eine sehr dunkle, graue Fichte, hat aber absolut keine Harzkanäle.
         </div>`,
+
     "Hickory": `
         <p class="mb-2">Verwandt mit dem Walnussbaum. Das Holz ist extrem schlagfest und zäh.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Hochwertige Werkzeugstiele, Drumsticks, Sportbögen.</p>
@@ -692,6 +727,7 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             <em>Feine Querlinien im Spätholz</em>. Im Tangentialschnitt sieht man unter der Lupe feine, leiterförmige Parenchymbänder zwischen den Poren.
         </div>`,
+
     "Kiefer": `
         <p class="mb-2">Kernholzbaum mit deutlichem Unterschied zwischen gelblichem Splint und rötlichem Kern.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Fenster, Türen, Möbel, Konstruktionsholz, Dielen.</p>
@@ -699,6 +735,7 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             <em>Große Harzkanäle</em>. Man kann die Harzkanäle oft mit bloßem Auge als helle Punkte im Querschnitt sehen. Sehr harziger Geruch.
         </div>`,
+
     "Kirschbaum": `
         <p class="mb-2">Edles, rötliches Hartholz. Es dunkelt unter Licht stark nach (wird rot-braun).</p>
         <p class="mb-2"><strong>Verwendung:</strong> Stilmöbel, Innenausbau, Furniere, Drechseln.</p>
@@ -706,6 +743,7 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Die <em>scharfen Markstrahlen</em>. Im Querschnitt leuchten die Markstrahlen hell und deutlich abgesetzt auf dem rötlichen Grund.
         </div>`,
+
     "Lärche": `
         <p class="mb-2">Das schwerste und härteste heimische Nadelholz. Sehr witterungsbeständig.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Außenfassaden, Fenster, Dielen, Brückenbau.</p>
@@ -713,6 +751,7 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Der krasse <em>Kontrast</em> im Jahrring. Das dunkle, harte Spätholz grenzt messerscharf an das helle Frühholz. Rötlich-brauner Kern.
         </div>`,
+
     "Linde": `
         <p class="mb-2">Weiches, homogenes Laubholz. Lässt sich exzellent in alle Richtungen schnitzen.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Bildhauerei, Schnitzerei, Kuckucksuhren, Gussmodelle.</p>
@@ -720,6 +759,7 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Die <em>Strukturlosigkeit</em>. Zerstreutporig, kaum sichtbare Jahrringe, gelblich-weiß. Es wirkt fast wie eine homogene Masse.
         </div>`,
+
     "Mahagoni Amerikanisch": `
         <p class="mb-2">Echtes Mahagoni. Rotbraun, goldglänzend, gut zu bearbeiten und witterungsfest.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Bootsbau, Luxusmöbel, Instrumentenbau.</p>
@@ -727,6 +767,7 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Der <em>Wechseldrehwuchs</em>. Auf der Fläche entstehen dadurch helle und dunkle Streifen, die je nach Lichteinfall wechseln (Glanzstreifen).
         </div>`,
+
     "Meranti (DR)": `
         <p class="mb-2">Tropisches Laubholz, oft als "Dark Red Meranti" gehandelt. Offenporig.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Fensterbau (Standardholz in den 80/90ern), Türen.</p>
@@ -734,6 +775,7 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Große, grobe Poren und <em>weiße Harzlinien</em>. Im Querschnitt sieht man oft feine weiße Linien (Gummiadern) tangential verlaufen.
         </div>`,
+
     "Nussbaum (EU)": `
         <p class="mb-2">Eines der wertvollsten heimischen Möbelhölzer. Grau-braun bis schwarz-braun, lebhafte Maserung.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Exklusive Möbel, Furniere, Gewehrschäfte, Klavierbau.</p>
@@ -741,6 +783,7 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             <em>Halbringporig</em>. Die Poren sind im Frühholz größer, nehmen aber zum Spätholz hin nur langsam ab. Dunkle Farbe mit fast schwarzem Kern.
         </div>`,
+
     "Palisander": `
         <p class="mb-2">Sehr hartes, schweres Tropenholz. Farben von violett bis dunkelbraun gestreift.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Musikinstrumente (Marimba, Griffbretter), Furniere, Drechseln.</p>
@@ -748,6 +791,7 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Die <em>schwarzen Streifen</em> und der Geruch. Es riecht beim Bearbeiten oft süßlich-blumig (daher engl. "Rosewood").
         </div>`,
+
     "Pappel": `
         <p class="mb-2">Sehr weiches, leichtes Laubholz. Wächst extrem schnell.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Sperrholz, Zündhölzer, Paletten, Prothesen, Saunabänke (leitet Hitze schlecht).</p>
@@ -755,6 +799,7 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             <em>Wollige Oberfläche</em>. Das Holz ist so weich, dass es beim Sägen und Schleifen oft faserig/wollig bleibt. Grau-weiß.
         </div>`,
+
     "Platane": `
         <p class="mb-2">Rötlich-braunes Holz mit sehr dekorativer Optik (Perlholz).</p>
         <p class="mb-2"><strong>Verwendung:</strong> Innenausbau, Furniere, Drechselarbeiten.</p>
@@ -762,6 +807,7 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Die <em>vielen, breiten Markstrahlen</em>. Im Spiegelschnitt sieht es aus wie ein Leopardenfell ("Perlholz"). Ähnlich wie Buche, aber deutlichere Spiegel.
         </div>`,
+
     "Redwood": `
         <p class="mb-2">Holz der Mammutbäume. Sehr leicht, weich, aber extrem dauerhaft gegen Fäule.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Außenfassaden, Gartenmöbel, Schindeln.</p>
@@ -769,6 +815,7 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             <em>Kein Harz, rotbraun</em>. Es ist sehr grobfaserig und spröde. Erinnert an Zeder, riecht aber nicht so aromatisch.
         </div>`,
+
     "Robinie": `
         <p class="mb-2">Das einzige europäische Holz der Dauerhaftigkeitsklasse 1-2. Zäh, hart und giftig.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Spielplatzgeräte, Gartenmöbel, Pfähle (Ersatz für Tropenholz).</p>
@@ -776,6 +823,7 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             <em>Verthyllte Poren</em>. Die großen Frühholzporen sind mit glitzernden Blasen (Thyllen) verstopft. Die Farbe ist oft grünlich-gelb.
         </div>`,
+
     "Rosskastanie": `
         <p class="mb-2">Weiches, gelblich-weißes Holz. Oft welliger Faserverlauf.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Blindholz, Schnitzerei, Kisten.</p>
@@ -783,6 +831,7 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Sehr <em>feine, stockwerkartige Markstrahlen</em>. Man sieht auf der Tangentialfläche (Fladerung) feine "Rippeln" (Ripple marks), wenn man genau hinsieht.
         </div>`,
+
     "Rotbuche": `
         <p class="mb-2">Das "Brotbaum"-Holz der deutschen Forstwirtschaft. Hart, abriebfest, dämpfbar (Bugholz).</p>
         <p class="mb-2"><strong>Verwendung:</strong> Stühle, Möbelgestelle, Spielzeug, Werkbankplatten, Parkett.</p>
@@ -790,6 +839,7 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Die <em>"Reiskerne"</em>. Auf der Tangentialfläche sieht man die breiten Markstrahlen als dunkle Spindeln. Im Querschnitt sind die Markstrahlen breit und zum Jahrring hin breiter werdend.
         </div>`,
+
     "Rüster": `
         <p class="mb-2">Das Holz der Ulme. Sehr dekorativ, zäh und stoßfest. Schöne braune Färbung.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Möbel, Furniere, Treppen, Sportgeräte.</p>
@@ -797,6 +847,7 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Die <em>Zick-Zack-Linien</em>. Im Spätholz sind die kleinen Poren zu wellenförmigen, tangentialen Bändern angeordnet (Ulmen-Wellen).
         </div>`,
+
     "Tanne": `
         <p class="mb-2">Reifholzbaum, ähnlich der Fichte, aber ohne Harzkanäle. Grau-weiß.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Konstruktionsholz, Fenster, Innenausbau (dunkelt weniger nach als Fichte).</p>
@@ -804,6 +855,7 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             <em>Harzfrei und "Katzenpisse"</em>. Im Gegensatz zur Fichte hat sie keine Harzkanäle. Frisches Tannenholz (Nasskern) riecht oft unangenehm säuerlich.
         </div>`,
+
     "Teak": `
         <p class="mb-2">Goldbraunes Tropenholz. Fühlt sich fettig an ("Wax-Feel"). Extrem witterungsbeständig.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Schiffsdecks, hochwertige Gartenmöbel, Furniere.</p>
@@ -811,6 +863,7 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Der <em>Ledergeruch und Fettgriff</em>. Es riecht deutlich nach altem Leder und fühlt sich wachsig an. Ringporig.
         </div>`,
+
     "Wengé": `
         <p class="mb-2">Afrikanisches Holz, kaffeebraun bis schwarz, mit hellen Streifen. Sehr hart und splitterig.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Exklusive Böden, Möbel, Intarsien.</p>
@@ -818,6 +871,7 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             <em>Rebhuhnhuhn-Muster</em>. Auf der Tangentialfläche bilden helle Parenchymbänder (Speichergewebe) auf dunklem Grund ein markantes Zick-Zack-Muster.
         </div>`,
+
     "Zebrano": `
         <p class="mb-2">Westafrikanisches Holz. Grundfarbe grau-gelb mit dunkelbraunen Streifen.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Furniere, Armaturenbretter (Auto), Ziergegenstände.</p>
@@ -825,6 +879,7 @@ const detailedWoodInfo = {
             <strong>🔨 Das Hammermerkmal:</strong><br>
             Der <em>Zebra-Look</em>. Die dunklen Streifen verlaufen fast parallel auf hellem Grund. Unverwechselbar.
         </div>`,
+
     "Zeder": `
         <p class="mb-2">Sammelbegriff für diverse Nadelhölzer (z.B. Western Red Cedar). Leicht, weich, aromatisch.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Zigarrenkisten, Mottenkugeln, Fassaden, Schindeln.</p>
@@ -1690,6 +1745,52 @@ if(p.get('game')){
     gameId=p.get('game'); 
     window.showNamePrompt('join'); 
 }
+
+// MASKOTTCHEN LOGIK
+const mascotStates = {
+    idle: { icon: "🐛", text: ["Holzen!", "Wähle weise!", "Na, was liegt an?"] },
+    win: { icon: "🐛", text: ["Stark!", "Sägespäne!", "Der Ast sitzt!", "Meisterlich!"], anim: "willi-anim" },
+    lose: { icon: "🐛", text: ["Autsch...", "Splitterbruch...", "Das war morsch.", "Kopf hoch!"], anim: "mascot-sad" },
+    tie: { icon: "🤔", text: ["Oha!", "Spannend...", "Wer weiß es?"], anim: "mascot-thinking" },
+    waiting: { icon: "💤", text: ["Gleich geht's los...", "Ich warte..."], anim: "mascot-thinking" }
+};
+
+window.setMascotState = (state) => {
+    const m = document.getElementById('gameMascot');
+    const icon = document.getElementById('mascotIcon');
+    const bubble = document.getElementById('mascotBubble');
+    
+    // Reset
+    m.classList.remove('hidden');
+    
+    const data = mascotStates[state] || mascotStates.idle;
+    
+    // Icon & Animation
+    icon.innerText = data.icon;
+    
+    // Text zufällig wählen
+    const text = data.text[Math.floor(Math.random() * data.text.length)];
+    bubble.innerText = text;
+    
+    // Sprechblase anzeigen
+    bubble.classList.remove('opacity-0', 'scale-95');
+    
+    // Nach 3 Sekunden Blase ausblenden (außer bei 'waiting')
+    if(state !== 'waiting') {
+        setTimeout(() => {
+             bubble.classList.add('opacity-0', 'scale-95');
+        }, 3000);
+    }
+};
+
+window.mascotInteract = () => {
+    // Kleines Feature: Wenn man draufklickt, sagt er was
+    const texts = ["Ich bin Willi!", "Alles im Lot?", "Holz ist genial.", "DIN 68364 beachten!"];
+    const bubble = document.getElementById('mascotBubble');
+    bubble.innerText = texts[Math.floor(Math.random() * texts.length)];
+    bubble.classList.remove('opacity-0', 'scale-95');
+    setTimeout(() => bubble.classList.add('opacity-0', 'scale-95'), 2000);
+};
 
 </script>
 </body>
