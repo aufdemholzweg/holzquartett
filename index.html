@@ -124,7 +124,7 @@
     </div>
 </div>
 
-<div id="happyKlotzi" class="fixed bottom-0 right-0 z-[100] transition-transform duration-500 translate-y-full hidden pointer-events-none">
+<div id="happyKlotzi" class="fixed bottom-20 right-0 z-[100] transition-transform duration-500 translate-y-full hidden pointer-events-none">
     <img src="https://github.com/aufdemholzweg/holzquartett/blob/main/images/klotzi_win.png?raw=true" alt="Jubel Klotzi" class="w-48 sm:w-64 drop-shadow-2xl">
 </div>
 
@@ -316,7 +316,7 @@
     <div class="w-10 h-10 absolute left-4 top-4"></div>
     
     <div class="relative w-full max-w-sm pt-20">
-        <img src="https://github.com/aufdemholzweg/holzquartett/blob/main/images/klotzi_menu.png?raw=true" alt="Klotzi Menü" class="absolute -top-12 -right-2 w-48 z-20 pointer-events-none transform rotate-3 drop-shadow-xl" onerror="this.style.display='none'">
+        <img src="https://github.com/aufdemholzweg/holzquartett/blob/main/images/klotzi_menu.png?raw=true" alt="Klotzi Menü" class="absolute -top-4 -right-2 w-48 z-20 pointer-events-none transform rotate-3 drop-shadow-xl" onerror="this.style.display='none'">
         
         <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full relative mb-6 z-10">
             <div class="bg-amber-500 p-5 text-white text-center font-bold text-lg sm:text-xl tracking-wide shadow-md">HOLZEN!<br><span class="text-sm font-normal opacity-90">Spielmodus wählen</span></div>
@@ -528,7 +528,8 @@ const attributeInfo={
      unit:'(N/mm²)', 
      logic: 'Hoch gewinnt', 
      default: true,
-     description: 'Die Druckfestigkeit von Holz ist die maximale Druckspannung, die ein Holzwerkstoff unter axialer Belastung parallel zur Faser bis zum Versagen (Bruch) aufnehmen kann. Sie wird nach DIN EN 408 ermittelt und in N/mm² angegeben.'
+     description: `Die Druckfestigkeit gibt die maximale Spannung in (N/mm²) an, die das Holz aufnehmen kann, wenn es in Faserrichtung gestaucht wird.
+Der Wert wird an kleinen, fehlerfreien Holzklötzen im Normalklima (20°C, 65% rel. Luftfeuchte) bestimmt. Dabei wird die maximale Kraft, bei der das Holz versagt, durch den ursprünglichen Querschnitt der Probe geteilt.`
  },
  quellen:{
      icon:'↔️',
@@ -540,11 +541,11 @@ const attributeInfo={
  },
  rohdichte:{
      icon:'⚖️',
-     name:'Rohdichte',
+     name:'Normalrohdichte (Roh)',
      unit:'(kg/m³)', 
      logic: 'Hoch gewinnt', 
      default: true,
-     description: 'Die Rohdichte ist das Verhältnis von Masse zu Volumen einer Holzprobe bei einer festgelegten Holzfeuchte von 12 %. Masse und Volumen werden dabei im gleichen Feuchtezustand bestimmt. Die Einheit ist kg/m³.'
+     description: 'Die Rohdichte ist der Quotient aus Masse und Volumen (kg/m³) bei gleicher Holzfeuchte. Als Referenz gilt hierbei das Normalklima nach DIN 50014 (20 °C / 65 % rel. Luftfeuchte), was einer Ausgleichsfeuchte des Holzes von rund 12 % entspricht.'
  },
  emodul:{
      icon:'📐',
@@ -552,7 +553,7 @@ const attributeInfo={
      unit:'(N/mm²)', 
      logic: 'Hoch gewinnt', 
      default: true,
-     description: 'Elastizitätsmodul. Ein Maß für die Steifigkeit des Holzes und ist eine Materialkonstante. Sie beschreibt in N/mm² die Kraft die benötigt wird, um einen Stab, mit einem Querschnitt von 1 mm² auf seine doppelte Länge zu dehnen. Je größer das E-Modul desto „steifer“ ein Material, d.h. desto mehr Widerstand leistet es bei seiner Verformung.'
+     description: 'Das E-Modul ist eine Materialkonstante und beschreibt die Steifigkeit des Holzes. Der Wert gibt an, welche Kraft (N) erforderlich ist, um einen Stab mit einem Querschnitt von 1x1 mm auf seine doppelte Länge zu verformen. Sie wird in N/mm² angegeben. Ein hoher E-Modul steht für ein steifes Material, das sich nur schwer verformen lässt (steile Steigung im Spannungs-Dehnungs-Diagramm).'
  },
  preis:{
      icon:'💰',
@@ -595,8 +596,8 @@ const IMG_SUFFIX = "?raw=true";
 
 // 6. KARTEN DATEN
 const woodCards=[
- {name:"Douglasie", dk:5, druckfestigkeit:68, quellen:7.7, rohdichte:510, emodul:13000, preis:4, imgTree:`${IMG_BASE}/douglasie_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/douglasie_2.jpeg${IMG_SUFFIX}`},
- {name:"Ebenholz, Afrikanisches", dk:"1-2", druckfestigkeit:70, quellen:12.8, rohdichte:1200, emodul:13400, preis:5, imgTree:`${IMG_BASE}/ebenholz_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/ebenholz_2.jpeg${IMG_SUFFIX}`},
+ {name:"Douglasie", dk:3, druckfestigkeit:68, quellen:7.7, rohdichte:510, emodul:13000, preis:4, imgTree:`${IMG_BASE}/douglasie_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/douglasie_2.jpeg${IMG_SUFFIX}`},
+ {name:"Ebenholz, Afrikanisches", dk:"1-2", druckfestigkeit:85, quellen:12.8, rohdichte:1200, emodul:13400, preis:5, imgTree:`${IMG_BASE}/ebenholz_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/ebenholz_2.jpeg${IMG_SUFFIX}`},
  {name:"Edelkastanie", dk:2, druckfestigkeit:52, quellen:6.7, rohdichte:620, emodul:9000, preis:3, imgTree:`${IMG_BASE}/kastanie_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/kastanie_2.jpeg${IMG_SUFFIX}`},
  {name:"Eibe", dk:2, druckfestigkeit:58, quellen:5.3, rohdichte:670, emodul:15000, preis:4, imgTree:`${IMG_BASE}/eibe_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/eibe_2.jpeg${IMG_SUFFIX}`},
  {name:"Eiche", dk:2, druckfestigkeit:38, quellen:11.9, rohdichte:665, emodul:13000, preis:3, imgTree:`${IMG_BASE}/eiche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/eiche_2.jpeg${IMG_SUFFIX}`},
@@ -623,7 +624,7 @@ const woodCards=[
  {name:"Tanne", dk:4, druckfestigkeit:47, quellen:7.6, rohdichte:450, emodul:11000, preis:2, imgTree:`${IMG_BASE}/tanne_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/tanne_2.jpeg${IMG_SUFFIX}`},
  {name:"Teak", dk:1, druckfestigkeit:59, quellen:5.8, rohdichte:660, emodul:13000, preis:5, imgTree:`${IMG_BASE}/teak_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/teak_2.jpeg${IMG_SUFFIX}`},
  {name:"Wengé", dk:2, druckfestigkeit:90, quellen:9.4, rohdichte:860, emodul:16000, preis:4, imgTree:`${IMG_BASE}/wenge_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/wenge_2.jpeg${IMG_SUFFIX}`},
- {name:"Zebrano", dk:"2-3", druckfestigkeit:50, quellen:9.1, rohdichte:1050, emodul:15400, preis:4, imgTree:`${IMG_BASE}/zebrano_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/zebrano_2.jpeg${IMG_SUFFIX}`},
+ {name:"Zebrano", dk:"2-3", druckfestigkeit:50, quellen:9.1, rohdichte:820, emodul:15400, preis:4, imgTree:`${IMG_BASE}/zebrano_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/zebrano_2.jpeg${IMG_SUFFIX}`},
  {name:"Zeder", dk:"1-2", druckfestigkeit:43, quellen:11.2, rohdichte:545, emodul:7000, preis:5, imgTree:`${IMG_BASE}/zeder_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/zeder_2.jpeg${IMG_SUFFIX}`},
  {name:"Birke", dk:5, druckfestigkeit:51, quellen:11.4, rohdichte:650, emodul:14500, preis:2, imgTree:`${IMG_BASE}/birke_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/birke_2.jpeg${IMG_SUFFIX}`},
  {name:"Ahorn", dk:5, druckfestigkeit:62, quellen:11.5, rohdichte:630, emodul:9400, preis:2, imgTree:`${IMG_BASE}/ahorn_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/ahorn_2.jpeg${IMG_SUFFIX}`}
