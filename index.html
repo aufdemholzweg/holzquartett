@@ -591,7 +591,7 @@ let activeAttributeKeys = getRandomDefaultAttributes();
 
 const sounds={
  flip:new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_139083c224.mp3'),
- win:new Audio('https://github.com/aufdemholzweg/holzquartett/blob/894e048eea71ba49921abfe6827bd8dc723f8c2d/gewonnen.mp3?raw=true'),
+ win:new Audio('https://github.com/aufdemholzweg/holzquartett/blob/64126fed45ff8c3fb4bd833f473d83f51ba0548b/Sounds/spielzuggewonnen.mp3?raw=true'),
  chime:new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c744c8.mp3'),
  starWin:new Audio('https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3'),
  quizTick: new Audio('https://github.com/aufdemholzweg/holzquartett/blob/main/Sounds/ticken_bei_quizfrage.mp3?raw=true'),
@@ -932,7 +932,7 @@ function showHappyWorm() {
     if(!k) return;
 
     // Zufälliger Jubel-Spruch
-    const cheers = ["Stark!", "Super!", "Punkt für uns!", "Weiter so!", "Yeah!", "Klasse!", "Meisterhaft!", "Astrein!", "Jawoll!"];
+    const cheers = ["Stark!", "Super!", "Punkt für uns!", "Weiter so!", "Bämm!", "Klasse!", "Holz-Meister!", "Sieg!", "Jawoll!"];
     if(t) t.childNodes[0].nodeValue = cheers[Math.floor(Math.random() * cheers.length)]; // Text ändern, Dreiecke behalten
 
     k.classList.remove('hidden', 'translate-y-full'); // Reinschieben
