@@ -534,19 +534,19 @@ Der Wert wird an kleinen, fehlerfreien Holzklötzen im Normalklima (20°C, 65% r
  },
  quellen:{
      icon:'↔️',
-     name:'Quellen/Schw.',
+     name:'Quellen/Schwinden',
      unit:'(%)', 
      logic: 'Niedrig gewinnt', 
      default: true,
-     description: 'Angegeben ist das maximale tangentiale Quell- und Schwindmaß in (%). Dieser Wert beschreibt die prozentuale Maßänderung in Richtung der Jahresringe vom fasergesättigten Zustand (ca. 30 % Holzfeuchte) bis zum darrtrockenen Zustand (0 %).'
+     description: 'Angegeben ist das maximale tangentiale Schwindmaß (%). Dieser Wert beschreibt die prozentuale Maßänderung in Richtung der Jahresringe vom fasergesättigten Zustand (ca. 30 % Holzfeuchte) bis zum darrtrockenen Zustand (0 %).'
  },
  rohdichte:{
      icon:'⚖️',
-     name:'Normalrohdichte',
+     name:'Normalrohdichte (Roh)',
      unit:'(kg/m³)', 
      logic: 'Hoch gewinnt', 
      default: true,
-     description: 'Die Rohdichte (Roh) ist der Quotient aus Masse und Volumen (kg/m³) bei gleicher Holzfeuchte. Als Referenz gilt hierbei das Normalklima nach DIN 50014 (20 °C / 65 % rel. Luftfeuchte), was einer Ausgleichsfeuchte des Holzes von rund 12 % entspricht.'
+     description: 'Die Rohdichte ist der Quotient aus Masse und Volumen (kg/m³) bei gleicher Holzfeuchte. Als Referenz gilt hierbei das Normalklima nach DIN 50014 (20 °C / 65 % rel. Luftfeuchte), was einer Ausgleichsfeuchte des Holzes von rund 12 % entspricht.'
  },
  emodul:{
      icon:'📐',
@@ -1130,20 +1130,20 @@ function startTieBreakerQuiz(qIndex, callback) {
                     setTimeout(() => {
                         modal.classList.add('hidden');
                         callback('correct');
-                    }, 500);
+                    }, 1000); // 1s Zeit zum Freuen
                 } else {
-                    btn.className = "w-full bg-red-500 text-white font-bold py-3 px-4 rounded-lg border-2 border-red-600 shadow-md transform scale-95";
+                    btn.className = "w-full bg-red-500 text-white font-bold py-3 px-4 rounded-lg border-2 border-red-600 shadow-md transform scale-95 opacity-50";
                     
-                    // NEU: Richtige Antwort grün anzeigen!
+                    // NEU: Richtige Antwort finden und grün färben
                     const correctBtnObj = buttons.find(b => b.idx === question.c);
                     if(correctBtnObj) {
-                        correctBtnObj.btn.className = "w-full bg-green-500 text-white font-bold py-3 px-4 rounded-lg border-2 border-green-600 shadow-lg scale-105";
+                        correctBtnObj.btn.className = "w-full bg-green-500 text-white font-bold py-3 px-4 rounded-lg border-2 border-green-600 shadow-lg scale-105 animate-pulse";
                     }
 
                     setTimeout(() => {
                         modal.classList.add('hidden');
                         callback('wrong');
-                    }, 1500); // Längere Wartezeit (1.5s) zum Lesen
+                    }, 1500); // 1.5s Zeit zum Lernen
                 }
             };
         });
