@@ -135,9 +135,7 @@
 
 <div id="tieOverlay" class="fixed inset-0 z-[90] flex items-center justify-center dimmer hidden pt-20">
     <div class="bg-white/10 backdrop-blur-md p-8 rounded-3xl animate-bounce-slam text-center border border-white/20 shadow-2xl relative">
-        
         <img src="https://github.com/aufdemholzweg/holzquartett/blob/main/images/klotzi_quiz.png?raw=true" alt="Klotzi Quiz" class="w-32 mx-auto mb-2 object-contain filter drop-shadow-lg" onerror="this.style.display='none'">
-        
         <div class="text-5xl mb-2 filter drop-shadow-lg">💥</div>
         <h2 class="text-4xl sm:text-5xl font-black text-white uppercase tracking-wider drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)]">
             GLEICHSTAND!
@@ -164,6 +162,9 @@
             </h3>
             <div id="quizOptions" class="grid grid-cols-1 gap-3 relative z-30">
                 </div>
+            
+            <div id="quizExplanation" class="hidden mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-gray-700 leading-snug shadow-sm animate-pop-in">
+            </div>
         </div>
     </div>
 </div>
@@ -643,285 +644,286 @@ const woodCards=[
 
 const detailedWoodInfo = {
     "Ahorn": `
-        <p class="mb-2">Feinporiges, zerstreutporiges Laubholz mit gleichmäßiger Struktur. Das Holz ist weißlich bis gelblich-weiß gefärbt und zeichnet sich durch hohe Härte und Abriebfestigkeit aus. Es neigt zum Vergilben.</p>
-        <p class="mb-2"><strong>Verwendung:</strong> Hochwertiger Möbelbau, Tischplatten, Musikinstrumente, Küchengeräte (geschmacksneutral).</p>
+        <p class="mb-2">Ein helles, feinporiges Hartholz. Es wirkt sehr homogen und edel.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Möbel, Tischplatten, Musikinstrumente (Geigenböden), Küchengeräte.</p>
         <div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2">
-            <strong>🔍 Fachliches Merkmal:</strong><br>
-            Ahorn besitzt einen charakteristischen <em>Seidenglanz</em> auf gehobelten Flächen. Die Poren sind mit bloßem Auge nicht sichtbar.
+            <strong>🔨 Das Hammermerkmal:</strong><br>
+            Der <em>Seidenglanz</em>! Ahorn schimmert im Licht. Die Poren sind mit bloßem Auge kaum zu sehen (zerstreutporig), die Markstrahlen sind fein, aber als dunkle Linien erkennbar.
         </div>`,
     "Birke": `
-        <p class="mb-2">Ein helles, gelblich-weißes bis rötlich-weißes Splintholz ohne sichtbaren Farbkern. Das Holz ist zäh, elastisch und mittelschwer, jedoch im Außenbereich nicht dauerhaft (pilzanfällig).</p>
-        <p class="mb-2"><strong>Verwendung:</strong> Sperrholz (Multiplex-Platten), Innenausbau, Drechselarbeiten, Brennholz.</p>
+        <p class="mb-2">Helles, gelblich-weißes bis rötliches Holz. Es ist zäh und elastisch, aber nicht witterungsfest.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Sperrholz (Multiplex), Möbelbau, Drechselarbeiten, Kaminholz.</p>
         <div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2">
-            <strong>🔍 Fachliches Merkmal:</strong><br>
-            Die Gefäße (Poren) sind oft breiter als die Markstrahlen. Im Querschnitt zeigen sich die Poren als feine, helle Punkte. Oft geflammte Zeichnung.
+            <strong>🔨 Das Hammermerkmal:</strong><br>
+            Die <em>Poren sind breiter als die Markstrahlen</em>. Im Querschnitt sieht man die Poren als weiße Punkte, die Markstrahlen sind kaum sichtbar. Oft "geflammte" Maserung.
         </div>`,
     "Douglasie": `
-        <p class="mb-2">Nadelholz mit ausgeprägtem Farbkern (rötlich-braun) und schmalem Splint. Es ist fester und witterungsbeständiger als Fichte, aber harzhaltig.</p>
-        <p class="mb-2"><strong>Verwendung:</strong> Konstruktiver Holzbau, Terrassendielen, Fensterkanteln, Fassadenbekleidung.</p>
+        <p class="mb-2">Ein festes Nadelholz mit rötlichem Kern. Witterungsbeständiger als Fichte.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Terrassendielen, Dachstühle, Fenster, Fassaden.</p>
         <div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2">
-            <strong>🔍 Fachliches Merkmal:</strong><br>
-            Deutlicher Kontrast zwischen Früh- und Spätholz. Besitzt Harzkanäle. Frisch bearbeitet riecht es oft leicht zitronig-harzig.
+            <strong>🔨 Das Hammermerkmal:</strong><br>
+            Der <em>abrupte Übergang</em> von Früh- zu Spätholz und die Harzkanäle. Frisch bearbeitet riecht es oft leicht nach Zitrus.
         </div>`,
     "Ebenholz, Afrikanisches": `
-        <p class="mb-2">Ein extrem hartes, schweres und dichtes Laubholz. Das Kernholz ist tiefschwarz (teilweise mit helleren Streifen), der Splint ist grau-weiß. Es lässt sich polieren, ist aber schwer zu bearbeiten.</p>
-        <p class="mb-2"><strong>Verwendung:</strong> Musikinstrumentenbau (Griffbretter, Tasten), Einlegearbeiten, Kunsthandwerk.</p>
+        <p class="mb-2">Extrem hartes, schweres und dichtes Edelholz. Das Kernholz ist tiefschwarz.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Musikinstrumente (Klaviertasten, Griffbretter), Einlegearbeiten, Luxusobjekte.</p>
         <div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2">
-            <strong>🔍 Fachliches Merkmal:</strong><br>
-            Sehr hohe Dichte (sinkt oft im Wasser). Poren sind extrem fein und oft mit dunklen Inhaltsstoffen gefüllt.
+            <strong>🔨 Das Hammermerkmal:</strong><br>
+            Die <em>Farbe und Dichte</em>. Es ist so feinporig und schwarz, dass man kaum Struktur erkennt. Es sinkt im Wasser.
         </div>`,
     "Edelkastanie": `
-        <p class="mb-2">Ringporiges Hartholz mit gelb-braunem Kern, der stark nachdunkelt. Es ähnelt der Eiche, ist jedoch etwas weicher und leichter. Enthält viel Gerbsäure.</p>
-        <p class="mb-2"><strong>Verwendung:</strong> Fassbau, Pfähle (hohe Dauerhaftigkeit), Möbelbau, Furniere.</p>
+        <p class="mb-2">Erinnert stark an Eiche, ist aber etwas leichter und weicher. Enthält viel Gerbsäure.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Fassholz, Pfähle, Möbel, im Außenbereich (sehr dauerhaft).</p>
         <div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2">
-            <strong>🔍 Fachliches Merkmal:</strong><br>
-            Im Gegensatz zur Eiche fehlen der Edelkastanie die breiten, gut sichtbaren Markstrahlen (keine Spiegel im Radialschnitt).
+            <strong>🔨 Das Hammermerkmal:</strong><br>
+            Wie Eiche (ringporig), aber <em>OHNE breite Markstrahlen</em> (keine Spiegel). Das unterscheidet sie sicher von der Eiche.
         </div>`,
     "Eibe": `
-        <p class="mb-2">Das härteste und schwerste heimische Nadelholz. Der Kern ist rötlich-braun bis violett-braun. Das Holz ist extrem zäh, elastisch und sehr dauerhaft. Alle Pflanzenteile (außer der Samenmantel) sind giftig.</p>
-        <p class="mb-2"><strong>Verwendung:</strong> Bogenbau (historisch), Drechslerei, Kunsttischlerei.</p>
+        <p class="mb-2">Das härteste heimische Nadelholz. Sehr elastisch und giftig. Der Kern ist violett-braun.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Bogenbau (historisch), Drechslerei, Kunsthandwerk.</p>
         <div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2">
-            <strong>🔍 Fachliches Merkmal:</strong><br>
-            Nadelholz <em>ohne</em> Harzkanäle. Die Jahrringe verlaufen oft sehr eng und wellig.
+            <strong>🔨 Das Hammermerkmal:</strong><br>
+            Nadelholz <em>OHNE Harzkanäle</em>. Der Kern ist auffällig dunkel/rötlich-braun, die Jahrringe sind oft extrem eng und wellig.
         </div>`,
     "Eiche": `
-        <p class="mb-2">Ringporiges Kernholz mit graugelbem bis gelbbraunem Kern. Das Holz ist hart, schwer und durch den hohen Gerbsäuregehalt sehr witterungsbeständig.</p>
-        <p class="mb-2"><strong>Verwendung:</strong> Massivholzmöbel, Parkett, Fenster, Treppen, Wasserbau.</p>
+        <p class="mb-2">Der Klassiker: Hart, schwer und witterungsbeständig. Grau-gelb bis gelb-braun.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Massivholzmöbel, Parkett, Fenster, Fässer, Bauholz.</p>
         <div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2">
-            <strong>🔍 Fachliches Merkmal:</strong><br>
-            Charakteristische, breite Markstrahlen. Im Radialschnitt als glänzende "Spiegel", im Tangentialschnitt als dunkle Linien erkennbar.
+            <strong>🔨 Das Hammermerkmal:</strong><br>
+            <em>Ringporig mit Spiegeln</em>. Man sieht riesige Frühholzporen im Kreis und sehr breite Markstrahlen, die im Radialschnitt als glänzende "Spiegel" sichtbar sind.
         </div>`,
     "Erle": `
-        <p class="mb-2">Zerstreutporiges Splintholz. Frisch gefällt färbt sich das Holz orangerot, getrocknet ist es rötlich-weiß. Es ist weich, aber formstabil.</p>
-        <p class="mb-2"><strong>Verwendung:</strong> Möbelbau (oft als "Kirschbaum-Imitat" gebeizt), Modellbau. Unter Wasser extrem dauerhaft.</p>
+        <p class="mb-2">Rötlich-weißes Holz, das an der Luft schnell orange-rot nachdunkelt. Weich, aber zäh.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Möbel, Modellbau, Blindholz. Unter Wasser extrem dauerhaft (Venedig!).</p>
         <div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2">
-            <strong>🔍 Fachliches Merkmal:</strong><br>
-            Oft treten Markflecken auf. Die "scheinbaren Markstrahlen" sind Bündelungen von feinen Strahlen.
+            <strong>🔨 Das Hammermerkmal:</strong><br>
+            Die <em>scheinbaren Markstrahlen</em>. Oft bilden Markstrahlenbündel breite, dunkle Streifen, obwohl die einzelnen Strahlen fein sind.
         </div>`,
     "Esche": `
-        <p class="mb-2">Ringporiges Laubholz. Splint und Kern sind meist gleichfarbig hell (Reifholz), im Alter oft mit fakultativem Braunkern. Zäh, hart und elastisch.</p>
-        <p class="mb-2"><strong>Verwendung:</strong> Werkzeugstiele (Dynamische Belastung), Sportgeräte, Biegeformteile, Treppen.</p>
+        <p class="mb-2">Zähes, elastisches Hartholz mit markanter Fladerung. Helles Splint- und Kernholz (außer beim Braunkern).</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Werkzeugstiele (Hammer, Axt), Sportgeräte, Möbel, Treppen.</p>
         <div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2">
-            <strong>🔍 Fachliches Merkmal:</strong><br>
-            Ringporig wie Eiche, jedoch <em>ohne</em> breite Markstrahlen. Deutliche Fladerung (tangential) bzw. Streifung (radial).
+            <strong>🔨 Das Hammermerkmal:</strong><br>
+            <em>Ringporig, aber keine Spiegel</em>. Im Gegensatz zur Eiche hat die Esche keine breiten Markstrahlen. Sehr deutliche Porenringe im Hirnholz.
         </div>`,
     "Fichte": `
-        <p class="mb-2">Reifholzbaum. Das Holz ist gelblich-weiß, weich und elastisch. Es ist das wichtigste Bau- und Konstruktionsholz in Europa.</p>
-        <p class="mb-2"><strong>Verwendung:</strong> Dachstühle, Leimholz (BSH/KVH), Innenausbau, Papierherstellung.</p>
+        <p class="mb-2">Das wichtigste Bauholz Europas. Hell, weich und elastisch. Reifes Holz (kein Farbkern).</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Dachstühle, Leimholz, Papier, Möbel, Instrumentendecken.</p>
         <div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2">
-            <strong>🔍 Fachliches Merkmal:</strong><br>
-            Besitzt Harzkanäle (Unterschied zur Tanne). Kleine, schwarze, fest verwachsene Äste sind typisch.
+            <strong>🔨 Das Hammermerkmal:</strong><br>
+            Helles Holz mit <em>kleinen Harzkanälen</em>. Im Gegensatz zur Tanne hat sie Harzkanäle; im Gegensatz zur Kiefer ist der Kern nicht rötlich abgesetzt.
         </div>`,
     "Hemlock": `
-        <p class="mb-2">Nordamerikanisches Nadelholz. Das Holz ist grau-braun, harzfrei und meist sehr astarm ("clears").</p>
-        <p class="mb-2"><strong>Verwendung:</strong> Saunabau (wegen Harzfreiheit), Profilbretter, Innenausbau.</p>
+        <p class="mb-2">Nadelholz aus Nordamerika. Harzfrei und nagelfest.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Saunabau (da harzfrei), Innenausbau, Profilbretter.</p>
         <div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2">
-            <strong>🔍 Fachliches Merkmal:</strong><br>
-            Erinnert optisch an Fichte, ist aber dunkler/grauer und besitzt <em>keine</em> Harzkanäle.
+            <strong>🔨 Das Hammermerkmal:</strong><br>
+            <em>Harzfrei und grau-braun</em>. Es sieht aus wie eine sehr dunkle, graue Fichte, hat aber absolut keine Harzkanäle.
         </div>`,
     "Hickory": `
-        <p class="mb-2">Nordamerikanisches Hartholz aus der Familie der Walnussgewächse. Es gilt als das Holz mit der höchsten Schlagbiegefestigkeit und Zähigkeit.</p>
-        <p class="mb-2"><strong>Verwendung:</strong> Hochwertige Werkzeugstiele (Axt, Hammer), Sportgeräte (Baseballschläger), Drumsticks.</p>
+        <p class="mb-2">Verwandt mit dem Walnussbaum. Das Holz ist extrem schlagfest und zäh.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Hochwertige Werkzeugstiele, Drumsticks, Sportbögen.</p>
         <div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2">
-            <strong>🔍 Fachliches Merkmal:</strong><br>
-            Im Spätholz sind feine, tangentiale Parenchymbänder (Speichergewebe) als helle Netzstruktur erkennbar.
+            <strong>🔨 Das Hammermerkmal:</strong><br>
+            <em>Feine Querlinien im Spätholz</em>. Im Tangentialschnitt sieht man unter der Lupe feine, leiterförmige Parenchymbänder zwischen den Poren.
         </div>`,
     "Kiefer": `
-        <p class="mb-2">Kernholzbaum mit deutlichem Unterschied zwischen gelblich-weißem Splint und rötlich-braunem Kern. Das Holz ist harzreich und mittelschwer.</p>
-        <p class="mb-2"><strong>Verwendung:</strong> Fensterbau, Türen, Möbel (Landhausstil), Dielenböden, Konstruktionsholz.</p>
+        <p class="mb-2">Kernholzbaum mit deutlichem Unterschied zwischen gelblichem Splint und rötlichem Kern.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Fenster, Türen, Möbel, Konstruktionsholz, Dielen.</p>
         <div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2">
-            <strong>🔍 Fachliches Merkmal:</strong><br>
-            Große, deutlich sichtbare Harzkanäle im Querschnitt. Intensiver Harzgeruch. Astquirle.
+            <strong>🔨 Das Hammermerkmal:</strong><br>
+            <em>Große Harzkanäle</em>. Man kann die Harzkanäle oft mit bloßem Auge als helle Punkte im Querschnitt sehen. Sehr harziger Geruch.
         </div>`,
     "Kirschbaum": `
-        <p class="mb-2">Mittelschweres, feinporiges Hartholz. Der Kern ist rötlich-gelb bis rotbraun und dunkelt unter Lichteinfluss stark ("feurig") nach.</p>
-        <p class="mb-2"><strong>Verwendung:</strong> Hochwertiger Möbelbau, Stilmöbel, Innenausbau, Drechslerei.</p>
+        <p class="mb-2">Edles, rötliches Hartholz. Es dunkelt unter Licht stark nach (wird rot-braun).</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Stilmöbel, Innenausbau, Furniere, Drechseln.</p>
         <div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2">
-            <strong>🔍 Fachliches Merkmal:</strong><br>
-            Die Markstrahlen sind im Querschnitt als helle, scharf begrenzte Linien sichtbar. Oft treten Gummigallen auf.
+            <strong>🔨 Das Hammermerkmal:</strong><br>
+            Die <em>scharfen Markstrahlen</em>. Im Querschnitt leuchten die Markstrahlen hell und deutlich abgesetzt auf dem rötlichen Grund.
         </div>`,
     "Lärche": `
-        <p class="mb-2">Kernholzbaum mit rötlich-braunem Kern und schmalem, gelblichem Splint. Das schwerste und härteste heimische Nadelholz mit guter Witterungsbeständigkeit.</p>
-        <p class="mb-2"><strong>Verwendung:</strong> Außenanwendungen, Fassadenschalung, Fenster, Dielen, Brückenbau.</p>
+        <p class="mb-2">Das schwerste und härteste heimische Nadelholz. Sehr witterungsbeständig.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Außenfassaden, Fenster, Dielen, Brückenbau.</p>
         <div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2">
-            <strong>🔍 Fachliches Merkmal:</strong><br>
-            Sehr abrupten Übergang von Frühholz (hell) zu Spätholz (dunkel), dadurch markante Struktur. Kleine Harzkanäle.
+            <strong>🔨 Das Hammermerkmal:</strong><br>
+            Der krasse <em>Kontrast</em> im Jahrring. Das dunkle, harte Spätholz grenzt messerscharf an das helle Frühholz. Rötlich-brauner Kern.
         </div>`,
     "Linde": `
-        <p class="mb-2">Reifholzbaum mit weißlichem bis gelblichem Holz. Es ist weich, leicht und sehr homogen (zerstreutporig), aber wenig fest und nicht dauerhaft.</p>
-        <p class="mb-2"><strong>Verwendung:</strong> Bildhauerei, Schnitzerei, Modellbau, Blindholz.</p>
+        <p class="mb-2">Weiches, homogenes Laubholz. Lässt sich exzellent in alle Richtungen schnitzen.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Bildhauerei, Schnitzerei, Kuckucksuhren, Gussmodelle.</p>
         <div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2">
-            <strong>🔍 Fachliches Merkmal:</strong><br>
-            Kaum sichtbare Jahresringe. Lässt sich exzellent in alle Richtungen (auch quer zur Faser) schneiden/schnitzen.
+            <strong>🔨 Das Hammermerkmal:</strong><br>
+            Die <em>Strukturlosigkeit</em>. Zerstreutporig, kaum sichtbare Jahrringe, gelblich-weiß. Es wirkt fast wie eine homogene Masse.
         </div>`,
     "Mahagoni Amerikanisch": `
-        <p class="mb-2">Tropisches Kernholz, rotbraun bis kupferfarben glänzend. Es ist mittelschwer, gut zu bearbeiten und resistent gegen Pilze und Insekten.</p>
-        <p class="mb-2"><strong>Verwendung:</strong> Hochwertiger Innenausbau, Bootsbau, Luxusmöbel.</p>
+        <p class="mb-2">Echtes Mahagoni. Rotbraun, goldglänzend, gut zu bearbeiten und witterungsfest.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Bootsbau, Luxusmöbel, Instrumentenbau.</p>
         <div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2">
-            <strong>🔍 Fachliches Merkmal:</strong><br>
-            Häufiger Wechseldrehwuchs, der auf der radialen Fläche den typischen "Glanzstreifen" erzeugt.
+            <strong>🔨 Das Hammermerkmal:</strong><br>
+            Der <em>Wechseldrehwuchs</em>. Auf der Fläche entstehen dadurch helle und dunkle Streifen, die je nach Lichteinfall wechseln (Glanzstreifen).
         </div>`,
     "Meranti (DR)": `
-        <p class="mb-2">Sammelbegriff für Shorea-Arten (hier: Dark Red). Tropisches Laubholz, rotbraun, grobporig und in der Dichte stark schwankend.</p>
-        <p class="mb-2"><strong>Verwendung:</strong> Fensterbau (Standardholz der 80er/90er Jahre), Außentüren.</p>
+        <p class="mb-2">Tropisches Laubholz, oft als "Dark Red Meranti" gehandelt. Offenporig.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Fensterbau (Standardholz in den 80/90ern), Türen.</p>
         <div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2">
-            <strong>🔍 Fachliches Merkmal:</strong><br>
-            Große Poren. Im Querschnitt sind oft feine, tangential verlaufende weiße Linien (Gummiadern) gefüllt mit Harz sichtbar.
+            <strong>🔨 Das Hammermerkmal:</strong><br>
+            Große, grobe Poren und <em>weiße Harzlinien</em>. Im Querschnitt sieht man oft feine weiße Linien (Gummiadern) tangential verlaufen.
         </div>`,
     "Nussbaum (EU)": `
-        <p class="mb-2">Halbringporiges Laubholz. Der Kern ist grau-braun bis schwarz-braun, oft unregelmäßig gestreift ("Farbkern"). Es gilt als eines der edelsten heimischen Hölzer.</p>
-        <p class="mb-2"><strong>Verwendung:</strong> Exklusive Möbel, Furniere, Gewehrschäfte, Musikinstrumente.</p>
+        <p class="mb-2">Eines der wertvollsten heimischen Möbelhölzer. Grau-braun bis schwarz-braun, lebhafte Maserung.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Exklusive Möbel, Furniere, Gewehrschäfte, Klavierbau.</p>
         <div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2">
-            <strong>🔍 Fachliches Merkmal:</strong><br>
-            Halbringporig: Die Poren werden vom Frühholz zum Spätholz hin allmählich kleiner (kein scharfer Ring, aber auch nicht zerstreut).
+            <strong>🔨 Das Hammermerkmal:</strong><br>
+            <em>Halbringporig</em>. Die Poren sind im Frühholz größer, nehmen aber zum Spätholz hin nur langsam ab. Dunkle Farbe mit fast schwarzem Kern.
         </div>`,
     "Palisander": `
-        <p class="mb-2">Sammelbegriff für Dalbergia-Arten. Sehr hartes, schweres Tropenholz. Die Farbe variiert von violett bis dunkelbraun, oft mit charakteristischen schwarzen Farbstreifen.</p>
-        <p class="mb-2"><strong>Verwendung:</strong> Musikinstrumente (Marimba, Gitarren), Furniere, Drechseln.</p>
+        <p class="mb-2">Sehr hartes, schweres Tropenholz. Farben von violett bis dunkelbraun gestreift.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Musikinstrumente (Marimba, Griffbretter), Furniere, Drechseln.</p>
         <div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2">
-            <strong>🔍 Fachliches Merkmal:</strong><br>
-            Markante schwarze Streifen. Bearbeitetes Holz verströmt oft einen süßlichen Geruch.
+            <strong>🔨 Das Hammermerkmal:</strong><br>
+            Die <em>schwarzen Streifen</em> und der Geruch. Es riecht beim Bearbeiten oft süßlich-blumig (daher engl. "Rosewood").
         </div>`,
     "Pappel": `
-        <p class="mb-2">Das weichste und leichteste heimische Laubholz. Es ist weißlich-grau bis bräunlich, sehr faserig und wenig fest.</p>
-        <p class="mb-2"><strong>Verwendung:</strong> Verpackungen, Sperrholz, Zündhölzer, Saunabänke (geringe Wärmeleitfähigkeit).</p>
+        <p class="mb-2">Sehr weiches, leichtes Laubholz. Wächst extrem schnell.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Sperrholz, Zündhölzer, Paletten, Prothesen, Saunabänke (leitet Hitze schlecht).</p>
         <div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2">
-            <strong>🔍 Fachliches Merkmal:</strong><br>
-            Sehr "wollige" Oberfläche nach dem Sägen. Schlechtes Stehvermögen beim Trocknen.
+            <strong>🔨 Das Hammermerkmal:</strong><br>
+            <em>Wollige Oberfläche</em>. Das Holz ist so weich, dass es beim Sägen und Schleifen oft faserig/wollig bleibt. Grau-weiß.
         </div>`,
     "Platane": `
-        <p class="mb-2">Zerstreutporiges Laubholz mit rötlich-braunem Kern. Es ist mäßig hart und gut zu bearbeiten.</p>
+        <p class="mb-2">Rötlich-braunes Holz mit sehr dekorativer Optik (Perlholz).</p>
         <p class="mb-2"><strong>Verwendung:</strong> Innenausbau, Furniere, Drechselarbeiten.</p>
         <div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2">
-            <strong>🔍 Fachliches Merkmal:</strong><br>
-            Besitzt sehr breite und hohe Markstrahlen. Im Radialschnitt entsteht dadurch eine auffällige Spiegelzeichnung ("Perlholz").
+            <strong>🔨 Das Hammermerkmal:</strong><br>
+            Die <em>vielen, breiten Markstrahlen</em>. Im Spiegelschnitt sieht es aus wie ein Leopardenfell ("Perlholz"). Ähnlich wie Buche, aber deutlichere Spiegel.
         </div>`,
     "Redwood": `
-        <p class="mb-2">Holz des Küstenmammutbaums. Das Kernholz ist rotbraun, sehr leicht, weich und extrem dauerhaft, aber spröde.</p>
-        <p class="mb-2"><strong>Verwendung:</strong> Außenfassaden, Schindeln, Gartenmöbel.</p>
+        <p class="mb-2">Holz der Mammutbäume. Sehr leicht, weich, aber extrem dauerhaft gegen Fäule.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Außenfassaden, Gartenmöbel, Schindeln.</p>
         <div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2">
-            <strong>🔍 Fachliches Merkmal:</strong><br>
-            Nadelholz ohne Harzkanäle. Sehr grobfaserige Struktur.
+            <strong>🔨 Das Hammermerkmal:</strong><br>
+            <em>Kein Harz, rotbraun</em>. Es ist sehr grobfaserig und spröde. Erinnert an Zeder, riecht aber nicht so aromatisch.
         </div>`,
     "Robinie": `
-        <p class="mb-2">Ringporiges Kernholz mit grünlich-gelbem bis goldbraunem Kern. Es ist das einzige europäische Holz der Dauerhaftigkeitsklasse 1-2 (sehr dauerhaft).</p>
+        <p class="mb-2">Das einzige europäische Holz der Dauerhaftigkeitsklasse 1-2. Zäh, hart und giftig.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Spielplatzgeräte, Gartenmöbel, Pfähle (Ersatz für Tropenholz).</p>
         <div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2">
-            <strong>🔍 Fachliches Merkmal:</strong><br>
-            Die großen Frühholzporen sind im Kernholz vollständig mit Thyllen (glitzernde Verschlüsse) verstopft.
+            <strong>🔨 Das Hammermerkmal:</strong><br>
+            <em>Verthyllte Poren</em>. Die großen Frühholzporen sind mit glitzernden Blasen (Thyllen) verstopft. Die Farbe ist oft grünlich-gelb.
         </div>`,
     "Rosskastanie": `
-        <p class="mb-2">Zerstreutporiges Reifholz, weißlich bis gelblich. Es ist weich, leicht und wenig dauerhaft. Neigt zum Stocken (Verfärben).</p>
-        <p class="mb-2"><strong>Verwendung:</strong> Blindholz, Schnitzerei, Kisten, Drechseln.</p>
+        <p class="mb-2">Weiches, gelblich-weißes Holz. Oft welliger Faserverlauf.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Blindholz, Schnitzerei, Kisten.</p>
         <div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2">
-            <strong>🔍 Fachliches Merkmal:</strong><br>
-            Besitzt extrem feine, stockwerkartige Markstrahlen, die auf der Tangentialfläche eine feine "Rippelung" (Ripple marks) erzeugen können.
+            <strong>🔨 Das Hammermerkmal:</strong><br>
+            Sehr <em>feine, stockwerkartige Markstrahlen</em>. Man sieht auf der Tangentialfläche (Fladerung) feine "Rippeln" (Ripple marks), wenn man genau hinsieht.
         </div>`,
     "Rotbuche": `
-        <p class="mb-2">Zerstreutporiges Holz, blassgelb bis rötlich-weiß. Durch Dämpfen wird es intensiv rot. Hart, abriebfest, aber stark schwindend ("nervöses" Holz).</p>
-        <p class="mb-2"><strong>Verwendung:</strong> Stühle (Bugholz), Möbelgestelle, Werkbankplatten, Parkett.</p>
+        <p class="mb-2">Das "Brotbaum"-Holz der deutschen Forstwirtschaft. Hart, abriebfest, dämpfbar (Bugholz).</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Stühle, Möbelgestelle, Spielzeug, Werkbankplatten, Parkett.</p>
         <div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2">
-            <strong>🔍 Fachliches Merkmal:</strong><br>
-            Markstrahlen im Tangentialschnitt als dunkle Spindeln ("Reiskerne") sichtbar. Ältere Bäume bilden oft einen rotbraunen Wolkenkern.
+            <strong>🔨 Das Hammermerkmal:</strong><br>
+            Die <em>"Reiskerne"</em>. Auf der Tangentialfläche sieht man die breiten Markstrahlen als dunkle Spindeln. Im Querschnitt sind die Markstrahlen breit und zum Jahrring hin breiter werdend.
         </div>`,
     "Rüster": `
-        <p class="mb-2">Handelsname für das Holz der Ulme. Ringporig mit schokobraunem Kern. Zäh, stoßfest und dekorativ.</p>
-        <p class="mb-2"><strong>Verwendung:</strong> Möbelbau, Furniere, Treppen, Sportgeräte.</p>
+        <p class="mb-2">Das Holz der Ulme. Sehr dekorativ, zäh und stoßfest. Schöne braune Färbung.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Möbel, Furniere, Treppen, Sportgeräte.</p>
         <div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2">
-            <strong>🔍 Fachliches Merkmal:</strong><br>
-            Im Spätholz sind die feinen Poren zu wellenförmigen, tangentialen Bändern ("Ulmen-Wellen") angeordnet.
+            <strong>🔨 Das Hammermerkmal:</strong><br>
+            Die <em>Zick-Zack-Linien</em>. Im Spätholz sind die kleinen Poren zu wellenförmigen, tangentialen Bändern angeordnet (Ulmen-Wellen).
         </div>`,
     "Tanne": `
-        <p class="mb-2">Reifholzbaum. Das Holz ist grau-weiß bis gelblich-weiß (kein Farbkern). Es ähnelt der Fichte, ist jedoch harzfrei.</p>
+        <p class="mb-2">Reifholzbaum, ähnlich der Fichte, aber ohne Harzkanäle. Grau-weiß.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Konstruktionsholz, Fenster, Innenausbau (dunkelt weniger nach als Fichte).</p>
         <div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2">
-            <strong>🔍 Fachliches Merkmal:</strong><br>
-            <em>Keine</em> Harzkanäle. Oft "Nasskern" (sehr feuchter Kernbereich).
+            <strong>🔨 Das Hammermerkmal:</strong><br>
+            <em>Harzfrei und "Katzenpisse"</em>. Im Gegensatz zur Fichte hat sie keine Harzkanäle. Frisches Tannenholz (Nasskern) riecht oft unangenehm säuerlich.
         </div>`,
     "Teak": `
-        <p class="mb-2">Tropisches, ringporiges Kernholz. Goldbraun, später mittel- bis dunkelbraun. Enthält Kautschuk und Öle, daher extrem witterungsbeständig und dimensionsstabil.</p>
+        <p class="mb-2">Goldbraunes Tropenholz. Fühlt sich fettig an ("Wax-Feel"). Extrem witterungsbeständig.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Schiffsdecks, hochwertige Gartenmöbel, Furniere.</p>
         <div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2">
-            <strong>🔍 Fachliches Merkmal:</strong><br>
-            "Wachsiger" Griff und Geruch nach altem Leder.
+            <strong>🔨 Das Hammermerkmal:</strong><br>
+            Der <em>Ledergeruch und Fettgriff</em>. Es riecht deutlich nach altem Leder und fühlt sich wachsig an. Ringporig.
         </div>`,
     "Wengé": `
-        <p class="mb-2">Afrikanisches Laubholz. Der Kern ist kaffeebraun bis schwarz mit hellen Strukturlinien. Sehr hart, schwer und splitterig.</p>
-        <p class="mb-2"><strong>Verwendung:</strong> Exklusive Bodenbeläge, Möbel, Intarsien.</p>
+        <p class="mb-2">Afrikanisches Holz, kaffeebraun bis schwarz, mit hellen Streifen. Sehr hart und splitterig.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Exklusive Böden, Möbel, Intarsien.</p>
         <div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2">
-            <strong>🔍 Fachliches Merkmal:</strong><br>
-            "Rebhuhn-Muster" auf der Tangentialfläche durch breite Parenchymbänder (Speichergewebe).
+            <strong>🔨 Das Hammermerkmal:</strong><br>
+            <em>Rebhuhnhuhn-Muster</em>. Auf der Tangentialfläche bilden helle Parenchymbänder (Speichergewebe) auf dunklem Grund ein markantes Zick-Zack-Muster.
         </div>`,
     "Zebrano": `
-        <p class="mb-2">Westafrikanisches Laubholz. Grundfarbe grau-gelb mit markanten, regelmäßigen dunkelbraunen Streifen.</p>
-        <p class="mb-2"><strong>Verwendung:</strong> Furniere, Armaturenbretter, Ziergegenstände.</p>
+        <p class="mb-2">Westafrikanisches Holz. Grundfarbe grau-gelb mit dunkelbraunen Streifen.</p>
+        <p class="mb-2"><strong>Verwendung:</strong> Furniere, Armaturenbretter (Auto), Ziergegenstände.</p>
         <div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2">
-            <strong>🔍 Fachliches Merkmal:</strong><br>
-            Unverwechselbare Zebra-Optik. Streng radialer Faserverlauf. Unangenehmer Geruch bei der Bearbeitung.
+            <strong>🔨 Das Hammermerkmal:</strong><br>
+            Der <em>Zebra-Look</em>. Die dunklen Streifen verlaufen fast parallel auf hellem Grund. Unverwechselbar.
         </div>`,
     "Zeder": `
-        <p class="mb-2">Handelsname, meist für "Western Red Cedar" (Riesenlebensbaum). Weiches, leichtes und sehr dauerhaftes Nadelholz mit rotbraunem Kern.</p>
+        <p class="mb-2">Sammelbegriff für diverse Nadelhölzer (z.B. Western Red Cedar). Leicht, weich, aromatisch.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Zigarrenkisten, Mottenkugeln, Fassaden, Schindeln.</p>
         <div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2">
-            <strong>🔍 Fachliches Merkmal:</strong><br>
-            Intensiver, aromatischer Geruch ("Bleistift-Geruch"). Harzfrei.
+            <strong>🔨 Das Hammermerkmal:</strong><br>
+            Der <em>Bleistift-Geruch</em>. Es riecht intensiv aromatisch. Das Holz ist sehr weich, rötlich-braun und harzfrei.
         </div>`
 };
 
 const reflectionQuestions=[ "Welches Holz würdest du für Gartenmöbel wählen und warum?", "Eine Küchenarbeitsplatte muss schnittfest sein. Welches Holz eignet sich?", "Für einen Dielenboden: Hartes oder weiches Holz?", "Warum ist Teak im Schiffbau so beliebt?" ];
 
-// 7. QUIZ FRAGEN (FÜR DAS STECHEN)
+// 7. QUIZ FRAGEN (FÜR DAS STECHEN) - NEU MIT ERKLÄRUNG
 const quizQuestions = [
-    {q:"Welche der folgenden Holzarten zählt zu den Nadelhölzern?", o:["Buche","Eiche","Fichte","Esche"], c:2},
-    {q:"Welche Holzart besitzt eine geringe Rohdichte und wird häufig im Leichtbau eingesetzt?", o:["Pappel","Eiche","Robinie","Buche"], c:0},
-    {q:"Welche Holzart ist für ihre hohe natürliche Dauerhaftigkeit bekannt?", o:["Fichte","Robinie","Birke","Ahorn"], c:1},
-    {q:"Welche Holzart ist aufgrund ihrer natürlichen Dauerhaftigkeit besonders für den unbehandelten Außenbereich geeignet?", o:["Buche","Teak","Pappel","Linde"], c:1},
-    {q:"Welche Holzart wird im konstruktiven Holzbau häufig für Dachstühle verwendet?", o:["Fichte","Nussbaum","Kirschbaum","Mahagoni"], c:0},
-    {q:"Welche Holzart weist typischerweise eine rötlich-braune Kernholzfarbe auf?", o:["Ahorn","Kirsche","Fichte","Birke"], c:1},
-    {q:"Welche Holzart besitzt eine hohe Härte und wird häufig für stark beanspruchte Bauteile verwendet?", o:["Balsa","Pappel","Eiche","Linde"], c:2},
-    {q:"Welche Holzart ist ein typisches Möbelholz im Innenausbau?", o:["Buche","Weide","Tanne","Pappel"], c:0},
-    {q:"Welche Holzart zeichnet sich durch ein besonders schnelles Wachstum aus?", o:["Eiche","Buche","Pappel","Nussbaum"], c:2},
-    {q:"Welche Holzart wird aufgrund ihrer Formstabilität und Festigkeit häufig für Gitarrenhälse verwendet?", o:["Ahorn","Fichte","Pappel","Weide"], c:0},
-    {q:"Welche der folgenden Holzarten zählt zu den Laubhölzern?", o:["Kiefer","Lärche","Buche","Fichte"], c:2},
-    {q:"Welche Holzart gilt als besonders witterungsbeständig durch natürliche Inhaltsstoffe?", o:["Fichte","Teak","Birke","Ahorn"], c:1},
-    {q:"Welche Holzart besitzt häufig eine sehr helle, nahezu weiße Holzfarbe?", o:["Linde","Ahorn","Kirsche","Nussbaum"], c:1},
-    {q:"Welche Holzart wird besonders häufig für Parkettböden verwendet?", o:["Eiche","Pappel","Fichte","Tanne"], c:0},
-    {q:"Welche Holzart zählt zu den tropischen Handelshölzern?", o:["Buche","Teak","Eiche","Lärche"], c:1},
-    {q:"Welche Holzart besitzt eine hohe Elastizität und wird traditionell für Sportgeräte verwendet?", o:["Esche","Fichte","Birke","Linde"], c:0},
-    {q:"Welche Holzart wird häufig zur Herstellung von Sperrholz verwendet?", o:["Pappel","Robinie","Eiche","Wenge"], c:0},
-    {q:"Welche Holzart ist für ihre sehr dunkle, fast schwarze Farbe bekannt?", o:["Ahorn","Ebenholz","Birke","Fichte"], c:1},
-    {q:"Welche Holzart wird aufgrund ihres angenehmen Geruchs und ihrer Feuchteresistenz im Saunabau eingesetzt?", o:["Fichte","Zeder","Eiche","Buche"], c:1},
-    {q:"Welche Holzart weist im Vergleich ein geringes Schwindmaß auf und gilt als relativ formstabil?", o:["Buche","Teak","Pappel","Weide"], c:1},
-    {q:"Welche Holzart ist ein typisches europäisches Konstruktionsholz?", o:["Fichte","Mahagoni","Kirschbaum","Nussbaum"], c:0},
-    {q:"Welche Holzart besitzt eine besonders kontrastreiche und dekorative Maserung?", o:["Linde","Wenge","Pappel","Birke"], c:1},
-    {q:"Welche Holzart wird aufgrund ihrer Weichheit häufig für Schnitzarbeiten verwendet?", o:["Linde","Eiche","Buche","Robinie"], c:0},
-    {q:"Welche Holzart besitzt deutlich ausgeprägte Harzkanäle?", o:["Buche","Fichte","Kiefer","Ahorn"], c:2},
-    {q:"Welche Holzart besitzt eine hohe Rohdichte und zählt zu den schweren europäischen Hölzern?", o:["Balsa","Pappel","Robinie","Linde"], c:2},
-    {q:"Was beschreibt die Rohdichte von Holz?", o:["Härte","Masse pro Volumen","Wasseraufnahme","Elastizität"], c:1},
-    {q:"In welcher Richtung schwindet und quillt Holz am stärksten?", o:["Längs","Radial","Tangential","Gleichmäßig"], c:2},
-    {q:"Was bedeutet Dauerhaftigkeitsklasse 1 nach DIN EN 350?", o:["Nicht dauerhaft","Sehr dauerhaft","Schwer entflammbar","Besonders elastisch"], c:1},
-    {q:"Welche Holzart zeigt ein hohes Quell- und Schwindmaß?", o:["Teak","Buche","Robinie","Mahagoni"], c:1},
-    {q:"Was ist Splintholz?", o:["Ältester Teil des Stammes","Innerer Kern","Äußerer, jüngerer Bereich","Rinde"], c:2},
-    {q:"Welche Holzart besitzt eine hohe natürliche Resistenz gegenüber holzzerstörenden Pilzen?", o:["Fichte","Robinie","Birke","Ahorn"], c:1},
-    {q:"Wofür steht das „E-Modul“ bei Holz?", o:["Dichte","Elastizitätsmodul","Energiegehalt","Emissionswert"], c:1},
-    {q:"Welche der folgenden Holzarten ist ringporig?", o:["Buche","Ahorn","Eiche","Birke"], c:2},
-    {q:"Was sind Jahrringe im Holzquerschnitt?", o:["Wurzelreste","Jahreszuwächse des Baumes","Harzadern","Pilzspuren"], c:1},
-    {q:"Welche Größe beeinflusst das Schwinden und Quellen von Holz maßgeblich?", o:["Temperatur","Änderung der Holzfeuchte","UV-Strahlung","Wind"], c:1},
-    {q:"Welche Holzart ist zerstreutporig?", o:["Esche","Eiche","Buche","Ulme"], c:2},
-    {q:"Welche Maßnahme erhöht die Dauerhaftigkeit von Holz im Außenbereich am stärksten?", o:["Lackieren","Imprägnieren","Hobeln","Schleifen"], c:1},
-    {q:"Welche Eigenschaft beschreibt die Biegefestigkeit eines Holzes?", o:["Widerstand gegen Druck","Widerstand gegen Zug","Widerstand gegen Biegung","Widerstand gegen Feuchte"], c:2},
-    {q:"Was versteht man unter Kernholz?", o:["Jüngstes Holz","Äußerstes Holz","Inneres, älteres Holz","Wurzelholz"], c:2},
-    {q:"Welche Holzart ist besonders resistent gegenüber Insektenbefall?", o:["Pappel","Robinie","Birke","Fichte"], c:1},
-    {q:"In welcher Richtung weist Holz die höchste Festigkeit auf?", o:["Tangential","Radial","Längs zur Faser","Gleich in alle Richtungen"], c:2},
-    {q:"Warum ist dauerhaft stehende Feuchtigkeit für Holz besonders schädlich?", o:["Sie kühlt das Holz","Sie erhöht die Dichte","Sie fördert Pilzbefall","Sie härtet das Holz"], c:2},
-    {q:"Was ist die Hauptursache für Verzug bei Holzbauteilen?", o:["UV-Strahlung","Ungleichmäßiges Schwinden","Hohe Dichte","Druckbelastung"], c:1},
-    {q:"Welche Eigenschaft macht Teak besonders dauerhaft?", o:["Hohe Dichte","Hoher Harzanteil","Ölige Inhaltsstoffe","Große Poren"], c:2},
-    {q:"Was beschreibt die tangentiale Richtung im Holz?", o:["Entlang der Fasern","Vom Kern nach außen","Entlang der Jahrringe","Quer zur Stammachse"], c:2},
-    {q:"Bei welcher Holzart ist der Unterschied zwischen Früh- und Spätholz besonders deutlich sichtbar?", o:["Ahorn","Fichte","Kiefer","Birke"], c:2},
-    {q:"Warum ist Kernholz meist dauerhafter als Splintholz?", o:["Es ist feuchter","Es enthält mehr Nährstoffe","Es enthält schützende Inhaltsstoffe","Es ist heller"], c:2},
-    {q:"Welcher Organismus zerstört Holz bei ausreichender Feuchte am schnellsten?", o:["Bakterien","Algen","Pilze","Moose"], c:2},
-    {q:"Welche Holzart besitzt eine sehr hohe natürliche Dauerhaftigkeit und wird im Außenbau geschätzt?", o:["Buche","Robinie","Fichte","Birke"], c:1},
-    {q:"Welche Materialeigenschaft ist für tragende Holzbauteile besonders entscheidend?", o:["Farbe","Maserung","Festigkeit","Geruch"], c:2}
+    {q:"Was passiert mit dem Volumen von Holz, wenn es unterhalb des Fasersättigungsbereiches Feuchtigkeit aufnimmt?", o:["Es schwindet","Es quillt","Bleibt gleich","Wird leichter"], c:1, e:"Wasser lagert sich in die Zellwände ein und drückt sie auseinander."},
+    {q:"In welcher anatomischen Richtung sind das Quellen und Schwinden von Holz am stärksten ausgeprägt?", o:["Längs","Radial","Tangential","Überall gleich"], c:2, e:"Tangential arbeitet Holz etwa doppelt so stark wie radial."},
+    {q:"Was bezeichnet man als den Fasersättigungsbereich bei einer Holzfeuchte von ca. 30 %?", o:["Holz schwimmt","Zellwand voll, Lumen leer","Darrtrocken","Möbeltrocken"], c:1, e:"Ab diesem Punkt beginnt das Holz beim Trocknen zu schwinden."},
+    {q:"Welche Holzfeuchte sollten Möbelstücke aufweisen, die in zentral beheizten Wohnräumen genutzt werden?", o:["8 – 10 %","15 – 18 %","ca. 25 %","0 %"], c:0, e:"Das entspricht dem durchschnittlichen Raumklima (20°C, 50% Luftfeuchte)."},
+    {q:"Was versteht man unter dem Begriff „Kernholz“?", o:["Junges Außenholz","Toter, innerer Teil","Die Rinde","Verfaultes Holz"], c:1, e:"Der Kern dient nur noch der Stabilität und ist oft dauerhafter."},
+    {q:"Welche physiologische Hauptfunktion erfüllt das Splintholz im lebenden Baum?", o:["Wasserleitung","Kälteschutz","Nur Stabilität","Harzspeicher"], c:0, e:"Der Splint ist der physiologisch aktive, wasserleitende Teil des Holzes."},
+    {q:"Welche der folgenden Baumarten zählt zu den Nadelhölzern?", o:["Eiche","Buche","Fichte","Ahorn"], c:2, e:"Die Fichte ist der klassische heimische Nadelbaum."},
+    {q:"Welche der folgenden Baumarten gehört zu den Laubhölzern?", o:["Kiefer","Lärche","Esche","Tanne"], c:2, e:"Die Esche gehört zu den Laubbäumen (Angiospermen)."},
+    {q:"Was versteht man unter der sogenannten „Darrdichte“ eines Holzes?", o:["Frischgewicht","Dichte bei 0 % Wasser","Härte","Astanteil"], c:1, e:"„Darren“ bedeutet technisches Trocknen bis kein Wasser mehr enthalten ist."},
+    {q:"Warum ist das Kernholz der Eiche besonders witterungsbeständig und dauerhaft?", o:["Ist sehr weich","Enthält Gerbsäure","Speichert Wasser","Ist weiß"], c:1, e:"Gerbsäure (Tannin) schützt das Holz vor Pilzen und Insekten."},
+    {q:"Welche heimische Baumart ist an ihrer charakteristischen weißen Rinde zu erkennen?", o:["Kiefer","Birke","Eiche","Nussbaum"], c:1, e:"Die weiße Rinde ist das sicherste Erkennungsmerkmal der Birke."},
+    {q:"Welches Nadelholz wird im traditionellen Holzbau am häufigsten für Dachstühle verwendet?", o:["Fichte","Nussbaum","Kirschbaum","Balsa"], c:0, e:"Fichte ist leicht, fest, elastisch und günstig verfügbar."},
+    {q:"Was stellen die Jahresringe im Querschnitt eines Baumstammes dar?", o:["Krankheiten","Holzzuwachs pro Jahr","Risse","Wurzeln"], c:1, e:"Ein Ring besteht aus Frühholz (Frühling) und Spätholz (Sommer)."},
+    {q:"Wodurch unterscheiden sich Frühholz und Spätholz innerhalb eines Jahresringes?", o:["Frühholz ist dunkler","Frühholz hell, Spätholz dunkel","Kein Unterschied","Spätholz ist blau"], c:1, e:"Frühholz dient dem Wassertransport, Spätholz der Festigkeit."},
+    {q:"Welche physikalische Eigenschaft ist typisch für das Holz der Pappel?", o:["Schwer und hart","Leicht und weich","Witterungsfest","Schwarz"], c:1, e:"Pappelholz hat eine sehr geringe Dichte."},
+    {q:"Was ist das Kambium und welche Funktion hat es im Baumstamm?", o:["Die Rinde","Wachstumsschicht","Das Mark","Ein Ast"], c:1, e:"Hier findet die Zellteilung statt (Holz nach innen, Bast nach außen)."},
+    {q:"Welches Holz verströmt einen intensiven, aromatischen Geruch, der an Bleistifte erinnert?", o:["Buche","Zeder","Ahorn","Esche"], c:1, e:"Zedernöl sorgt für den typischen Geruch und vertreibt Motten."},
+    {q:"Was bedeutet es, wenn ein Holzbauteil als „imprägniert“ bezeichnet wird?", o:["Mit Schutzmittel getränkt","Geschliffen","Getrocknet","Lackiert"], c:0, e:"Der Schutz zieht tief in das Holz ein, anders als bei Lack."},
+    {q:"Welcher heimische Nadelbaum wirft im Winter seine Nadeln ab?", o:["Fichte","Kiefer","Lärche","Tanne"], c:2, e:"Die Lärche wirft ihre Nadeln im Herbst ab wie ein Laubbaum seine Blätter."},
+    {q:"Welche Holzart wird aufgrund ihrer Zähigkeit traditionell für Hammerstiele verwendet?", o:["Fichte","Esche","Pappel","Balsa"], c:1, e:"Esche ist extrem zäh und elastisch, sie bricht nicht spröde."},
+    {q:"Welche biologische Funktion erfüllt das Harz bei Nadelbäumen?", o:["Wundverschluss","Ein Pilz","Der Kern","Ein Dünger"], c:0, e:"Es verschließt Verletzungen und schützt vor Insekten."},
+    {q:"Was bedeutet der Begriff „anisotrop“ in Bezug auf den Werkstoff Holz?", o:["Überall gleich","Richtungsabhängig","Brennbar","Giftig"], c:1, e:"Holz verhält sich in Längs-, Radial- und Tangentialrichtung unterschiedlich."},
+    {q:"Woran kann man die Nadeln einer Fichte bei der Bestimmung erkennen?", o:["Sie stechen","Sind weich","Fallen ab","Schuppenförmig"], c:0, e:"„Die Fichte sticht, die Tanne nicht.“"},
+    {q:"Mit welchem Messgerät bestimmt man üblicherweise die Holzfeuchte auf der Baustelle?", o:["Zollstock","Widerstandsmessgerät","Wasserwaage","Thermometer"], c:1, e:"Zwei Spitzen werden ins Holz geschlagen; je feuchter, desto besser leitet es Strom."},
+    {q:"Was versteht man unter der „Darr-Methode“ zur Bestimmung der Holzfeuchte?", o:["Trocknen bei 103°C","Dünsten","Wässern","Holzdehnung"], c:0, e:"Dies ist die Referenzmethode, um den exakten Wassergehalt zu bestimmen."},
+    {q:"Welchen Zweck erfüllt ein großer Dachüberstand beim Holzschutz an Fassaden?", o:["Optik","Trockenhalten","Brandschutz","Vogelschutz"], c:1, e:"Trockenes Holz (unter 20 %) kann nicht von Pilzen zerstört werden."},
+    {q:"Welche Funktion übernimmt der Inhaltsstoff Lignin in der Holzzellwand?", o:["Druckfestigkeit (Härte)","Weichmacher","Holzfärbung","Nährstoffreicher"], c:0, e:"Lignin verholzt die Zellwand und sorgt für die Druckstabilität."},
+    {q:"Welche Funktion hat die Cellulose im Aufbau der Holzzellwand?", o:["Zuggerüst der Fasern","„Klebstoff“","Standfästigkeit","Einlagerung"], c:0, e:"Cellulosefasern fangen Zugkräfte auf (ähnlich wie Stahl in Stahlbeton)."},
+    {q:"Welche der folgenden Holzarten ist so schwer, dass sie im Wasser sinkt?", o:["Fichte","Ebenholz","Pappel","Linde"], c:1, e:"Diese Hölzer haben eine Rohdichte von über 1,0 g/cm³."},
+    {q:"Was versteht man unter dem Begriff „Maserholz“?", o:["Wirbelig strukturiertes Holz","Gerades Holz","Farbiges Holz","Faules Holz"], c:0, e:"Es entsteht oft an Wucherungen und ist sehr dekorativ."},
+    {q:"Welche Holzart wird klassischerweise für die Herstellung von Weinfässern (Barrique) genutzt?", o:["Eiche","Fichte","Pappel","Birke"], c:0, e:"Eiche ist dicht (dank Thyllen) und gibt erwünschte Aromen an den Wein ab."},
+    {q:"Was ist „Bläue“ im Holz?", o:["Zuwachs von Ästen","Verfärbung durch Pilze","Holzzerfall","Wuchsfehler"], c:1, e:"Bläue ist meist ein optischer Mangel, keine Zerstörung der Zellwand."},
+    {q:"Welcher Teil des Holzes weist die höchste Dichte und Härte auf?", o:["Frühholz","Spätholz","alles gleich","Kambium"], c:1, e:"Spätholz hat dickere Zellwände und kleinere Hohlräume."},
+    {q:"Nach welchem Prinzip ist eine Sperrholzplatte aufgebaut?", o:["Längsholz aufeinander","Lagen um 90° verleimt","Stäbe hochkant","PU-Klebstoff"], c:1, e:"Durch das „Absperren“ (Kreuzen) wird das Quellen und Schwinden minimiert."},
+    {q:"Welche Holzart zeigt im Radialschnitt glänzende „Spiegel“ (Markstrahlen)?", o:["Eiche","Fichte","Kiefer","Pappel"], c:0, e:"Die „Spiegel“ sind die angeschnittenen, breiten Markstrahlen der Eiche."},
+    {q:"Welches Holz zeichnet sich durch besonders hohe Elastizität aus?", o:["Esche","Eiche","Pappel","Fichte"], c:0, e:"Esche ist biegsam und bricht nicht sofort (ideal für Sportgeräte)."},
+    {q:"Was ist ein Ast im Holz aus technischer Sicht?", o:["Wuchsfehler","Eingewachsener Zweig","Krankheit","Wurzel"], c:1, e:"Jeder Ast im Holz war früher ein Zweig außen am Baum."},
+    {q:"Welche Holzart wird häufig für die Herstellung von einfachen Paletten verwendet?", o:["Kiefer / Fichte","Nussbaum","Eiche","Teak"], c:0, e:"Für Einwegverpackungen muss das Holz billig, leicht und verfügbar sein."},
+    {q:"Was meint der Fachmann mit dem Ausdruck „Das Holz arbeitet“?", o:["Macht Geräusche","Quillt & Schwindet","Verrottet","Wächst"], c:1, e:"Das Quellen und Schwinden ist die wichtigste Eigenschaft bei der Konstruktion."},
+    {q:"Welche der folgenden Holzarten bezeichnet man als ringporig?", o:["Eiche","Buche","Ahorn","Fichte"], c:0, e:"Bei der Eiche sieht man die großen Poren im Frühholz als deutlichen Ring."},
+    {q:"Was ist eine OSB-Platte (Oriented Strand Board)?", o:["Grobspanplatte","Massivholz","Vollkunststoff","MDF"], c:0, e:"Die Späne sind ausgerichtet, um der Platte mehr Festigkeit zu geben."},
+    {q:"In welcher Jahreszeit bildet der Baum das dunklere Spätholz?", o:["Frühling","Sommer","Winter","Immer"], c:1, e:"Im Frühling muss der Baum schnell Wasser leiten, im Sommer festigt er sich."},
+    {q:"Ab welcher Holzfeuchte besteht dauerhaft die Gefahr von Pilzbefall?", o:["0 %","8 %","20 %","100 %"], c:2, e:"Pilze brauchen freies Wasser. Trockenes Holz (unter 20 %) ist sicher."},
+    {q:"Warum vergraut Holz im Außenbereich mit der Zeit?", o:["Staub","UV-Licht & Regen","Fäule","Pilze"], c:1, e:"Das Lignin wird zerstört und ausgewaschen, zurück bleibt helle Cellulose."},
+    {q:"Welcher heimische Nadelbaum besitzt keine Harzkanäle?", o:["Fichte","Kiefer","Lärche","Tanne"], c:3, e:"Tannenholz ist harzfrei (ein wichtiges Unterscheidungsmerkmal zur Fichte)."},
+    {q:"Warum haben Pfannen oft Holzgriffe?", o:["reduziert Gewicht","Leitet Strom","Isoliert Wärme","Brennt nicht"], c:2, e:"Holz leitet Hitze nur sehr langsam weiter, man verbrennt sich nicht die Finger."},
+    {q:"Die Eibe ist ein Nadelholz. Welches typische Nadelholz-Merkmal fehlt ihr jedoch komplett?", o:["Jahresringe","Der farbige Kern","Die Harzkanäle","Die Härte"], c:2, e:"Im Gegensatz zu Fichte oder Kiefer besitzt die Eibe keine Harzkanäle."},
+    {q:"Was ist das besondere Merkmal der Poren bei der Robinie?", o:["Sie sind leer","Sie sind verthyllt","Sie sind quadratisch","Mit Harz gefüllt"], c:1, e:"Die Thyllen verstopfen die Poren komplett, was das Holz sehr dauerhaft macht."},
+    {q:"Welche Holzfeuchte stellt sich ungefähr ein, wenn Holz lange Zeit im Normalklima (20°C/65%) gelagert wird?", o:["ca. 6 – 8 %","ca. 12 %","ca. 18 %","ca. 30 %"], c:1, e:"Dies ist ein Standardwert für die „Ausgleichsfeuchte“ im Außenklima unter Dach."},
+    {q:"Bei welcher Holzart muss man bei der Oberflächenbeschichtung besonders mit Harzgallen rechnen?", o:["Eiche","Fichte (o. Kiefer)","Tanne","Buche"], c:1, e:"Fichte und Kiefer besitzen Harzkanäle, die bei Wärme auslaufen können."},
+    {q:"Warum fühlt sich Holz bei Raumtemperatur wärmer an als ein Stück Stahl?", o:["Holz heizt","Schlechter Wärmeleiter","Höhere Dichte","Gibt Feuchte ab"], c:1, e:"Stahl leitet die Körperwärme sofort ab (kalt), Holz isoliert (warm)."}
 ];
 
 function shuffleArray(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
@@ -932,7 +934,7 @@ function showHappyWorm() {
     if(!k) return;
 
     // Zufälliger Jubel-Spruch
-    const cheers = ["Stark!", "Super!", "Punkt für uns!", "Weiter so!", "Yeah!", "Klasse!", "Meisterhaft!", "Astrein!", "Jawoll!"];
+    const cheers = ["Stark!", "Super!", "Punkt für uns!", "Weiter so!", "Bämm!", "Klasse!", "Holz-Meister!", "Sieg!", "Jawoll!"];
     if(t) t.childNodes[0].nodeValue = cheers[Math.floor(Math.random() * cheers.length)]; // Text ändern, Dreiecke behalten
 
     k.classList.remove('hidden', 'translate-y-full'); // Reinschieben
@@ -1083,27 +1085,26 @@ function startTieBreakerQuiz(qIndex, callback) {
     const qText = document.getElementById('quizQuestion');
     const qOptions = document.getElementById('quizOptions');
     const statusText = document.getElementById('quizStatusText');
+    const expBox = document.getElementById('quizExplanation');
     
     const question = quizQuestions[qIndex];
     
     qText.innerText = question.q;
     qOptions.innerHTML = '';
     statusText.innerText = "⚠️ Gleichstand! Quiz lädt...";
+    expBox.classList.add('hidden'); // Reset Explanation
     
     // 1. Reset Bar (Start state)
-    // Remove all animations and set initial style
     timerBar.classList.remove('animate-charge', 'animate-shrink');
     timerBar.style.width = "0%";
     timerBar.className = "h-full bg-amber-500 rounded-r-sm relative";
     
-    // Force Reflow
     void timerBar.offsetWidth;
     
-    // Buttons erstellen (aber deaktiviert)
+    // Buttons erstellen
     let buttons = [];
     question.o.forEach((opt, idx) => {
         const btn = document.createElement('button');
-        // Initial state: Disabled, but maintaining border
         btn.className = "w-full bg-gray-100 text-gray-400 font-semibold py-3 px-4 rounded-lg border-2 border-gray-200 cursor-not-allowed";
         btn.innerText = opt;
         btn.disabled = true; 
@@ -1120,19 +1121,16 @@ function startTieBreakerQuiz(qIndex, callback) {
     setTimeout(() => {
         statusText.innerText = "⚡ STECHEN! 10 Sekunden Zeit";
         
-        // Bar auf "Voll & Rot" setzen für Entladung
         timerBar.classList.remove('animate-charge');
-        timerBar.style.width = '100%'; // Ensure full width before shrinking
-        void timerBar.offsetWidth; // Force Reflow
-        timerBar.className = "h-full bg-red-500 rounded-r-sm relative animate-shrink"; // Start discharging
+        timerBar.style.width = '100%';
+        void timerBar.offsetWidth;
+        timerBar.className = "h-full bg-red-500 rounded-r-sm relative animate-shrink";
         
         playSound(sounds.quizTick);
         
-        // Buttons aktivieren
         let answered = false;
         buttons.forEach(obj => {
             const {btn, idx} = obj;
-            // Active state: Enabled, maintaining border and adding hover effects
             btn.className = "w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 px-4 rounded-lg border-2 border-gray-200 transition active:scale-95 cursor-pointer";
             btn.disabled = false;
             
@@ -1142,17 +1140,21 @@ function startTieBreakerQuiz(qIndex, callback) {
                 clearTimeout(quizTimeout);
                 sounds.quizTick.pause(); sounds.quizTick.currentTime = 0;
                 
+                // Show Explanation
+                const explanation = question.e || "Keine Erklärung verfügbar.";
+                expBox.innerText = "💡 " + explanation;
+                expBox.classList.remove('hidden');
+                
                 if(idx === question.c) {
                     btn.className = "w-full bg-green-500 text-white font-bold py-3 px-4 rounded-lg border-2 border-green-600 shadow-lg scale-105";
                     playSound(sounds.win);
                     setTimeout(() => {
                         modal.classList.add('hidden');
                         callback('correct');
-                    }, 1000); // 1s Zeit zum Freuen
+                    }, 3500); // 3.5s Zeit zum Lesen der Erklärung
                 } else {
                     btn.className = "w-full bg-red-500 text-white font-bold py-3 px-4 rounded-lg border-2 border-red-600 shadow-md transform scale-95 opacity-50";
                     
-                    // NEU: Richtige Antwort finden und grün färben
                     const correctBtnObj = buttons.find(b => b.idx === question.c);
                     if(correctBtnObj) {
                         correctBtnObj.btn.className = "w-full bg-green-500 text-white font-bold py-3 px-4 rounded-lg border-2 border-green-600 shadow-lg scale-105 animate-pulse";
@@ -1161,12 +1163,11 @@ function startTieBreakerQuiz(qIndex, callback) {
                     setTimeout(() => {
                         modal.classList.add('hidden');
                         callback('wrong');
-                    }, 1500); // 1.5s Zeit zum Lernen
+                    }, 3500); // 3.5s Zeit zum Lernen
                 }
             };
         });
         
-        // 10 Sekunden Timer (Discharging)
         const quizTimeout = setTimeout(() => {
             if(!answered) {
                 answered = true;
@@ -1207,7 +1208,6 @@ function evaluateRoundAI(attr){
             startTieBreakerQuiz(qIdx, (result) => {
                 let roundWinner = false;
                 if(result === 'correct') roundWinner = true;
-                // If wrong or timeout -> PC wins (in Singleplayer logic)
                 finishRoundAI(attr, rawPv, rawAv, roundWinner);
             });
         });
