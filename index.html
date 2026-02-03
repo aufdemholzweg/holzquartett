@@ -320,8 +320,11 @@
 </div>
 
 <div id="setupModal" class="fixed inset-0 z-[110] flex flex-col items-center justify-center p-4 dimmer overflow-y-auto h-screen">
-    <div class="w-10 h-10 absolute left-4 top-4"></div>
-    
+    <a href="https://forms.office.com/r/dPiXWjBiGQ" target="_blank" 
+       class="absolute top-20 left-4 z-[120] bg-violet-600 hover:bg-violet-700 text-white text-xs font-bold py-2 px-3 rounded-full shadow-lg transition-transform active:scale-95 flex items-center gap-2 no-underline border-2 border-white/20">
+       <span>💬</span> Feedback
+    </a>
+
     <div class="relative w-full max-w-sm pt-20">
         <img src="https://github.com/aufdemholzweg/holzquartett/blob/main/images/klotzi_menu.png?raw=true" alt="Klotzi Menü" class="absolute -top-4 -right-2 w-48 z-20 pointer-events-none transform rotate-3 drop-shadow-xl" onerror="this.style.display='none'">
         
@@ -330,18 +333,12 @@
             <div class="p-6 space-y-4">
                 <button onclick="window.showNamePrompt('ai')" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold py-4 rounded-xl shadow-lg flex items-center justify-center gap-3 active:scale-95 transition-transform"><span class="text-2xl">🤖</span> Gegen Computer</button>
                 <button onclick="window.showNamePrompt('multiplayer')" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold py-4 rounded-xl shadow-lg flex items-center justify-center gap-3 active:scale-95 transition-transform"><span class="text-2xl">🌍</span> Online gegen Freunde</button>
-                
-                <a href="https://forms.office.com/r/dPiXWjBiGQ" target="_blank" class="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-3 px-6 rounded-full shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-transform no-underline">
-                    <span>💬</span> Feedback zum Spiel
-                </a>
-
                 <button onclick="window.openAttrConfig()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 rounded-xl border border-gray-200 flex items-center justify-center gap-2 text-sm mt-2">
                     <span>⚙️</span> Spieloptionen <span id="attrCountBadge" class="bg-amber-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">5</span>
                 </button>
             </div>
         </div>
         <div id="mainMenuStats" class="text-center hidden mb-8 relative z-10"></div>
-        
         <div class="mt-auto pt-4 text-center relative z-10">
             <button onclick="document.getElementById('impressumModal').classList.remove('hidden')" class="text-white/70 text-xs font-medium hover:text-white underline transition-colors">Impressum</button>
         </div>
@@ -955,25 +952,23 @@ const quizQuestions = [
 
 function shuffleArray(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
 
+// Funktion: Klotzi jubeln lassen (MIT NEUEN SPRÜCHEN)
 function showHappyWorm() {
     const k = document.getElementById('happyKlotzi');
     const t = document.getElementById('happyKlotziText');
     if(!k) return;
 
-    // Zufälliger Jubel-Spruch
+    // NEUE MOTIVATIONSSPRÜCHE
     const cheers = ["Stark!", "Super!", "Punkt für uns!", "Weiter so!", "Hammerhart!", "Klasse!", "Holz-Meister!", "Holzklasse!", "Jawoll!", "Sauber!", "richtiges Brett!", "Maßarbeit!", "Stabil!"];
-    if(t) t.childNodes[0].nodeValue = cheers[Math.floor(Math.random() * cheers.length)]; // Text ändern, Dreiecke behalten
+    if(t) t.childNodes[0].nodeValue = cheers[Math.floor(Math.random() * cheers.length)];
 
-    k.classList.remove('hidden', 'translate-y-full'); // Reinschieben
-    k.querySelector('img').classList.add('animate-klotzi-popup'); // Wurm animieren
+    k.classList.remove('hidden', 'translate-y-full'); 
+    k.querySelector('img').classList.add('animate-klotzi-popup');
     
-    // Nach 2.5s wieder rausschieben
     setTimeout(() => {
         k.classList.add('translate-y-full');
         k.querySelector('img').classList.remove('animate-klotzi-popup');
     }, 2500);
-    
-    // Nach 3s ganz verstecken
     setTimeout(() => k.classList.add('hidden'), 3000);
 }
 
@@ -987,7 +982,7 @@ function triggerConfetti() {
 }
 
 window.openAttrConfig = () => {
-    document.getElementById('setupModal').classList.add('hidden'); // Hauptmenü verstecken
+    document.getElementById('setupModal').classList.add('hidden');
     const list = document.getElementById('attrConfigList');
     list.innerHTML = '';
     Object.keys(attributeInfo).forEach(key => {
@@ -996,25 +991,15 @@ window.openAttrConfig = () => {
         const div = document.createElement('div');
         div.className = `attr-toggle-btn w-full p-3 rounded-lg flex items-center justify-between cursor-pointer ${isSelected ? 'selected' : ''}`;
         div.onclick = () => toggleAttribute(key, div);
-        div.innerHTML = `
-            <div class="flex items-center gap-3">
-                <span class="text-xl">${info.icon}</span>
-                <div class="text-left leading-tight">
-                    <div class="font-bold text-sm">${info.name}</div>
-                    <div class="text-[10px] opacity-70">${info.unit}</div>
-                </div>
-            </div>
-            <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center ${isSelected ? 'border-amber-500 bg-amber-500 text-white' : 'border-gray-300 bg-white'}">
-                ${isSelected ? '✓' : ''}
-            </div>`;
+        div.innerHTML = `<div class="flex items-center gap-3"><span class="text-xl">${info.icon}</span><div class="text-left leading-tight"><div class="font-bold text-sm">${info.name}</div><div class="text-[10px] opacity-70">${info.unit}</div></div></div><div class="w-6 h-6 rounded-full border-2 flex items-center justify-center ${isSelected ? 'border-amber-500 bg-amber-500 text-white' : 'border-gray-300 bg-white'}">${isSelected ? '✓' : ''}</div>`;
         list.appendChild(div);
     });
-    document.getElementById('attrConfigModal').classList.remove('hidden'); // Optionen anzeigen
+    document.getElementById('attrConfigModal').classList.remove('hidden');
 };
 
 window.closeAttrConfig = () => {
-    document.getElementById('attrConfigModal').classList.add('hidden'); // Optionen verstecken
-    document.getElementById('setupModal').classList.remove('hidden'); // Hauptmenü wieder anzeigen
+    document.getElementById('attrConfigModal').classList.add('hidden');
+    document.getElementById('setupModal').classList.remove('hidden');
 }
 
 function toggleAttribute(key, el) {
@@ -1051,23 +1036,19 @@ function createCard(data, isRevealed, isPlayer, isActive, highlightAttr){
     const bClass = isActive ? 'border-orange-500 ring-4 ring-orange-200' : 'border-orange-200';
     front.className = `card-front card-front-bg rounded-2xl shadow-lg border-4 ${bClass} flex flex-col transition-all`;
     let html = `<div class="pt-3 px-3 pb-1"><h2 class="text-lg sm:text-xl font-bold text-amber-900 leading-none">${data.name}</h2></div>
-                <div class="mx-3 mt-1 mb-2 aspect-[4/3] rounded-xl overflow-hidden bg-white shadow-sm border border-orange-100">
-                    <img src="${data.imgTree}" class="w-full h-full object-cover">
-                </div>
+                <div class="mx-3 mt-1 mb-2 aspect-[4/3] rounded-xl overflow-hidden bg-white shadow-sm border border-orange-100"><img src="${data.imgTree}" class="w-full h-full object-cover"></div>
                 <div class="flex-grow flex flex-col justify-start gap-1 sm:gap-2 px-2 pb-2 overflow-y-auto hide-scrollbar">`;
     
     for(const k of activeAttributeKeys){
         const info = attributeInfo[k];
         let flashClass = '';
         if(highlightAttr === k) flashClass = isActive ? 'flash-active' : 'highlight-compare';
-        
         const rowInner = `<div class="flex items-center gap-2"><span class="text-base">${info.icon}</span><div class="flex flex-col text-left leading-none"><span class="font-bold text-gray-800 text-[10px] sm:text-sm">${info.name}</span><span class="text-[9px] text-gray-500 font-medium">${info.unit}</span></div></div><span class="text-sm font-bold text-amber-800">${data[k]}</span>`;
         if(canSelect) html += `<div onclick="window.selectAttribute('${k}')" data-attr-btn="${k}" class="attr-box w-full flex justify-between items-center px-2 py-1.5 rounded-xl cursor-pointer hover:brightness-95 ${flashClass}">${rowInner}</div>`;
         else html += `<div class="attr-box w-full flex justify-between items-center px-2 py-1.5 rounded-xl opacity-90 ${flashClass}" data-attr-row="${k}">${rowInner}</div>`;
     }
     html += '</div>';
     front.innerHTML = html;
-
     const back = document.createElement('div');
     back.className = `card-back rounded-2xl shadow-lg relative ${isActive ? 'border-orange-500' : 'border-white'}`;
     if(!isPlayer && isOpponentNameBackVisible()){
@@ -1084,28 +1065,20 @@ function updateDisplayAI(){
     const pcEl=document.getElementById('playerCard'); pcEl.innerHTML='';
     const acEl=document.getElementById('aiCard'); acEl.innerHTML='';
     const isPTurn = aiGame.turn === 'player';
-    
     if(aiGame.currentPlayerCard) pcEl.appendChild(createCard(aiGame.currentPlayerCard, true, true, isPTurn, null));
     if(aiGame.currentAiCard) acEl.appendChild(createCard(aiGame.currentAiCard, false, false, !isPTurn, null));
-    
     if(aiGame.turn==='ai' && !aiGame.roundInProgress) setTimeout(aiTurn, 1000);
 }
 
 function getNumericValue(val, attr) {
-    if (attr === 'dk') {
-        if (typeof val === 'string' && val.includes('-')) {
-            const parts = val.split('-');
-            const v1 = parseFloat(parts[0]);
-            const v2 = parseFloat(parts[1]);
-            return (v1 + v2) / 2;
-        }
-        return parseFloat(val);
+    if (attr === 'dk' && typeof val === 'string' && val.includes('-')) {
+        const parts = val.split('-');
+        return (parseFloat(parts[0]) + parseFloat(parts[1])) / 2;
     }
     return parseFloat(val);
 }
 
-// 8. NEUE FUNKTION: DAS QUIZ STARTEN (FÜR BEIDE SPIELER)
-let quizTimerInterval;
+// 8. NEUE FUNKTION: DAS QUIZ STARTEN (Mit 4500ms Timer)
 function startTieBreakerQuiz(qIndex, callback) {
     const modal = document.getElementById('quizModal');
     const timerBar = document.getElementById('quizTimerBar');
@@ -1115,20 +1088,16 @@ function startTieBreakerQuiz(qIndex, callback) {
     const expBox = document.getElementById('quizExplanation');
     
     const question = quizQuestions[qIndex];
-    
     qText.innerText = question.q;
     qOptions.innerHTML = '';
     statusText.innerText = "⚠️ Gleichstand! Quiz lädt...";
-    expBox.classList.add('hidden'); // Reset Explanation
+    expBox.classList.add('hidden'); 
     
-    // 1. Reset Bar (Start state)
     timerBar.classList.remove('animate-charge', 'animate-shrink');
     timerBar.style.width = "0%";
     timerBar.className = "h-full bg-amber-500 rounded-r-sm relative";
-    
     void timerBar.offsetWidth;
     
-    // Buttons erstellen
     let buttons = [];
     question.o.forEach((opt, idx) => {
         const btn = document.createElement('button');
@@ -1140,19 +1109,14 @@ function startTieBreakerQuiz(qIndex, callback) {
     });
     
     modal.classList.remove('hidden');
-    
-    // 2. Start Charging Animation (1.5s)
     timerBar.classList.add('animate-charge');
     
-    // 3. Nach 1.5s: Quiz Start
     setTimeout(() => {
         statusText.innerText = "⚡ STECHEN! 10 Sekunden Zeit";
-        
         timerBar.classList.remove('animate-charge');
         timerBar.style.width = '100%';
         void timerBar.offsetWidth;
         timerBar.className = "h-full bg-red-500 rounded-r-sm relative animate-shrink";
-        
         playSound(sounds.quizTick);
         
         let answered = false;
@@ -1167,7 +1131,6 @@ function startTieBreakerQuiz(qIndex, callback) {
                 clearTimeout(quizTimeout);
                 sounds.quizTick.pause(); sounds.quizTick.currentTime = 0;
                 
-                // Show Explanation
                 const explanation = question.e || "Keine Erklärung verfügbar.";
                 expBox.innerText = "💡 " + explanation;
                 expBox.classList.remove('hidden');
@@ -1178,19 +1141,15 @@ function startTieBreakerQuiz(qIndex, callback) {
                     setTimeout(() => {
                         modal.classList.add('hidden');
                         callback('correct');
-                    }, 5500); // 4.5s Zeit zum Lesen der Erklärung
+                    }, 4500); // 4.5 Sekunden warten
                 } else {
                     btn.className = "w-full bg-red-500 text-white font-bold py-3 px-4 rounded-lg border-2 border-red-600 shadow-md transform scale-95 opacity-50";
-                    
                     const correctBtnObj = buttons.find(b => b.idx === question.c);
-                    if(correctBtnObj) {
-                        correctBtnObj.btn.className = "w-full bg-green-500 text-white font-bold py-3 px-4 rounded-lg border-2 border-green-600 shadow-lg scale-105 animate-pulse";
-                    }
-
+                    if(correctBtnObj) correctBtnObj.btn.className = "w-full bg-green-500 text-white font-bold py-3 px-4 rounded-lg border-2 border-green-600 shadow-lg scale-105 animate-pulse";
                     setTimeout(() => {
                         modal.classList.add('hidden');
                         callback('wrong');
-                    }, 5500); // 4.5s Zeit zum Lernen
+                    }, 4500); // 4.5 Sekunden warten
                 }
             };
         });
@@ -1203,11 +1162,9 @@ function startTieBreakerQuiz(qIndex, callback) {
                 callback('timeout');
             }
         }, 10000);
-        
     }, 1500);
 }
 
-// Zeigt das "GLEICHSTAND" Overlay für 2 Sekunden
 function showTieOverlay(callback) {
     const overlay = document.getElementById('tieOverlay');
     overlay.classList.remove('hidden');
@@ -1224,13 +1181,10 @@ function evaluateRoundAI(attr){
     const pv = getNumericValue(rawPv, attr);
     const av = getNumericValue(rawAv, attr);
     const logic = attributeInfo[attr].logic;
-    
     let pWins = (logic === 'Niedrig gewinnt') ? (pv < av) : (pv > av);
     
-    // STECHEN IM SINGLEPLAYER
     if(pv === av) {
         showTieOverlay(() => {
-            // Starte Quiz NACH dem Overlay
             const qIdx = Math.floor(Math.random() * quizQuestions.length);
             startTieBreakerQuiz(qIdx, (result) => {
                 let roundWinner = false;
@@ -1240,26 +1194,21 @@ function evaluateRoundAI(attr){
         });
         return;
     }
-    
     finishRoundAI(attr, rawPv, rawAv, pWins);
 }
 
 function finishRoundAI(attr, rawPv, rawAv, pWins) {
     const resText = pWins===true ? 'Du gewinnst!' : 'Computer gewinnt!';
     const resColor = pWins===true ? 'text-green-600' : 'text-red-600';
-    
     document.getElementById('resultText').innerText = resText;
     document.getElementById('resultText').className = `text-2xl font-black uppercase tracking-wide mb-2 ${resColor}`;
     document.getElementById('resultDetails').innerText = `${attributeInfo[attr].name}: ${rawPv} vs ${rawAv}`;
-    
     if(pWins===true) { playSound(sounds.win); showHappyWorm(); lastRoundWinningWoodName = aiGame.currentPlayerCard.name; } 
     else { lastRoundWinningWoodName = aiGame.currentAiCard.name; }
-    
     openBottomSheet(resText);
     const pC=aiGame.playerCards.shift(); const aC=aiGame.aiCards.shift();
     if(pWins===true){ aiGame.playerCards.push(pC, aC); aiGame.turn='player'; }
     else { aiGame.aiCards.push(aC, pC); aiGame.turn='ai'; }
-
     if(aiGame.playerCards.length===0) window.endGame("Computer");
     if(aiGame.aiCards.length===0) window.endGame(aiGame.playerName);
 }
@@ -1287,61 +1236,37 @@ function listenToGameChanges(){
     unsubscribeGame=onSnapshot(getPublicDataRef("games", gameId),(ds)=>{
         if(!ds.exists()) { window.resetGame(); return; }
         const gd=ds.data(); localGameState=gd;
-
-        // SYNC ACTIVE ATTRIBUTES FROM HOST
-        if(gd.activeAttributes) {
-            activeAttributeKeys = gd.activeAttributes;
-        }
+        if(gd.activeAttributes) { activeAttributeKeys = gd.activeAttributes; }
         
-        // CHECK FÜR MULTIPLAYER QUIZ
-        // Wenn ein Quiz getriggert wurde und wir es noch nicht gemacht haben
         if(gd.quizTrigger && gd.quizTrigger.active && !document.getElementById('quizModal').dataset.active) {
-             document.getElementById('quizModal').dataset.active = "true"; // Mark as open
-             
-             // ZEIGE ERST GLEICHSTAND OVERLAY, DANN QUIZ
+             document.getElementById('quizModal').dataset.active = "true";
              showTieOverlay(() => {
-                 // Starte Quiz für BEIDE Spieler
                  startTieBreakerQuiz(gd.quizTrigger.qIndex, async (result) => {
-                     document.getElementById('quizModal').dataset.active = ""; // Reset
-                     
+                     document.getElementById('quizModal').dataset.active = "";
                      const opp = localGameState.playerIds.find(id=>id!==localPlayerId);
-                     let winner = 'tie'; // Default to tie (timeout)
-
-                     if (result === 'correct') {
-                         winner = localPlayerId;
-                     } else if (result === 'wrong') {
-                         winner = opp;
-                     } 
-                     // if result === 'timeout', winner remains 'tie'
-
-                     // Hole aktuelle Werte für Resultat
+                     let winner = 'tie';
+                     if (result === 'correct') { winner = localPlayerId; } else if (result === 'wrong') { winner = opp; } 
                      const rawPv = localGameState.currentCards[localPlayerId][gd.quizTrigger.attr];
                      const rawOv = localGameState.currentCards[opp][gd.quizTrigger.attr];
-                     
-                     // Schreibe Resultat in DB (der Schnellste gewinnt den Write)
                      await updateDoc(getPublicDataRef("games", gameId),{
-                        quizTrigger: null, // Quiz beenden
+                        quizTrigger: null,
                         lastResult: {winnerId:winner, attribute:gd.quizTrigger.attr, values:{[localPlayerId]:rawPv, [opp]:rawOv}}
                      });
                  });
              });
         }
         
-        // Wenn das Quiz vorbei ist (durch DB Update), Fenster schließen falls noch offen
         if((!gd.quizTrigger || !gd.quizTrigger.active) && document.getElementById('quizModal').classList.contains('hidden') === false) {
              document.getElementById('quizModal').classList.add('hidden');
              document.getElementById('quizModal').dataset.active = "";
-             sounds.quizTick.pause(); sounds.quizTick.currentTime = 0; // Sound sicherheitshalber stoppen
+             sounds.quizTick.pause(); sounds.quizTick.currentTime = 0;
         }
 
         if(gd.status==='playing'||gd.status==='finished'){
             document.getElementById('multiplayerLobbyModal').classList.add('hidden');
             document.getElementById('gameContainer').classList.remove('hidden');
-            // Show rule button in Multiplayer mode
             document.getElementById('ruleButton').classList.remove('hidden');
-            
-            if(!gd.quizTrigger) scrollToTop(); // Nur scrollen wenn kein Quiz läuft
-            
+            if(!gd.quizTrigger) scrollToTop();
             const oppId=gd.playerIds.find(id=>id!==localPlayerId);
             document.getElementById('playerNameDisplay').innerText = gd.players[localPlayerId]?.name || 'DU';
             document.getElementById('opponentNameDisplay').innerText = (oppId ? gd.players[oppId]?.name : 'GEGNER').toUpperCase();
@@ -1350,43 +1275,29 @@ function listenToGameChanges(){
             document.getElementById('playerCards').innerText = pCount;
             document.getElementById('aiCards').innerText = oCount;
             updateStatusBar(pCount, oCount);
-            
             const highlightAttr = gd.lastResult ? gd.lastResult.attribute : null;
-
             const pc = document.getElementById('playerCard'); const ac = document.getElementById('aiCard');
             pc.innerHTML=''; ac.innerHTML='';
             const isPlayerTurn = gd.turn === localPlayerId;
             if(gd.currentCards[localPlayerId]) pc.appendChild(createCard(gd.currentCards[localPlayerId], true, true, isPlayerTurn, highlightAttr));
-            
             if(oppId && gd.currentCards[oppId]){
                 const c = createCard(gd.currentCards[oppId], false, false, !isPlayerTurn, highlightAttr);
                 ac.appendChild(c);
-                if(gd.lastResult){
-                    setTimeout(()=> { c.classList.remove('card-flipped'); playSound(sounds.flip); }, 100);
-                }
-            } else {
-                ac.innerHTML = `<div class="w-full h-full bg-gray-200 rounded-2xl flex items-center justify-center text-xs text-gray-500">Warte auf Gegner-Karte...</div>`;
-            }
+                if(gd.lastResult){ setTimeout(()=> { c.classList.remove('card-flipped'); playSound(sounds.flip); }, 100); }
+            } else { ac.innerHTML = `<div class="w-full h-full bg-gray-200 rounded-2xl flex items-center justify-center text-xs text-gray-500">Warte auf Gegner-Karte...</div>`; }
             
             if(gd.lastResult){
                  const wId = gd.lastResult.winnerId;
                  const iWin = wId===localPlayerId;
-                 
-                 if(gd.currentCards[wId]) {
-                     lastRoundWinningWoodName = gd.currentCards[wId].name;
-                 }
-
+                 if(gd.currentCards[wId]) { lastRoundWinningWoodName = gd.currentCards[wId].name; }
                  if(!roundSoundPlayed && iWin) playSound(sounds.win);
                  roundSoundPlayed=true;
-                 
                  const resText = iWin ? 'Du gewinnst!' : (wId==='tie'?'Unentschieden':'Gegner gewinnt!');
                  document.getElementById('resultText').className = iWin ? 'text-2xl font-black uppercase text-green-600' : 'text-2xl font-black uppercase text-red-600';
                  document.getElementById('resultDetails').innerText = `${attributeInfo[gd.lastResult.attribute].name}: ${gd.lastResult.values[localPlayerId]} vs ${gd.lastResult.values[oppId]}`;
                  if(iWin) showHappyWorm();
                  if(document.getElementById('bottomSheet').classList.contains('hidden')) openBottomSheet(resText);
-            } else {
-                 roundSoundPlayed=false; closeBottomSheet();
-            }
+            } else { roundSoundPlayed=false; closeBottomSheet(); }
             document.getElementById('turnIndicator').innerText = (gd.turn===localPlayerId) ? "Du bist am Zug!" : "Gegner wählt...";
             if(gd.status==='finished'){
                 let winnerName = "";
@@ -1415,31 +1326,20 @@ window.selectAttribute = async (attr) => {
         if(!localGameState || localGameState.turn!==localPlayerId) return;
         scrollToTop();
         const opp = localGameState.playerIds.find(id=>id!==localPlayerId);
-        
         const rawPv = localGameState.currentCards[localPlayerId][attr];
         const rawOv = localGameState.currentCards[opp][attr];
         const pv = getNumericValue(rawPv, attr);
         const ov = getNumericValue(rawOv, attr);
-        
         const logic = attributeInfo[attr].logic;
         let pWins = (logic === 'Niedrig gewinnt') ? (pv < ov) : (pv > ov);
         
-        // STECHEN IM MULTIPLAYER
         if(pv === ov) {
-            // Starte Quiz für BEIDE Spieler durch Datenbank-Eintrag
-            // SOFORTIGES Update ohne Timeout für besseres Feeling
             const qIdx = Math.floor(Math.random() * quizQuestions.length);
             await updateDoc(getPublicDataRef("games", gameId),{
-                quizTrigger: {
-                    active: true,
-                    attr: attr,
-                    qIndex: qIdx,
-                    timestamp: Date.now() // Erzwingt Update
-                }
+                quizTrigger: { active: true, attr: attr, qIndex: qIdx, timestamp: Date.now() }
             });
             return; 
         }
-        
         const winner = pWins ? localPlayerId : opp;
         await updateDoc(getPublicDataRef("games", gameId),{
             lastResult: {winnerId:winner, attribute:attr, values:{[localPlayerId]:rawPv, [opp]:rawOv}}
@@ -1451,7 +1351,6 @@ window.startGameAI = (name) => {
     trackEvent('games_ai');
     gameMode='ai'; aiGame.playerName=name;
     window.setNavState('game');
-    // Show rule button in AI mode
     document.getElementById('ruleButton').classList.remove('hidden');
     document.getElementById('playerNameDisplay').innerText=name;
     const sh=shuffleArray([...woodCards]);
@@ -1475,15 +1374,13 @@ window.createGame = async (playerName) => {
     gameId=Math.random().toString(36).substring(2,8).toUpperCase();
     const joinUrl=`${window.location.href.split('?')[0]}?game=${gameId}`;
     document.getElementById('shareLink').value=joinUrl;
-    
     document.getElementById('qrcode').innerHTML = "";
     new QRCode(document.getElementById('qrcode'), {text: joinUrl, width: 128, height: 128});
     
-    // --- CHANGE: SAVE activeAttributes to Firestore ---
     await setDoc(getPublicDataRef("games", gameId),{
         gameId, status:'waiting', playerIds:[localPlayerId],
         players:{[localPlayerId]:{name:playerName,cards:[],status:'online'}},
-        activeAttributes: activeAttributeKeys, // SAVE CONFIG HERE
+        activeAttributes: activeAttributeKeys,
         createdAt:serverTimestamp()
     });
     listenToGameChanges();
@@ -1500,7 +1397,6 @@ window.joinGame = async (id, playerName) => {
         document.getElementById('multiplayerLobbyModal').classList.remove('hidden');
         const sh=shuffleArray([...woodCards]);
         const p1=snap.data().playerIds[0];
-        
         await updateDoc(ref,{
             status:'playing', playerIds:[p1,localPlayerId],
             [`players.${localPlayerId}`]:{name:playerName,cards:sh.slice(15,30),status:'online'},
@@ -1530,11 +1426,9 @@ window.nextRound = async () => {
         let c1=gs.players[p1].cards.shift();
         let c2=gs.players[p2].cards.shift();
         const w = gs.lastResult.winnerId;
-        
         if(w===p1){ if(c1) gs.players[p1].cards.push(c1); if(c2) gs.players[p1].cards.push(c2); }
         else if(w===p2){ if(c1) gs.players[p2].cards.push(c1); if(c2) gs.players[p2].cards.push(c2); }
         else { if(c1) gs.players[p1].cards.push(c1); if(c2) gs.players[p2].cards.push(c2); }
-        
         if(gs.players[p1].cards.length===0 || gs.players[p2].cards.length===0){
             await updateDoc(getPublicDataRef("games", gameId), {status:'finished', players:gs.players});
             return;
@@ -1547,9 +1441,7 @@ window.nextRound = async () => {
     }
 };
 
-window.showFinalWinScreen = () => {
-    document.getElementById('reflectionModal').classList.add('hidden');
-};
+window.showFinalWinScreen = () => { document.getElementById('reflectionModal').classList.add('hidden'); };
 
 const calculateRank = (count) => {
     if (count >= 100) return { title: "Leim-Legende", stars: 6 };
@@ -1567,110 +1459,53 @@ async function updateMainMenuStats(user) {
         const snap = await getDoc(statsRef);
         const count = snap.exists() ? (snap.data().gamesPlayed || 0) : 0;
         const rank = calculateRank(count);
-        
         const container = document.getElementById('mainMenuStats');
         if(container) {
-            container.innerHTML = `
-                <div class="flex flex-col items-center gap-1">
-                    <div class="text-xs text-white/80 font-bold uppercase tracking-wider">Dein Rang</div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-xl font-bold text-white drop-shadow-md">${rank.title}</span>
-                        <div class="flex text-amber-400 text-sm drop-shadow-sm">${Array(rank.stars).fill('★').join('')}</div>
-                    </div>
-                    <div class="flex items-center gap-2 mt-1">
-                        <span class="text-lg filter drop-shadow">🔥</span>
-                        <span class="font-bold text-white text-lg drop-shadow-md">${count} Spiele</span>
-                    </div>
-                </div>
-            `;
+            container.innerHTML = `<div class="flex flex-col items-center gap-1"><div class="text-xs text-white/80 font-bold uppercase tracking-wider">Dein Rang</div><div class="flex items-center gap-2"><span class="text-xl font-bold text-white drop-shadow-md">${rank.title}</span><div class="flex text-amber-400 text-sm drop-shadow-sm">${Array(rank.stars).fill('★').join('')}</div></div><div class="flex items-center gap-2 mt-1"><span class="text-lg filter drop-shadow">🔥</span><span class="font-bold text-white text-lg drop-shadow-md">${count} Spiele</span></div></div>`;
             container.classList.remove('hidden');
         }
-    } catch (e) {
-        console.error("Stats load error", e);
-    }
+    } catch (e) {}
 }
-
-onAuthStateChanged(auth, (user) => {
-    if (user) updateMainMenuStats(user);
-});
+onAuthStateChanged(auth, (user) => { if (user) updateMainMenuStats(user); });
 
 async function updateLeaderboard(name) {
     if (!auth.currentUser) return;
     const ref = getPublicDataRef("leaderboard", auth.currentUser.uid);
     try {
-        await setDoc(ref, {
-            name: name,
-            wins: increment(1),
-            last_win: serverTimestamp()
-        }, { merge: true });
-    } catch (e) {
-        console.error("Leaderboard update failed", e);
-    }
+        await setDoc(ref, { name: name, wins: increment(1), last_win: serverTimestamp() }, { merge: true });
+    } catch (e) {}
 }
 
 window.endGame = async (winnerName) => {
     document.getElementById('gameContainer').classList.add('hidden');
     document.getElementById('bottomSheet').classList.add('hidden');
     document.getElementById('bottomSheetBackdrop').classList.add('hidden');
-
     const isWin = (winnerName === (gameMode === 'ai' ? aiGame.playerName : localGameState.players[localPlayerId].name));
-    
-    // SET WURM IMAGE (Game Over)
     const gameOverImg = document.getElementById('gameOverWorm');
-    if(gameOverImg) {
-        if(isWin) {
-            gameOverImg.src = "https://github.com/aufdemholzweg/holzquartett/blob/main/images/klotzi_win.png?raw=true";
-        } else {
-            gameOverImg.src = "https://github.com/aufdemholzweg/holzquartett/blob/main/images/klotzi_lose.png?raw=true";
-        }
-    }
-    
-    let newGamesCount = 0;
-    let rankData = null;
-    
+    if(gameOverImg) { gameOverImg.src = isWin ? "https://github.com/aufdemholzweg/holzquartett/blob/main/images/klotzi_win.png?raw=true" : "https://github.com/aufdemholzweg/holzquartett/blob/main/images/klotzi_lose.png?raw=true"; }
+    let newGamesCount = 0; let rankData = null;
     if (auth.currentUser) {
         const statsRef = doc(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'gamification', 'stats');
         try {
-            await setDoc(statsRef, {
-                gamesPlayed: increment(1),
-                lastPlayed: serverTimestamp()
-            }, { merge: true });
-            
+            await setDoc(statsRef, { gamesPlayed: increment(1), lastPlayed: serverTimestamp() }, { merge: true });
             const snap = await getDoc(statsRef);
             newGamesCount = snap.data().gamesPlayed || 0;
             rankData = calculateRank(newGamesCount);
-        } catch (e) {
-            console.error("Stats update failed", e);
-        }
-
-        if (isWin) {
-            const playerName = gameMode === 'ai' ? aiGame.playerName : localGameState.players[localPlayerId].name;
-            await updateLeaderboard(playerName);
-        }
+        } catch (e) {}
+        if (isWin) { await updateLeaderboard(gameMode === 'ai' ? aiGame.playerName : localGameState.players[localPlayerId].name); }
     }
-
     const title = document.getElementById('gameOverTitle');
     const text = document.getElementById('gameOverText');
-    
     if (isWin) {
         title.innerText = "GEWONNEN!";
         title.className = "text-3xl font-black mb-2 text-green-600";
-        text.innerHTML = `Herzlichen Glückwunsch! Du hast gewonnen.<br><br>
-                          <div class="flex items-center justify-center gap-2 text-amber-600 font-bold bg-amber-50 p-2 rounded-lg">
-                            <span class="text-2xl">🔥</span> ${newGamesCount} Flammen gesammelt
-                          </div>
-                          <div class="mt-2 text-sm text-gray-500">${rankData ? 'Rang: ' + rankData.title : ''}</div>`;
+        text.innerHTML = `Herzlichen Glückwunsch! Du hast gewonnen.<br><br><div class="flex items-center justify-center gap-2 text-amber-600 font-bold bg-amber-50 p-2 rounded-lg"><span class="text-2xl">🔥</span> ${newGamesCount} Flammen gesammelt</div><div class="mt-2 text-sm text-gray-500">${rankData ? 'Rang: ' + rankData.title : ''}</div>`;
         triggerConfetti();
     } else {
         title.innerText = "VERLOREN";
         title.className = "text-3xl font-black mb-2 text-gray-600";
-        text.innerHTML = `Schade, ${winnerName} hat gewonnen.<br>Dranbleiben lohnt sich!<br><br>
-                          <div class="flex items-center justify-center gap-2 text-amber-600 font-bold bg-amber-50 p-2 rounded-lg">
-                            <span class="text-2xl">🔥</span> ${newGamesCount} Flammen gesammelt
-                          </div>
-                          <div class="mt-2 text-sm text-gray-500">${rankData ? 'Rang: ' + rankData.title : ''}</div>`;
+        text.innerHTML = `Schade, ${winnerName} hat gewonnen.<br>Dranbleiben lohnt sich!<br><br><div class="flex items-center justify-center gap-2 text-amber-600 font-bold bg-amber-50 p-2 rounded-lg"><span class="text-2xl">🔥</span> ${newGamesCount} Flammen gesammelt</div><div class="mt-2 text-sm text-gray-500">${rankData ? 'Rang: ' + rankData.title : ''}</div>`;
     }
-    
     document.getElementById('gameOverModal').classList.remove('hidden');
 };
 
@@ -1684,7 +1519,7 @@ window.showLeaderboard = async () => {
         const snap=await getDocs(q);
         if(snap.empty){ list.innerHTML='<div class="text-center py-4 text-gray-400">Keine Einträge</div>'; return; }
         list.innerHTML = snap.docs.map((d,i)=>`<div class="flex justify-between p-3 rounded-lg ${i%2===0?'bg-gray-50':'bg-white'} border border-gray-100"><span class="font-bold text-gray-700">${i+1}. ${d.data().name}</span><span class="font-bold text-amber-600">${d.data().wins} 🏆</span></div>`).join('');
-    } catch(e){ list.innerHTML='<div class="text-center text-red-400 text-sm">Fehler beim Laden</div>'; console.error(e); }
+    } catch(e){ list.innerHTML='<div class="text-center text-red-400 text-sm">Fehler beim Laden</div>'; }
 };
 
 window.showNamePrompt = (mode) => {
@@ -1693,10 +1528,7 @@ window.showNamePrompt = (mode) => {
     const btn=document.getElementById('nameSubmitButton');
     const clone=btn.cloneNode(true);
     btn.parentNode.replaceChild(clone,btn);
-    
-    // Set navigation state to handle the back button correctly
     window.setNavState('name_input');
-    
     clone.addEventListener('click',()=>{
         const n=document.getElementById('playerName').value.trim();
         if(!n)return;
