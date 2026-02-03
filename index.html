@@ -91,7 +91,8 @@
         <a id="navButton" href="#" class="relative z-[121] w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center text-white shadow-sm hover:bg-white/30 transition-all border border-white/30" aria-label="Navigation">
              </a>
         <h1 class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-lg sm:text-2xl font-black tracking-wider uppercase drop-shadow-sm whitespace-nowrap pointer-events-none">🌲 HOLZEN! 🌲</h1>
-        <button id="ruleButton" onclick="window.showGameInfo()" class="text-white hover:text-amber-100 p-2 rounded-full transition-colors active:scale-90 relative z-[121] hidden" aria-label="Spielregeln">
+        
+        <button id="ruleButton" onclick="window.showGameInfo()" class="text-white hover:text-amber-100 p-2 rounded-full transition-colors active:scale-90 relative z-[121]" aria-label="Spielregeln">
              <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
         </button>
     </div>
@@ -320,9 +321,11 @@
 </div>
 
 <div id="setupModal" class="fixed inset-0 z-[110] flex flex-col items-center justify-center p-4 dimmer overflow-y-auto h-screen">
+    <div class="w-10 h-10 absolute left-4 top-4"></div>
+    
     <a href="https://forms.office.com/r/dPiXWjBiGQ" target="_blank" 
-       class="absolute top-20 left-4 z-[120] bg-violet-600 hover:bg-violet-700 text-white text-xs font-bold py-2 px-3 rounded-full shadow-lg transition-transform active:scale-95 flex items-center gap-2 no-underline border-2 border-white/20">
-       <span>💬</span> Feedback
+       class="absolute top-20 left-4 z-[120] bg-violet-600 hover:bg-violet-700 text-white text-xs font-bold py-2 px-3 rounded-full shadow-lg transition-transform active:scale-95 flex items-center justify-center gap-2 no-underline border-2 border-white/20 w-48">
+       <span>💬</span> Feedback zum Spiel
     </a>
 
     <div class="relative w-full max-w-sm pt-20">
@@ -1141,7 +1144,7 @@ function startTieBreakerQuiz(qIndex, callback) {
                     setTimeout(() => {
                         modal.classList.add('hidden');
                         callback('correct');
-                    }, 4500); // 4.5 Sekunden warten
+                    }, 4500); // 4.5 Sekunden warten (geändert von 3500)
                 } else {
                     btn.className = "w-full bg-red-500 text-white font-bold py-3 px-4 rounded-lg border-2 border-red-600 shadow-md transform scale-95 opacity-50";
                     const correctBtnObj = buttons.find(b => b.idx === question.c);
@@ -1149,7 +1152,7 @@ function startTieBreakerQuiz(qIndex, callback) {
                     setTimeout(() => {
                         modal.classList.add('hidden');
                         callback('wrong');
-                    }, 4500); // 4.5 Sekunden warten
+                    }, 4500); // 4.5 Sekunden warten (geändert von 3500)
                 }
             };
         });
