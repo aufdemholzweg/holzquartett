@@ -149,11 +149,13 @@
 
 <div id="quizModal" class="fixed inset-0 dimmer flex items-center justify-center z-[80] p-4 hidden pt-20">
     <div class="bg-white rounded-2xl shadow-2xl relative w-full max-w-sm flex flex-col animate-pop-in border-4 border-amber-500 overflow-visible">
+        
         <div class="h-4 w-full bg-gray-200 relative overflow-hidden rounded-t-xl">
             <div id="quizTimerBar" class="h-full w-0 bg-amber-500 rounded-r-sm relative"> 
                 <div class="absolute right-0 top-1/2 w-4 h-4 bg-white border-2 border-amber-600 rounded-full shadow z-10 animate-pulse-dot transform translate-x-1/2 -translate-y-1/2"></div>
             </div>
         </div>
+        
         <div class="p-6 text-center relative z-10">
             <div id="quizStatusText" class="inline-block bg-amber-100 text-amber-800 text-xs font-bold px-2 py-1 rounded-full mb-3 relative z-30">
                 ⚠️ Gleichstand! Quiz lädt...
@@ -163,6 +165,7 @@
             </h3>
             <div id="quizOptions" class="grid grid-cols-1 gap-3 relative z-30">
                 </div>
+            
             <div id="quizExplanation" class="hidden mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-gray-700 leading-snug shadow-sm animate-pop-in">
             </div>
         </div>
@@ -250,7 +253,51 @@
                     <li><strong>Preise:</strong> <a href="https://www.muehlbauerholz.com/upload/schnittholz-mai-2024.pdf" target="_blank" class="underline text-blue-600">Mühlbauer Holz (Preisliste Mai 2024)</a></li>
                 </ul>
             </div>
-             </div>
+
+            <div>
+                <h4 class="font-bold text-gray-900 mb-1">Haftung für Inhalte & Daten</h4>
+                <p class="mb-2">Die Inhalte dieser Web-App wurden mit größter Sorgfalt und nach bestem Wissen und Gewissen erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte kann jedoch keine Gewähr übernommen werden.</p>
+                <p class="mb-2"><strong>Besonderer Hinweis zu fachlichen Daten:</strong> Die im Spiel verwendeten Daten (z. B. Rohdichte, E-Modul, Preise) dienen primär der Spielmechanik und der didaktischen Vereinfachung. Sie stellen Durchschnittswerte oder Richtwerte dar und ersetzen keine fachgerechte Planung nach DIN/EN-Normen.</p>
+            </div>
+            <div>
+                <h4 class="font-bold text-gray-900 mb-1">Haftung für Links</h4>
+                <p>Diese Webseite enthält Links zu externen Webseiten Dritter (z. B. GitHub), auf deren Inhalte wir keinen Einfluss haben. Deshalb können wir für diese fremden Inhalte auch keine Gewähr übernehmen. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber der Seiten verantwortlich.</p>
+            </div>
+            <div>
+                <h4 class="font-bold text-gray-900 mb-1">Urheberrecht</h4>
+                <p class="mb-2">Die durch den Betreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers.</p>
+            </div>
+            <div>
+                <h4 class="font-bold text-gray-900 mb-1">Bild- und Tonquellen</h4>
+                <ul class="list-disc pl-4 text-xs text-gray-600 space-y-1">
+                    <li><strong>Holzbilder:</strong> <a href="https://holzvomfach.de/" target="_blank" class="underline text-blue-600">holzvomfach.de</a> und <a href="https://www.schreiner-seiten.de/index.php" target="_blank" class="underline text-blue-600">schreiner-seiten.de</a></li>
+                    <li><strong>Sounds:</strong> <a href="https://pixabay.com/de/" target="_blank" class="underline text-blue-600">Pixabay.com</a></li>
+                    <li><strong>Emojis/Icons:</strong> Systemstandard (Unicode)</li>
+                </ul>
+            </div>
+            
+            <hr class="my-4 border-gray-300">
+            
+            <div>
+                <h4 class="font-bold text-gray-900 mb-1">Datenschutz & Technik</h4>
+                <p class="mb-2">Da dies ein reines Forschungsprojekt ist, werden so wenige Daten wie möglich gespeichert. Dennoch kommen externe Dienstleister zum Einsatz, um die technische Funktion zu gewährleisten:</p>
+                
+                <ul class="list-disc pl-4 text-xs text-gray-600 space-y-2">
+                    <li>
+                        <strong>Hosting (GitHub Pages):</strong><br>
+                        Diese Webseite wird auf Servern von GitHub Inc. (USA) gehostet. Beim Aufruf der Seite werden technisch bedingt Verbindungsdaten (z. B. IP-Adresse) an GitHub übertragen, um die Inhalte auszuliefern.
+                    </li>
+                    <li>
+                        <strong>Datenbank & Backend (Google Firebase):</strong><br>
+                        Für die Multiplayer-Funktion (Spielstände, Synchronisation) nutzen wir Google Firebase (Google Ireland Limited). Die Spieldaten werden temporär auf deren Servern gespeichert. Wir verwenden die "Anonyme Anmeldung", sodass keine Klarnamen oder E-Mail-Adressen von Nutzern gespeichert werden, sofern diese nicht freiwillig eingegeben werden.
+                    </li>
+                    <li>
+                        <strong>Cookies / LocalStorage:</strong><br>
+                        Das Spiel speichert lediglich technische Einstellungen (z. B. Sound an/aus) lokal auf Ihrem Gerät ("LocalStorage"). Es werden keine Tracking- oder Werbe-Cookies eingesetzt.
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -286,9 +333,8 @@
     <div class="w-10 h-10 absolute left-4 top-4"></div>
     
     <a href="https://forms.office.com/r/dPiXWjBiGQ" target="_blank" 
-       class="absolute top-20 left-4 z-[120] bg-violet-600 hover:bg-violet-700 text-white font-bold w-10 h-10 rounded-full shadow-lg transition-transform active:scale-95 flex items-center justify-center border-2 border-white/20"
-       title="Feedback zum Spiel">
-       <span class="text-xl">💬</span>
+       class="absolute top-20 left-4 z-[120] bg-violet-600 hover:bg-violet-700 text-white text-xs font-bold py-2 px-3 rounded-full shadow-lg transition-transform active:scale-95 flex items-center justify-center gap-2 no-underline border-2 border-white/20 w-48">
+       <span>💬</span> Feedback zum Spiel
     </a>
 
     <div class="relative w-full max-w-sm pt-20">
@@ -597,7 +643,7 @@ const woodCards=[
  {name:"Ahorn", dk:"5", druckfestigkeit:60, quellen:9, rohdichte:650, emodul:9500, preis:2, imgTree:`${IMG_BASE}/ahorn_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/ahorn_2.jpeg${IMG_SUFFIX}`},
  {name:"Birke", dk:"5", druckfestigkeit:50, quellen:11.7, rohdichte:650, emodul:14500, preis:2, imgTree:`${IMG_BASE}/birke_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/birke_2.jpeg${IMG_SUFFIX}`},
  {name:"Douglasie", dk:"5", druckfestigkeit:70, quellen:7.5, rohdichte:500, emodul:13000, preis:4, imgTree:`${IMG_BASE}/douglasie_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/douglasie_2.jpeg${IMG_SUFFIX}`},
- {name:"Ebenholz, Afr.", dk:"1-2", druckfestigkeit:70, quellen:12.8, rohdichte:1200, emodul:13000, preis:5, imgTree:`${IMG_BASE}/ebenholz_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/ebenholz_2.jpeg${IMG_SUFFIX}`},
+ {name:"Ebenholz, Afrikanisches", dk:"1-2", druckfestigkeit:70, quellen:12.8, rohdichte:1200, emodul:13000, preis:5, imgTree:`${IMG_BASE}/ebenholz_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/ebenholz_2.jpeg${IMG_SUFFIX}`},
  {name:"Kastanie", dk:"2", druckfestigkeit:50, quellen:6.8, rohdichte:620, emodul:9000, preis:3, imgTree:`${IMG_BASE}/kastanie_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/kastanie_2.jpeg${IMG_SUFFIX}`},
  {name:"Eibe", dk:"2", druckfestigkeit:60, quellen:5.2, rohdichte:670, emodul:15000, preis:4, imgTree:`${IMG_BASE}/eibe_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/eibe_2.jpeg${IMG_SUFFIX}`},
  {name:"Eiche", dk:"2", druckfestigkeit:40, quellen:11.7, rohdichte:670, emodul:13000, preis:3, imgTree:`${IMG_BASE}/eiche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/eiche_2.jpeg${IMG_SUFFIX}`},
@@ -610,7 +656,7 @@ const woodCards=[
  {name:"Kirschbaum", dk:"3", druckfestigkeit:55, quellen:8.5, rohdichte:630, emodul:10600, preis:3, imgTree:`${IMG_BASE}/kirsche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/kirsche_2.jpeg${IMG_SUFFIX}`},
  {name:"Lärche", dk:"3-4", druckfestigkeit:55, quellen:10.4, rohdichte:590, emodul:13800, preis:3, imgTree:`${IMG_BASE}/laerche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/laerche_2.jpeg${IMG_SUFFIX}`},
  {name:"Linde", dk:"5", druckfestigkeit:50, quellen:10.7, rohdichte:520, emodul:7200, preis:2, imgTree:`${IMG_BASE}/linde_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/linde_2.jpeg${IMG_SUFFIX}`},
- {name:"Mahagoni (echtes)", dk:"2", druckfestigkeit:50, quellen:5.8, rohdichte:600, emodul:10600, preis:5, imgTree:`${IMG_BASE}/mahagoni_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/mahagoni_2.jpeg${IMG_SUFFIX}`},
+ {name:"Mahagoni Amerikanisch", dk:"2", druckfestigkeit:50, quellen:5.8, rohdichte:600, emodul:10600, preis:5, imgTree:`${IMG_BASE}/mahagoni_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/mahagoni_2.jpeg${IMG_SUFFIX}`},
  {name:"Meranti (DR)", dk:"3-4", druckfestigkeit:65, quellen:9.8, rohdichte:720, emodul:14500, preis:4, imgTree:`${IMG_BASE}/meranti_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/meranti_2.jpeg${IMG_SUFFIX}`},
  {name:"Nussbaum (EU)", dk:"3", druckfestigkeit:70, quellen:7.5, rohdichte:670, emodul:12000, preis:4, imgTree:`${IMG_BASE}/nuss_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/nuss_2.jpeg${IMG_SUFFIX}`},
  {name:"Palisander", dk:"1", druckfestigkeit:80, quellen:8.1, rohdichte:850, emodul:12800, preis:5, imgTree:`${IMG_BASE}/palisander_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/palisander_2.jpeg${IMG_SUFFIX}`},
@@ -650,7 +696,7 @@ const detailedWoodInfo = {
             <strong>🔍 Fachliches Merkmal:</strong><br>
             Deutlicher Kontrast zwischen Früh- und Spätholz. Besitzt Harzkanäle. Frisch bearbeitet riecht es oft leicht zitronig-harzig.
         </div>`,
-    "Ebenholz, Afr.": `
+    "Ebenholz, Afrikanisches": `
         <p class="mb-2">Ein extrem hartes, schweres und dichtes Laubholz. Das Kernholz ist tiefschwarz (teilweise mit helleren Streifen), der Splint ist grau-weiß. Es lässt sich polieren, ist aber schwer zu bearbeiten.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Musikinstrumentenbau (Griffbretter, Tasten), Einlegearbeiten, Kunsthandwerk.</p>
         <div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2">
@@ -741,7 +787,7 @@ const detailedWoodInfo = {
             <strong>🔍 Fachliches Merkmal:</strong><br>
             Kaum sichtbare Jahresringe. Lässt sich exzellent in alle Richtungen (auch quer zur Faser) schneiden/schnitzen.
         </div>`,
-    "Mahagoni (echtes)": `
+    "Mahagoni Amerikanisch": `
         <p class="mb-2">Tropisches Kernholz, rotbraun bis kupferfarben glänzend. Es ist mittelschwer, gut zu bearbeiten und resistent gegen Pilze und Insekten.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Hochwertiger Innenausbau, Bootsbau, Luxusmöbel.</p>
         <div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2">
@@ -749,7 +795,7 @@ const detailedWoodInfo = {
             Häufiger Wechseldrehwuchs, der auf der radialen Fläche den typischen "Glanzstreifen" erzeugt.
         </div>`,
     "Meranti (DR)": `
-        <p class="mb-2">Sammelbegriff für Shorea-Arten (hier: <strong>Dark Red</strong>). Tropisches Laubholz, rotbraun, grobporig und in der Dichte stark schwankend.</p>
+        <p class="mb-2">Sammelbegriff für Shorea-Arten (hier: Dark Red). Tropisches Laubholz, rotbraun, grobporig und in der Dichte stark schwankend.</p>
         <p class="mb-2"><strong>Verwendung:</strong> Fensterbau (Standardholz der 80er/90er Jahre), Außentüren.</p>
         <div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2">
             <strong>🔍 Fachliches Merkmal:</strong><br>
@@ -916,26 +962,140 @@ const quizQuestions = [
     {q:"Wo bildet ein Laubbaum Reaktionsholz (Zugholz), wenn er schief steht?", o:["Auf der Unterseite","Auf der Oberseite (Zugseite)","Im Kern","In der Wurzel"], c:1, e:"Laubbäume „ziehen“ sich aktiv wieder gerade (im Gegensatz zu Nadelbäumen, die drücken)."}
 ];
 
-let usedQuizIndices = [];
+function shuffleArray(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
 
-function getUniqueQuizQuestionIndex() {
-    // Falls alle Fragen schon einmal dran waren, Liste zurücksetzen
-    if (usedQuizIndices.length === quizQuestions.length) {
-        usedQuizIndices = [];
-    }
+// Funktion: Klotzi jubeln lassen (MIT NEUEN SPRÜCHEN)
+function showHappyWorm() {
+    const k = document.getElementById('happyKlotzi');
+    const t = document.getElementById('happyKlotziText');
+    if(!k) return;
 
-    let idx;
-    // So lange zufällig ziehen, bis eine Nummer kommt, die noch nicht in der Liste ist
-    do {
-        idx = Math.floor(Math.random() * quizQuestions.length);
-    } while (usedQuizIndices.includes(idx));
+    // NEUE MOTIVATIONSSPRÜCHE
+    const cheers = ["Stark!", "Super!", "Punkt für uns!", "Weiter so!", "Hammerhart!", "Klasse!", "Holz-Meister!", "Holzklasse!", "Jawoll!", "Sauber!", "richtiges Brett!", "Maßarbeit!", "Stabil!"];
+    if(t) t.childNodes[0].nodeValue = cheers[Math.floor(Math.random() * cheers.length)];
 
-    // Die gezogene Nummer merken
-    usedQuizIndices.push(idx);
+    k.classList.remove('hidden', 'translate-y-full'); 
+    k.querySelector('img').classList.add('animate-klotzi-popup');
     
-    return idx;
+    setTimeout(() => {
+        k.classList.add('translate-y-full');
+        k.querySelector('img').classList.remove('animate-klotzi-popup');
+    }, 2500);
+    setTimeout(() => k.classList.add('hidden'), 3000);
 }
 
+function triggerConfetti() {
+    var duration = 3000; var end = Date.now() + duration;
+    (function frame() {
+        confetti({ particleCount: 7, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#d97706', '#fbbf24', '#ffffff'] });
+        confetti({ particleCount: 7, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#d97706', '#fbbf24', '#ffffff'] });
+        if (Date.now() < end) requestAnimationFrame(frame);
+    }());
+}
+
+window.openAttrConfig = () => {
+    document.getElementById('setupModal').classList.add('hidden');
+    const list = document.getElementById('attrConfigList');
+    list.innerHTML = '';
+    Object.keys(attributeInfo).forEach(key => {
+        const info = attributeInfo[key];
+        const isSelected = activeAttributeKeys.includes(key);
+        const div = document.createElement('div');
+        div.className = `attr-toggle-btn w-full p-3 rounded-lg flex items-center justify-between cursor-pointer ${isSelected ? 'selected' : ''}`;
+        div.onclick = () => toggleAttribute(key, div);
+        div.innerHTML = `<div class="flex items-center gap-3"><span class="text-xl">${info.icon}</span><div class="text-left leading-tight"><div class="font-bold text-sm">${info.name}</div><div class="text-[10px] opacity-70">${info.unit}</div></div></div><div class="w-6 h-6 rounded-full border-2 flex items-center justify-center ${isSelected ? 'border-amber-500 bg-amber-500 text-white' : 'border-gray-300 bg-white'}">${isSelected ? '✓' : ''}</div>`;
+        list.appendChild(div);
+    });
+    document.getElementById('attrConfigModal').classList.remove('hidden');
+};
+
+window.closeAttrConfig = () => {
+    document.getElementById('attrConfigModal').classList.add('hidden');
+    document.getElementById('setupModal').classList.remove('hidden');
+}
+
+function toggleAttribute(key, el) {
+    const idx = activeAttributeKeys.indexOf(key);
+    if (idx > -1) {
+        if(activeAttributeKeys.length <= 3) { alert("Mindestens 3 Eigenschaften müssen aktiv sein!"); return; }
+        activeAttributeKeys.splice(idx, 1);
+    } else {
+        if(activeAttributeKeys.length >= 5) { return; } 
+        activeAttributeKeys.push(key);
+    }
+    const isSelected = activeAttributeKeys.includes(key);
+    el.className = `attr-toggle-btn w-full p-3 rounded-lg flex items-center justify-between cursor-pointer ${isSelected ? 'selected' : ''}`;
+    el.querySelector('.w-6').className = `w-6 h-6 rounded-full border-2 flex items-center justify-center ${isSelected ? 'border-amber-500 bg-amber-500 text-white' : 'border-gray-300 bg-white'}`;
+    el.querySelector('.w-6').innerHTML = isSelected ? '✓' : '';
+    document.getElementById('attrCountBadge').innerText = activeAttributeKeys.length;
+}
+
+function updateStatusBar(p, o){
+    const total=p+o; const pct=(total===0)?50:(p/total)*100;
+    const bar=document.getElementById('statusBar'); const ball=document.getElementById('statusBall');
+    bar.style.width=`${pct}%`; ball.style.left=`${pct}%`;
+}
+
+function createCard(data, isRevealed, isPlayer, isActive, highlightAttr){
+    const card = document.createElement('div');
+    card.className = `card-3d w-full h-full relative ${isPlayer?'cursor-pointer hover-lift':''}`;
+    if(!isRevealed) card.classList.add('card-flipped');
+    if(isPlayer) { card.setAttribute('role', 'button'); card.setAttribute('tabindex', '0'); }
+
+    const canSelect = isPlayer && ((gameMode==='ai' && aiGame.turn==='player' && !aiGame.roundInProgress) || (gameMode==='multiplayer' && localGameState.turn===localPlayerId && !localGameState.lastResult));
+    
+    const front = document.createElement('div');
+    const bClass = isActive ? 'border-orange-500 ring-4 ring-orange-200' : 'border-orange-200';
+    front.className = `card-front card-front-bg rounded-2xl shadow-lg border-4 ${bClass} flex flex-col transition-all`;
+    let html = `<div class="pt-3 px-3 pb-1"><h2 class="text-lg sm:text-xl font-bold text-amber-900 leading-none">${data.name}</h2></div>
+                <div class="mx-3 mt-1 mb-2 aspect-[4/3] rounded-xl overflow-hidden bg-white shadow-sm border border-orange-100"><img src="${data.imgTree}" class="w-full h-full object-cover"></div>
+                <div class="flex-grow flex flex-col justify-start gap-1 sm:gap-2 px-2 pb-2 overflow-y-auto hide-scrollbar">`;
+    
+    for(const k of activeAttributeKeys){
+        const info = attributeInfo[k];
+        let flashClass = '';
+        if(highlightAttr === k) flashClass = isActive ? 'flash-active' : 'highlight-compare';
+        const rowInner = `<div class="flex items-center gap-2"><span class="text-base">${info.icon}</span><div class="flex flex-col text-left leading-none"><span class="font-bold text-gray-800 text-[10px] sm:text-sm">${info.name}</span><span class="text-[9px] text-gray-500 font-medium">${info.unit}</span></div></div><span class="text-sm font-bold text-amber-800">${data[k]}</span>`;
+        if(canSelect) html += `<div onclick="window.selectAttribute('${k}')" data-attr-btn="${k}" class="attr-box w-full flex justify-between items-center px-2 py-1.5 rounded-xl cursor-pointer hover:brightness-95 ${flashClass}">${rowInner}</div>`;
+        else html += `<div class="attr-box w-full flex justify-between items-center px-2 py-1.5 rounded-xl opacity-90 ${flashClass}" data-attr-row="${k}">${rowInner}</div>`;
+    }
+    html += '</div>';
+    front.innerHTML = html;
+    const back = document.createElement('div');
+    back.className = `card-back rounded-2xl shadow-lg relative ${isActive ? 'border-orange-500' : 'border-white'}`;
+    if(!isPlayer && isOpponentNameBackVisible()){
+        const lbl = document.createElement('div'); lbl.className = 'opponent-back-name'; lbl.innerText = data.name; back.appendChild(lbl);
+    }
+    card.appendChild(front); card.appendChild(back);
+    return card;
+}
+
+function updateDisplayAI(){
+    const pc=aiGame.playerCards.length; const ac=aiGame.aiCards.length;
+    document.getElementById('playerCards').innerText=pc; document.getElementById('aiCards').innerText=ac;
+    updateStatusBar(pc,ac);
+    const pcEl=document.getElementById('playerCard'); pcEl.innerHTML='';
+    const acEl=document.getElementById('aiCard'); acEl.innerHTML='';
+    const isPTurn = aiGame.turn === 'player';
+    if(aiGame.currentPlayerCard) pcEl.appendChild(createCard(aiGame.currentPlayerCard, true, true, isPTurn, null));
+    if(aiGame.currentAiCard) acEl.appendChild(createCard(aiGame.currentAiCard, false, false, !isPTurn, null));
+    if(aiGame.turn==='ai' && !aiGame.roundInProgress) setTimeout(aiTurn, 1000);
+}
+
+function getNumericValue(val, attr) {
+    if (attr === 'dk') {
+        if (typeof val === 'string' && val.includes('-')) {
+            const parts = val.split('-');
+            const v1 = parseFloat(parts[0]);
+            const v2 = parseFloat(parts[1]);
+            return (v1 + v2) / 2;
+        }
+        return parseFloat(val);
+    }
+    return parseFloat(val);
+}
+
+// 8. NEUE FUNKTION: DAS QUIZ STARTEN (Mit 4500ms Timer)
 function startTieBreakerQuiz(qIndex, callback) {
     const modal = document.getElementById('quizModal');
     const timerBar = document.getElementById('quizTimerBar');
@@ -945,20 +1105,16 @@ function startTieBreakerQuiz(qIndex, callback) {
     const expBox = document.getElementById('quizExplanation');
     
     const question = quizQuestions[qIndex];
-    
     qText.innerText = question.q;
     qOptions.innerHTML = '';
     statusText.innerText = "⚠️ Gleichstand! Quiz lädt...";
-    expBox.classList.add('hidden'); // Reset Explanation
+    expBox.classList.add('hidden'); 
     
-    // 1. Reset Bar (Start state)
     timerBar.classList.remove('animate-charge', 'animate-shrink');
     timerBar.style.width = "0%";
     timerBar.className = "h-full bg-amber-500 rounded-r-sm relative";
-    
     void timerBar.offsetWidth;
     
-    // Buttons erstellen
     let buttons = [];
     question.o.forEach((opt, idx) => {
         const btn = document.createElement('button');
@@ -970,19 +1126,14 @@ function startTieBreakerQuiz(qIndex, callback) {
     });
     
     modal.classList.remove('hidden');
-    
-    // 2. Start Charging Animation (1.5s)
     timerBar.classList.add('animate-charge');
     
-    // 3. Nach 1.5s: Quiz Start
     setTimeout(() => {
         statusText.innerText = "⚡ STECHEN! 10 Sekunden Zeit";
-        
         timerBar.classList.remove('animate-charge');
         timerBar.style.width = '100%';
         void timerBar.offsetWidth;
         timerBar.className = "h-full bg-red-500 rounded-r-sm relative animate-shrink";
-        
         playSound(sounds.quizTick);
         
         let answered = false;
@@ -997,7 +1148,6 @@ function startTieBreakerQuiz(qIndex, callback) {
                 clearTimeout(quizTimeout);
                 sounds.quizTick.pause(); sounds.quizTick.currentTime = 0;
                 
-                // Show Explanation
                 const explanation = question.e || "Keine Erklärung verfügbar.";
                 expBox.innerText = "💡 " + explanation;
                 expBox.classList.remove('hidden');
@@ -1008,19 +1158,15 @@ function startTieBreakerQuiz(qIndex, callback) {
                     setTimeout(() => {
                         modal.classList.add('hidden');
                         callback('correct');
-                    }, 4500); // 4.5s Zeit zum Lesen der Erklärung
+                    }, 4500); // 4.5 Sekunden warten (geändert von 3500)
                 } else {
                     btn.className = "w-full bg-red-500 text-white font-bold py-3 px-4 rounded-lg border-2 border-red-600 shadow-md transform scale-95 opacity-50";
-                    
                     const correctBtnObj = buttons.find(b => b.idx === question.c);
-                    if(correctBtnObj) {
-                        correctBtnObj.btn.className = "w-full bg-green-500 text-white font-bold py-3 px-4 rounded-lg border-2 border-green-600 shadow-lg scale-105 animate-pulse";
-                    }
-
+                    if(correctBtnObj) correctBtnObj.btn.className = "w-full bg-green-500 text-white font-bold py-3 px-4 rounded-lg border-2 border-green-600 shadow-lg scale-105 animate-pulse";
                     setTimeout(() => {
                         modal.classList.add('hidden');
                         callback('wrong');
-                    }, 5500); // 4.5s Zeit zum Lernen
+                    }, 4500); // 4.5 Sekunden warten (geändert von 3500)
                 }
             };
         });
@@ -1033,11 +1179,9 @@ function startTieBreakerQuiz(qIndex, callback) {
                 callback('timeout');
             }
         }, 10000);
-        
     }, 1500);
 }
 
-// Zeigt das "GLEICHSTAND" Overlay für 2 Sekunden
 function showTieOverlay(callback) {
     const overlay = document.getElementById('tieOverlay');
     overlay.classList.remove('hidden');
@@ -1054,14 +1198,11 @@ function evaluateRoundAI(attr){
     const pv = getNumericValue(rawPv, attr);
     const av = getNumericValue(rawAv, attr);
     const logic = attributeInfo[attr].logic;
-    
     let pWins = (logic === 'Niedrig gewinnt') ? (pv < av) : (pv > av);
     
-    // STECHEN IM SINGLEPLAYER
     if(pv === av) {
         showTieOverlay(() => {
-            // Starte Quiz NACH dem Overlay
-            const qIdx = getUniqueQuizQuestionIndex();
+            const qIdx = Math.floor(Math.random() * quizQuestions.length);
             startTieBreakerQuiz(qIdx, (result) => {
                 let roundWinner = false;
                 if(result === 'correct') roundWinner = true;
@@ -1070,26 +1211,21 @@ function evaluateRoundAI(attr){
         });
         return;
     }
-    
     finishRoundAI(attr, rawPv, rawAv, pWins);
 }
 
 function finishRoundAI(attr, rawPv, rawAv, pWins) {
     const resText = pWins===true ? 'Du gewinnst!' : 'Computer gewinnt!';
     const resColor = pWins===true ? 'text-green-600' : 'text-red-600';
-    
     document.getElementById('resultText').innerText = resText;
     document.getElementById('resultText').className = `text-2xl font-black uppercase tracking-wide mb-2 ${resColor}`;
     document.getElementById('resultDetails').innerText = `${attributeInfo[attr].name}: ${rawPv} vs ${rawAv}`;
-    
     if(pWins===true) { playSound(sounds.win); showHappyWorm(); lastRoundWinningWoodName = aiGame.currentPlayerCard.name; } 
     else { lastRoundWinningWoodName = aiGame.currentAiCard.name; }
-    
     openBottomSheet(resText);
     const pC=aiGame.playerCards.shift(); const aC=aiGame.aiCards.shift();
     if(pWins===true){ aiGame.playerCards.push(pC, aC); aiGame.turn='player'; }
     else { aiGame.aiCards.push(aC, pC); aiGame.turn='ai'; }
-
     if(aiGame.playerCards.length===0) window.endGame("Computer");
     if(aiGame.aiCards.length===0) window.endGame(aiGame.playerName);
 }
@@ -1117,61 +1253,37 @@ function listenToGameChanges(){
     unsubscribeGame=onSnapshot(getPublicDataRef("games", gameId),(ds)=>{
         if(!ds.exists()) { window.resetGame(); return; }
         const gd=ds.data(); localGameState=gd;
-
-        // SYNC ACTIVE ATTRIBUTES FROM HOST
-        if(gd.activeAttributes) {
-            activeAttributeKeys = gd.activeAttributes;
-        }
+        if(gd.activeAttributes) { activeAttributeKeys = gd.activeAttributes; }
         
-        // CHECK FÜR MULTIPLAYER QUIZ
-        // Wenn ein Quiz getriggert wurde und wir es noch nicht gemacht haben
         if(gd.quizTrigger && gd.quizTrigger.active && !document.getElementById('quizModal').dataset.active) {
-             document.getElementById('quizModal').dataset.active = "true"; // Mark as open
-             
-             // ZEIGE ERST GLEICHSTAND OVERLAY, DANN QUIZ
+             document.getElementById('quizModal').dataset.active = "true";
              showTieOverlay(() => {
-                 // Starte Quiz für BEIDE Spieler
                  startTieBreakerQuiz(gd.quizTrigger.qIndex, async (result) => {
-                     document.getElementById('quizModal').dataset.active = ""; // Reset
-                     
+                     document.getElementById('quizModal').dataset.active = "";
                      const opp = localGameState.playerIds.find(id=>id!==localPlayerId);
-                     let winner = 'tie'; // Default to tie (timeout)
-
-                     if (result === 'correct') {
-                         winner = localPlayerId;
-                     } else if (result === 'wrong') {
-                         winner = opp;
-                     } 
-                     // if result === 'timeout', winner remains 'tie'
-
-                     // Hole aktuelle Werte für Resultat
+                     let winner = 'tie';
+                     if (result === 'correct') { winner = localPlayerId; } else if (result === 'wrong') { winner = opp; } 
                      const rawPv = localGameState.currentCards[localPlayerId][gd.quizTrigger.attr];
                      const rawOv = localGameState.currentCards[opp][gd.quizTrigger.attr];
-                     
-                     // Schreibe Resultat in DB (der Schnellste gewinnt den Write)
                      await updateDoc(getPublicDataRef("games", gameId),{
-                        quizTrigger: null, // Quiz beenden
+                        quizTrigger: null,
                         lastResult: {winnerId:winner, attribute:gd.quizTrigger.attr, values:{[localPlayerId]:rawPv, [opp]:rawOv}}
                      });
                  });
              });
         }
         
-        // Wenn das Quiz vorbei ist (durch DB Update), Fenster schließen falls noch offen
         if((!gd.quizTrigger || !gd.quizTrigger.active) && document.getElementById('quizModal').classList.contains('hidden') === false) {
              document.getElementById('quizModal').classList.add('hidden');
              document.getElementById('quizModal').dataset.active = "";
-             sounds.quizTick.pause(); sounds.quizTick.currentTime = 0; // Sound sicherheitshalber stoppen
+             sounds.quizTick.pause(); sounds.quizTick.currentTime = 0;
         }
 
         if(gd.status==='playing'||gd.status==='finished'){
             document.getElementById('multiplayerLobbyModal').classList.add('hidden');
             document.getElementById('gameContainer').classList.remove('hidden');
-            // Show rule button in Multiplayer mode
             document.getElementById('ruleButton').classList.remove('hidden');
-            
-            if(!gd.quizTrigger) scrollToTop(); // Nur scrollen wenn kein Quiz läuft
-            
+            if(!gd.quizTrigger) scrollToTop();
             const oppId=gd.playerIds.find(id=>id!==localPlayerId);
             document.getElementById('playerNameDisplay').innerText = gd.players[localPlayerId]?.name || 'DU';
             document.getElementById('opponentNameDisplay').innerText = (oppId ? gd.players[oppId]?.name : 'GEGNER').toUpperCase();
@@ -1180,43 +1292,29 @@ function listenToGameChanges(){
             document.getElementById('playerCards').innerText = pCount;
             document.getElementById('aiCards').innerText = oCount;
             updateStatusBar(pCount, oCount);
-            
             const highlightAttr = gd.lastResult ? gd.lastResult.attribute : null;
-
             const pc = document.getElementById('playerCard'); const ac = document.getElementById('aiCard');
             pc.innerHTML=''; ac.innerHTML='';
             const isPlayerTurn = gd.turn === localPlayerId;
             if(gd.currentCards[localPlayerId]) pc.appendChild(createCard(gd.currentCards[localPlayerId], true, true, isPlayerTurn, highlightAttr));
-            
             if(oppId && gd.currentCards[oppId]){
                 const c = createCard(gd.currentCards[oppId], false, false, !isPlayerTurn, highlightAttr);
                 ac.appendChild(c);
-                if(gd.lastResult){
-                    setTimeout(()=> { c.classList.remove('card-flipped'); playSound(sounds.flip); }, 100);
-                }
-            } else {
-                ac.innerHTML = `<div class="w-full h-full bg-gray-200 rounded-2xl flex items-center justify-center text-xs text-gray-500">Warte auf Gegner-Karte...</div>`;
-            }
+                if(gd.lastResult){ setTimeout(()=> { c.classList.remove('card-flipped'); playSound(sounds.flip); }, 100); }
+            } else { ac.innerHTML = `<div class="w-full h-full bg-gray-200 rounded-2xl flex items-center justify-center text-xs text-gray-500">Warte auf Gegner-Karte...</div>`; }
             
             if(gd.lastResult){
                  const wId = gd.lastResult.winnerId;
                  const iWin = wId===localPlayerId;
-                 
-                 if(gd.currentCards[wId]) {
-                     lastRoundWinningWoodName = gd.currentCards[wId].name;
-                 }
-
+                 if(gd.currentCards[wId]) { lastRoundWinningWoodName = gd.currentCards[wId].name; }
                  if(!roundSoundPlayed && iWin) playSound(sounds.win);
                  roundSoundPlayed=true;
-                 
                  const resText = iWin ? 'Du gewinnst!' : (wId==='tie'?'Unentschieden':'Gegner gewinnt!');
                  document.getElementById('resultText').className = iWin ? 'text-2xl font-black uppercase text-green-600' : 'text-2xl font-black uppercase text-red-600';
                  document.getElementById('resultDetails').innerText = `${attributeInfo[gd.lastResult.attribute].name}: ${gd.lastResult.values[localPlayerId]} vs ${gd.lastResult.values[oppId]}`;
                  if(iWin) showHappyWorm();
                  if(document.getElementById('bottomSheet').classList.contains('hidden')) openBottomSheet(resText);
-            } else {
-                 roundSoundPlayed=false; closeBottomSheet();
-            }
+            } else { roundSoundPlayed=false; closeBottomSheet(); }
             document.getElementById('turnIndicator').innerText = (gd.turn===localPlayerId) ? "Du bist am Zug!" : "Gegner wählt...";
             if(gd.status==='finished'){
                 let winnerName = "";
@@ -1245,31 +1343,20 @@ window.selectAttribute = async (attr) => {
         if(!localGameState || localGameState.turn!==localPlayerId) return;
         scrollToTop();
         const opp = localGameState.playerIds.find(id=>id!==localPlayerId);
-        
         const rawPv = localGameState.currentCards[localPlayerId][attr];
         const rawOv = localGameState.currentCards[opp][attr];
         const pv = getNumericValue(rawPv, attr);
         const ov = getNumericValue(rawOv, attr);
-        
         const logic = attributeInfo[attr].logic;
         let pWins = (logic === 'Niedrig gewinnt') ? (pv < ov) : (pv > ov);
         
-        // STECHEN IM MULTIPLAYER
         if(pv === ov) {
-            // Starte Quiz für BEIDE Spieler durch Datenbank-Eintrag
-            // SOFORTIGES Update ohne Timeout für besseres Feeling
-            const qIdx = getUniqueQuizQuestionIndex();
+            const qIdx = Math.floor(Math.random() * quizQuestions.length);
             await updateDoc(getPublicDataRef("games", gameId),{
-                quizTrigger: {
-                    active: true,
-                    attr: attr,
-                    qIndex: qIdx,
-                    timestamp: Date.now() // Erzwingt Update
-                }
+                quizTrigger: { active: true, attr: attr, qIndex: qIdx, timestamp: Date.now() }
             });
             return; 
         }
-        
         const winner = pWins ? localPlayerId : opp;
         await updateDoc(getPublicDataRef("games", gameId),{
             lastResult: {winnerId:winner, attribute:attr, values:{[localPlayerId]:rawPv, [opp]:rawOv}}
@@ -1307,11 +1394,10 @@ window.createGame = async (playerName) => {
     document.getElementById('qrcode').innerHTML = "";
     new QRCode(document.getElementById('qrcode'), {text: joinUrl, width: 128, height: 128});
     
-    // --- CHANGE: SAVE activeAttributes to Firestore ---
     await setDoc(getPublicDataRef("games", gameId),{
         gameId, status:'waiting', playerIds:[localPlayerId],
         players:{[localPlayerId]:{name:playerName,cards:[],status:'online'}},
-        activeAttributes: activeAttributeKeys, // SAVE CONFIG HERE
+        activeAttributes: activeAttributeKeys,
         createdAt:serverTimestamp()
     });
     listenToGameChanges();
@@ -1328,7 +1414,6 @@ window.joinGame = async (id, playerName) => {
         document.getElementById('multiplayerLobbyModal').classList.remove('hidden');
         const sh=shuffleArray([...woodCards]);
         const p1=snap.data().playerIds[0];
-        
         await updateDoc(ref,{
             status:'playing', playerIds:[p1,localPlayerId],
             [`players.${localPlayerId}`]:{name:playerName,cards:sh.slice(15,30),status:'online'},
@@ -1358,11 +1443,9 @@ window.nextRound = async () => {
         let c1=gs.players[p1].cards.shift();
         let c2=gs.players[p2].cards.shift();
         const w = gs.lastResult.winnerId;
-        
         if(w===p1){ if(c1) gs.players[p1].cards.push(c1); if(c2) gs.players[p1].cards.push(c2); }
         else if(w===p2){ if(c1) gs.players[p2].cards.push(c1); if(c2) gs.players[p2].cards.push(c2); }
         else { if(c1) gs.players[p1].cards.push(c1); if(c2) gs.players[p2].cards.push(c2); }
-        
         if(gs.players[p1].cards.length===0 || gs.players[p2].cards.length===0){
             await updateDoc(getPublicDataRef("games", gameId), {status:'finished', players:gs.players});
             return;
@@ -1375,9 +1458,7 @@ window.nextRound = async () => {
     }
 };
 
-window.showFinalWinScreen = () => {
-    document.getElementById('reflectionModal').classList.add('hidden');
-};
+window.showFinalWinScreen = () => { document.getElementById('reflectionModal').classList.add('hidden'); };
 
 const calculateRank = (count) => {
     if (count >= 100) return { title: "Leim-Legende", stars: 6 };
@@ -1395,110 +1476,53 @@ async function updateMainMenuStats(user) {
         const snap = await getDoc(statsRef);
         const count = snap.exists() ? (snap.data().gamesPlayed || 0) : 0;
         const rank = calculateRank(count);
-        
         const container = document.getElementById('mainMenuStats');
         if(container) {
-            container.innerHTML = `
-                <div class="flex flex-col items-center gap-1">
-                    <div class="text-xs text-white/80 font-bold uppercase tracking-wider">Dein Rang</div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-xl font-bold text-white drop-shadow-md">${rank.title}</span>
-                        <div class="flex text-amber-400 text-sm drop-shadow-sm">${Array(rank.stars).fill('★').join('')}</div>
-                    </div>
-                    <div class="flex items-center gap-2 mt-1">
-                        <span class="text-lg filter drop-shadow">🔥</span>
-                        <span class="font-bold text-white text-lg drop-shadow-md">${count} Spiele</span>
-                    </div>
-                </div>
-            `;
+            container.innerHTML = `<div class="flex flex-col items-center gap-1"><div class="text-xs text-white/80 font-bold uppercase tracking-wider">Dein Rang</div><div class="flex items-center gap-2"><span class="text-xl font-bold text-white drop-shadow-md">${rank.title}</span><div class="flex text-amber-400 text-sm drop-shadow-sm">${Array(rank.stars).fill('★').join('')}</div></div><div class="flex items-center gap-2 mt-1"><span class="text-lg filter drop-shadow">🔥</span><span class="font-bold text-white text-lg drop-shadow-md">${count} Spiele</span></div></div>`;
             container.classList.remove('hidden');
         }
-    } catch (e) {
-        console.error("Stats load error", e);
-    }
+    } catch (e) {}
 }
-
-onAuthStateChanged(auth, (user) => {
-    if (user) updateMainMenuStats(user);
-});
+onAuthStateChanged(auth, (user) => { if (user) updateMainMenuStats(user); });
 
 async function updateLeaderboard(name) {
     if (!auth.currentUser) return;
     const ref = getPublicDataRef("leaderboard", auth.currentUser.uid);
     try {
-        await setDoc(ref, {
-            name: name,
-            wins: increment(1),
-            last_win: serverTimestamp()
-        }, { merge: true });
-    } catch (e) {
-        console.error("Leaderboard update failed", e);
-    }
+        await setDoc(ref, { name: name, wins: increment(1), last_win: serverTimestamp() }, { merge: true });
+    } catch (e) {}
 }
 
 window.endGame = async (winnerName) => {
     document.getElementById('gameContainer').classList.add('hidden');
     document.getElementById('bottomSheet').classList.add('hidden');
     document.getElementById('bottomSheetBackdrop').classList.add('hidden');
-
     const isWin = (winnerName === (gameMode === 'ai' ? aiGame.playerName : localGameState.players[localPlayerId].name));
-    
-    // SET WURM IMAGE (Game Over)
     const gameOverImg = document.getElementById('gameOverWorm');
-    if(gameOverImg) {
-        if(isWin) {
-            gameOverImg.src = "https://github.com/aufdemholzweg/holzquartett/blob/main/images/klotzi_win.png?raw=true";
-        } else {
-            gameOverImg.src = "https://github.com/aufdemholzweg/holzquartett/blob/main/images/klotzi_lose.png?raw=true";
-        }
-    }
-    
-    let newGamesCount = 0;
-    let rankData = null;
-    
+    if(gameOverImg) { gameOverImg.src = isWin ? "https://github.com/aufdemholzweg/holzquartett/blob/main/images/klotzi_win.png?raw=true" : "https://github.com/aufdemholzweg/holzquartett/blob/main/images/klotzi_lose.png?raw=true"; }
+    let newGamesCount = 0; let rankData = null;
     if (auth.currentUser) {
         const statsRef = doc(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'gamification', 'stats');
         try {
-            await setDoc(statsRef, {
-                gamesPlayed: increment(1),
-                lastPlayed: serverTimestamp()
-            }, { merge: true });
-            
+            await setDoc(statsRef, { gamesPlayed: increment(1), lastPlayed: serverTimestamp() }, { merge: true });
             const snap = await getDoc(statsRef);
             newGamesCount = snap.data().gamesPlayed || 0;
             rankData = calculateRank(newGamesCount);
-        } catch (e) {
-            console.error("Stats update failed", e);
-        }
-
-        if (isWin) {
-            const playerName = gameMode === 'ai' ? aiGame.playerName : localGameState.players[localPlayerId].name;
-            await updateLeaderboard(playerName);
-        }
+        } catch (e) {}
+        if (isWin) { await updateLeaderboard(gameMode === 'ai' ? aiGame.playerName : localGameState.players[localPlayerId].name); }
     }
-
     const title = document.getElementById('gameOverTitle');
     const text = document.getElementById('gameOverText');
-    
     if (isWin) {
         title.innerText = "GEWONNEN!";
         title.className = "text-3xl font-black mb-2 text-green-600";
-        text.innerHTML = `Herzlichen Glückwunsch! Du hast gewonnen.<br><br>
-                          <div class="flex items-center justify-center gap-2 text-amber-600 font-bold bg-amber-50 p-2 rounded-lg">
-                            <span class="text-2xl">🔥</span> ${newGamesCount} Flammen gesammelt
-                          </div>
-                          <div class="mt-2 text-sm text-gray-500">${rankData ? 'Rang: ' + rankData.title : ''}</div>`;
+        text.innerHTML = `Herzlichen Glückwunsch! Du hast gewonnen.<br><br><div class="flex items-center justify-center gap-2 text-amber-600 font-bold bg-amber-50 p-2 rounded-lg"><span class="text-2xl">🔥</span> ${newGamesCount} Flammen gesammelt</div><div class="mt-2 text-sm text-gray-500">${rankData ? 'Rang: ' + rankData.title : ''}</div>`;
         triggerConfetti();
     } else {
         title.innerText = "VERLOREN";
         title.className = "text-3xl font-black mb-2 text-gray-600";
-        text.innerHTML = `Schade, ${winnerName} hat gewonnen.<br>Dranbleiben lohnt sich!<br><br>
-                          <div class="flex items-center justify-center gap-2 text-amber-600 font-bold bg-amber-50 p-2 rounded-lg">
-                            <span class="text-2xl">🔥</span> ${newGamesCount} Flammen gesammelt
-                          </div>
-                          <div class="mt-2 text-sm text-gray-500">${rankData ? 'Rang: ' + rankData.title : ''}</div>`;
+        text.innerHTML = `Schade, ${winnerName} hat gewonnen.<br>Dranbleiben lohnt sich!<br><br><div class="flex items-center justify-center gap-2 text-amber-600 font-bold bg-amber-50 p-2 rounded-lg"><span class="text-2xl">🔥</span> ${newGamesCount} Flammen gesammelt</div><div class="mt-2 text-sm text-gray-500">${rankData ? 'Rang: ' + rankData.title : ''}</div>`;
     }
-    
     document.getElementById('gameOverModal').classList.remove('hidden');
 };
 
