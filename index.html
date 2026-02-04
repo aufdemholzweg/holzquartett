@@ -553,15 +553,7 @@ let aiGame={playerName:'',playerCards:[],aiCards:[],currentPlayerCard:null,curre
 
 // 5. ATTRIBUTE & EIGENSCHAFTEN (Updated)
 const attributeInfo={
- dk:{
-     icon:'🛡️',
-     name:'Dauerhaftigkeit',
-     unit:'(DK)', 
-     logic: 'Niedrig gewinnt', 
-     default: true,
-     description: 'Die Dauerhaftigkeit nach DIN EN 350 gibt an, wie resistent das Kernholz gegen biologischen Befall ist: DK 1 bedeutet eine sehr lange Wiederstandsfähigkeit gegenüber Pilze, Insekten und andere Schädlinge, DK 5 dagegen eine sehr geringe Dauerhaftigkeit.'
- },
- druckfestigkeit:{
+druckfestigkeit:{
      icon:'💎',
      name:'Druckfestigkeit',
      unit:'(N/mm²)', 
@@ -569,6 +561,30 @@ const attributeInfo={
      default: true,
      description: `Die Druckfestigkeit gibt die maximale Spannung in (N/mm²) an, die das Holz aufnehmen kann, wenn es in Faserrichtung gestaucht wird.
 Der Wert wird an kleinen, fehlerfreien Holzklötzen im Normalklima (20°C, 65% rel. Luftfeuchte) bestimmt. Dabei wird die maximale Kraft, bei der das Holz versagt, durch den ursprünglichen Querschnitt der Probe geteilt.`
+ },
+rohdichte:{
+     icon:'⚖️',
+     name:'Rohdichte',
+     unit:'(kg/m³)', 
+     logic: 'Hoch gewinnt', 
+     default: true,
+     description: 'Die Normal-Rohdichte (Roh) ist der Quotient aus Masse und Volumen (kg/m³) bei gleicher Holzfeuchte. Als Referenz gilt hierbei das Normalklima nach DIN 50014 (20 °C / 65 % rel. Luftfeuchte), was einer Ausgleichsfeuchte des Holzes von rund 12 % entspricht.'
+ },
+ emodul:{
+     icon:'📐',
+     name:'E-Modul',
+     unit:'(N/mm²)', 
+     logic: 'Hoch gewinnt', 
+     default: true,
+     description: 'Das E-Modul ist eine Materialkonstante und beschreibt die Steifigkeit des Holzes. Der Wert gibt an, welche Kraft (N) erforderlich ist, um einen Stab mit einem Querschnitt von 1x1 mm auf seine doppelte Länge zu verformen. Sie wird in N/mm² angegeben. Ein hoher E-Modul steht für ein steifes Material, das sich nur schwer verformen lässt (steile Steigung im Spannungs-Dehnungs-Diagramm).'
+ },
+dk:{
+     icon:'🛡️',
+     name:'Dauerhaftigkeit',
+     unit:'(DK)', 
+     logic: 'Niedrig gewinnt', 
+     default: true,
+     description: 'Die Dauerhaftigkeit nach DIN EN 350 gibt an, wie resistent das Kernholz gegen biologischen Befall ist: DK 1 bedeutet eine sehr lange Wiederstandsfähigkeit gegenüber Pilze, Insekten und andere Schädlinge, DK 5 dagegen eine sehr geringe Dauerhaftigkeit.'
  },
  quellen:{
      icon:'↔️',
@@ -585,14 +601,6 @@ Der Wert wird an kleinen, fehlerfreien Holzklötzen im Normalklima (20°C, 65% r
      logic: 'Hoch gewinnt', 
      default: true,
      description: 'Die Normal-Rohdichte (Roh) ist der Quotient aus Masse und Volumen (kg/m³) bei gleicher Holzfeuchte. Als Referenz gilt hierbei das Normalklima nach DIN 50014 (20 °C / 65 % rel. Luftfeuchte), was einer Ausgleichsfeuchte des Holzes von rund 12 % entspricht.'
- },
- emodul:{
-     icon:'📐',
-     name:'E-Modul',
-     unit:'(N/mm²)', 
-     logic: 'Hoch gewinnt', 
-     default: true,
-     description: 'Das E-Modul ist eine Materialkonstante und beschreibt die Steifigkeit des Holzes. Der Wert gibt an, welche Kraft (N) erforderlich ist, um einen Stab mit einem Querschnitt von 1x1 mm auf seine doppelte Länge zu verformen. Sie wird in N/mm² angegeben. Ein hoher E-Modul steht für ein steifes Material, das sich nur schwer verformen lässt (steile Steigung im Spannungs-Dehnungs-Diagramm).'
  },
  preis:{
      icon:'💰',
