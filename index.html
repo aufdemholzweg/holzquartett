@@ -88,8 +88,17 @@
 
 <header id="mainHeader" class="fixed top-0 left-0 w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-md z-[120]">
     <div class="max-w-[600px] mx-auto px-4 py-3 relative flex justify-between items-center">
-        <a id="navButton" href="#" class="relative z-[121] w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center text-white shadow-sm hover:bg-white/30 transition-all border border-white/30" aria-label="Navigation">
-             </a>
+        <a id="navButton" href="https://aufdemholzweg.github.io/Splashscreen-Holztechnik/" class="relative z-[121] w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center text-white shadow-md border-2 border-white/20 hover:scale-105 transition-transform" aria-label="Zurück zum Hauptmenü">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 22c0-8 3-14 8-20" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.9" />
+                <path d="M2 16c2-4 4-8 5-14" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.6" />
+                <path d="M8 22c1-6 2-10 6-12 3-1.5 6 0 8 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.8" />
+                <path d="M13 22c1-4 3-8 7-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.7" />
+                <path d="M18 22c1-3 2-6 4-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.5" />
+                <path d="M16 2c2 1 4 4 6 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.6" />
+            </svg>
+        </a>
+
         <h1 class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-lg sm:text-2xl font-black tracking-wider uppercase drop-shadow-sm whitespace-nowrap pointer-events-none">🌲 HOLZEN! 🌲</h1>
         
         <button id="ruleButton" onclick="window.showGameInfo()" class="text-white hover:text-amber-100 p-2 rounded-full transition-colors active:scale-90 relative z-[121]" aria-label="Spielregeln">
@@ -237,7 +246,7 @@
             </div>
             <div>
                 <h4 class="font-bold text-gray-900 mb-1">Kontext</h4>
-                <p>Dieses interaktive Lernspiel entstand im Rahmen meiner Masterarbeit des Studiengang Lehramt an Berufsbildenden Schulen, Fachrichtung Holztechnik an der <strong>Leibniz Universität Hannover</strong>. Es dient ausschließlich nicht-kommerziellen Bildungs- und Forschungszwecken.</p>
+                <p>Dieses interaktive Lernspiel entstand im Rahmen meiner Masterarbeit des Studiengang Lehramt an Berufsbildenden BBS, Fachrichtung Holztechnik an der <strong>Leibniz Universität Hannover</strong>. Es dient ausschließlich nicht-kommerziellen Bildungs- und Forschungszwecken.</p>
             </div>
             
             <div>
@@ -334,7 +343,7 @@
     
     <a href="https://forms.office.com/r/dPiXWjBiGQ" target="_blank" 
        class="absolute top-20 left-4 z-[120] bg-violet-600 hover:bg-violet-700 text-white text-xs font-bold py-2 px-3 rounded-full shadow-lg transition-transform active:scale-95 flex items-center justify-center gap-2 no-underline border-2 border-white/20 w-48">
-       <span>💬</span> Feedback zum Spiel
+        <span>💬</span> Feedback zum Spiel
     </a>
 
     <div class="relative w-full max-w-sm pt-20">
@@ -494,13 +503,16 @@ async function trackEvent(type) {
 }
 
 // -------------------------------------------------------------
-// NEUES LOGO: Holzmaserung (statt Fingerabdruck)
+// NAV ICONS UND FUNKTIONALITÄT
 // -------------------------------------------------------------
 const NAV_ICONS = {
-    fingerprint: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="3" width="18" height="18" rx="2" />
-                    <path d="M8 21s2-4 2-9-2-9-2-9" />
-                    <path d="M16 3s-2 4-2 9 2 9 2 9" />
+    fingerprint: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 22c0-8 3-14 8-20" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.9" />
+                    <path d="M2 16c2-4 4-8 5-14" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.6" />
+                    <path d="M8 22c1-6 2-10 6-12 3-1.5 6 0 8 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.8" />
+                    <path d="M13 22c1-4 3-8 7-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.7" />
+                    <path d="M18 22c1-3 2-6 4-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.5" />
+                    <path d="M16 2c2 1 4 4 6 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.6" />
                   </svg>`,
     house: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>`
 };
@@ -523,28 +535,27 @@ window.setNavState = (state) => {
             e.preventDefault(); 
             if(confirm('Spiel abbrechen und zum Startbildschirm zurückkehren?')) { 
                 if(typeof unsubscribeGame === 'function') unsubscribeGame();
-                window.location.href = window.location.origin + window.location.pathname; 
+                window.location.href = "https://aufdemholzweg.github.io/Splashscreen-Holztechnik/"; 
             } 
         };
         btn.setAttribute('aria-label', 'Zurück zur Holzen! Startseite');
         
     } else if (state === 'name_input') {
-        // Navigation im Namens-Fenster -> Zurück zum Hauptmenü
         btn.innerHTML = NAV_ICONS.house;
         btn.href = "#";
         btn.onclick = (e) => {
             e.preventDefault();
             document.getElementById('nameModal').classList.add('hidden');
             document.getElementById('setupModal').classList.remove('hidden');
-            window.setNavState('menu'); // Reset to default menu behavior
+            window.setNavState('menu'); 
         };
         btn.setAttribute('aria-label', 'Zurück zum Hauptmenü');
         
     } else {
-        // Default: Startseite (Splashscreen) mit neuem Holz-Logo
+        // Default: Link zum Splashscreen
         btn.innerHTML = NAV_ICONS.fingerprint; 
         btn.href = 'https://aufdemholzweg.github.io/Splashscreen-Holztechnik/';
-        btn.onclick = null; // Standard link behavior
+        btn.onclick = null; 
         btn.setAttribute('aria-label', 'Zum Splashscreen');
     }
 };
@@ -601,14 +612,6 @@ dk:{
      default: true,
      description: 'Angegeben ist das maximale tangentiale Schwindmaß (%). Dieser Wert beschreibt die prozentuale Maßänderung in Richtung der Jahresringe vom fasergesättigten Zustand (ca. 30 % Holzfeuchte) bis zum darrtrockenen Zustand (0 %).'
  },
- rohdichte:{
-     icon:'⚖️',
-     name:'Rohdichte',
-     unit:'(kg/m³)', 
-     logic: 'Hoch gewinnt', 
-     default: true,
-     description: 'Die Normal-Rohdichte (Roh) ist der Quotient aus Masse und Volumen (kg/m³) bei gleicher Holzfeuchte. Als Referenz gilt hierbei das Normalklima nach DIN 50014 (20 °C / 65 % rel. Luftfeuchte), was einer Ausgleichsfeuchte des Holzes von rund 12 % entspricht.'
- },
  preis:{
      icon:'💰',
      name:'Preisstufe',
@@ -620,7 +623,7 @@ dk:{
   700€ bis 1199€ = 2
  1200€ bis 1999€ = 3
  2000€ bis 3999€ = 4
->4000€           = 5`
+>4000€            = 5`
  }
 };
 
@@ -706,7 +709,7 @@ const detailedWoodInfo = {
     "Fichte": `<div class="text-xs font-bold mb-2">🟩 Heimisch (Europa)</div><p class="mb-2">Das wichtigste Bauholz. Es ist hell, weich und leicht, aber fest genug für Tragwerke.</p><p class="mb-2"><strong>Verwendung:</strong> Dachstühle, Leimholzträger, Möbel.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Im Gegensatz zur Tanne hat die Fichte <strong>Harzkanäle</strong>. Die Äste sind meist klein, schwarz und fest verwachsen.</div>`,
     "Hemlock": `<div class="text-xs font-bold mb-2 text-yellow-600">🟨 Import (Nordamerika)</div><p class="mb-2">Ein Nadelholz aus Nordamerika. Es ist grau-weiß bis gelblich und harzfrei.</p><p class="mb-2"><strong>Verwendung:</strong> Saunabau (harzt nicht), Innenausbau.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Es sieht der Fichte ähnlich, ist aber eher <strong>grau im Farbton</strong> und besitzt absolut keine Harzkanäle.</div>`,
     "Hickory": `<div class="text-xs font-bold mb-2 text-yellow-600">🟨 Import (Nordamerika)</div><p class="mb-2">Ein sehr hartes Holz aus der Walnuss-Familie. Höchste Zähigkeit aller Handelshölzer.</p><p class="mb-2"><strong>Verwendung:</strong> Hochwertige Werkzeugstiele, Drumsticks.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Im dunklen Spätholz kannst du feine, helle Linien erkennen. Das sind netzartige <strong>Parenchymbänder</strong>.</div>`,
-    "Kastanie": `<div class="text-xs font-bold mb-2">🟩 Heimisch (Europa)</div><p class="mb-2">Das Holz ist weißlich bis gelblich und weich. Es hat eine sehr homogene Struktur.</p><p class="mb-2"><strong>Verwendung:</strong> Blindholz, Schnitzereien, Kisten.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Die Markstrahlen sind stockwerkartig angeordnet. Das erzeugt auf der Fläche eine sehr feine <strong>Rippelung</strong> (Ripple Marks).</div>`,
+    "Kastanie": `<div class="text-xs font-bold mb-2">🟩 Heimisch (Europa)</div><p class="mb-2">Das Holz ist weißlich bis gelblich und weich. Es hat eine sehr homogene Struktur.</p><p class="mb-2"><strong>Verwendung:</strong> Blindholz, Schnitzereien, Kisten.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Das Holz ist in alle Richtungen <strong>sehr homogen</strong> schneidbar (ideal zum Schnitzen).</div>`,
     "Kiefer": `<div class="text-xs font-bold mb-2">🟩 Heimisch (Europa)</div><p class="mb-2">Starker Kontrast zwischen dem rötlichen Kern und dem gelben Splint. Harzreich.</p><p class="mb-2"><strong>Verwendung:</strong> Fenster, Türen, Möbel im Landhausstil, Dielen.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Auf dem Querschnitt siehst du große, deutliche <strong>Harzkanäle</strong>. Riecht intensiv nach Harz.</div>`,
     "Kirschbaum": `<div class="text-xs font-bold mb-2">🟩 Heimisch (Europa)</div><p class="mb-2">Ein edles, feinporiges Hartholz. Der Kern ist rötlich und dunkelt feurig nach.</p><p class="mb-2"><strong>Verwendung:</strong> Stilmöbel, Innenausbau.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Die Markstrahlen erscheinen im Querschnitt als helle, <strong>scharf begrenzte Linien</strong>.</div>`,
     "Lärche": `<div class="text-xs font-bold mb-2">🟩 Heimisch (Europa)</div><p class="mb-2">Schwerstes heimisches Nadelholz. Kern intensiv rotbraun. Sehr witterungsbeständig.</p><p class="mb-2"><strong>Verwendung:</strong> Fassaden, Fenster, Brücken, Außenbereich.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Der Übergang vom hellen Frühholz zum dunklen <strong>Spätholz</strong> ist extrem scharf und kontrastreich.</div>`,
@@ -783,7 +786,7 @@ const quizQuestions = [
     {q:"Welche Holzfeuchte stellt sich ungefähr ein, wenn Holz lange Zeit im Normalklima (20°C/65%) gelagert wird?", o:["ca. 6 – 8 %","ca. 12 %","ca. 18 %","ca. 30 %"], c:1, e:"Dies ist ein Standardwert für die „Ausgleichsfeuchte“ im Außenklima unter Dach."},
     {q:"Bei welcher Holzart muss man bei der Oberflächenbeschichtung besonders mit Harzgallen rechnen?", o:["Eiche","Fichte (o. Kiefer)","Tanne","Buche"], c:1, e:"Fichte und Kiefer besitzen Harzkanäle, die bei Wärme auslaufen können."},
     {q:"Warum fühlt sich Holz bei Raumtemperatur wärmer an als ein Stück Stahl?", o:["Holz heizt","Schlechter Wärmeleiter","Höhere Dichte","Gibt Feuchte ab"], c:1, e:"Stahl leitet die Körperwärme sofort ab (kalt), Holz isoliert (warm)."},
-    {q:"Woran erkennt man „Braunfäule“ am zerstörten Holz?", o:["Das Holz wird weiß und faserig","Das Holz zerfällt würfelartig (Würfelbruch)","Das Holz wird blau","Das Holz wird elastisch"], c:1, e:"Der Pilz baut Cellulose ab, das braune Lignin bleibt spröde zurück und bricht in Würfeln."},
+    {q:"Woran kann man „Braunfäule“ am zerstörten Holz?", o:["Das Holz wird weiß und faserig","Das Holz zerfällt würfelartig (Würfelbruch)","Das Holz wird blau","Das Holz wird elastisch"], c:1, e:"Der Pilz baut Cellulose ab, das braune Lignin bleibt spröde zurück und bricht in Würfeln."},
     {q:"Woran erkennt man „Weißfäule“?", o:["Das Holz wird hell und faserig","Das Holz wird schwarz","Es entstehen Würfel","Es wird steinhart"], c:0, e:"Der Pilz baut das braune Lignin ab, die weiße Cellulose bleibt als weiche Faserstruktur zurück."},
     {q:"Was sind „Tüpfel“ in der Zellwand?", o:["Ventile für den Wasseraustausch","Krankheiten","Farbpigmente","Astlöcher"], c:0, e:"Sie verbinden benachbarte Zellen und ermöglichen den Flüssigkeitstransport."},
     {q:"Wo bildet ein Laubbaum Reaktionsholz (Zugholz), wenn er schief steht?", o:["Auf der Unterseite","Auf der Oberseite (Zugseite)","Im Kern","In der Wurzel"], c:1, e:"Laubbäume „ziehen“ sich aktiv wieder gerade (im Gegensatz zu Nadelbäumen, die drücken)."}
@@ -985,7 +988,7 @@ function startTieBreakerQuiz(qIndex, callback) {
                     setTimeout(() => {
                         modal.classList.add('hidden');
                         callback('correct');
-                    }, 4500); // 4.5 Sekunden warten (geändert von 3500)
+                    }, 4500); 
                 } else {
                     btn.className = "w-full bg-red-500 text-white font-bold py-3 px-4 rounded-lg border-2 border-red-600 shadow-md transform scale-95 opacity-50";
                     const correctBtnObj = buttons.find(b => b.idx === question.c);
@@ -993,7 +996,7 @@ function startTieBreakerQuiz(qIndex, callback) {
                     setTimeout(() => {
                         modal.classList.add('hidden');
                         callback('wrong');
-                    }, 4500); // 4.5 Sekunden warten (geändert von 3500)
+                    }, 4500); 
                 }
             };
         });
@@ -1133,7 +1136,7 @@ function listenToGameChanges(){
             if(gd.lastResult){
                  const wId = gd.lastResult.winnerId;
                  const iWin = wId===localPlayerId;
-                 if(gd.currentCards[wId]) { lastRoundWinningWoodName = gd.currentCards[wId].name; }
+                 if(gd.currentCards[wId]) { lastRoundWinning woodName = gd.currentCards[wId].name; }
                  if(!roundSoundPlayed && iWin) playSound(sounds.win);
                  roundSoundPlayed=true;
                  const resText = iWin ? 'Du gewinnst!' : (wId==='tie'?'Unentschieden':'Gegner gewinnt!');
@@ -1386,7 +1389,7 @@ window.copyShareLink = () => { const l=document.getElementById('shareLink'); l.s
 
 // MODIFIED SHOW GAME INFO TO HIDE HEADER
 window.showGameInfo = () => {
-    document.getElementById('mainHeader').classList.add('hidden'); // HIDE HEADER
+    document.getElementById('mainHeader').classList.add('hidden'); 
     const list = document.getElementById('infoCategoryList');
     if (!list) return;
     let html = '';
@@ -1408,7 +1411,7 @@ window.showGameInfo = () => {
 // MODIFIED CLOSE GAME INFO TO SHOW HEADER
 window.closeGameInfo = () => {
     document.getElementById('gameInfoModal').classList.add('hidden');
-    document.getElementById('mainHeader').classList.remove('hidden'); // SHOW HEADER
+    document.getElementById('mainHeader').classList.remove('hidden'); 
 };
 
 window.closeInfoModal = () => document.getElementById('infoModal').classList.add('hidden');
