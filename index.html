@@ -191,14 +191,14 @@
             <h3 class="font-bold text-lg">Spielregeln & Eigenschaften</h3>
             <button onclick="window.closeGameInfo()" class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
         </div>
-        <div class="p-5 overflow-y-auto hide-scrollbar space-y-5">
-            <h4 class="font-bold text-gray-700 text-md">Regeln:</h4>
-            <p class="text-sm text-gray-600 leading-relaxed">Die aktive Person wählt auf ihrer Karte die Eigenschaft, die den größtmöglichen Vorteil verspricht. Je nach Kategorie zählt der höhere oder der niedrigere Wert (siehe die Beschreibung der Eigenschaften).</p>
+        <div class="p-5 overflow-y-auto hide-scrollbar">
+            <h4 class="font-bold text-gray-700 text-md">Regeln</h4>
+            <p class="text-sm text-gray-600 leading-relaxed mt-1 mb-4">Die aktive Person wählt auf ihrer Karte die Eigenschaft, die den größtmöglichen Vorteil verspricht. Je nach Kategorie zählt der höhere oder der niedrigere Wert (siehe die Beschreibung der Eigenschaften).</p>
             
-            <h4 class="font-bold text-gray-700 text-md mt-4">Bei Gleichstand:</h4>
-            <p class="text-sm text-gray-600 leading-relaxed">Haben beide Karten den gleichen Wert, startet für BEIDE Spieler ein Quiz! Wer die Frage innerhalb von 10 Sekunden am schnellsten richtig beantwortet, gewinnt die Karte und ist als nächstes am Zug. Wird die Frage falsch beantwortet, gewinnt dein Gegenspieler. Wird die Frage von beiden Spielern innerhalb der Zeit NICHT beantwortet, bekommen beide keinen Punkt und jeder behält seine Karte.</p>
+            <p class="text-sm text-gray-600 leading-relaxed mb-6"><strong>Bei Gleichstand:</strong> Haben beide Karten den gleichen Wert, startet für BEIDE Spieler ein Quiz! Wer die Frage innerhalb von 10 Sekunden am schnellsten richtig beantwortet, gewinnt die Karte und ist als nächstes am Zug. Wird die Frage falsch beantwortet, gewinnt dein Gegenspieler. Wird die Frage von beiden Spielern innerhalb der Zeit NICHT beantwortet, bekommen beide keinen Punkt und jeder behält seine Karte.</p>
             
-            <div id="infoCategoryList" class="space-y-3 pt-3"></div>
+            <h4 class="font-bold text-gray-700 text-md mb-2">Beschreibung der Eigenschaften</h4>
+            <div id="infoCategoryList" class="space-y-3"></div>
         </div>
     </div>
 </div>
@@ -493,8 +493,15 @@ async function trackEvent(type) {
     }
 }
 
+// -------------------------------------------------------------
+// NEUES LOGO: Holzmaserung (statt Fingerabdruck)
+// -------------------------------------------------------------
 const NAV_ICONS = {
-    fingerprint: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20 C 10 18, 10 6, 14 4" opacity="0.5" /><path d="M9 21 C 14 19, 14 5, 18 3" opacity="0.7" /><path d="M13 22 C 18 20, 18 4, 22 2" opacity="0.9" /><path d="M2 15 C 6 13, 6 9, 10 7" opacity="0.3" /><path d="M15 22 C 19 20, 19 12, 22 10" opacity="0.5" /></svg>`,
+    fingerprint: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <path d="M8 21s2-4 2-9-2-9-2-9" />
+                    <path d="M16 3s-2 4-2 9 2 9 2 9" />
+                  </svg>`,
     house: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>`
 };
 
@@ -534,7 +541,7 @@ window.setNavState = (state) => {
         btn.setAttribute('aria-label', 'Zurück zum Hauptmenü');
         
     } else {
-        // Default: Startseite (Splashscreen)
+        // Default: Startseite (Splashscreen) mit neuem Holz-Logo
         btn.innerHTML = NAV_ICONS.fingerprint; 
         btn.href = 'https://aufdemholzweg.github.io/Splashscreen-Holztechnik/';
         btn.onclick = null; // Standard link behavior
@@ -553,7 +560,15 @@ let aiGame={playerName:'',playerCards:[],aiCards:[],currentPlayerCard:null,curre
 
 // 5. ATTRIBUTE & EIGENSCHAFTEN (Updated)
 const attributeInfo={
-druckfestigkeit:{
+ dk:{
+     icon:'🛡️',
+     name:'Dauerhaftigkeit',
+     unit:'(DK)', 
+     logic: 'Niedrig gewinnt', 
+     default: true,
+     description: 'Die Dauerhaftigkeit nach DIN EN 350 gibt an, wie resistent das Kernholz gegen biologischen Befall ist: DK 1 bedeutet eine sehr lange Wiederstandsfähigkeit gegenüber Pilze, Insekten und andere Schädlinge, DK 5 dagegen eine sehr geringe Dauerhaftigkeit.'
+ },
+ druckfestigkeit:{
      icon:'💎',
      name:'Druckfestigkeit',
      unit:'(N/mm²)', 
@@ -561,30 +576,6 @@ druckfestigkeit:{
      default: true,
      description: `Die Druckfestigkeit gibt die maximale Spannung in (N/mm²) an, die das Holz aufnehmen kann, wenn es in Faserrichtung gestaucht wird.
 Der Wert wird an kleinen, fehlerfreien Holzklötzen im Normalklima (20°C, 65% rel. Luftfeuchte) bestimmt. Dabei wird die maximale Kraft, bei der das Holz versagt, durch den ursprünglichen Querschnitt der Probe geteilt.`
- },
-rohdichte:{
-     icon:'⚖️',
-     name:'Rohdichte',
-     unit:'(kg/m³)', 
-     logic: 'Hoch gewinnt', 
-     default: true,
-     description: 'Die Normal-Rohdichte (Roh) ist der Quotient aus Masse und Volumen (kg/m³) bei gleicher Holzfeuchte. Als Referenz gilt hierbei das Normalklima nach DIN 50014 (20 °C / 65 % rel. Luftfeuchte), was einer Ausgleichsfeuchte des Holzes von rund 12 % entspricht.'
- },
- emodul:{
-     icon:'📐',
-     name:'E-Modul',
-     unit:'(N/mm²)', 
-     logic: 'Hoch gewinnt', 
-     default: true,
-     description: 'Das E-Modul ist eine Materialkonstante und beschreibt die Steifigkeit des Holzes. Der Wert gibt an, welche Kraft (N) erforderlich ist, um einen Stab mit einem Querschnitt von 1x1 mm auf seine doppelte Länge zu verformen. Sie wird in N/mm² angegeben. Ein hoher E-Modul steht für ein steifes Material, das sich nur schwer verformen lässt (steile Steigung im Spannungs-Dehnungs-Diagramm).'
- },
-dk:{
-     icon:'🛡️',
-     name:'Dauerhaftigkeit',
-     unit:'(DK)', 
-     logic: 'Niedrig gewinnt', 
-     default: true,
-     description: 'Die Dauerhaftigkeit nach DIN EN 350 gibt an, wie resistent das Kernholz gegen biologischen Befall ist: DK 1 bedeutet eine sehr lange Wiederstandsfähigkeit gegenüber Pilze, Insekten und andere Schädlinge, DK 5 dagegen eine sehr geringe Dauerhaftigkeit.'
  },
  quellen:{
      icon:'↔️',
@@ -601,6 +592,14 @@ dk:{
      logic: 'Hoch gewinnt', 
      default: true,
      description: 'Die Normal-Rohdichte (Roh) ist der Quotient aus Masse und Volumen (kg/m³) bei gleicher Holzfeuchte. Als Referenz gilt hierbei das Normalklima nach DIN 50014 (20 °C / 65 % rel. Luftfeuchte), was einer Ausgleichsfeuchte des Holzes von rund 12 % entspricht.'
+ },
+ emodul:{
+     icon:'📐',
+     name:'E-Modul',
+     unit:'(N/mm²)', 
+     logic: 'Hoch gewinnt', 
+     default: true,
+     description: 'Das E-Modul ist eine Materialkonstante und beschreibt die Steifigkeit des Holzes. Der Wert gibt an, welche Kraft (N) erforderlich ist, um einen Stab mit einem Querschnitt von 1x1 mm auf seine doppelte Länge zu verformen. Sie wird in N/mm² angegeben. Ein hoher E-Modul steht für ein steifes Material, das sich nur schwer verformen lässt (steile Steigung im Spannungs-Dehnungs-Diagramm).'
  },
  preis:{
      icon:'💰',
@@ -682,6 +681,9 @@ const woodCards=[
  {name:"Zeder", dk:"1-2", druckfestigkeit:40, quellen:11, rohdichte:550, emodul:7200, preis:5, imgTree:`${IMG_BASE}/zeder_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/zeder_2.jpeg${IMG_SUFFIX}`}
 ];
 
+// -------------------------------------------------------------
+// NEUE WISSENSKARTEN-DATEN
+// -------------------------------------------------------------
 const detailedWoodInfo = {
     "Ahorn": `<div class="text-xs font-bold mb-2 text-green-700">🟢 Heimisch (Europa)</div><p class="mb-2">Das helle Holz glänzt seidig und hat eine sehr gleichmäßige Struktur. Es ist hart und gleichzeitig elastisch.</p><p class="mb-2"><strong>Verwendung:</strong> Hochwertige Massivmöbel, Tischplatten, Böden von Streichinstrumenten.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Ahorn hat einen typischen <strong>Seidenglanz</strong> auf gehobelten Flächen. Poren kaum sichtbar.</div>`,
     "Birke": `<div class="text-xs font-bold mb-2 text-green-700">🟢 Heimisch (Europa, Nordasien)</div><p class="mb-2">Ein helles, gelblich-weißes bis rötliches Holz. Mäßig hart und zäh, aber nicht witterungsbeständig.</p><p class="mb-2"><strong>Verwendung:</strong> Sperrholz, Multiplex-Platten, Innenausbau, Drechselarbeiten.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Gefäße sind oft breiter als die Markstrahlen. Poren erscheinen als <strong>feine, helle Punkte</strong>.</div>`,
