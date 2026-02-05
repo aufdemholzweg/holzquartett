@@ -115,14 +115,14 @@
         <div class="flex flex-col w-[48%] max-w-[280px] gap-2 z-10">
             <div class="bg-white w-full rounded-2xl shadow-sm border border-orange-100 p-2 sm:p-3 text-center">
                 <div id="playerNameDisplay" class="text-base sm:text-lg font-bold text-amber-700 leading-tight truncate">Spieler</div>
-                <div class="text-[10px] sm:text-sm text-gray-500 mt-0.5">Karten: <span id="playerCards" class="font-bold text-xl sm:text-2xl text-gray-800">15</span></div>
+                <div class="text-[10px] sm:text-sm text-gray-500 mt-0.5">Karten: <span id="playerCards" class="font-bold text-xl sm:text-2xl text-gray-800">14</span></div>
             </div>
             <div class="w-full aspect-[20/46] perspective-1000 relative" id="playerCardContainer"><div id="playerCard" class="w-full h-full relative"></div></div>
         </div>
         <div class="flex flex-col w-[48%] max-w-[280px] gap-2 z-10">
             <div class="bg-white w-full rounded-2xl shadow-sm border border-orange-100 p-2 sm:p-3 text-center">
                 <div id="opponentNameDisplay" class="text-base sm:text-lg font-bold text-gray-600 leading-tight truncate">COMPUTER</div>
-                <div class="text-[10px] sm:text-sm text-gray-500 mt-0.5">Karten: <span id="aiCards" class="font-bold text-xl sm:text-2xl text-gray-800">15</span></div>
+                <div class="text-[10px] sm:text-sm text-gray-500 mt-0.5">Karten: <span id="aiCards" class="font-bold text-xl sm:text-2xl text-gray-800">14</span></div>
             </div>
             <div class="w-full aspect-[20/46] perspective-1000 relative" id="aiCardContainer"><div id="aiCard" class="w-full h-full relative"></div></div>
         </div>
@@ -677,9 +677,7 @@ const woodCards=[
  {name:"Palisander", dk:"1", druckfestigkeit:80, quellen:8.1, rohdichte:850, emodul:12800, preis:5, imgTree:`${IMG_BASE}/palisander_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/palisander_2.jpeg${IMG_SUFFIX}`},
  {name:"Pappel", dk:"5", druckfestigkeit:35, quellen:9.8, rohdichte:450, emodul:9000, preis:2, imgTree:`${IMG_BASE}/pappel_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/pappel_2.jpeg${IMG_SUFFIX}`},
  {name:"Platane", dk:"5", druckfestigkeit:45, quellen:8.5, rohdichte:620, emodul:12800, preis:3, imgTree:`${IMG_BASE}/platane_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/platane_2.jpeg${IMG_SUFFIX}`},
- {name:"Redwood", dk:"2", druckfestigkeit:40, quellen:5.2, rohdichte:400, emodul:9500, preis:2, imgTree:`${IMG_BASE}/redwood_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/redwood_2.jpeg${IMG_SUFFIX}`},
  {name:"Robinie", dk:"1-2", druckfestigkeit:70, quellen:7.5, rohdichte:770, emodul:13600, preis:3, imgTree:`${IMG_BASE}/robinie_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/robinie_2.jpeg${IMG_SUFFIX}`},
- {name:"Kastanie", dk:"5", druckfestigkeit:30, quellen:6.8, rohdichte:550, emodul:6500, preis:3, imgTree:`${IMG_BASE}/Kastanie_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/Kastanie_2.jpeg${IMG_SUFFIX}`},
  {name:"Rotbuche", dk:"5", druckfestigkeit:60, quellen:11.7, rohdichte:720, emodul:14000, preis:2, imgTree:`${IMG_BASE}/buche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/buche_2.jpeg${IMG_SUFFIX}`},
  {name:"Rüster", dk:"4", druckfestigkeit:45, quellen:8.3, rohdichte:670, emodul:11000, preis:3, imgTree:`${IMG_BASE}/ulme_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/ulme_2.jpeg${IMG_SUFFIX}`},
  {name:"Tanne", dk:"4", druckfestigkeit:45, quellen:7.5, rohdichte:450, emodul:11000, preis:2, imgTree:`${IMG_BASE}/tanne_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/tanne_2.jpeg${IMG_SUFFIX}`},
@@ -713,7 +711,6 @@ const detailedWoodInfo = {
     "Palisander": `<div class="text-xs font-bold mb-2 text-red-600">🟥 Import (Tropen) - CITES!</div><p class="mb-2">Sehr schweres, hartes Tropenholz. Violett bis schokobraun mit fast schwarzen Streifen.</p><p class="mb-2"><strong>Verwendung:</strong> Marimbaphone, Gitarren, Luxusobjekte.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Charakteristisch sind die <strong>schwarzen Farbstreifen</strong>. Riecht süßlich bei Bearbeitung.</div>`,
     "Pappel": `<div class="text-xs font-bold mb-2">🟩 Heimisch (Europa)</div><p class="mb-2">Sehr weiches und leichtes Laubholz. Grau-weiß bis bräunlich.</p><p class="mb-2"><strong>Verwendung:</strong> Paletten, Zündhölzer, Saunabänke.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Nach dem Sägen ist die Oberfläche sehr <strong>wollig und faserig</strong>.</div>`,
     "Platane": `<div class="text-xs font-bold mb-2">🟩 Heimisch (Südeuropa)</div><p class="mb-2">Zerstreutporiges Laubholz mit rötlichem Kern. Mäßig hart.</p><p class="mb-2"><strong>Verwendung:</strong> Innenausbau, Drechseln.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Die Markstrahlen sind ungewöhnlich <strong>breit und hoch</strong> (Perlholz-Optik im Schnitt).</div>`,
-    "Redwood": `<div class="text-xs font-bold mb-2 text-yellow-600">🟨 Import (USA)</div><p class="mb-2">Mammutbaum-Holz. Rotbraun, sehr leicht und weich, aber dauerhaft.</p><p class="mb-2"><strong>Verwendung:</strong> Fassaden, Schindeln.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Ähnelt Lärche, hat aber <strong>keine Harzkanäle</strong> und eine sehr grobe Struktur.</div>`,
     "Robinie": `<div class="text-xs font-bold mb-2">🟩 Heimisch (Eingebürgert)</div><p class="mb-2">Kern olivgrün bis goldbraun. Extrem hart, zäh und dauerhaft.</p><p class="mb-2"><strong>Verwendung:</strong> Spielplätze, Gartenmöbel, Pfähle.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Die großen Frühholzporen sind komplett mit <strong>Thyllen</strong> verstopft.</div>`,
     "Rotbuche": `<div class="text-xs font-bold mb-2">🟩 Heimisch (Europa)</div><p class="mb-2">Schlichtes, rötlich-weißes Holz. Hart und schwer, arbeitet aber stark.</p><p class="mb-2"><strong>Verwendung:</strong> Stühle (Bugholz), Werkbänke, Treppen.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Markstrahlen im Tangentialschnitt als dunkle Spindeln (<strong>Reiskerne</strong>) sichtbar.</div>`,
     "Rüster": `<div class="text-xs font-bold mb-2">🟩 Heimisch (Europa)</div><p class="mb-2">Holz der Ulme. Ringporig, schokobrauner Kern. Sehr zäh.</p><p class="mb-2"><strong>Verwendung:</strong> Möbel, Treppen, Sportgeräte.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Feine Poren im Spätholz bilden wellenförmige Bänder (<strong>Ulmenwellen</strong>).</div>`,
@@ -1162,7 +1159,7 @@ window.startGameAI = (name) => {
     document.getElementById('ruleButton').classList.remove('hidden');
     document.getElementById('playerNameDisplay').innerText=name;
     const sh=shuffleArray([...woodCards]);
-    aiGame.playerCards=sh.slice(0,15); aiGame.aiCards=sh.slice(15,30);
+    aiGame.playerCards=sh.slice(0,14); aiGame.aiCards=sh.slice(14,28);
     aiGame.currentPlayerCard=aiGame.playerCards[0]; aiGame.currentAiCard=aiGame.aiCards[0];
     document.getElementById('gameContainer').classList.remove('hidden');
     scrollToTop();
@@ -1206,9 +1203,9 @@ window.joinGame = async (id, playerName) => {
         const p1=snap.data().playerIds[0];
         await updateDoc(ref,{
             status:'playing', playerIds:[p1,localPlayerId],
-            [`players.${localPlayerId}`]:{name:playerName,cards:sh.slice(15,30),status:'online'},
-            [`players.${p1}.cards`]:sh.slice(0,15),
-            turn:p1, currentCards:{[p1]:sh.slice(0,15)[0],[localPlayerId]:sh.slice(15,30)[0]},
+            [`players.${localPlayerId}`]:{name:playerName,cards:sh.slice(14,28),status:'online'},
+            [`players.${p1}.cards`]:sh.slice(0,14),
+            turn:p1, currentCards:{[p1]:sh.slice(0,14)[0],[localPlayerId]:sh.slice(14,28)[0]},
             lastResult:null
         });
         scrollToTop();
