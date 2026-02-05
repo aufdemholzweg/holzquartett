@@ -29,16 +29,23 @@
         .card-front-bg { background-color: #fffbeb; background-image: linear-gradient(to bottom right, #fffbeb, #fef3c7); }
         .hover-lift:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
         
-        /* ANIMATIONEN */
+        /* Status-Ball Animation */
         .animate-pulse-glow { animation: pulse-glow 2s infinite; }
         @keyframes pulse-glow { 0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); transform: translate(-50%, -50%) scale(1); } 50% { box-shadow: 0 0 15px 5px rgba(34, 197, 94, 0.4); transform: translate(-50%, -50%) scale(1.1); } 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); transform: translate(-50%, -50%) scale(1); } }
         
+        /* Pop-In Animation für Fenster */
         .animate-pop-in { animation: pop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         @keyframes pop-in { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         
+        /* Bounce Animation für Gleichstand */
         .animate-bounce-slam { animation: bounce-slam 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        @keyframes bounce-slam { 0% { transform: scale(0); opacity: 0; } 60% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes bounce-slam { 
+            0% { transform: scale(0); opacity: 0; } 
+            60% { transform: scale(1.1); opacity: 1; } 
+            100% { transform: scale(1); opacity: 1; } 
+        }
 
+        /* KLOTZI JUBEL ANIMATION (Runde gewonnen) */
         @keyframes slide-up-bounce {
             0% { transform: translateY(100%) rotate(10deg); opacity: 0; }
             60% { transform: translateY(-20px) rotate(-5deg); opacity: 1; }
@@ -47,7 +54,7 @@
         }
         .animate-klotzi-popup { animation: slide-up-bounce 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
 
-        /* RUN FLAMMEN ANIMATION */
+        /* NEU: RUN FLAMMEN ANIMATION */
         @keyframes flame-in {
             0% { transform: scale(0) rotate(-20deg); opacity: 0; }
             50% { transform: scale(1.3) rotate(10deg); opacity: 1; }
@@ -71,10 +78,16 @@
         .attr-toggle-btn.selected { background-color: #fef3c7; border-color: #f59e0b; color: #92400e; }
         .attr-toggle-btn:not(.selected) { background-color: #f3f4f6; color: #9ca3af; border-color: transparent; }
 
-        @keyframes pulse-dot-anim { 0%, 100% { transform: translate(50%, -50%) scale(1); } 50% { transform: translate(50%, -50%) scale(1.4); } }
+        /* ANIMATIONEN FÜR DEN BALKEN & PUNKT */
+        @keyframes pulse-dot-anim { 
+            0%, 100% { transform: translate(50%, -50%) scale(1); } 
+            50% { transform: translate(50%, -50%) scale(1.4); } 
+        }
         .animate-pulse-dot { animation: pulse-dot-anim 1s infinite ease-in-out; }
+
         @keyframes chargeWidth { from { width: 0%; } to { width: 100%; } }
         .animate-charge { animation: chargeWidth 1.5s linear forwards; }
+        
         @keyframes shrinkWidth { from { width: 100%; } to { width: 0%; } }
         .animate-shrink { animation: shrinkWidth 10s linear forwards; }
     </style>
@@ -83,8 +96,9 @@
 
 <header id="mainHeader" class="fixed top-0 left-0 w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-md z-[120]">
     <div class="max-w-[600px] mx-auto px-4 py-3 relative flex justify-between items-center">
+        
         <a id="navButton" href="https://aufdemholzweg.github.io/Splashscreen-Holztechnik/" class="relative z-[130] w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center text-white shadow-md border-2 border-white/20 hover:scale-105 transition-transform" aria-label="Navigation">
-        </a>
+             </a>
         
         <h1 class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-lg sm:text-2xl font-black tracking-wider uppercase drop-shadow-sm whitespace-nowrap pointer-events-none">🌲 HOLZEN! 🌲</h1>
         
@@ -109,14 +123,14 @@
         <div class="flex flex-col w-[48%] max-w-[280px] gap-2 z-10">
             <div class="bg-white w-full rounded-2xl shadow-sm border border-orange-100 p-2 sm:p-3 text-center">
                 <div id="playerNameDisplay" class="text-base sm:text-lg font-bold text-amber-700 leading-tight truncate">Spieler</div>
-                <div class="text-[10px] sm:text-sm text-gray-500 mt-0.5">Karten: <span id="playerCards" class="font-bold text-xl sm:text-2xl text-gray-800">15</span></div>
+                <div class="text-[10px] sm:text-sm text-gray-500 mt-0.5">Karten: <span id="playerCards" class="font-bold text-xl sm:text-2xl text-gray-800">14</span></div>
             </div>
             <div class="w-full aspect-[20/46] perspective-1000 relative" id="playerCardContainer"><div id="playerCard" class="w-full h-full relative"></div></div>
         </div>
         <div class="flex flex-col w-[48%] max-w-[280px] gap-2 z-10">
             <div class="bg-white w-full rounded-2xl shadow-sm border border-orange-100 p-2 sm:p-3 text-center">
                 <div id="opponentNameDisplay" class="text-base sm:text-lg font-bold text-gray-600 leading-tight truncate">COMPUTER</div>
-                <div class="text-[10px] sm:text-sm text-gray-500 mt-0.5">Karten: <span id="aiCards" class="font-bold text-xl sm:text-2xl text-gray-800">15</span></div>
+                <div class="text-[10px] sm:text-sm text-gray-500 mt-0.5">Karten: <span id="aiCards" class="font-bold text-xl sm:text-2xl text-gray-800">14</span></div>
             </div>
             <div class="w-full aspect-[20/46] perspective-1000 relative" id="aiCardContainer"><div id="aiCard" class="w-full h-full relative"></div></div>
         </div>
@@ -152,11 +166,13 @@
 
 <div id="quizModal" class="fixed inset-0 dimmer flex items-center justify-center z-[80] p-4 hidden pt-20">
     <div class="bg-white rounded-2xl shadow-2xl relative w-full max-w-sm flex flex-col animate-pop-in border-4 border-amber-500 overflow-visible">
+        
         <div class="h-4 w-full bg-gray-200 relative overflow-hidden rounded-t-xl">
             <div id="quizTimerBar" class="h-full w-0 bg-amber-500 rounded-r-sm relative"> 
                 <div class="absolute right-0 top-1/2 w-4 h-4 bg-white border-2 border-amber-600 rounded-full shadow z-10 animate-pulse-dot transform translate-x-1/2 -translate-y-1/2"></div>
             </div>
         </div>
+        
         <div class="p-6 text-center relative z-10">
             <div id="quizStatusText" class="inline-block bg-amber-100 text-amber-800 text-xs font-bold px-2 py-1 rounded-full mb-3 relative z-30">
                 ⚠️ Gleichstand! Quiz lädt...
@@ -166,6 +182,7 @@
             </h3>
             <div id="quizOptions" class="grid grid-cols-1 gap-3 relative z-30">
                 </div>
+            
             <div id="quizExplanation" class="hidden mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-gray-700 leading-snug shadow-sm animate-pop-in">
             </div>
         </div>
@@ -191,12 +208,14 @@
             <h3 class="font-bold text-lg">Spielregeln & Eigenschaften</h3>
             <button onclick="window.closeGameInfo()" class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
         </div>
-        <div class="p-5 overflow-y-auto hide-scrollbar space-y-5">
-            <h4 class="font-bold text-gray-700 text-md">Regeln:</h4>
-            <p class="text-sm text-gray-600 leading-relaxed">Die aktive Person wählt auf ihrer Karte die Eigenschaft, die den größtmöglichen Vorteil verspricht. Je nach Kategorie zählt der höhere oder der niedrigere Wert (siehe die Beschreibung der Eigenschaften).</p>
-            <h4 class="font-bold text-gray-700 text-md mt-4">Bei Gleichstand:</h4>
-            <p class="text-sm text-gray-600 leading-relaxed">Haben beide Karten den gleichen Wert, startet für BEIDE Spieler ein Quiz! Wer die Frage innerhalb von 10 Sekunden am schnellsten richtig beantwortet, gewinnt die Karte. Wird die Frage falsch beantwortet, gewinnt dein Gegenspieler.</p>
-            <div id="infoCategoryList" class="space-y-3 pt-3"></div>
+        <div class="p-5 overflow-y-auto hide-scrollbar">
+            <h4 class="font-bold text-gray-700 text-md">Regeln</h4>
+            <p class="text-sm text-gray-600 leading-relaxed mt-1 mb-4">Die aktive Person wählt auf ihrer Karte die Eigenschaft, die den größtmöglichen Vorteil verspricht. Je nach Kategorie zählt der höhere oder der niedrigere Wert (siehe die Beschreibung der Eigenschaften).</p>
+            
+            <p class="text-sm text-gray-600 leading-relaxed mb-6"><strong>Bei Gleichstand:</strong> Haben beide Karten den gleichen Wert, startet für BEIDE Spieler ein Quiz! Wer die Frage innerhalb von 10 Sekunden am schnellsten richtig beantwortet, gewinnt die Karte und ist als nächstes am Zug. Wird die Frage falsch beantwortet, gewinnt dein Gegenspieler. Wird die Frage von beiden Spielern innerhalb der Zeit NICHT beantwortet, bekommen beide keinen Punkt und jeder behält seine Karte.</p>
+            
+            <h4 class="font-bold text-gray-700 text-md mb-2">Beschreibung der Eigenschaften</h4>
+            <div id="infoCategoryList" class="space-y-3"></div>
         </div>
     </div>
 </div>
@@ -225,29 +244,119 @@
             <button onclick="document.getElementById('impressumModal').classList.add('hidden')" class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
         </div>
         <div class="p-6 overflow-y-auto text-sm text-gray-700 space-y-4">
-            <div><h4 class="font-bold text-gray-900 mb-1">Angaben gemäß § 5 TMG</h4><p>Christopher Lehr<br>Waterloostraße 49<br>28201 Bremen</p></div>
-            <div><h4 class="font-bold text-gray-900 mb-1">Kontakt</h4><p>E-Mail: christopher_lehr@web.de</p></div>
-            <div><h4 class="font-bold text-gray-900 mb-1">Kontext</h4><p>Dieses interaktive Lernspiel entstand im Rahmen meiner Masterarbeit des Studiengang Lehramt an Berufsbildenden Schulen, Fachrichtung Holztechnik an der <strong>Leibniz Universität Hannover</strong>. Es dient ausschließlich nicht-kommerziellen Bildungs- und Forschungszwecken.</p></div>
+            <div>
+                <h4 class="font-bold text-gray-900 mb-1">Angaben gemäß § 5 TMG</h4>
+                <p>Christopher Lehr<br>Waterloostraße 49<br>28201 Bremen</p>
+            </div>
+            <div>
+                <h4 class="font-bold text-gray-900 mb-1">Kontakt</h4>
+                <p>E-Mail: christopher_lehr@web.de</p>
+            </div>
+            <div>
+                <h4 class="font-bold text-gray-900 mb-1">Kontext</h4>
+                <p>Dieses interaktive Lernspiel entstand im Rahmen meiner Masterarbeit des Studiengang Lehramt an Berufsbildenden Schulen, Fachrichtung Holztechnik an der <strong>Leibniz Universität Hannover</strong>. Es dient ausschließlich nicht-kommerziellen Bildungs- und Forschungszwecken.</p>
+            </div>
+            
             <div>
                 <h4 class="font-bold text-gray-900 mb-1">Fachliche Grundlagen & Quellen</h4>
+                <p class="text-xs text-gray-500 mb-1">Die verwendeten Holzdaten basieren auf folgenden Normen und Quellen:</p>
                 <ul class="list-disc pl-4 text-xs text-gray-600 space-y-1">
-                    <li><strong>DIN 68364:</strong> Kennwerte von Holzarten</li>
-                    <li><strong>DIN EN 338:</strong> Bauholz für tragende Zwecke</li>
+                    <li><strong>DIN 68364:</strong> Kennwerte von Holzarten (Rohdichte, Elastizitätsmodul, Festigkeiten)</li>
+                    <li><strong>DIN EN 338:</strong> Bauholz für tragende Zwecke – Festigkeitsklassen</li>
                     <li><strong>DIN EN 350:</strong> Dauerhaftigkeitsklassen von Holz</li>
-                    <li><strong>Preise:</strong> Mühlbauer Holz (Preisliste Mai 2024)</li>
+                    <li><strong>DIN 52184:</strong> Bestimmung der Quellung und Schwindung</li>
+                    <li><strong>DIN 52192:</strong> Druckversuch quer zur Faserrichtung</li>
+                    <li><strong>Vorlesung:</strong> Dr. Frank Peters (2021): Werkstoffkunde 1, Holzphysik</li>
+                    <li><strong>Preise:</strong> <a href="https://www.muehlbauerholz.com/upload/schnittholz-mai-2024.pdf" target="_blank" class="underline text-blue-600">Mühlbauer Holz (Preisliste Mai 2024)</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="font-bold text-gray-900 mb-1">Haftung für Inhalte & Daten</h4>
+                <p class="mb-2">Die Inhalte dieser Web-App wurden mit größter Sorgfalt und nach bestem Wissen und Gewissen erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte kann jedoch keine Gewähr übernommen werden.</p>
+                <p class="mb-2"><strong>Besonderer Hinweis zu fachlichen Daten:</strong> Die im Spiel verwendeten Daten (z. B. Rohdichte, E-Modul, Preise) dienen primär der Spielmechanik und der didaktischen Vereinfachung. Sie stellen Durchschnittswerte oder Richtwerte dar und ersetzen keine fachgerechte Planung nach DIN/EN-Normen.</p>
+            </div>
+            <div>
+                <h4 class="font-bold text-gray-900 mb-1">Haftung für Links</h4>
+                <p>Diese Webseite enthält Links zu externen Webseiten Dritter (z. B. GitHub), auf deren Inhalte wir keinen Einfluss haben. Deshalb können wir für diese fremden Inhalte auch keine Gewähr übernehmen. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber der Seiten verantwortlich.</p>
+            </div>
+            <div>
+                <h4 class="font-bold text-gray-900 mb-1">Urheberrecht</h4>
+                <p class="mb-2">Die durch den Betreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers.</p>
+            </div>
+            <div>
+                <h4 class="font-bold text-gray-900 mb-1">Bild- und Tonquellen</h4>
+                <ul class="list-disc pl-4 text-xs text-gray-600 space-y-1">
+                    <li><strong>Holzbilder:</strong> <a href="https://holzvomfach.de/" target="_blank" class="underline text-blue-600">holzvomfach.de</a> und <a href="https://www.schreiner-seiten.de/index.php" target="_blank" class="underline text-blue-600">schreiner-seiten.de</a></li>
+                    <li><strong>Sounds:</strong> <a href="https://pixabay.com/de/" target="_blank" class="underline text-blue-600">Pixabay.com</a></li>
+                    <li><strong>Emojis/Icons:</strong> Systemstandard (Unicode)</li>
+                </ul>
+            </div>
+            
+            <hr class="my-4 border-gray-300">
+            
+            <div>
+                <h4 class="font-bold text-gray-900 mb-1">Datenschutz & Technik</h4>
+                <p class="mb-2">Da dies ein reines Forschungsprojekt ist, werden so wenige Daten wie möglich gespeichert. Dennoch kommen externe Dienstleister zum Einsatz, um die technische Funktion zu gewährleisten:</p>
+                
+                <ul class="list-disc pl-4 text-xs text-gray-600 space-y-2">
+                    <li>
+                        <strong>Hosting (GitHub Pages):</strong><br>
+                        Diese Webseite wird auf Servern von GitHub Inc. (USA) gehostet. Beim Aufruf der Seite werden technisch bedingt Verbindungsdaten (z. B. IP-Adresse) an GitHub übertragen, um die Inhalte auszuliefern.
+                    </li>
+                    <li>
+                        <strong>Datenbank & Backend (Google Firebase):</strong><br>
+                        Für die Multiplayer-Funktion (Spielstände, Synchronisation) nutzen wir Google Firebase (Google Ireland Limited). Die Spieldaten werden temporär auf deren Servern gespeichert. Wir verwenden die "Anonyme Anmeldung", sodass keine Klarnamen oder E-Mail-Adressen von Nutzern gespeichert werden, sofern diese nicht freiwillig eingegeben werden.
+                    </li>
+                    <li>
+                        <strong>Cookies / LocalStorage:</strong><br>
+                        Das Spiel speichert lediglich technische Einstellungen (z. B. Sound an/aus) lokal auf Ihrem Gerät ("LocalStorage"). Es werden keine Tracking- oder Werbe-Cookies eingesetzt.
+                    </li>
                 </ul>
             </div>
         </div>
     </div>
 </div>
 
+<div id="attrConfigModal" class="fixed inset-0 z-[120] flex items-center justify-center p-4 dimmer hidden pt-20">
+    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-sm flex flex-col max-h-[85vh]">
+        <div class="bg-amber-600 p-4 flex justify-between items-center text-white shrink-0">
+            <h3 class="font-bold">Spieloptionen</h3>
+            <button onclick="window.closeAttrConfig()" class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
+        </div>
+        <div class="p-4 overflow-y-auto">
+            <div class="mb-5 space-y-3">
+                <div class="flex justify-between items-center bg-gray-50 p-3 rounded-lg border border-gray-100">
+                     <span class="font-bold text-gray-700 text-sm flex items-center gap-2">🔊 Ton an</span>
+                     <input type="checkbox" id="soundToggle" class="accent-green-500 w-5 h-5">
+                </div>
+                <div class="flex justify-between items-center bg-gray-50 p-3 rounded-lg border border-gray-100">
+                     <span class="font-bold text-gray-700 text-sm flex items-center gap-2">👀 Gegner-Karte sichtbar</span>
+                     <input type="checkbox" id="revealBackToggle" class="accent-green-500 w-5 h-5">
+                </div>
+            </div>
+            <hr class="border-gray-200 mb-4 border-t-2 border-dashed">
+            <h4 class="font-bold text-gray-800 mb-1 text-sm">Eigenschaften wählen</h4>
+            <p class="text-xs text-gray-500 mb-3">Wähle mindestens 3 und maximal 5 Kategorien.</p>
+            <div id="attrConfigList" class="space-y-2"></div>
+        </div>
+        <div class="p-4 bg-gray-50 border-t">
+             <button onclick="window.closeAttrConfig()" class="w-full bg-amber-500 text-white font-bold py-2 rounded-lg shadow">Fertig</button>
+        </div>
+    </div>
+</div>
+
 <div id="setupModal" class="fixed inset-0 z-[110] flex flex-col items-center justify-center p-4 dimmer overflow-y-auto h-screen">
-    <a href="https://forms.office.com/r/dPiXWjBiGQ" target="_blank" class="absolute top-20 left-4 z-[120] bg-violet-600 hover:bg-violet-700 text-white text-xs font-bold py-2 px-3 rounded-full shadow-lg transition-transform active:scale-95 flex items-center justify-center gap-2 no-underline border-2 border-white/20 w-48">
+    <div class="w-10 h-10 absolute left-4 top-4"></div>
+    
+    <a href="https://forms.office.com/r/dPiXWjBiGQ" target="_blank" 
+       class="absolute top-20 left-4 z-[120] bg-violet-600 hover:bg-violet-700 text-white text-xs font-bold py-2 px-3 rounded-full shadow-lg transition-transform active:scale-95 flex items-center justify-center gap-2 no-underline border-2 border-white/20 w-48">
         <span>💬</span> Feedback zum Spiel
     </a>
 
     <div class="relative w-full max-w-sm pt-20">
         <img src="https://github.com/aufdemholzweg/holzquartett/blob/main/images/klotzi_menu.png?raw=true" alt="Klotzi Menü" class="absolute -top-4 -right-2 w-48 z-20 pointer-events-none transform rotate-3 drop-shadow-xl" onerror="this.style.display='none'">
+        
         <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full relative mb-6 z-10">
             <div class="bg-amber-50 p-5 text-white text-center font-bold text-lg sm:text-xl tracking-wide shadow-md" style="background-color: #f59e0b;">HOLZEN!<br><span class="text-sm font-normal opacity-90">Spielmodus wählen</span></div>
             <div class="p-6 space-y-4">
@@ -267,7 +376,9 @@
 
 <div id="nameModal" class="hidden fixed inset-0 dimmer flex items-center justify-center z-50 p-4 pt-20">
     <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-xs w-full text-center relative overflow-visible">
+        
         <img src="https://github.com/aufdemholzweg/holzquartett/blob/main/images/klotzi_name.png?raw=true" alt="Klotzi Name" class="absolute -top-24 left-1/2 -translate-x-1/2 w-48 pointer-events-none drop-shadow-xl z-20" onerror="this.style.display='none'">
+        
         <div class="relative z-10 mt-16"> 
             <h2 class="text-xl font-bold text-gray-800 mb-6">Dein Name</h2>
             <input type="text" id="playerName" class="w-full p-3 border-2 border-gray-200 rounded-lg mb-6 text-center font-bold text-lg" placeholder="Name eingeben" maxlength="12">
@@ -291,12 +402,26 @@
 
 <div id="gameOverModal" class="hidden fixed inset-0 dimmer flex items-center justify-center z-50 p-4 pt-20">
     <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full text-center relative overflow-visible">
+        
+        <style>
+            .scene-stage { width: 100%; height: 220px; position: relative; background: linear-gradient(to bottom, #87CEEB 0%, #E0F7FA 70%, #8D6E63 70%, #5D4037 100%); border-radius: 16px; overflow: hidden; border: 4px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.15); margin-bottom: 20px; }
+            .klotzi-real { height: 100px; width: auto; position: absolute; bottom: 50px; left: 40px; z-index: 10; transform-origin: bottom center; animation: klotzi-logic 6s infinite ease-in-out; }
+            .seed { font-size: 20px; position: absolute; bottom: 120px; left: 160px; opacity: 0; animation: seed-fall 6s infinite; }
+            .big-tree { font-size: 120px; position: absolute; bottom: 35px; left: 110px; transform-origin: bottom center; transform: scale(0); filter: drop-shadow(5px 5px 5px rgba(0,0,0,0.2)); animation: tree-pop 6s infinite; }
+            .sun-ray { position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: repeating-conic-gradient(from 0deg, rgba(255,255,255,0.4) 0deg 10deg, transparent 10deg 20deg); animation: spin-sun 20s linear infinite; z-index: 0; }
+            @keyframes klotzi-logic { 0% { transform: translateX(-100px); } 10% { transform: translateX(0); } 15% { transform: scaleY(0.9); } 20% { transform: scaleY(1); } 40% { transform: translateX(0); } 45% { transform: translateY(-20px) rotate(-10deg); } 50% { transform: translateY(0) rotate(0deg); } 55% { transform: translateY(-20px) rotate(10deg); } 60% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(0); } }
+            @keyframes seed-fall { 0%, 10% { opacity: 0; transform: translateY(0); } 15% { opacity: 1; transform: translateY(0); } 25% { opacity: 1; transform: translateY(70px) scale(0.5); } 26%, 100% { opacity: 0; } }
+            @keyframes tree-pop { 0%, 25% { transform: scale(0); } 35% { transform: scale(1.2); } 40% { transform: scale(0.9); } 45% { transform: scale(1); } 100% { transform: scale(1); } }
+            @keyframes spin-sun { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        </style>
+        
         <div class="scene-stage" role="img" aria-label="Animation: Klotzi pflanzt einen Baum">
             <div class="sun-ray"></div>
             <img src="https://github.com/aufdemholzweg/holzquartett/blob/main/images/klotzi_win.png?raw=true" class="klotzi-real" alt="Klotzi">
             <div class="seed">🌰</div>
             <div class="big-tree">🌳</div>
         </div>
+        
         <div class="relative z-10 mt-4"> 
             <h2 id="gameOverTitle" class="text-3xl font-black mb-2 text-gray-800">SPIELENDE</h2>
             <p id="gameOverText" class="text-gray-600 mb-6"></p>
@@ -305,6 +430,15 @@
                 <button onclick="window.resetGame()" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 rounded-lg shadow">🔄 Neues Spiel</button>
             </div>
         </div>
+    </div>
+</div>
+
+<div id="reflectionModal" class="hidden fixed inset-0 dimmer flex items-center justify-center z-50 p-4 pt-20">
+    <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full">
+        <h2 class="text-xl font-bold text-amber-800 mb-4">🎉 Super gespielt!</h2>
+        <p id="reflectionQuestion" class="text-gray-700 mb-4 font-medium"></p>
+        <textarea id="reflectionAnswer" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 min-h-[100px] mb-4 text-sm" placeholder="Deine Gedanken dazu..."></textarea>
+        <button onclick="window.showFinalWinScreen()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-lg shadow-lg">Weiter</button>
     </div>
 </div>
 
@@ -317,26 +451,45 @@
 </div>
 
 <script type="module">
+// 4. DATENBANK & LOGIK (JAVASCRIPT)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, deleteDoc, collection, query, orderBy, limit, getDocs, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
 const firebaseConfig = {
- apiKey: "AIzaSyCyRXl8-JPr1xTXPDi1VG-eQk6fOnTpqUI",
- authDomain: "holzquartett-3a177.firebaseapp.com",
- projectId: "holzquartett-3a177",
- storageBucket: "holzquartett-3a177.appspot.com",
- messagingSenderId: "1081595025073",
- appId: "1:1081595025073:web:bc571fffb6e4f20b27f490",
- measurementId: "G-HKLWFJE83K"
+  apiKey: "AIzaSyCyRXl8-JPr1xTXPDi1VG-eQk6fOnTpqUI",
+  authDomain: "holzquartett-3a177.firebaseapp.com",
+  projectId: "holzquartett-3a177",
+  storageBucket: "holzquartett-3a177.appspot.com",
+  messagingSenderId: "1081595025073",
+  appId: "1:1081595025073:web:bc571fffb6e4f20b27f490",
+  measurementId: "G-HKLWFJE83K"
 };
 
-const appId = 'holzquartett-3a177';
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
+const activeConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : firebaseConfig;
+const appId = typeof __app_id !== 'undefined' ? __app_id : 'holzquartett-3a177';
 
-const initAuth = async () => { try { await signInAnonymously(auth); } catch (e) { console.error("Auth Failed", e); } };
+let app, db, auth;
+try {
+    app = initializeApp(activeConfig);
+    db = getFirestore(app);
+    auth = getAuth(app);
+} catch (e) {
+    console.error("Firebase Init Error:", e);
+    alert("Fehler beim Laden der Datenbank-Konfiguration.");
+}
+
+const initAuth = async () => {
+    try {
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+            await signInWithCustomToken(auth, __initial_auth_token);
+        } else {
+            await signInAnonymously(auth);
+        }
+    } catch (e) {
+        console.error("Auth Failed", e);
+    }
+};
 initAuth();
 
 const getPublicDataRef = (coll, docId) => {
@@ -347,37 +500,84 @@ const getPublicDataRef = (coll, docId) => {
 async function trackEvent(type) {
     if (!auth || !auth.currentUser) return;
     const ref = getPublicDataRef("statistics", "usage"); 
-    try { await setDoc(ref, { [type]: increment(1), last_activity: serverTimestamp() }, { merge: true }); } catch (e) {}
+    try {
+        await setDoc(ref, {
+            [type]: increment(1),
+            last_activity: serverTimestamp()
+        }, { merge: true });
+    } catch (e) {
+        console.warn("Tracking eingeschränkt.", e);
+    }
 }
 
+// -------------------------------------------------------------
+// NAV ICONS UND FUNKTIONALITÄT
+// -------------------------------------------------------------
 const NAV_ICONS = {
-    fingerprint: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22c0-8 3-14 8-20" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.9" /><path d="M2 16c2-4 4-8 5-14" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.6" /><path d="M8 22c1-6 2-10 6-12 3-1.5 6 0 8 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.8" /><path d="M13 22c1-4 3-8 7-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.7" /><path d="M18 22c1-3 2-6 4-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.5" /><path d="M16 2c2 1 4 4 6 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.6" /></svg>`,
+    fingerprint: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 22c0-8 3-14 8-20" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.9" />
+                    <path d="M2 16c2-4 4-8 5-14" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.6" />
+                    <path d="M8 22c1-6 2-10 6-12 3-1.5 6 0 8 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.8" />
+                    <path d="M13 22c1-4 3-8 7-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.7" />
+                    <path d="M18 22c1-3 2-6 4-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.5" />
+                    <path d="M16 2c2 1 4 4 6 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.6" />
+                  </svg>`,
     house: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>`
 };
 
-function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
 window.setNavState = (state) => {
     const btn = document.getElementById('navButton');
     if(!btn) return;
+    
+    // REMOVE OLD HANDLERS (Clean Navigation)
     btn.onclick = null;
-    if(state === 'game' || state === 'name_input') {
+    
+    if(state === 'game') {
         btn.innerHTML = NAV_ICONS.house;
-        btn.onclick = (e) => { e.preventDefault(); if(state==='name_input' || confirm('Spiel abbrechen?')) window.location.href = "https://aufdemholzweg.github.io/holzquartett/"; };
+        btn.removeAttribute('href'); 
+        btn.onclick = (e) => { 
+            e.preventDefault(); 
+            if(confirm('Spiel abbrechen und zum Startbildschirm zurückkehren?')) { 
+                if(typeof unsubscribeGame === 'function') unsubscribeGame();
+                window.location.href = "https://aufdemholzweg.github.io/holzquartett/"; 
+            } 
+        };
+        btn.setAttribute('aria-label', 'Zurück zur Holzen! Startseite');
+        
+    } else if (state === 'name_input') {
+        btn.innerHTML = NAV_ICONS.house;
+        btn.href = "#";
+        btn.onclick = (e) => {
+            e.preventDefault();
+            document.getElementById('nameModal').classList.add('hidden');
+            document.getElementById('setupModal').classList.remove('hidden');
+            window.setNavState('menu'); 
+        };
+        btn.setAttribute('aria-label', 'Zurück zum Hauptmenü');
+        
     } else {
+        // Default: Link zum Splashscreen
         btn.innerHTML = NAV_ICONS.fingerprint; 
         btn.href = 'https://aufdemholzweg.github.io/Splashscreen-Holztechnik/';
+        btn.onclick = null; 
+        btn.setAttribute('aria-label', 'Zum Splashscreen');
     }
 };
 
+// Initial Call
 window.setNavState('menu');
 
-let gameMode=null, gameId=null, localPlayerId=null, unsubscribeGame=null, localGameState={}, winStreak=0;
+let gameMode=null, gameId=null, localPlayerId=null, unsubscribeGame=null, localGameState={}, winStreak=0, hasCopiedShareLink=false;
 let isMuted=false;
 let roundSoundPlayed=false;
 let lastRoundWinningWoodName = null;
 let aiGame={playerName:'',playerCards:[],aiCards:[],currentPlayerCard:null,currentAiCard:null,roundInProgress:false,turn:'player'};
 
+// --- RUN LOGIK ---
 function checkRun() {
     if (winStreak === 5) {
         const overlay = document.getElementById('runOverlay');
@@ -386,40 +586,101 @@ function checkRun() {
     }
 }
 
+// 5. ATTRIBUTE & EIGENSCHAFTEN (Updated)
 const attributeInfo={
-    druckfestigkeit:{ icon:'💎', name:'Druckfestigkeit', unit:'(N/mm²)', logic: 'Hoch gewinnt', default: true, description: `Druckfestigkeit in Faserrichtung (DIN 68364).` },
-    rohdichte:{ icon:'⚖️', name:'Rohdichte', unit:'(kg/m³)', logic: 'Hoch gewinnt', default: true, description: 'Normal-Rohdichte bei 12% Holzfeuchte (DIN 68364).' },
-    emodul:{ icon:'📐', name:'E-Modul', unit:'(N/mm²)', logic: 'Hoch gewinnt', default: true, description: 'Steifigkeit des Holzes (DIN EN 338).' },
-    dk:{ icon:'🛡️', name:'Dauerhaftigkeit', unit:'(DK)', logic: 'Niedrig gewinnt', default: true, description: 'Resistenz gegen biologischen Befall (DIN EN 350).' },
-    quellen:{ icon:'↔️', name:'Quellen/Schw.', unit:'(%)', logic: 'Niedrig gewinnt', default: true, description: 'Maximales tangentiales Schwindmaß.' },
-    preis:{ icon:'💰', name:'Preisstufe', unit:'(Stufe)', logic: 'Niedrig gewinnt', default: true, description: 'Relative Preisklasse 1-5.' }
+druckfestigkeit:{
+     icon:'💎',
+     name:'Druckfestigkeit',
+     unit:'(N/mm²)', 
+     logic: 'Hoch gewinnt', 
+     default: true,
+     description: `Die Druckfestigkeit gibt die maximale Spannung in (N/mm²) an, die das Holz aufnehmen kann, wenn es in Faserrichtung gestaucht wird.
+Der Wert wird an kleinen, fehlerfreien Holzklötzen im Normalklima (20°C, 65% rel. Luftfeuchte) bestimmt. Dabei wird die maximale Kraft, bei der das Holz versagt, durch den ursprünglichen Querschnitt der Probe geteilt.`
+ },
+rohdichte:{
+     icon:'⚖️',
+     name:'Rohdichte',
+     unit:'(kg/m³)', 
+     logic: 'Hoch gewinnt', 
+     default: true,
+     description: 'Die Normal-Rohdichte (Roh) ist der Quotient aus Masse und Volumen (kg/m³) bei gleicher Holzfeuchte. Als Referenz gilt hierbei das Normalklima nach DIN 50014 (20 °C / 65 % rel. Luftfeuchte), was einer Ausgleichsfeuchte des Holzes von rund 12 % entspricht.'
+ },
+ emodul:{
+     icon:'📐',
+     name:'E-Modul',
+     unit:'(N/mm²)', 
+     logic: 'Hoch gewinnt', 
+     default: true,
+     description: 'Das E-Modul ist eine Materialkonstante und beschreibt die Steifigkeit des Holzes. Der Wert gibt an, welche Kraft (N) erforderlich ist, um einen Stab mit einem Querschnitt von 1x1 mm auf seine doppelte Länge zu verformen. Sie wird in N/mm² angegeben. Ein hoher E-Modul steht für ein steifes Material, das sich nur schwer verformen lässt (steile Steigung im Spannungs-Dehnungs-Diagramm).'
+ },
+dk:{
+     icon:'🛡️',
+     name:'Dauerhaftigkeit',
+     unit:'(DK)', 
+     logic: 'Niedrig gewinnt', 
+     default: true,
+     description: 'Die Dauerhaftigkeit nach DIN EN 350 gibt an, wie resistent das Kernholz gegen biologischen Befall ist: DK 1 bedeutet eine sehr lange Wiederstandsfähigkeit gegenüber Pilze, Insekten und andere Schädlinge, DK 5 dagegen eine sehr geringe Dauerhaftigkeit.'
+ },
+ quellen:{
+     icon:'↔️',
+     name:'Quellen/Schw.',
+     unit:'(%)', 
+     logic: 'Niedrig gewinnt', 
+     default: true,
+     description: 'Angegeben ist das maximale tangentiale Schwindmaß (%). Dieser Wert beschreibt die prozentuale Maßänderung in Richtung der Jahresringe vom fasergesättigten Zustand (ca. 30 % Holzfeuchte) bis zum darrtrockenen Zustand (0 %).'
+ },
+ preis:{
+     icon:'💰',
+     name:'Preisstufe',
+     unit:'(Stufe)', 
+     logic: 'Niedrig gewinnt', 
+     default: true,
+     description: `Um eine einfache Vergleichbarkeit der Materialien zu gewährleisten, beziehen sich alle Preisangaben auf das Volumen von einem Kubikmeter (€/m³) Massivholz. Da reale Marktpreise je nach Region und Zeitpunkt schwanken, sind alle Hölzer in fünf feste Preisstufen unterteilt. 
+    0€ bis 699€  = 1
+  700€ bis 1199€ = 2
+ 1200€ bis 1999€ = 3
+ 2000€ bis 3999€ = 4
+>4000€            = 5`
+ }
 };
 
+
+// RANDOM DEFAULT ATTRIBUTES
 function getRandomDefaultAttributes() {
     const keys = Object.keys(attributeInfo);
+    // Simple shuffle
     for (let i = keys.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [keys[i], keys[j]] = [keys[j], keys[i]];
     }
     return keys.slice(0, 5);
 }
+
 let activeAttributeKeys = getRandomDefaultAttributes();
 
 const sounds={
  flip:new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_139083c224.mp3'),
  win:new Audio('https://github.com/aufdemholzweg/holzquartett/blob/64126fed45ff8c3fb4bd833f473d83f51ba0548b/Sounds/spielzuggewonnen.mp3?raw=true'),
+ chime:new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c744c8.mp3'),
+ starWin:new Audio('https://cdn.pixabay.com/audio/2022/10/28/audio_73b90209e7.mp3'),
  quizTick: new Audio('https://github.com/aufdemholzweg/holzquartett/blob/main/Sounds/ticken_bei_quizfrage.mp3?raw=true'),
  tieAlert: new Audio('https://github.com/aufdemholzweg/holzquartett/blob/main/Sounds/Quiztime.mp3?raw=true'),
  gameWin: new Audio('https://github.com/aufdemholzweg/holzquartett/blob/main/Sounds/win%20game.mp3?raw=true')
 };
-
 function playSound(a){ if(!isMuted && a){ a.currentTime=0; a.play().catch(()=>{}); } }
 
+function isOpponentNameBackVisible(){ return localStorage.getItem('holzquartett_showOpponentNameOnBack')==='true'; }
+function setOpponentNameBackVisible(v){ localStorage.setItem('holzquartett_showOpponentNameOnBack', v?'true':'false'); }
+
+const IMG_BASE = "https://github.com/aufdemholzweg/holzquartett/blob/main/images";
+const IMG_SUFFIX = "?raw=true";
+
+// 6. KARTEN DATEN
 const woodCards=[
  {name:"Ahorn", dk:"5", druckfestigkeit:60, quellen:9, rohdichte:650, emodul:9500, preis:2, imgTree:`${IMG_BASE}/ahorn_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/ahorn_2.jpeg${IMG_SUFFIX}`},
  {name:"Birke", dk:"5", druckfestigkeit:50, quellen:11.7, rohdichte:650, emodul:14500, preis:2, imgTree:`${IMG_BASE}/birke_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/birke_2.jpeg${IMG_SUFFIX}`},
  {name:"Douglasie", dk:"5", druckfestigkeit:70, quellen:7.5, rohdichte:500, emodul:13000, preis:4, imgTree:`${IMG_BASE}/douglasie_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/douglasie_2.jpeg${IMG_SUFFIX}`},
- {name:"Ebenholz, Afrikanisches", dk:"1-2", druckfestigkeit:70, quellen:12.8, rohdichte:1200, emodul:13000, preis:5, imgTree:`${IMG_BASE}/ebenholz_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/ebenholz_2.jpeg${IMG_SUFFIX}`},
+ {name:"Ebenholz (afr.)", dk:"1-2", druckfestigkeit:70, quellen:12.8, rohdichte:1200, emodul:13000, preis:5, imgTree:`${IMG_BASE}/ebenholz_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/ebenholz_2.jpeg${IMG_SUFFIX}`},
  {name:"Kastanie", dk:"2", druckfestigkeit:50, quellen:6.8, rohdichte:620, emodul:9000, preis:3, imgTree:`${IMG_BASE}/kastanie_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/kastanie_2.jpeg${IMG_SUFFIX}`},
  {name:"Eibe", dk:"2", druckfestigkeit:60, quellen:5.2, rohdichte:670, emodul:15000, preis:4, imgTree:`${IMG_BASE}/eibe_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/eibe_2.jpeg${IMG_SUFFIX}`},
  {name:"Eiche", dk:"2", druckfestigkeit:40, quellen:11.7, rohdichte:670, emodul:13000, preis:3, imgTree:`${IMG_BASE}/eiche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/eiche_2.jpeg${IMG_SUFFIX}`},
@@ -432,7 +693,7 @@ const woodCards=[
  {name:"Kirschbaum", dk:"3", druckfestigkeit:55, quellen:8.5, rohdichte:630, emodul:10600, preis:3, imgTree:`${IMG_BASE}/kirsche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/kirsche_2.jpeg${IMG_SUFFIX}`},
  {name:"Lärche", dk:"3-4", druckfestigkeit:55, quellen:10.4, rohdichte:590, emodul:13800, preis:3, imgTree:`${IMG_BASE}/laerche_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/laerche_2.jpeg${IMG_SUFFIX}`},
  {name:"Linde", dk:"5", druckfestigkeit:50, quellen:10.7, rohdichte:520, emodul:7200, preis:2, imgTree:`${IMG_BASE}/linde_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/linde_2.jpeg${IMG_SUFFIX}`},
- {name:"Mahagoni Amerikanisch", dk:"2", druckfestigkeit:50, quellen:5.8, rohdichte:600, emodul:10600, preis:5, imgTree:`${IMG_BASE}/mahagoni_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/mahagoni_2.jpeg${IMG_SUFFIX}`},
+ {name:"Mahagoni (ami)", dk:"2", druckfestigkeit:50, quellen:5.8, rohdichte:600, emodul:10600, preis:5, imgTree:`${IMG_BASE}/mahagoni_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/mahagoni_2.jpeg${IMG_SUFFIX}`},
  {name:"Meranti (DR)", dk:"3-4", druckfestigkeit:65, quellen:9.8, rohdichte:720, emodul:14500, preis:4, imgTree:`${IMG_BASE}/meranti_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/meranti_2.jpeg${IMG_SUFFIX}`},
  {name:"Nussbaum (EU)", dk:"3", druckfestigkeit:70, quellen:7.5, rohdichte:670, emodul:12000, preis:4, imgTree:`${IMG_BASE}/nuss_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/nuss_2.jpeg${IMG_SUFFIX}`},
  {name:"Palisander", dk:"1", druckfestigkeit:80, quellen:8.1, rohdichte:850, emodul:12800, preis:5, imgTree:`${IMG_BASE}/palisander_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/palisander_2.jpeg${IMG_SUFFIX}`},
@@ -448,41 +709,45 @@ const woodCards=[
  {name:"Zeder", dk:"1-2", druckfestigkeit:40, quellen:11, rohdichte:550, emodul:7200, preis:5, imgTree:`${IMG_BASE}/zeder_1.jpeg${IMG_SUFFIX}`, imgCross:`${IMG_BASE}/zeder_2.jpeg${IMG_SUFFIX}`}
 ];
 
+// -------------------------------------------------------------
+// NEUE WISSENSKARTEN-DATEN
+// -------------------------------------------------------------
 const detailedWoodInfo = {
-    "Ahorn": `<p class="mb-2">Feinporiges Laubholz mit hoher Härte. Beliebt im Instrumentenbau.</p>`,
-    "Birke": `<p class="mb-2">Zähes Holz, ideal für Multiplexplatten.</p>`,
-    "Douglasie": `<p class="mb-2">Widerstandsfähiges Nadelholz für den Außenbereich.</p>`,
-    "Ebenholz, Afrikanisches": `<p class="mb-2">Extrem hartes, schwarzes Kernholz.</p>`,
-    "Kastanie": `<p class="mb-2">Ringporiges Hartholz, sehr dauerhaft.</p>`,
-    "Eibe": `<p class="mb-2">Schwerstes heimisches Nadelholz, sehr elastisch.</p>`,
-    "Eiche": `<p class="mb-2">Klassisches Kernholz mit hoher Witterungsbeständigkeit.</p>`,
-    "Erle": `<p class="mb-2">Weiches Laubholz, unter Wasser extrem haltbar.</p>`,
-    "Esche": `<p class="mb-2">Zäh und elastisch, ideal für Werkzeugstiele.</p>`,
-    "Fichte": `<p class="mb-2">Wichtigstes Bauholz in Europa.</p>`,
-    "Hemlock": `<p class="mb-2">Harzfreies Nadelholz, ideal für Saunen.</p>`,
-    "Hickory": `<p class="mb-2">Höchste Schlagbiegefestigkeit.</p>`,
-    "Kiefer": `<p class="mb-2">Harzreiches Nadelholz mit markantem Kern.</p>`,
-    "Kirschbaum": `<p class="mb-2">Edles Möbelholz mit feurig-roter Farbe.</p>`,
-    "Lärche": `<p class="mb-2">Witterungsbeständiges Nadelholz für Fassaden.</p>`,
-    "Linde": `<p class="mb-2">Standardholz für Schnitzarbeiten.</p>`,
-    "Mahagoni Amerikanisch": `<p class="mb-2">Exklusives Tropenholz für den Bootsbau.</p>`,
-    "Meranti (DR)": `<p class="mb-2">Standardholz für den Fensterbau.</p>`,
-    "Nussbaum (EU)": `<p class="mb-2">Sehr dekoratives Hartholz für Luxusmöbel.</p>`,
-    "Palisander": `<p class="mb-2">Sehr hartes Edelholz mit schwarzen Streifen.</p>`,
-    "Pappel": `<p class="mb-2">Sehr leichtes und weiches Laubholz.</p>`,
-    "Platane": `<p class="mb-2">Markante Spiegelzeichnung im Radialschnitt.</p>`,
-    "Robinie": `<p class="mb-2">Dauerhaftestes europäisches Holz.</p>`,
-    "Rotbuche": `<p class="mb-2">Hartes, abriebfestes Holz für Treppen und Stühle.</p>`,
-    "Rüster": `<p class="mb-2">Zähes Holz der Ulme für den Möbelbau.</p>`,
-    "Tanne": `<p class="mb-2">Harzfreies Nadelholz, konstruktiv vielseitig.</p>`,
-    "Teak": `<p class="mb-2">Ölhaltiges Tropenholz, extrem witterungsfest.</p>`,
-    "Wengé": `<p class="mb-2">Fast schwarzes, sehr hartes afrikanisches Laubholz.</p>`,
-    "Zebrano": `<p class="mb-2">Markante Streifenzeichnung, sehr dekorativ.</p>`,
-    "Zeder": `<p class="mb-2">Leichtes, aromatisches Nadelholz.</p>`
+    "Ahorn": `<div class="text-xs font-bold mb-2">🟩 Heimisch (Europa)</div><p class="mb-2">Das helle Holz glänzt seidig und hat eine sehr gleichmäßige Struktur. Es ist hart und gleichzeitig elastisch.</p><p class="mb-2"><strong>Verwendung:</strong> Hochwertige Massivmöbel, Tischplatten, Böden von Streichinstrumenten.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Ahorn hat einen typischen <strong>Seidenglanz</strong> auf gehobelten Flächen. Die Poren sind so fein, dass du sie mit bloßem Auge nicht sehen kannst.</div>`,
+    "Birke": `<div class="text-xs font-bold mb-2">🟩 Heimisch (Europa, Nordasien)</div><p class="mb-2">Die Birke liefert ein helles, gelblich-weißes bis rötliches Holz. Es ist mäßig hart und zäh, aber leider nicht witterungsbeständig.</p><p class="mb-2"><strong>Verwendung:</strong> Der Klassiker für Sperrholz und Multiplex-Platten.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Hier sind die Gefäße (Poren) oft breiter als die Markstrahlen. Im Querschnitt sehen die Poren aus wie <strong>feine, helle Punkte</strong>.</div>`,
+    "Douglasie": `<div class="text-xs font-bold mb-2">🟩 Heimisch (Eingebürgert)</div><p class="mb-2">Ein Nadelholz mit einem kräftigen, rötlichen Kern. Es ist fester und widerstandsfähiger als Fichte und enthält Harz.</p><p class="mb-2"><strong>Verwendung:</strong> Konstruktionsholz für draußen, Terrassendielen.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Der Übergang zwischen dem hellen Frühholz und dem dunklen Spätholz ist sehr scharf. Wenn du es bearbeitest, riecht es oft leicht nach <strong>Zitrone</strong>.</div>`,
+    "Ebenholz, Afr.": `<div class="text-xs font-bold mb-2 text-red-600">🟥 Import (Afrika) - Stark gefährdet</div><p class="mb-2">Dieses Holz ist extrem hart, schwer und dicht. Der Kern ist tiefschwarz. Es ist so fein, dass es sich hervorragend polieren lässt.</p><p class="mb-2"><strong>Verwendung:</strong> Griffbretter für Geigen und Gitarren, Klaviertasten.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Es hat eine enorme Dichte und <strong>sinkt im Wasser</strong>. Die Poren sind oft mit dunklen Inhaltsstoffen gefüllt und kaum sichtbar.</div>`,
+    "Kastanie": `<div class="text-xs font-bold mb-2">🟩 Heimisch (Südeuropa)</div><p class="mb-2">Ein ringporiges Hartholz mit einem gelbbraunen Kern. Es sieht der Eiche zum Verwechseln ähnlich, ist aber etwas leichter und weicher.</p><p class="mb-2"><strong>Verwendung:</strong> Fassholz für Wein, Pfähle, Möbel.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Es sieht aus wie Eiche, aber es fehlen die breiten Markstrahlen. Du siehst also <strong>keine Spiegel</strong> auf der radialen Fläche.</div>`,
+    "Eibe": `<div class="text-xs font-bold mb-2 text-yellow-600">🟨 Heimisch - Geschützt</div><p class="mb-2">Das härteste und schwerste Nadelholz, das wir haben. Der Kern ist rötlich-violett. Es ist extrem zäh und dauerhaft.</p><p class="mb-2"><strong>Verwendung:</strong> Drechseln, Kunsttischlerei, Bogenbau.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Obwohl es ein Nadelholz ist, hat die Eibe <strong>keine Harzkanäle</strong>. Die Jahresringe verlaufen oft sehr wellig.</div>`,
+    "Eiche": `<div class="text-xs font-bold mb-2">🟩 Heimisch (Europa)</div><p class="mb-2">Der Klassiker. Der Kern ist graugelb bis gelbbraun. Das Holz ist hart, schwer und dank der Gerbsäure sehr wetterfest.</p><p class="mb-2"><strong>Verwendung:</strong> Massivholzmöbel, Parkettböden, Weinfässer.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Die Eiche erkennst du sofort an den breiten <strong>Markstrahlen</strong>. Im Radialschnitt glänzen sie als auffällige Spiegel.</div>`,
+    "Erle": `<div class="text-xs font-bold mb-2">🟩 Heimisch (Europa)</div><p class="mb-2">Frisch gefällt leuchtet das Holz orange-rot. Es ist ein weiches und leichtes Laubholz.</p><p class="mb-2"><strong>Verwendung:</strong> Kirschbaum-Ersatz (gebeizt), Modellbau. Unter Wasser extrem haltbar.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Die Markstrahlen bündeln sich oft zu sogenannten <strong>Scheinmarkstrahlen</strong>, die du als Längsstreifen erkennen kannst.</div>`,
+    "Esche": `<div class="text-xs font-bold mb-2">🟩 Heimisch (Europa)</div><p class="mb-2">Ein ringporiges Hartholz. Es ist bekannt für seine extreme Zähigkeit und Elastizität.</p><p class="mb-2"><strong>Verwendung:</strong> Perfekt für Werkzeugstiele (Hämmer, Äxte) und Sportgeräte.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Es ist ringporig wie die Eiche, besitzt aber <strong>keine breiten Markstrahlen</strong>.</div>`,
+    "Fichte": `<div class="text-xs font-bold mb-2">🟩 Heimisch (Europa)</div><p class="mb-2">Das wichtigste Bauholz. Es ist hell, weich und leicht, aber fest genug für Tragwerke.</p><p class="mb-2"><strong>Verwendung:</strong> Dachstühle, Leimholzträger, Möbel.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Im Gegensatz zur Tanne hat die Fichte <strong>Harzkanäle</strong>. Die Äste sind meist klein, schwarz und fest verwachsen.</div>`,
+    "Hemlock": `<div class="text-xs font-bold mb-2 text-yellow-600">🟨 Import (Nordamerika)</div><p class="mb-2">Ein Nadelholz aus Nordamerika. Es ist grau-weiß bis gelblich und harzfrei.</p><p class="mb-2"><strong>Verwendung:</strong> Saunabau (harzt nicht), Innenausbau.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Es sieht der Fichte ähnlich, ist aber eher <strong>grau im Farbton</strong> und besitzt absolut keine Harzkanäle.</div>`,
+    "Hickory": `<div class="text-xs font-bold mb-2 text-yellow-600">🟨 Import (Nordamerika)</div><p class="mb-2">Ein sehr hartes Holz aus der Walnuss-Familie. Höchste Zähigkeit aller Handelshölzer.</p><p class="mb-2"><strong>Verwendung:</strong> Hochwertige Werkzeugstiele, Drumsticks.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Im dunklen Spätholz kannst du feine, helle Linien erkennen. Das sind netzartige <strong>Parenchymbänder</strong>.</div>`,
+    "Kiefer": `<div class="text-xs font-bold mb-2">🟩 Heimisch (Europa)</div><p class="mb-2">Starker Kontrast zwischen dem rötlichen Kern und dem gelben Splint. Harzreich.</p><p class="mb-2"><strong>Verwendung:</strong> Fenster, Türen, Möbel im Landhausstil, Dielen.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Auf dem Querschnitt siehst du große, deutliche <strong>Harzkanäle</strong>. Riecht intensiv nach Harz.</div>`,
+    "Kirschbaum": `<div class="text-xs font-bold mb-2">🟩 Heimisch (Europa)</div><p class="mb-2">Ein edles, feinporiges Hartholz. Der Kern ist rötlich und dunkelt feurig nach.</p><p class="mb-2"><strong>Verwendung:</strong> Stilmöbel, Innenausbau.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Die Markstrahlen sind im Querschnitt als helle, <strong>scharf begrenzte Linien</strong>.</div>`,
+    "Lärche": `<div class="text-xs font-bold mb-2">🟩 Heimisch (Europa)</div><p class="mb-2">Schwerstes heimisches Nadelholz. Kern intensiv rotbraun. Sehr witterungsbeständig.</p><p class="mb-2"><strong>Verwendung:</strong> Fassaden, Fenster, Brücken, Außenbereich.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Der Übergang vom hellen Frühholz zum dunklen <strong>Spätholz</strong> ist extrem scharf und kontrastreich.</div>`,
+    "Linde": `<div class="text-xs font-bold mb-2">🟩 Heimisch (Europa)</div><p class="mb-2">Ein helles, weiches und leichtes Holz. Kaum sichtbare Jahresringe.</p><p class="mb-2"><strong>Verwendung:</strong> Das klassische Holz für Bildhauer und Schnitzer.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Das Holz ist in alle Richtungen <strong>sehr homogen</strong> schneidbar (ideal zum Schnitzen).</div>`,
+    "Mahagoni (echtes)": `<div class="text-xs font-bold mb-2 text-red-600">🟥 Import (Tropen) - CITES!</div><p class="mb-2">Tropisches Kernholz, rotbraun bis kupferrot. Mäßig hart, arbeitet kaum.</p><p class="mb-2"><strong>Verwendung:</strong> Exklusive Möbel, Bootsbau.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Durch den <strong>Wechseldrehwuchs</strong> entstehen auf der Fläche die berühmten Hell-Dunkel-Streifen.</div>`,
+    "Meranti (DR)": `<div class="text-xs font-bold mb-2 text-yellow-600">🟨 Import (Asien)</div><p class="mb-2">DR steht für <strong>Dark Red</strong>. Der Kern ist rotbraun. Eigenschaften schwanken stark.</p><p class="mb-2"><strong>Verwendung:</strong> Fensterbau (Standard), Außentüren.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Grobporig. Auf dem Querschnitt sieht man oft feine weiße Linien mit Harz (<strong>Gummiadern</strong>).</div>`,
+    "Nussbaum (EU)": `<div class="text-xs font-bold mb-2">🟩 Heimisch (Europa)</div><p class="mb-2">Sehr dekoratives Hartholz. Kern grau-braun, oft dunkel gemasert.</p><p class="mb-2"><strong>Verwendung:</strong> Teure Möbel, Furniere, Gewehrschäfte.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Es ist <strong>halbringporig</strong>. Die Poren werden vom Frühjahr zum Sommer hin langsam kleiner.</div>`,
+    "Palisander": `<div class="text-xs font-bold mb-2 text-red-600">🟥 Import (Tropen) - CITES!</div><p class="mb-2">Sehr schweres, hartes Tropenholz. Violett bis schokobraun mit fast schwarzen Streifen.</p><p class="mb-2"><strong>Verwendung:</strong> Marimbaphone, Gitarren, Luxusobjekte.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Charakteristisch sind die <strong>schwarzen Farbstreifen</strong>. Riecht süßlich bei Bearbeitung.</div>`,
+    "Pappel": `<div class="text-xs font-bold mb-2">🟩 Heimisch (Europa)</div><p class="mb-2">Sehr weiches und leichtes Laubholz. Grau-weiß bis bräunlich.</p><p class="mb-2"><strong>Verwendung:</strong> Paletten, Zündhölzer, Saunabänke.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Nach dem Sägen ist die Oberfläche sehr <strong>wollig und faserig</strong>.</div>`,
+    "Platane": `<div class="text-xs font-bold mb-2">🟩 Heimisch (Südeuropa)</div><p class="mb-2">Zerstreutporiges Laubholz mit rötlichem Kern. Mäßig hart.</p><p class="mb-2"><strong>Verwendung:</strong> Innenausbau, Drechseln.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Die Markstrahlen sind ungewöhnlich <strong>breit und hoch</strong> (Perlholz-Optik im Schnitt).</div>`,
+    "Robinie": `<div class="text-xs font-bold mb-2">🟩 Heimisch (Eingebürgert)</div><p class="mb-2">Kern olivgrün bis goldbraun. Extrem hart, zäh und dauerhaft.</p><p class="mb-2"><strong>Verwendung:</strong> Spielplätze, Gartenmöbel, Pfähle.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Die großen Frühholzporen sind komplett mit <strong>Thyllen</strong> verstopft.</div>`,
+    "Rotbuche": `<div class="text-xs font-bold mb-2">🟩 Heimisch (Europa)</div><p class="mb-2">Schlichtes, rötlich-weißes Holz. Hart und schwer, arbeitet aber stark.</p><p class="mb-2"><strong>Verwendung:</strong> Stühle (Bugholz), Werkbänke, Treppen.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Markstrahlen im Tangentialschnitt als dunkle Spindeln (<strong>Reiskerne</strong>) sichtbar.</div>`,
+    "Rüster": `<div class="text-xs font-bold mb-2">🟩 Heimisch (Europa)</div><p class="mb-2">Holz der Ulme. Ringporig, schokobrauner Kern. Sehr zäh.</p><p class="mb-2"><strong>Verwendung:</strong> Möbel, Treppen, Sportgeräte.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Feine Poren im Spätholz bilden wellenförmige Bänder (<strong>Ulmenwellen</strong>).</div>`,
+    "Tanne": `<div class="text-xs font-bold mb-2">🟩 Heimisch (Europa)</div><p class="mb-2">Helles Nadelholz ohne Farbkern. Harzfrei.</p><p class="mb-2"><strong>Verwendung:</strong> Konstruktion, Fenster, Innenausbau.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Im Gegensatz zur Fichte hat die Tanne absolut <strong>keine Harzkanäle</strong>.</div>`,
+    "Teak": `<div class="text-xs font-bold mb-2 text-yellow-600">🟨 Import (Asien)</div><p class="mb-2">Goldbraun, fühlt sich ölig an. Extrem wetterfest.</p><p class="mb-2"><strong>Verwendung:</strong> Schiffsdecks, Gartenmöbel.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Fühlt sich <strong>wachsig</strong> an und riecht wie altes Leder.</div>`,
+    "Wengé": `<div class="text-xs font-bold mb-2 text-red-600">🟥 Import (Afrika) - Gefährdet</div><p class="mb-2">Fast schwarz mit feinen hellen Streifen. Sehr hart, splittert leicht.</p><p class="mb-2"><strong>Verwendung:</strong> Exklusive Parkettböden, Möbel.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Helle Speicherzellen erzeugen auf der Fläche ein feines <strong>Rebhuhn-Muster</strong>.</div>`,
+    "Zebrano": `<div class="text-xs font-bold mb-2 text-red-600">🟥 Import (Afrika) - Gefährdet</div><p class="mb-2">Hellbraun mit regelmäßigen dunkelbraunen Streifen.</p><p class="mb-2"><strong>Verwendung:</strong> Furniere, Auto-Interieur.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Die <strong>Zebra-Streifung</strong> ist unverwechselbar. Riecht unangenehm.</div>`,
+    "Zeder": `<div class="text-xs font-bold mb-2 text-yellow-600">🟨 Import (Nordamerika)</div><p class="mb-2">Meist Western Red Cedar. Sehr leicht, weich, rötlich und haltbar.</p><p class="mb-2"><strong>Verwendung:</strong> Schindeln, Fassaden, Mottenkugeln.</p><div class="bg-amber-50 p-2 rounded border border-amber-200 mt-2"><strong>🔍 Hammermerkmal:</strong><br>Intensiver, <strong>aromatischer Geruch</strong> (Bleistift).</div>`
 };
 
 const reflectionQuestions=[ "Welches Holz würdest du für Gartenmöbel wählen und warum?", "Eine Küchenarbeitsplatte muss schnittfest sein. Welches Holz eignet sich?", "Für einen Dielenboden: Hartes oder weiches Holz?", "Warum ist Teak im Schiffbau so beliebt?" ];
 
+// 7. QUIZ FRAGEN (FÜR DAS STECHEN) - NEU MIT ERKLÄRUNG
 const quizQuestions = [
     {q:"Was passiert mit dem Volumen von Holz, wenn es unterhalb des Fasersättigungsbereiches Feuchtigkeit aufnimmt?", o:["Es schwindet","Es quillt","Bleibt gleich","Wird leichter"], c:1, e:"Wasser lagert sich in die Zellwände ein und drückt sie auseinander."},
     {q:"In welcher anatomischen Richtung sind das Quellen und Schwinden von Holz am stärksten ausgeprägt?", o:["Längs","Radial","Tangential","Überall gleich"], c:2, e:"Tangential arbeitet Holz etwa doppelt so stark wie radial."},
@@ -543,14 +808,19 @@ const quizQuestions = [
 
 function shuffleArray(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
 
+// Funktion: Klotzi jubeln lassen (MIT NEUEN SPRÜCHEN)
 function showHappyWorm() {
     const k = document.getElementById('happyKlotzi');
     const t = document.getElementById('happyKlotziText');
     if(!k) return;
+
+    // NEUE MOTIVATIONSSPRÜCHE
     const cheers = ["Stark!", "Super!", "Punkt für uns!", "Weiter so!", "Hammerhart!", "Klasse!", "Holz-Meister!", "Holzklasse!", "Jawoll!", "Sauber!", "richtiges Brett!", "Maßarbeit!", "Stabil!"];
     if(t) t.childNodes[0].nodeValue = cheers[Math.floor(Math.random() * cheers.length)];
+
     k.classList.remove('hidden', 'translate-y-full'); 
     k.querySelector('img').classList.add('animate-klotzi-popup');
+    
     setTimeout(() => {
         k.classList.add('translate-y-full');
         k.querySelector('img').classList.remove('animate-klotzi-popup');
@@ -615,13 +885,16 @@ function createCard(data, isRevealed, isPlayer, isActive, highlightAttr){
     card.className = `card-3d w-full h-full relative ${isPlayer?'cursor-pointer hover-lift':''}`;
     if(!isRevealed) card.classList.add('card-flipped');
     if(isPlayer) { card.setAttribute('role', 'button'); card.setAttribute('tabindex', '0'); }
+
     const canSelect = isPlayer && ((gameMode==='ai' && aiGame.turn==='player' && !aiGame.roundInProgress) || (gameMode==='multiplayer' && localGameState.turn===localPlayerId && !localGameState.lastResult));
+    
     const front = document.createElement('div');
     const bClass = isActive ? 'border-orange-500 ring-4 ring-orange-200' : 'border-orange-200';
     front.className = `card-front card-front-bg rounded-2xl shadow-lg border-4 ${bClass} flex flex-col transition-all`;
     let html = `<div class="pt-3 px-3 pb-1"><h2 class="text-lg sm:text-xl font-bold text-amber-900 leading-none">${data.name}</h2></div>
                 <div class="mx-3 mt-1 mb-2 aspect-[4/3] rounded-xl overflow-hidden bg-white shadow-sm border border-orange-100"><img src="${data.imgTree}" class="w-full h-full object-cover"></div>
                 <div class="flex-grow flex flex-col justify-start gap-1 sm:gap-2 px-2 pb-2 overflow-y-auto hide-scrollbar">`;
+    
     for(const k of activeAttributeKeys){
         const info = attributeInfo[k];
         let flashClass = '';
@@ -666,6 +939,7 @@ function getNumericValue(val, attr) {
     return parseFloat(val);
 }
 
+// 8. NEUE FUNKTION: DAS QUIZ STARTEN (Mit 4500ms Timer)
 function startTieBreakerQuiz(qIndex, callback) {
     const modal = document.getElementById('quizModal');
     const timerBar = document.getElementById('quizTimerBar');
@@ -673,15 +947,18 @@ function startTieBreakerQuiz(qIndex, callback) {
     const qOptions = document.getElementById('quizOptions');
     const statusText = document.getElementById('quizStatusText');
     const expBox = document.getElementById('quizExplanation');
+    
     const question = quizQuestions[qIndex];
     qText.innerText = question.q;
     qOptions.innerHTML = '';
     statusText.innerText = "⚠️ Gleichstand! Quiz lädt...";
     expBox.classList.add('hidden'); 
+    
     timerBar.classList.remove('animate-charge', 'animate-shrink');
     timerBar.style.width = "0%";
     timerBar.className = "h-full bg-amber-500 rounded-r-sm relative";
     void timerBar.offsetWidth;
+    
     let buttons = [];
     question.o.forEach((opt, idx) => {
         const btn = document.createElement('button');
@@ -691,8 +968,10 @@ function startTieBreakerQuiz(qIndex, callback) {
         buttons.push({btn, idx});
         qOptions.appendChild(btn);
     });
+    
     modal.classList.remove('hidden');
     timerBar.classList.add('animate-charge');
+    
     setTimeout(() => {
         statusText.innerText = "⚡ STECHEN! 10 Sekunden Zeit";
         timerBar.classList.remove('animate-charge');
@@ -700,31 +979,42 @@ function startTieBreakerQuiz(qIndex, callback) {
         void timerBar.offsetWidth;
         timerBar.className = "h-full bg-red-500 rounded-r-sm relative animate-shrink";
         playSound(sounds.quizTick);
+        
         let answered = false;
         buttons.forEach(obj => {
             const {btn, idx} = obj;
             btn.className = "w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 px-4 rounded-lg border-2 border-gray-200 transition active:scale-95 cursor-pointer";
             btn.disabled = false;
+            
             btn.onclick = () => {
                 if(answered) return;
                 answered = true;
                 clearTimeout(quizTimeout);
                 sounds.quizTick.pause(); sounds.quizTick.currentTime = 0;
+                
                 const explanation = question.e || "Keine Erklärung verfügbar.";
                 expBox.innerText = "💡 " + explanation;
                 expBox.classList.remove('hidden');
+                
                 if(idx === question.c) {
                     btn.className = "w-full bg-green-500 text-white font-bold py-3 px-4 rounded-lg border-2 border-green-600 shadow-lg scale-105";
                     playSound(sounds.win);
-                    setTimeout(() => { modal.classList.add('hidden'); callback('correct'); }, 4500);
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                        callback('correct');
+                    }, 4500); 
                 } else {
                     btn.className = "w-full bg-red-500 text-white font-bold py-3 px-4 rounded-lg border-2 border-red-600 shadow-md transform scale-95 opacity-50";
                     const correctBtnObj = buttons.find(b => b.idx === question.c);
                     if(correctBtnObj) correctBtnObj.btn.className = "w-full bg-green-500 text-white font-bold py-3 px-4 rounded-lg border-2 border-green-600 shadow-lg scale-105 animate-pulse";
-                    setTimeout(() => { modal.classList.add('hidden'); callback('wrong'); }, 4500);
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                        callback('wrong');
+                    }, 4500); 
                 }
             };
         });
+        
         const quizTimeout = setTimeout(() => {
             if(!answered) {
                 answered = true;
@@ -753,6 +1043,7 @@ function evaluateRoundAI(attr){
     const av = getNumericValue(rawAv, attr);
     const logic = attributeInfo[attr].logic;
     let pWins = (logic === 'Niedrig gewinnt') ? (pv < av) : (pv > av);
+    
     if(pv === av) {
         showTieOverlay(() => {
             const qIdx = Math.floor(Math.random() * quizQuestions.length);
@@ -770,19 +1061,19 @@ function evaluateRoundAI(attr){
 function finishRoundAI(attr, rawPv, rawAv, pWins) {
     const resText = pWins===true ? 'Du gewinnst!' : 'Computer gewinnt!';
     const resColor = pWins===true ? 'text-green-600' : 'text-red-600';
-    if(pWins===true) { 
-        winStreak++; 
-        playSound(sounds.win); 
-        showHappyWorm(); 
-        checkRun();
-        lastRoundWinningWoodName = aiGame.currentPlayerCard.name; 
-    } else { 
-        winStreak = 0; 
-        lastRoundWinningWoodName = aiGame.currentAiCard.name; 
-    }
     document.getElementById('resultText').innerText = resText;
     document.getElementById('resultText').className = `text-2xl font-black uppercase tracking-wide mb-2 ${resColor}`;
     document.getElementById('resultDetails').innerText = `${attributeInfo[attr].name}: ${rawPv} vs ${rawAv}`;
+    if(pWins===true) { 
+        winStreak++; // RUN ERHÖHEN
+        playSound(sounds.win); 
+        showHappyWorm(); 
+        checkRun(); // CHECK OB 5 ERREICHT
+        lastRoundWinningWoodName = aiGame.currentPlayerCard.name; 
+    } else { 
+        winStreak = 0; // RUN RESET
+        lastRoundWinningWoodName = aiGame.currentAiCard.name; 
+    }
     openBottomSheet(resText);
     const pC=aiGame.playerCards.shift(); const aC=aiGame.aiCards.shift();
     if(pWins===true){ aiGame.playerCards.push(pC, aC); aiGame.turn='player'; }
@@ -815,6 +1106,7 @@ function listenToGameChanges(){
         if(!ds.exists()) { window.resetGame(); return; }
         const gd=ds.data(); localGameState=gd;
         if(gd.activeAttributes) { activeAttributeKeys = gd.activeAttributes; }
+        
         if(gd.quizTrigger && gd.quizTrigger.active && !document.getElementById('quizModal').dataset.active) {
              document.getElementById('quizModal').dataset.active = "true";
              showTieOverlay(() => {
@@ -832,11 +1124,13 @@ function listenToGameChanges(){
                  });
              });
         }
-        if((!gd.quizTrigger || !gd.quizTrigger.active) && !document.getElementById('quizModal').classList.contains('hidden')) {
+        
+        if((!gd.quizTrigger || !gd.quizTrigger.active) && document.getElementById('quizModal').classList.contains('hidden') === false) {
              document.getElementById('quizModal').classList.add('hidden');
              document.getElementById('quizModal').dataset.active = "";
              sounds.quizTick.pause(); sounds.quizTick.currentTime = 0;
         }
+
         if(gd.status==='playing'||gd.status==='finished'){
             document.getElementById('multiplayerLobbyModal').classList.add('hidden');
             document.getElementById('gameContainer').classList.remove('hidden');
@@ -860,10 +1154,14 @@ function listenToGameChanges(){
                 ac.appendChild(c);
                 if(gd.lastResult){ setTimeout(()=> { c.classList.remove('card-flipped'); playSound(sounds.flip); }, 100); }
             } else { ac.innerHTML = `<div class="w-full h-full bg-gray-200 rounded-2xl flex items-center justify-center text-xs text-gray-500">Warte auf Gegner-Karte...</div>`; }
+            
             if(gd.lastResult){
                  const wId = gd.lastResult.winnerId;
                  const iWin = wId===localPlayerId;
+                 
+                 // RUN LOGIK ONLINE
                  if(iWin) { winStreak++; checkRun(); } else if(wId !== 'tie') { winStreak = 0; }
+
                  if(gd.currentCards[wId]) { lastRoundWinningWoodName = gd.currentCards[wId].name; }
                  if(!roundSoundPlayed && iWin) playSound(sounds.win);
                  roundSoundPlayed=true;
@@ -907,6 +1205,7 @@ window.selectAttribute = async (attr) => {
         const ov = getNumericValue(rawOv, attr);
         const logic = attributeInfo[attr].logic;
         let pWins = (logic === 'Niedrig gewinnt') ? (pv < ov) : (pv > ov);
+        
         if(pv === ov) {
             const qIdx = Math.floor(Math.random() * quizQuestions.length);
             await updateDoc(getPublicDataRef("games", gameId),{
@@ -928,7 +1227,7 @@ window.startGameAI = (name) => {
     document.getElementById('ruleButton').classList.remove('hidden');
     document.getElementById('playerNameDisplay').innerText=name;
     const sh=shuffleArray([...woodCards]);
-    aiGame.playerCards=sh.slice(0,14); aiGame.aiCards=sh.slice(14,28);
+    aiGame.playerCards=sh.slice(0,14); aiGame.aiCards=sh.slice(14,28); // 14 KARTEN WEIL 30 GESAMT
     aiGame.currentPlayerCard=aiGame.playerCards[0]; aiGame.currentAiCard=aiGame.aiCards[0];
     document.getElementById('gameContainer').classList.remove('hidden');
     scrollToTop();
@@ -950,6 +1249,7 @@ window.createGame = async (playerName) => {
     document.getElementById('shareLink').value=joinUrl;
     document.getElementById('qrcode').innerHTML = "";
     new QRCode(document.getElementById('qrcode'), {text: joinUrl, width: 128, height: 128});
+    
     await setDoc(getPublicDataRef("games", gameId),{
         gameId, status:'waiting', playerIds:[localPlayerId],
         players:{[localPlayerId]:{name:playerName,cards:[],status:'online'}},
@@ -1117,6 +1417,7 @@ window.showNamePrompt = (mode) => {
 };
 window.copyShareLink = () => { const l=document.getElementById('shareLink'); l.select(); try { document.execCommand('copy'); } catch(e){} };
 
+// MODIFIED SHOW GAME INFO TO HIDE HEADER
 window.showGameInfo = () => {
     document.getElementById('mainHeader').classList.add('hidden'); 
     const list = document.getElementById('infoCategoryList');
@@ -1137,6 +1438,7 @@ window.showGameInfo = () => {
     document.getElementById('gameInfoModal').classList.remove('hidden');
 }
 
+// MODIFIED CLOSE GAME INFO TO SHOW HEADER
 window.closeGameInfo = () => {
     document.getElementById('gameInfoModal').classList.add('hidden');
     document.getElementById('mainHeader').classList.remove('hidden'); 
@@ -1151,6 +1453,7 @@ function openBottomSheet(title){ if(title)document.getElementById('resultText').
 
 document.getElementById('bsNextBtn').addEventListener('click',()=> { closeBottomSheet(); window.nextRound(); });
 
+// Settings Listeners
 const soundToggle = document.getElementById('soundToggle');
 if(soundToggle) { soundToggle.checked = !isMuted; soundToggle.addEventListener('change', function() { isMuted = !this.checked; }); }
 const revealToggle = document.getElementById('revealBackToggle');
@@ -1186,6 +1489,7 @@ if(p.get('game')){
     window.showNamePrompt('join'); 
 }
 
+// IMAGE VIEWER LOGIC (LIGHTBOX)
 window.openImageViewer = (src) => {
     document.getElementById('fullSizeImage').src = src;
     document.getElementById('imageViewerModal').classList.remove('hidden');
