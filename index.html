@@ -1316,11 +1316,11 @@ window.nextRound = async () => {
 window.showFinalWinScreen = () => { document.getElementById('reflectionModal').classList.add('hidden'); };
 
 const calculateRank = (count) => {
-    if (count >= 100) return { title: "Leim-Legende", stars: 6 };
-    if (count >= 50) return { title: "Astloch-Philosoph", stars: 5 };
-    if (count >= 30) return { title: "Brett-Bezwinger", stars: 4 };
-    if (count >= 20) return { title: "Hobel-Held", stars: 3 };
-    if (count >= 10) return { title: "Schleifklotz-Schwinger", stars: 2 };
+    if (count >= 50) return { title: "Leim-Legende", stars: 6 };
+    if (count >= 25) return { title: "Astloch-Philosoph", stars: 5 };
+    if (count >= 15) return { title: "Brett-Bezwinger", stars: 4 };
+    if (count >= 10) return { title: "Hobel-Held", stars: 3 };
+    if (count >= 3) return { title: "Schleifklotz-Schwinger", stars: 2 };
     return { title: "Werkstatt-Neuling", stars: 1 };
 };
 
