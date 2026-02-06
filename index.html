@@ -1544,7 +1544,6 @@ try {
         const rank = calculateRank(count);
         const container = document.getElementById('mainMenuStats');
 if(container) {
-            // HIER WURDE DIE SCHRIFTGRÖSSE ANGEPASST (text-base, text-sm statt xl)
             container.innerHTML = `<div class="flex flex-col items-center gap-1"><div class="text-[10px] text-white/80 font-bold uppercase tracking-wider">Dein Rang</div><div class="flex items-center gap-2"><span class="text-base font-bold text-white drop-shadow-md">${rank.title}</span><div class="flex text-amber-400 text-xs drop-shadow-sm">${Array(rank.stars).fill('★').join('')}</div></div><div class="flex items-center gap-2 mt-0.5"><span class="text-sm filter drop-shadow">🔥</span><span class="font-bold text-white text-sm drop-shadow-md">${count} Spiele</span></div></div>`;
 container.classList.remove('hidden');
         }
@@ -1637,13 +1636,13 @@ if(snap.empty){ list.innerHTML='<div class="text-center py-4 text-gray-400">Kein
 } catch(e){ list.innerHTML='<div class="text-center text-red-400 text-sm">Fehler beim Laden</div>'; }
 };
 
-// UPDATE: Close Logic basierend auf Source
+// UPDATE: Close Logic basierend auf Source (HIER WAR DER FEHLER: leaderboardSource statt source)
 window.closeLeaderboard = () => { 
     document.getElementById('leaderboardModal').classList.add('hidden'); 
     
     if(leaderboardSource === 'gameover') {
         document.getElementById('gameOverModal').classList.remove('hidden');
-    } else if (source === 'menu') {
+    } else if (leaderboardSource === 'menu') {
         document.getElementById('setupModal').classList.remove('hidden');
     } else {
         // Fallback: Wenn Variable leer ist (sollte nicht passieren), versuche Menü
@@ -1698,7 +1697,6 @@ document.getElementById('mainHeader').classList.remove('hidden');
 };
 
 window.closeInfoModal = () => document.getElementById('infoModal').classList.add('hidden');
-// HIER WURDE CLOSE LEADERBOARD ENTFERNT, DA OBEN NEU DEFINIERT
 window.resetGame = () => location.reload();
 function closeBottomSheet(){ const bs=document.getElementById('bottomSheet'); const bd=document.getElementById('bottomSheetBackdrop'); bs.classList.add('translate-y-full'); bd.classList.add('opacity-0'); setTimeout(()=>{bs.classList.add('hidden');bd.classList.add('hidden');},300); }
 function openBottomSheet(title){ if(title)document.getElementById('resultText').innerText=title; const bs=document.getElementById('bottomSheet'); const bd=document.getElementById('bottomSheetBackdrop'); bd.classList.remove('hidden'); bs.classList.remove('hidden'); setTimeout(()=>{bd.classList.remove('opacity-0'); bs.classList.remove('translate-y-full');},10);
