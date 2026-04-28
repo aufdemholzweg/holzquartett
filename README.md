@@ -11,6 +11,7 @@ Ziel ist es, dem Gegner alle Karten abzunehmen, indem man gezielt technische Eig
 
 ## ✨ Features
 * **Zwei Spielmodi:**
+  
   * 🤖 **Einzelspieler:** Trainiere dein Wissen gegen einen computergesteuerten Gegner.
   * 🌍 **Multiplayer:** Spiele in Echtzeit gegen Mitstudierende oder Freunde (inkl. QR-Code Lobby).
 * **30+ Holzarten** mit realen technischen Daten (basierend auf DIN-Normen).
@@ -53,8 +54,6 @@ Nicht immer ist der höhere Wert besser! Die Logik orientiert sich an der fachli
 ## ⚖️ Lizenz & Credits
 
 Der Quellcode dieses Projekts, das Spielkonzept sowie die Quizfragen sind lizenziert unter der **CC BY 4.0** Lizenz.
-
-> **⚠️ Wichtiger Hinweis zu Drittinhalten:** > Die im Ordner `/images` enthaltenen Holzbilder unterliegen dem Urheberrecht der jeweiligen Quellen (*holzvomfach.de* und *schreiner-seiten.de*) und sind **nicht** Teil der freien CC-Lizenz. Eine Weiterverwendung dieser Bilder ist nur mit Genehmigung der Rechteinhaber gestattet.
 
 **Sounds:**
 Soundeffekte von [freesound.org).
