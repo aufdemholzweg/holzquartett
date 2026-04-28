@@ -101,7 +101,7 @@
         .animate-charge { animation: chargeWidth 1.5s linear forwards; }
         
         @keyframes shrinkWidth { from { width: 100%; } to { width: 0%; } }
-        .animate-shrink { animation: shrinkWidth 10s linear forwards; }
+        .animate-shrink { animation: shrinkWidth 15s linear forwards; }
     </style>
 </head>
 <body class="flex flex-col relative text-gray-800">
@@ -1088,7 +1088,7 @@ function startTieBreakerQuiz(qIndex, callback) {
     timerBar.classList.add('animate-charge');
     
     setTimeout(() => {
-        statusText.innerText = "⚡ STECHEN! 10 Sekunden Zeit";
+        statusText.innerText = "⚡ STECHEN! 15 Sekunden Zeit";
         timerBar.classList.remove('animate-charge');
         timerBar.style.width = '100%';
         void timerBar.offsetWidth;
